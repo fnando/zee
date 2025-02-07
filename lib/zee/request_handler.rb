@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module Zee
+  # @private
   class RequestHandler
     attr_reader :app
 

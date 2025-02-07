@@ -1,0 +1,1 @@
+--no-private --exclude generators --verbose --debug --output-dir tmp/doc --readme README.md 'lib/**/*.rb' - CHANGELOG.md CODE_OF_CONDUCT.md LICENSE.md CONTRIBUTING.md

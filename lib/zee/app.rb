@@ -11,6 +11,8 @@ module Zee
     # - `ZEE_ENV`
     # - `APP_ENV`
     # - `RACK_ENV`
+    #
+    # @return [String]
     attr_accessor :env
 
     def initialize(&)
@@ -19,14 +21,23 @@ module Zee
       instance_eval(&) if block_given?
     end
 
-    # Define the app's routes.
-    # See [Zee::Routes].
+    # Define the app's routes. See {Zee::Routes}.
+    #
+    # @return [Zee::Routes]
+    #
+    # @example
+    #   app.routes do
+    #     root to: "pages#home"
+    #   end
     def routes(&)
       @routes ||= Routes.new
       @routes.instance_eval(&) if block_given?
       @routes
     end
 
+    # Initialize the application.
+    # This will load the necessary files and set up the application.
+    # If a routes file exist at `config/routes.rb`, it will also be loaded.
     def initialize!
       require "zeitwerk"
       Bundler.require(env.to_sym)
@@ -59,6 +70,7 @@ module Zee
       require routes_file if routes_file.file?
     end
 
+    # @private
     def loader
       @loader ||= Zeitwerk::Loader.new
     end

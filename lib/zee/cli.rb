@@ -5,6 +5,7 @@ require_relative "../zee"
 require_relative "generators/app"
 
 module Zee
+  # @private
   class CLI < Thor
     check_unknown_options!
 

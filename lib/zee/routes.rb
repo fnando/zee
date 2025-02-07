@@ -46,7 +46,7 @@ module Zee
       match(path, via: [:put], to:, as:, constraints:, defaults:)
     end
 
-    # Define PUT route.
+    # Define DELETE route.
     # See {#match} for more information.
     def delete(path, to:, as: nil, constraints: nil, defaults: nil)
       match(path, via: [:delete], to:, as:, constraints:, defaults:)
@@ -64,14 +64,16 @@ module Zee
       match(path, via: [:head], to:, as:, constraints:, defaults:)
     end
 
-    # Definen app route.
+    # Define an app route.
     #
     # @param path [String] the path to match.
     # @param via [Array(Symbol)] the HTTP method(s) to match.
-    # @param to [String|Callable] the controller and action to route to or an
-    #                             object that responds to `#call()`.
+    # @param to [String, #call] the controller and action to route to,
+    #                           like `posts#show`. You can also provide any
+    #                           object that responds to `#call`.
     # @param as [String] the name of the route.
-    # @param constraints [Hash] the constraints to match. See {#constraints}.
+    # @param constraints [Hash, #match?, #call] the constraints to match.
+    #                                           See {#constraints}.
     # @param defaults [Hash] the default values for the route. See {#defaults}.
     def match(path, via:, to:, as: nil, constraints: nil, defaults: nil)
       defaults = merge_hash(@defaults, defaults)
@@ -86,11 +88,9 @@ module Zee
     #
     # @param defaults [Hash] the default values for the route.
     # @example
-    # ```ruby
-    #  defaults(locale: "en") do
-    #    get "(/:locale)/posts/:id", to: "posts#show"
-    #  end
-    #  ```
+    #   defaults(locale: "en") do
+    #     get "(/:locale)/posts/:id", to: "posts#show"
+    #   end
     def defaults(defaults = nil, &)
       @defaults << defaults if defaults
       yield
@@ -102,11 +102,9 @@ module Zee
     #
     # @param subdomain [String|Regexp] the subdomain that should be matched.
     # @example
-    # ```ruby
-    #  subdomain("api") do
-    #    get "posts/:id", to: "posts#show"
-    #  end
-    #  ```
+    #   subdomain("api") do
+    #     get "posts/:id", to: "posts#show"
+    #   end
     def subdomain(subdomain, &)
       constraints(subdomain:, &)
     end
@@ -115,13 +113,11 @@ module Zee
     # This method can be nested to define different constraints for different
     # segments.
     #
-    # @param constraints [Hash|Callable] the constraints to match.
+    # @param constraints [Hash, #call] the constraints to match.
     # @example
-    # ```ruby
-    #  constraints locale: /^en|pt-BR$/ do
-    #    get "(/:locale)/posts/:id", to: "posts#show"
-    #  end
-    #  ```
+    #   constraints locale: /^en|pt-BR$/ do
+    #     get "(/:locale)/posts/:id", to: "posts#show"
+    #   end
     def constraints(constraints = nil, &)
       @constraints << constraints if constraints
       yield

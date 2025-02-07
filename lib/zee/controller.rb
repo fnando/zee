@@ -5,7 +5,21 @@ module Zee
   MissingTemplateError = Class.new(StandardError)
 
   class Controller
-    attr_reader :request, :response, :action_name, :controller_name
+    # The current action name.
+    # @return [String]
+    attr_reader :action_name
+
+    # The current controller name.
+    # @return [String]
+    attr_reader :controller_name
+
+    # The current request.
+    # @return [Zee::Request]
+    attr_reader :request
+
+    # The current response.
+    # @return [Zee::Response]
+    attr_reader :response
 
     def initialize(request:, response:, action_name: nil, controller_name: nil)
       @request = request
@@ -16,16 +30,17 @@ module Zee
 
     # The variables that will be exposed to templates.
     # @return [Hash]
+    #
+    # @example
+    #   locals[:name] = user.name
     def locals
       @locals ||= {}
     end
 
     # Expose variables to the template.
-    # @param variables [Hash] The variables to expose.
+    # @param vars [Hash] The variables to expose.
     # @example
-    # ```ruby
-    # expose message: "Hello, World!"
-    # ```
+    #   expose message: "Hello, World!"
     def expose(**vars)
       locals.merge!(vars)
     end
@@ -38,12 +53,14 @@ module Zee
     #                               Defaults to the action name.
     # @param status [Integer|Symbol] The status code of the response.
     #                                Defaults to `:ok`.
-    # @example
-    # ```ruby
-    # render
-    # render :home
-    # render :show, status: :created
-    # ```
+    # @example Implicit render uses the action name as the template name.
+    #   render
+    #
+    # @example Explicit render.
+    #   render :home
+    #
+    # @example Render with a different status.
+    #   render :show, status: :created
     def render(template_name = action_name, status: :ok)
       accept = request.env[HTTP_ACCEPT] || TEXT_HTML
       mimes = Rack::Utils
