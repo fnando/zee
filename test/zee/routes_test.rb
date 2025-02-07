@@ -369,4 +369,38 @@ class RoutesTest < Minitest::Test
 
     refute_nil route
   end
+
+  test "handles trailing slashes" do
+    routes = Zee::Routes.new do
+      root to: "home#index"
+      get "posts", to: "posts#index"
+    end
+
+    route = routes.find(
+      Zee::Request.new(
+        "REQUEST_METHOD" => "GET",
+        "PATH_INFO" => "/posts"
+      )
+    )
+
+    refute_nil route
+
+    route = routes.find(
+      Zee::Request.new(
+        "REQUEST_METHOD" => "GET",
+        "PATH_INFO" => "/posts/"
+      )
+    )
+
+    refute_nil route
+
+    route = routes.find(
+      Zee::Request.new(
+        "REQUEST_METHOD" => "GET",
+        "PATH_INFO" => "/"
+      )
+    )
+
+    refute_nil route
+  end
 end

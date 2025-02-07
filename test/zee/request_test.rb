@@ -8,4 +8,10 @@ class RequestTest < Minitest::Test
 
     assert_equal "foo", request.subdomain
   end
+
+  test "normalizes trailing slashes" do
+    request = Zee::Request.new("PATH_INFO" => "/posts/")
+
+    assert_equal "/posts", request.path_with_no_trailing_slash
+  end
 end

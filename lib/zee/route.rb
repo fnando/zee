@@ -17,7 +17,7 @@ module Zee
     def match?(request)
       return false unless match_path?(request)
 
-      params = request.path
+      params = request.path_with_no_trailing_slash
                       .match(matcher)
                       .named_captures
                       .each_with_object({}) do |(key, value), hash|
@@ -35,7 +35,7 @@ module Zee
     end
 
     private def match_path?(request)
-      request.path.match?(matcher)
+      request.path_with_no_trailing_slash.match?(matcher)
     end
 
     private def match_request_method?(request)
