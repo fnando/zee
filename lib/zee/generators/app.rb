@@ -7,7 +7,7 @@ module Zee
     attr_accessor :options
 
     def self.source_root
-      File.join(__dir__, "templates")
+      File.join(__dir__, "app")
     end
 
     no_commands do

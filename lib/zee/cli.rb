@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
+require "thor"
+require_relative "../zee"
+require_relative "generators/app"
+
 module Zee
   class CLI < Thor
     check_unknown_options!
@@ -8,7 +12,7 @@ module Zee
       true
     end
 
-    desc "new PATH", "Create a new gem"
+    desc "new PATH", "Create a new app"
     def new(path)
       generator = Generator.new
       generator.destination_root = File.expand_path(path)

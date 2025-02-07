@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
 module Zee
-  require "zee/version"
+  require_relative "zee/version"
 end
