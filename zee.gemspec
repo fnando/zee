@@ -9,7 +9,7 @@ Gem::Specification.new do |spec|
   spec.email   = ["me@fnando.com"]
   spec.metadata = {"rubygems_mfa_required" => "true"}
 
-  spec.summary     = "A micro web framework."
+  spec.summary     = "A mini web framework."
   spec.description = spec.summary
   spec.license     = "MIT"
   spec.required_ruby_version = Gem::Requirement.new(">= 3.3.0")

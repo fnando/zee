@@ -8,3 +8,7 @@ AllCops:
   Exclude:
     - vendor/**/*
     - gemfiles/**/*
+
+Naming/FileName:
+  Exclude:
+    - API_DESIGN.rb
