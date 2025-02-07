@@ -6,7 +6,7 @@ module Zee
       @store = []
       @defaults = []
       @constraints = []
-      instance_eval(&)
+      instance_eval(&) if block_given?
     end
 
     # Find a route that matches the current request.

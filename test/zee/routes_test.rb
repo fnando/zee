@@ -352,4 +352,21 @@ class RoutesTest < Minitest::Test
 
     assert_nil route
   end
+
+  test "defines routes for app" do
+    app = Zee::App.new do
+      routes do
+        get "posts", to: "posts#index"
+      end
+    end
+
+    route = app.routes.find(
+      Zee::Request.new(
+        "REQUEST_METHOD" => "GET",
+        "PATH_INFO" => "/posts"
+      )
+    )
+
+    refute_nil route
+  end
 end
