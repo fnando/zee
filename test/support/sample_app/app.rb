@@ -6,6 +6,7 @@ SampleApp = Zee::App.new do
   routes do
     root to: "pages#home"
     get "missing-template", to: "pages#missing_template"
+    get "hello", to: "pages#hello"
   end
 end
 

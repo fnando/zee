@@ -14,6 +14,22 @@ module Zee
       @controller_name = controller_name
     end
 
+    # The variables that will be exposed to templates.
+    # @return [Hash]
+    def locals
+      @locals ||= {}
+    end
+
+    # Expose variables to the template.
+    # @param variables [Hash] The variables to expose.
+    # @example
+    # ```ruby
+    # expose message: "Hello, World!"
+    # ```
+    def expose(**vars)
+      locals.merge!(vars)
+    end
+
     # Render a template. The default is to render a template with the same name
     # as the action. The template must be
     # named `:name.:content_type.:template_handler`, as in `home.html.erb`.
@@ -59,7 +75,7 @@ module Zee
 
       response.status(status)
       response.headers[:content_type] = mime&.content_type
-      response.body = Tilt.new(template_path).render
+      response.body = Tilt.new(template_path).render(Object.new, locals)
     end
 
     private def build_template_paths(mimes, template_handlers, base_path)

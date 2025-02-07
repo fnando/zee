@@ -21,4 +21,12 @@ class RenderTemplatesTest < Minitest::Test
   test "handles missing template" do
     assert_raises(Zee::MissingTemplateError) { get "/missing-template" }
   end
+
+  test "renders template with locals" do
+    get "/hello"
+
+    assert last_response.ok?
+    assert_includes last_response.body, "Hello, World!"
+    assert_equal "text/html", last_response.content_type
+  end
 end

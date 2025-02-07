@@ -8,5 +8,9 @@ module Controllers
     def missing_template
       render :missing_template
     end
+
+    def hello
+      expose message: "Hello, World!"
+    end
   end
 end
