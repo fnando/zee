@@ -99,4 +99,40 @@ class RoutesTest < Minitest::Test
 
     refute_nil route
   end
+
+  test "defines route with leading optional segment" do
+    routes = Zee::Routes.new do
+      get "(/:locale)/posts/:id", to: "posts#show"
+    end
+
+    route = routes.find(
+      Zee::Request.new("REQUEST_METHOD" => "GET", "PATH_INFO" => "/posts/1")
+    )
+
+    refute_nil route
+
+    route = routes.find(
+      Zee::Request.new("REQUEST_METHOD" => "GET", "PATH_INFO" => "/en/posts/1")
+    )
+
+    refute_nil route
+  end
+
+  test "defines route with trailing optional segment" do
+    routes = Zee::Routes.new do
+      get "archive(/:category)", to: "archive#show"
+    end
+
+    route = routes.find(
+      Zee::Request.new("REQUEST_METHOD" => "GET", "PATH_INFO" => "/archive")
+    )
+
+    refute_nil route
+
+    route = routes.find(
+      Zee::Request.new("REQUEST_METHOD" => "GET", "PATH_INFO" => "/archive/all")
+    )
+
+    refute_nil route
+  end
 end

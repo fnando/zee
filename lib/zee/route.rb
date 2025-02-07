@@ -27,13 +27,15 @@ module Zee
     end
 
     private def normalize_slashes(path)
-      "/#{path}".squeeze("/")
+      path = "/#{path}" unless path.start_with?("(")
+      path.squeeze("/")
     end
 
     private def parse_path(path)
-      path = path.gsub(/:(\w+)/, "([^/]+)")
-
-      Regexp.new(path)
+      path = path
+             .gsub(/\((.*?)\)/, "(?:\\1)?")
+             .gsub(/:\w+/, "([^/]+)")
+      Regexp.new("^#{path}$")
     end
   end
 end
