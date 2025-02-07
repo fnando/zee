@@ -5,8 +5,17 @@ module Zee
     # The root path of the application.
     attr_accessor :root
 
+    # The current environment. Defaults to "development".
+    # It can be set using the following environment variables:
+    #
+    # - `ZEE_ENV`
+    # - `APP_ENV`
+    # - `RACK_ENV`
+    attr_accessor :env
+
     def initialize(&)
       self.root = Pathname.pwd
+      self.env = compute_env
       instance_eval(&) if block_given?
     end
 
@@ -20,6 +29,7 @@ module Zee
 
     def initialize!
       require "zeitwerk"
+      Bundler.require(env.to_sym)
 
       Object.const_set(:Actions, Module.new) unless defined?(::Actions)
       Object.const_set(:Controllers, Module.new) unless defined?(::Controllers)
@@ -66,6 +76,14 @@ module Zee
     def call(env)
       env[RACK_ZEE_APP] = self
       Dir.chdir(root) { return app.call(env) }
+    end
+
+    private def compute_env
+      env_name = ENV_NAMES.find { ENV[_1] } # rubocop:disable Style/FetchEnvVar
+      env = ENV[env_name] if env_name # rubocop:disable Style/FetchEnvVar
+      env = env.to_s
+
+      env.empty? ? "development" : env
     end
   end
 end

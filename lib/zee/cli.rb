@@ -13,6 +13,10 @@ module Zee
     end
 
     desc "new PATH", "Create a new app"
+    option :skip_bundle, type: :boolean,
+                         default: false,
+                         desc: "Skip bundle install",
+                         aliases: "-B"
     def new(path)
       generator = Generator.new
       generator.destination_root = File.expand_path(path)

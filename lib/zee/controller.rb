@@ -63,32 +63,31 @@ module Zee
       template_paths = build_template_paths(mimes, handlers, base)
 
       # Find the first file that exists.
-      mime, template_path = *template_paths.find {|(_, path)| File.file?(path) }
+      template_path = template_paths.find {|tp| File.file?(tp[:path]) }
 
       unless template_path
         list = template_paths
-               .map {|(_, path)| path.relative_path_from(root) }
+               .map { _1[:path].relative_path_from(root) }
                .join(", ")
+
         raise MissingTemplateError,
               "#{controller_name}##{template_name}: #{list}"
       end
 
       response.status(status)
-      response.headers[:content_type] = mime&.content_type
-      response.body = Tilt.new(template_path).render(Object.new, locals)
+      response.headers[:content_type] = template_path[:mime]&.content_type
+      response.body = Tilt.new(template_path[:path]).render(Object.new, locals)
     end
 
     private def build_template_paths(mimes, template_handlers, base_path)
-      list = mimes.map do |content_type|
+      mimes.flat_map do |mime|
         template_handlers.map do |handler|
-          [
-            content_type,
-            Pathname("#{base_path}.#{content_type.extension}.#{handler}")
-          ]
+          {
+            mime:,
+            path: Pathname("#{base_path}.#{mime.extension}.#{handler}")
+          }
         end
       end
-
-      list.first
     end
   end
 end

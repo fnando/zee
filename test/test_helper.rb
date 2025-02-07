@@ -5,6 +5,7 @@ SimpleCov.start
 
 require "bundler/setup"
 require "zee"
+require "zee/cli"
 require "rack/test"
 
 require "minitest/utils"
