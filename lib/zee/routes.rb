@@ -98,6 +98,19 @@ module Zee
       @defaults.pop if defaults
     end
 
+    # Define a subdomain constraint.
+    #
+    # @param subdomain [String|Regexp] the subdomain that should be matched.
+    # @example
+    # ```ruby
+    #  subdomain("api") do
+    #    get "posts/:id", to: "posts#show"
+    #  end
+    #  ```
+    def subdomain(subdomain, &)
+      constraints(subdomain:, &)
+    end
+
     # Define constraints for the route.
     # This method can be nested to define different constraints for different
     # segments.
