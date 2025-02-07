@@ -11,7 +11,7 @@ module Zee
       @to = to
       @as = as
       @constraints = constraints
-      @defaults = defaults
+      @defaults = defaults || {}
     end
 
     def match?(request)
@@ -34,7 +34,7 @@ module Zee
     private def parse_path(path)
       path = path
              .gsub(/\((.*?)\)/, "(?:\\1)?")
-             .gsub(/:\w+/, "([^/]+)")
+             .gsub(/:(\w+)/, "(?<\\1>[^/]+)")
       Regexp.new("^#{path}$")
     end
   end

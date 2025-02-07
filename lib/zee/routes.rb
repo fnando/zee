@@ -4,6 +4,7 @@ module Zee
   class Routes
     def initialize(&)
       @store = []
+      @defaults = []
       instance_eval(&)
     end
 
@@ -11,9 +12,18 @@ module Zee
     #
     # @param request [Zee::Request] the current request.
     def find(request)
-      @store.find do |route|
-        route.match?(request)
-      end
+      route = @store.find { _1.match?(request) }
+      return unless route
+
+      params = request.path
+                      .match(route.matcher)
+                      .named_captures
+                      .each_with_object({}) do |(key, value), hash|
+                        key = key.to_sym
+                        hash[key] = value || route.defaults[key]
+                      end
+      request.params.merge!(params)
+      route
     end
 
     # Define root route, like `GET /`.
@@ -74,7 +84,22 @@ module Zee
     # @param constraints [Hash] the constraints to match.
     # @param defaults [Hash] the default values for the route.
     def match(path, via:, to:, as: nil, constraints: nil, defaults: nil)
+      defaults = merge(@defaults, defaults)
+
       @store << Route.new(path:, via:, to:, as:, constraints:, defaults:)
+    end
+
+    def defaults(defaults = nil, &)
+      @defaults << defaults if defaults
+      yield
+    ensure
+      @defaults.pop if defaults
+    end
+
+    private def merge(list, other)
+      list.push(other).flatten.compact.each_with_object({}) do |entry, buffer|
+        buffer.merge!(entry)
+      end
     end
   end
 end
