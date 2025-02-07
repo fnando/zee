@@ -135,4 +135,53 @@ class RoutesTest < Minitest::Test
 
     refute_nil route
   end
+
+  test "sets route params" do
+    routes = Zee::Routes.new do
+      get "posts/:id", to: "posts#show"
+    end
+
+    request = Zee::Request.new(
+      "REQUEST_METHOD" => "GET",
+      "PATH_INFO" => "/posts/1"
+    )
+    route = routes.find(request)
+
+    refute_nil route
+    assert_equal "1", request.params[:id]
+  end
+
+  test "sets route params with defaults option" do
+    routes = Zee::Routes.new do
+      get "(/:locale)/posts/:id", to: "posts#show", defaults: {locale: "en"}
+    end
+
+    request = Zee::Request.new(
+      "REQUEST_METHOD" => "GET",
+      "PATH_INFO" => "/posts/1"
+    )
+    route = routes.find(request)
+
+    refute_nil route
+    assert_equal "1", request.params[:id]
+    assert_equal "en", request.params[:locale]
+  end
+
+  test "sets route params with defaults" do
+    routes = Zee::Routes.new do
+      defaults locale: "en" do
+        get "(/:locale)/posts/:id", to: "posts#show"
+      end
+    end
+
+    request = Zee::Request.new(
+      "REQUEST_METHOD" => "GET",
+      "PATH_INFO" => "/posts/1"
+    )
+    route = routes.find(request)
+
+    refute_nil route
+    assert_equal "1", request.params[:id]
+    assert_equal "en", request.params[:locale]
+  end
 end
