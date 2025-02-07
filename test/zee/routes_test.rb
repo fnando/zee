@@ -184,4 +184,144 @@ class RoutesTest < Minitest::Test
     assert_equal "1", request.params[:id]
     assert_equal "en", request.params[:locale]
   end
+
+  test "sets route segment constraint" do
+    routes = Zee::Routes.new do
+      get "posts/:id", to: "posts#show", constraints: {id: /^\d+$/}
+    end
+
+    route = routes.find(
+      Zee::Request.new(
+        "REQUEST_METHOD" => "GET",
+        "PATH_INFO" => "/posts/1"
+      )
+    )
+
+    refute_nil route
+
+    route = routes.find(
+      Zee::Request.new(
+        "REQUEST_METHOD" => "GET",
+        "PATH_INFO" => "/posts/a"
+      )
+    )
+
+    assert_nil route
+  end
+
+  test "sets route constraints" do
+    routes = Zee::Routes.new do
+      constraints id: /^\d+$/ do
+        get "posts/:id", to: "posts#show"
+      end
+    end
+
+    route = routes.find(
+      Zee::Request.new(
+        "REQUEST_METHOD" => "GET",
+        "PATH_INFO" => "/posts/1"
+      )
+    )
+
+    refute_nil route
+
+    route = routes.find(
+      Zee::Request.new(
+        "REQUEST_METHOD" => "GET",
+        "PATH_INFO" => "/posts/a"
+      )
+    )
+
+    assert_nil route
+  end
+
+  test "sets route with request constraints" do
+    routes = Zee::Routes.new do
+      constraints host: "example.com" do
+        get "posts/:id", to: "posts#show"
+      end
+    end
+
+    route = routes.find(
+      Zee::Request.new(
+        "REQUEST_METHOD" => "GET",
+        "PATH_INFO" => "/posts/1",
+        "HTTP_HOST" => "example.com"
+      )
+    )
+
+    refute_nil route
+
+    route = routes.find(
+      Zee::Request.new(
+        "REQUEST_METHOD" => "GET",
+        "PATH_INFO" => "/posts/1",
+        "HTTP_HOST" => "blog.example.com"
+      )
+    )
+
+    assert_nil route
+  end
+
+  test "sets route with callable constraint" do
+    routes = Zee::Routes.new do
+      constraints(->(request) { request.host == "example.com" }) do
+        get "posts/:id", to: "posts#show"
+      end
+    end
+
+    route = routes.find(
+      Zee::Request.new(
+        "REQUEST_METHOD" => "GET",
+        "PATH_INFO" => "/posts/1",
+        "HTTP_HOST" => "example.com"
+      )
+    )
+
+    refute_nil route
+
+    route = routes.find(
+      Zee::Request.new(
+        "REQUEST_METHOD" => "GET",
+        "PATH_INFO" => "/posts/1",
+        "HTTP_HOST" => "blog.example.com"
+      )
+    )
+
+    assert_nil route
+  end
+
+  test "sets route with #match? constraint" do
+    constraint = Module.new do
+      def self.match?(request)
+        request.host == "example.com"
+      end
+    end
+
+    routes = Zee::Routes.new do
+      constraints(constraint) do
+        get "posts/:id", to: "posts#show"
+      end
+    end
+
+    route = routes.find(
+      Zee::Request.new(
+        "REQUEST_METHOD" => "GET",
+        "PATH_INFO" => "/posts/1",
+        "HTTP_HOST" => "example.com"
+      )
+    )
+
+    refute_nil route
+
+    route = routes.find(
+      Zee::Request.new(
+        "REQUEST_METHOD" => "GET",
+        "PATH_INFO" => "/posts/1",
+        "HTTP_HOST" => "blog.example.com"
+      )
+    )
+
+    assert_nil route
+  end
 end

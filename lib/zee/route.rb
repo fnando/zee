@@ -10,12 +10,28 @@ module Zee
       @via = Array(via).compact.map(&:to_sym)
       @to = to
       @as = as
-      @constraints = constraints
+      @constraints = Array(constraints).flatten.compact
       @defaults = defaults || {}
     end
 
     def match?(request)
-      match_path?(request) && match_request_method?(request)
+      return false unless match_path?(request)
+
+      params = request.path
+                      .match(matcher)
+                      .named_captures
+                      .each_with_object({}) do |(key, value), hash|
+                        key = key.to_sym
+                        hash[key] = value || defaults[key]
+                      end
+      request.params.merge!(params)
+
+      match_request_method?(request) &&
+        match_constraints?(request)
+    end
+
+    def segments
+      @segments ||= path.scan(/:(\w+)/).flatten.map(&:to_sym)
     end
 
     private def match_path?(request)
@@ -24,6 +40,44 @@ module Zee
 
     private def match_request_method?(request)
       via.include?(request.request_method.downcase.to_sym)
+    end
+
+    private def match_constraints?(request)
+      return true if constraints.empty?
+
+      hash =
+        constraints
+        .select { _1.is_a?(Hash) }
+        .each_with_object({}) {|constraint, buffer| buffer.merge!(constraint) }
+
+      callable = constraints.select do |constraint|
+        constraint.respond_to?(:call) || constraint.respond_to?(:match?)
+      end
+
+      match_hash_constraints?(request, hash) &&
+      match_callable_constraints?(request, callable)
+    end
+
+    private def match_hash_constraints?(request, constraints)
+      constraints.all? do |key, constraint|
+        if segments.include?(key)
+          constraint === request.params[key] # rubocop:disable Style/CaseEquality
+        elsif request.respond_to?(key)
+          constraint === request.public_send(key) # rubocop:disable Style/CaseEquality
+        else
+          true
+        end
+      end
+    end
+
+    private def match_callable_constraints?(request, constraints)
+      constraints.all? do |constraint|
+        if constraint.respond_to?(:call)
+          constraint.call(request)
+        else
+          constraint.match?(request)
+        end
+      end
     end
 
     private def normalize_slashes(path)
