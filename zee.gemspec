@@ -35,6 +35,7 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^exe/}) {|f| File.basename(f) }
   spec.require_paths = ["lib"]
 
+  spec.add_dependency "public_suffix", "~> 6.0"
   spec.add_dependency "rack", "~> 3.1"
   spec.add_dependency "thor", "~> 1.3"
   spec.add_development_dependency "minitest"

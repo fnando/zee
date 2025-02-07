@@ -324,4 +324,32 @@ class RoutesTest < Minitest::Test
 
     assert_nil route
   end
+
+  test "sets subdomain constraint" do
+    routes = Zee::Routes.new do
+      subdomain("api") do
+        get "posts/:id", to: "posts#show"
+      end
+    end
+
+    route = routes.find(
+      Zee::Request.new(
+        "REQUEST_METHOD" => "GET",
+        "PATH_INFO" => "/posts/1",
+        "HTTP_HOST" => "api.example.com"
+      )
+    )
+
+    refute_nil route
+
+    route = routes.find(
+      Zee::Request.new(
+        "REQUEST_METHOD" => "GET",
+        "PATH_INFO" => "/posts/1",
+        "HTTP_HOST" => "example.com"
+      )
+    )
+
+    assert_nil route
+  end
 end
