@@ -64,8 +64,6 @@ module Zee
           constraint === request.params[key] # rubocop:disable Style/CaseEquality
         elsif request.respond_to?(key)
           constraint === request.public_send(key) # rubocop:disable Style/CaseEquality
-        else
-          true
         end
       end
     end
