@@ -5,6 +5,7 @@ module Zee
     def initialize(&)
       @store = []
       @defaults = []
+      @constraints = []
       instance_eval(&)
     end
 
@@ -12,18 +13,7 @@ module Zee
     #
     # @param request [Zee::Request] the current request.
     def find(request)
-      route = @store.find { _1.match?(request) }
-      return unless route
-
-      params = request.path
-                      .match(route.matcher)
-                      .named_captures
-                      .each_with_object({}) do |(key, value), hash|
-                        key = key.to_sym
-                        hash[key] = value || route.defaults[key]
-                      end
-      request.params.merge!(params)
-      route
+      @store.find { _1.match?(request) }
     end
 
     # Define root route, like `GET /`.
@@ -81,14 +71,26 @@ module Zee
     # @param to [String|Callable] the controller and action to route to or an
     #                             object that responds to `#call()`.
     # @param as [String] the name of the route.
-    # @param constraints [Hash] the constraints to match.
-    # @param defaults [Hash] the default values for the route.
+    # @param constraints [Hash] the constraints to match. See {#constraints}.
+    # @param defaults [Hash] the default values for the route. See {#defaults}.
     def match(path, via:, to:, as: nil, constraints: nil, defaults: nil)
-      defaults = merge(@defaults, defaults)
+      defaults = merge_hash(@defaults, defaults)
+      constraints = (@constraints + [constraints]).flatten.compact
 
       @store << Route.new(path:, via:, to:, as:, constraints:, defaults:)
     end
 
+    # Define the default value for optional segments.
+    # This method can be nested to define different default values for different
+    # segments.
+    #
+    # @param defaults [Hash] the default values for the route.
+    # @example
+    # ```ruby
+    #  defaults(locale: "en") do
+    #    get "(/:locale)/posts/:id", to: "posts#show"
+    #  end
+    #  ```
     def defaults(defaults = nil, &)
       @defaults << defaults if defaults
       yield
@@ -96,10 +98,29 @@ module Zee
       @defaults.pop if defaults
     end
 
-    private def merge(list, other)
-      list.push(other).flatten.compact.each_with_object({}) do |entry, buffer|
-        buffer.merge!(entry)
-      end
+    # Define constraints for the route.
+    # This method can be nested to define different constraints for different
+    # segments.
+    #
+    # @param constraints [Hash|Callable] the constraints to match.
+    # @example
+    # ```ruby
+    #  constraints locale: /^en|pt-BR$/ do
+    #    get "(/:locale)/posts/:id", to: "posts#show"
+    #  end
+    #  ```
+    def constraints(constraints = nil, &)
+      @constraints << constraints if constraints
+      yield
+    ensure
+      @constraints.pop if constraints
+    end
+
+    private def merge_hash(list, other)
+      list.push(other)
+          .flatten
+          .compact
+          .each_with_object({}) {|entry, buffer| buffer.merge!(entry) }
     end
   end
 end
