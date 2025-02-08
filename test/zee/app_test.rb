@@ -24,4 +24,19 @@ class AppTest < Minitest::Test
 
     assert Zee::App.new.env.production?
   end
+
+  test "sets config" do
+    app = Zee::App.new do
+      config do
+        optional :one, string, "one"
+      end
+
+      config do
+        optional :two, string, "two"
+      end
+    end
+
+    assert_equal "one", app.config.one
+    assert_equal "two", app.config.two
+  end
 end
