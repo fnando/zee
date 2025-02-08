@@ -34,6 +34,15 @@ module Zee
       # rendering the template.
       controller.render(action_name) unless response.status
 
+      content_type = response.headers[:content_type]
+
+      # TODO: move this to a middleware.
+      unless content_type&.include?("charset")
+        charset = Encoding.default_external.name
+        content_type = "#{content_type}; charset=#{charset}"
+        response.headers[:content_type] = content_type
+      end
+
       [response.status, response.headers.to_h, [response.body]]
     end
   end
