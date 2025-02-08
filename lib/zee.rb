@@ -15,4 +15,5 @@ module Zee
   require_relative "zee/controller"
   require_relative "zee/request_handler"
   require_relative "zee/headers"
+  require_relative "zee/environment"
 end

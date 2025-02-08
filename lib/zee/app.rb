@@ -12,13 +12,19 @@ module Zee
     # - `APP_ENV`
     # - `RACK_ENV`
     #
-    # @return [String]
-    attr_accessor :env
+    # @return [Zee::Environment]
+    attr_reader :env
 
     def initialize(&)
       self.root = Pathname.pwd
       self.env = compute_env
       instance_eval(&) if block_given?
+    end
+
+    # Set the current environment.
+    # @param env [String, Symbol]
+    def env=(env)
+      @env = Environment.new(env)
     end
 
     # Define the app's routes. See {Zee::Routes}.
@@ -99,8 +105,9 @@ module Zee
       env.empty? ? "development" : env
     end
 
+    # :nocov:
     private def enable_reloading
-      return if env == "development"
+      return if env.development?
 
       require "listen"
       loader.enable_reloading
@@ -110,5 +117,6 @@ module Zee
     rescue LoadError
       warn "Please add `gem 'listen'` to your Gemfile to enable reloading."
     end
+    # :nocov:
   end
 end

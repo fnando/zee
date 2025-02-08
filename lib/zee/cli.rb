@@ -9,9 +9,11 @@ module Zee
   class CLI < Thor
     check_unknown_options!
 
+    # :nocov:
     def self.exit_on_failure?
       true
     end
+    # :nocov:
 
     desc "new PATH", "Create a new app"
     option :skip_bundle, type: :boolean,
