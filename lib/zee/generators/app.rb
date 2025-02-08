@@ -42,6 +42,11 @@ module Zee
       copy_file "app/views/layouts/application.html.erb"
     end
 
+    def keys
+      create_key :development
+      create_key :test
+    end
+
     def permissions
       in_root do
         FileUtils.chmod(0o755, "bin/dev")
@@ -57,7 +62,49 @@ module Zee
       end
     end
 
+    def instructions
+      say "\n==========", :red
+      say "Important!", :red
+      say "==========", :red
+      say "We generated encryption keys at config/credentials/*.key"
+      say "Save this in a password manager your team can access."
+      say "Without the key, no one, including you, " \
+          "can access the encrypted credentiails."
+
+      say "\nTo start the app, run:"
+      say "  bin/dev"
+    end
+
     no_commands do
+      def create_key(env)
+        key = SecureRandom.hex(16)
+        key_file = "config/credentials/#{env}.key"
+        create_file key_file, key
+        saved_key = File.read(File.join(destination_root, key_file))
+        credentials_file =
+          "#{destination_root}/config/credentials/#{env}.yml.enc"
+        relative_credentials_file = Pathname
+                                    .new(credentials_file)
+                                    .relative_path_from(destination_root)
+        FileUtils.chmod(0o600, File.join(destination_root, key_file))
+
+        # :nocov:
+        if key != saved_key
+          say_status :skip, relative_credentials_file, :yellow
+          return
+        end
+        # :nocov:
+
+        encrypted_file = EncryptedFile.new(path: credentials_file, key:)
+
+        encrypted_file.write <<~YAML
+          ---
+          # Add your secrets here
+        YAML
+
+        say_status :create, relative_credentials_file, :green
+      end
+
       def version(version, size = 3)
         version.split(".").take(size).join(".")
       end

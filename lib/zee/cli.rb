@@ -1,8 +1,12 @@
 # frozen_string_literal: true
 
 require "thor"
+require "shellwords"
+require "securerandom"
+require "pathname"
 require_relative "../zee"
 require_relative "generators/app"
+require_relative "cli/credentials"
 
 module Zee
   # @private
@@ -26,6 +30,9 @@ module Zee
       generator.options = options
       generator.invoke_all
     end
+
+    desc "credentials SUBCOMMAND", "Credentials management"
+    subcommand "credentials", Credentials
 
     no_commands do
       # Add helper methods here

@@ -18,4 +18,5 @@ module Zee
   require_relative "zee/headers"
   require_relative "zee/environment"
   require_relative "zee/config"
+  require_relative "zee/encrypted_file"
 end
