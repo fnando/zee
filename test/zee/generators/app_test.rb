@@ -14,6 +14,10 @@ class AppTest < Minitest::Test
     assert app.join(".gitignore").file?
     assert app.join(".rubocop.yml").file?
     assert app.join(".ruby-version").file?
+    assert app.join(".env.development").file?
+    assert app.join(".env.test").file?
+    assert app.join("bin/dev").file?
+    assert app.join("bin/console").file?
     assert app.join("app/controllers/base.rb").file?
     assert app.join("app/controllers/pages.rb").file?
     assert app.join("app/views/layouts/application.html.erb").file?
@@ -28,6 +32,8 @@ class AppTest < Minitest::Test
     assert app.join("tmp/.keep").file?
     assert_equal RUBY_VERSION, app.join(".ruby-version").read.chomp
     assert_includes out, "bundle install"
+    assert app.join("bin/dev").executable?
+    assert app.join("bin/console").executable?
   end
 
   test "skips bundle install" do
