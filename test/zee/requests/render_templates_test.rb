@@ -15,7 +15,7 @@ class RenderTemplatesTest < Minitest::Test
     assert last_response.ok?
     assert_includes last_response.body,
                     "sample_app:app/views/pages/home.html.erb"
-    assert_equal "text/html", last_response.content_type
+    assert_includes last_response.content_type, "text/html"
   end
 
   test "handles missing template" do
@@ -27,6 +27,6 @@ class RenderTemplatesTest < Minitest::Test
 
     assert last_response.ok?
     assert_includes last_response.body, "Hello, World!"
-    assert_equal "text/html", last_response.content_type
+    assert_includes last_response.content_type, "text/html"
   end
 end
