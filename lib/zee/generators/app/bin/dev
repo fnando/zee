@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+set -e
+
+# This script is used to start the development server.
+
+if [ -x "$(which overmind)" ]; then
+  OVERMIND_ENV=.env.development overmind start --procfile Procfile.dev --port 3000
+else
+  if [ ! -x "$(which foreman)" ]; then
+    echo "Installing foreman..."
+    gem install foreman
+  fi
+
+  foreman start --procfile Procfile.dev --port 3000 --env .env.development
+fi

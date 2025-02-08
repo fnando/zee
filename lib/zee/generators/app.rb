@@ -19,6 +19,10 @@ module Zee
 
     def files
       copy_file ".gitignore"
+      copy_file ".env.development"
+      copy_file ".env.test"
+      copy_file "bin/dev"
+      copy_file "bin/console"
       copy_file "tmp/.keep"
       copy_file "config/boot.rb"
       copy_file "config/puma.rb"
@@ -36,6 +40,13 @@ module Zee
     def views
       copy_file "app/views/pages/home.html.erb"
       copy_file "app/views/layouts/application.html.erb"
+    end
+
+    def permissions
+      in_root do
+        FileUtils.chmod(0o755, "bin/dev")
+        FileUtils.chmod(0o755, "bin/console")
+      end
     end
 
     def install
