@@ -20,4 +20,5 @@ module Zee
   require_relative "zee/config"
   require_relative "zee/encrypted_file"
   require_relative "zee/master_key"
+  require_relative "zee/secrets"
 end

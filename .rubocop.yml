@@ -8,6 +8,7 @@ AllCops:
   Exclude:
     - vendor/**/*
     - gemfiles/**/*
+    - test/fixtures/app/**/*
 
 Naming/FileName:
   Exclude:
