@@ -63,6 +63,7 @@ module Zee
       push_dir.call "app/models", ::Models
       push_dir.call "app/views", ::Views
 
+      enable_reloading
       loader.setup
 
       routes_file = root.join("config/routes.rb")
@@ -96,6 +97,18 @@ module Zee
       env = env.to_s
 
       env.empty? ? "development" : env
+    end
+
+    private def enable_reloading
+      return if env == "development"
+
+      require "listen"
+      loader.enable_reloading
+      only = /\.rb|Gemfile.lock$/
+      listener = Listen.to(root, only:) { loader.reload }
+      listener.start
+    rescue LoadError
+      warn "Please add `gem 'listen'` to your Gemfile to enable reloading."
     end
   end
 end
