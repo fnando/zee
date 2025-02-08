@@ -10,18 +10,18 @@ class AppTest < Minitest::Test
   test "uses ZEE_ENV as the env value" do
     ENV["ZEE_ENV"] = "production"
 
-    assert_equal "production", Zee::App.new.env
+    assert Zee::App.new.env.production?
   end
 
   test "uses APP_ENV as the env value" do
     ENV["APP_ENV"] = "production"
 
-    assert_equal "production", Zee::App.new.env
+    assert Zee::App.new.env.production?
   end
 
   test "uses RACK_ENV as the env value" do
     ENV["RACK_ENV"] = "production"
 
-    assert_equal "production", Zee::App.new.env
+    assert Zee::App.new.env.production?
   end
 end
