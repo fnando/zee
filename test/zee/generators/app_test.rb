@@ -26,6 +26,8 @@ class AppTest < Minitest::Test
     assert app.join("config/app.rb").file?
     assert app.join("config/boot.rb").file?
     assert app.join("config/environment.rb").file?
+    assert app.join("config/credentials/development.key").file?
+    assert app.join("config/credentials/test.key").file?
     assert app.join("config/puma.rb").file?
     assert app.join("Gemfile").file?
     assert app.join("Procfile.dev").file?
@@ -34,6 +36,8 @@ class AppTest < Minitest::Test
     assert_includes out, "bundle install"
     assert app.join("bin/dev").executable?
     assert app.join("bin/console").executable?
+    refute app.join("config/credentials/development.key").world_readable?
+    refute app.join("config/credentials/test.key").world_readable?
   end
 
   test "skips bundle install" do
