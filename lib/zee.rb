@@ -3,6 +3,7 @@
 require "rack"
 require "mini_mime"
 require "tilt"
+require "superconfig"
 
 module Zee
   require_relative "zee/constants"
@@ -16,4 +17,5 @@ module Zee
   require_relative "zee/request_handler"
   require_relative "zee/headers"
   require_relative "zee/environment"
+  require_relative "zee/config"
 end

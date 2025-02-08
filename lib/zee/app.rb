@@ -41,6 +41,20 @@ module Zee
       @routes
     end
 
+    # Define the app's configuration. See {Zee::Config}.
+    #
+    # @return [Zee::Config]
+    #
+    # @example
+    #   app.config do
+    #     mandatory :database_url, string
+    #   end
+    def config(&)
+      @config ||= Config.new
+      @config.instance_eval(&) if block_given?
+      @config
+    end
+
     # Initialize the application.
     # This will load the necessary files and set up the application.
     # If a routes file exist at `config/routes.rb`, it will also be loaded.
