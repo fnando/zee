@@ -12,3 +12,6 @@ AllCops:
 Naming/FileName:
   Exclude:
     - API_DESIGN.rb
+
+Style/FetchEnvVar:
+  Enabled: false

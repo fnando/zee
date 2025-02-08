@@ -112,8 +112,8 @@ module Zee
     end
 
     private def compute_env
-      env_name = ENV_NAMES.find { ENV[_1] } # rubocop:disable Style/FetchEnvVar
-      env = ENV[env_name] if env_name # rubocop:disable Style/FetchEnvVar
+      env_name = ENV_NAMES.find { ENV[_1] }
+      env = ENV[env_name] if env_name
       env = env.to_s
 
       env.empty? ? "development" : env

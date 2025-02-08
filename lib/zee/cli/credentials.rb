@@ -12,7 +12,16 @@ module Zee
       # :nocov:
       def edit
         env = options["environment"]
-        key = ENV["ZEE_MASTER_KEY"] || read_key(env)
+
+        key = begin
+          MasterKey.read(env)
+        rescue MasterKey::MissingKeyError
+          say_error "ERROR: Set ZEE_MASTER_KEY or create #{key_file}", :red
+          say "\nTo create a new key, run the following command:\n" \
+              "zee credentials create -e #{env}"
+          exit 1
+        end
+
         tmp_file = File.join(Dir.tmpdir, "#{env}-#{SecureRandom.hex(8)}.yml")
         credentials_file = Pathname(
           File.join(Dir.pwd, "config/credentials", "#{env}.yml.enc")
@@ -71,19 +80,6 @@ module Zee
 
       no_commands do
         # :nocov:
-        def read_key(env)
-          key_file = "config/credentials/#{env}.key"
-
-          unless File.file?(key_file)
-            say_error "ERROR: Set ZEE_MASTER_KEY or create #{key_file}", :red
-            say "\nTo create a new key, run the following command:\n" \
-                "zee credentials create -e #{env}"
-            exit 1
-          end
-
-          File.read("config/credentials/#{env}.key").chomp
-        end
-
         def editor
           ENV["EDITOR"] || ENV["VISUAL"] || "vi"
         end

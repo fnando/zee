@@ -14,3 +14,11 @@ require "minitest/autorun"
 Dir["#{__dir__}/support/**/*.rb"].each do |file|
   require file
 end
+
+module Minitest
+  class Test
+    setup { FileUtils.rm_rf("tmp") }
+    setup { FileUtils.mkdir("tmp") }
+    teardown { FileUtils.rm_rf("tmp") }
+  end
+end
