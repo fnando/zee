@@ -39,4 +39,12 @@ class AppTest < Minitest::Test
     assert_equal "one", app.config.one
     assert_equal "two", app.config.two
   end
+
+  test "reads secrets" do
+    Dir.chdir("test/fixtures/app") do
+      app = Zee::App.new
+
+      assert_equal "some-api-key", app.secrets.api_key
+    end
+  end
 end

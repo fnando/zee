@@ -1,0 +1,44 @@
+# frozen_string_literal: true
+
+source "https://rubygems.org"
+ruby file: ".ruby-version"
+
+# A mini web framework.
+# [https://github.com/fnando/zee]
+gem "zee", path: "../../.."
+
+# A Ruby/Rack web server built for parallelism.
+# [https://puma.io]
+gem "puma"
+
+group :development do
+  # Listen to file modifications
+  # [https://github.com/guard/listen]
+  gem "listen", require: false
+
+  # minitest provides a complete suite of testing facilities supporting TDD,
+  # BDD, mocking, and benchmarking
+  # [https://github.com/minitest/minitest]
+  gem "minitest"
+
+  # Automatic Ruby code style checking tool.
+  # [https://github.com/rubocop/rubocop]
+  gem "rubocop"
+
+  # Ruby Style Guide, with linter & automatic code fixer
+  # [https://github.com/standardrb/standard]
+  gem "standard"
+
+  # Plugin containing implementations of custom cops that are bundled as
+  # defaults in Standard Ruby
+  # [https://github.com/standardrb/standard-custom]
+  gem "standard-custom"
+
+  # Standard Ruby Plugin providing configuration for rubocop-performance
+  # [https://github.com/standardrb/standard-performance]
+  gem "standard-performance"
+
+  # Automatic performance checking tool for Ruby code.
+  # [https://github.com/rubocop/rubocop-performance]
+  gem "rubocop-performance"
+end

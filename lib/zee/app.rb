@@ -55,6 +55,16 @@ module Zee
       @config
     end
 
+    # Define the app's secrets. See {Zee::Secrets}.
+    #
+    # @return [Zee::Secrets]
+    def secrets
+      @secrets ||= Secrets.new(
+        key: MasterKey.read(env),
+        credentials_file: root.join("config/credentials/#{env}.yml.enc")
+      )
+    end
+
     # Initialize the application.
     # This will load the necessary files and set up the application.
     # If a routes file exist at `config/routes.rb`, it will also be loaded.
