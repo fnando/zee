@@ -1,11 +1,19 @@
-# zee
+<div align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="logo/zee-dark.svg">
+    <img alt="Zee" src="logo/zee-light.svg" width="250">
+  </picture>
+
+A mini web framework.
+
+---
 
 [![Tests](https://github.com/fnando/zee/workflows/ruby-tests/badge.svg)](https://github.com/fnando/zee)
 [![Gem](https://img.shields.io/gem/v/zee.svg)](https://rubygems.org/gems/zee)
 [![Gem](https://img.shields.io/gem/dt/zee.svg)](https://rubygems.org/gems/zee)
 [![MIT License](https://img.shields.io/:License-MIT-blue.svg)](https://tldrlegal.com/license/mit-license)
 
-A mini web framework.
+</div>
 
 ## Installation
 
