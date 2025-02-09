@@ -47,4 +47,11 @@ class AppTest < Minitest::Test
       assert_equal "some-api-key", app.secrets.api_key
     end
   end
+
+  test "prevents app from being initialized twice" do
+    app = Zee::App.new
+    app.initialize!
+
+    assert_raises(Zee::App::AlreadyInitializedError) { app.initialize! }
+  end
 end

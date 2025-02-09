@@ -2,6 +2,9 @@
 
 module Zee
   class App
+    # This error is raised whenever the app is initialized more than once.
+    AlreadyInitializedError = Class.new(StandardError)
+
     # The root path of the application.
     attr_accessor :root
 
@@ -16,6 +19,7 @@ module Zee
     attr_reader :env
 
     def initialize(&)
+      @initialized = false
       self.root = Pathname.pwd
       self.env = compute_env
       instance_eval(&) if block_given?
@@ -69,6 +73,10 @@ module Zee
     # This will load the necessary files and set up the application.
     # If a routes file exist at `config/routes.rb`, it will also be loaded.
     def initialize!
+      raise AlreadyInitializedError if @initialized
+
+      @initialized = true
+
       require "zeitwerk"
       Bundler.require(env.to_sym)
 
