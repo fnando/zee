@@ -61,7 +61,7 @@ module Zee
     def secrets
       @secrets ||= Secrets.new(
         key: MasterKey.read(env),
-        credentials_file: root.join("config/credentials/#{env}.yml.enc")
+        secrets_file: root.join("config/secrets/#{env}.yml.enc")
       )
     end
 

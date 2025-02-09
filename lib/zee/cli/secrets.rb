@@ -2,8 +2,8 @@
 
 module Zee
   class CLI < Thor
-    class Credentials < Thor
-      desc "edit", "Edit credentials"
+    class Secrets < Thor
+      desc "edit", "Edit secrets"
       option :environment,
              desc: "Environment to edit",
              type: :string,
@@ -18,23 +18,23 @@ module Zee
         rescue MasterKey::MissingKeyError
           say_error "ERROR: Set ZEE_MASTER_KEY or create #{key_file}", :red
           say "\nTo create a new key, run the following command:\n" \
-              "zee credentials create -e #{env}"
+              "zee secrets create -e #{env}"
           exit 1
         end
 
         tmp_file = File.join(Dir.tmpdir, "#{env}-#{SecureRandom.hex(8)}.yml")
-        credentials_file = Pathname(
-          File.join(Dir.pwd, "config/credentials", "#{env}.yml.enc")
+        secrets_file = Pathname(
+          File.join(Dir.pwd, "config/secrets", "#{env}.yml.enc")
         )
 
-        encrypted_file = EncryptedFile.new(path: credentials_file, key:)
+        encrypted_file = EncryptedFile.new(path: secrets_file, key:)
 
-        if credentials_file.file?
+        if secrets_file.file?
           content = encrypted_file.read
           File.write(tmp_file, content)
         end
 
-        say "Editing #{credentials_file.relative_path_from(Dir.pwd)}…"
+        say "Editing #{secrets_file.relative_path_from(Dir.pwd)}…"
         system(*Shellwords.split(editor), tmp_file)
         updated_content = File.binread(tmp_file)
         encrypted_file.write(updated_content) if content != updated_content
@@ -44,7 +44,7 @@ module Zee
       end
       # :nocov:
 
-      desc "create", "Create credentials"
+      desc "create", "Create secrets"
       option :environment,
              desc: "Environment to create",
              type: :string,
@@ -52,18 +52,18 @@ module Zee
              required: true
       def create
         env = options["environment"]
-        key_file = "config/credentials/#{env}.key"
-        credentials_file = "config/credentials/#{env}.yml.enc"
+        key_file = "config/secrets/#{env}.key"
+        secrets_file = "config/secrets/#{env}.yml.enc"
 
-        FileUtils.mkdir_p("config/credentials")
+        FileUtils.mkdir_p("config/secrets")
 
         if File.file?(key_file)
           say_error "ERROR: #{key_file} already exists", :red
           exit 1
         end
 
-        if File.file?(credentials_file)
-          say_error "ERROR: #{credentials_file} already exists", :red
+        if File.file?(secrets_file)
+          say_error "ERROR: #{secrets_file} already exists", :red
           exit 1
         end
 
@@ -74,7 +74,7 @@ module Zee
           # Add your secrets here
         YAML
 
-        EncryptedFile.new(path: credentials_file, key:).write(content)
+        EncryptedFile.new(path: secrets_file, key:).write(content)
         File.chmod(0o600, key_file)
       end
 

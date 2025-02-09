@@ -6,7 +6,7 @@ class SecretsTest < Minitest::Test
   test "reads secrets from encrypted file" do
     secrets = Zee::Secrets.new(
       key: File.read("test/fixtures/secrets/main.key"),
-      credentials_file: "test/fixtures/secrets/secrets.yml.enc"
+      secrets_file: "test/fixtures/secrets/secrets.yml.enc"
     )
 
     assert_equal "some-api-key", secrets[:api_key]

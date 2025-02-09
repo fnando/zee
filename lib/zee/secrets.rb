@@ -3,10 +3,10 @@
 module Zee
   class Secrets
     # Initialize the secrets object.
-    # @param credentials_file [String] The path to the encrypted file.
-    # @param key [String] The key to decrypt the credentials file.
-    def initialize(credentials_file:, key:)
-      @credentials_file = credentials_file
+    # @param secrets_file [String] The path to the encrypted file.
+    # @param key [String] The key to decrypt the secrets file.
+    def initialize(secrets_file:, key:)
+      @secrets_file = secrets_file
       @key = key
     end
 
@@ -29,7 +29,7 @@ module Zee
 
     private def store
       @store ||= begin
-        encrypted = EncryptedFile.new(path: @credentials_file, key: @key)
+        encrypted = EncryptedFile.new(path: @secrets_file, key: @key)
         YAML.safe_load(encrypted.read, symbolize_names: true)
       end
     end
