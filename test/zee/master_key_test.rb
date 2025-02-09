@@ -14,7 +14,7 @@ class MasterKeyTest < Minitest::Test
 
   test "retrieves key from file" do
     key =
-      File.read("./test/fixtures/master_key/config/credentials/development.key")
+      File.read("./test/fixtures/master_key/config/secrets/development.key")
           .chomp
 
     found_key = Dir.chdir("test/fixtures/master_key") do
@@ -32,7 +32,7 @@ class MasterKeyTest < Minitest::Test
     end
 
     assert_equal(
-      "Set ZEE_MASTER_KEY or create config/credentials/production.key",
+      "Set ZEE_MASTER_KEY or create config/secrets/production.key",
       error.message
     )
   end

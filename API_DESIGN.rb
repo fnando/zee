@@ -20,8 +20,8 @@ MyApp = App.new do
     optional :tz, string, "Etc/UTC"
 
     # Fetched from encrypted file like
-    # config/credentials/:env.enc
-    credential :some_api_key
+    # config/secrets/:env.enc
+    secret :some_api_key
   end
 end
 

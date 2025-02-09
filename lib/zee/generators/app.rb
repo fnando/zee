@@ -66,7 +66,7 @@ module Zee
       say "\n==========", :red
       say "Important!", :red
       say "==========", :red
-      say "We generated encryption keys at config/credentials/*.key"
+      say "We generated encryption keys at config/secrets/*.key"
       say "Save this in a password manager your team can access."
       say "Without the key, no one, including you, " \
           "can access the encrypted credentiails."
@@ -78,31 +78,31 @@ module Zee
     no_commands do
       def create_key(env)
         key = SecureRandom.hex(16)
-        key_file = "config/credentials/#{env}.key"
+        key_file = "config/secrets/#{env}.key"
         create_file key_file, key
         saved_key = File.read(File.join(destination_root, key_file))
-        credentials_file =
-          "#{destination_root}/config/credentials/#{env}.yml.enc"
-        relative_credentials_file = Pathname
-                                    .new(credentials_file)
-                                    .relative_path_from(destination_root)
+        secrets_file =
+          "#{destination_root}/config/secrets/#{env}.yml.enc"
+        relative_secrets_file = Pathname
+                                .new(secrets_file)
+                                .relative_path_from(destination_root)
         FileUtils.chmod(0o600, File.join(destination_root, key_file))
 
         # :nocov:
         if key != saved_key
-          say_status :skip, relative_credentials_file, :yellow
+          say_status :skip, relative_secrets_file, :yellow
           return
         end
         # :nocov:
 
-        encrypted_file = EncryptedFile.new(path: credentials_file, key:)
+        encrypted_file = EncryptedFile.new(path: secrets_file, key:)
 
         encrypted_file.write <<~YAML
           ---
           # Add your secrets here
         YAML
 
-        say_status :create, relative_credentials_file, :green
+        say_status :create, relative_secrets_file, :green
       end
 
       def version(version, size = 3)

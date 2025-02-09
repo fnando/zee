@@ -6,7 +6,7 @@ require "securerandom"
 require "pathname"
 require_relative "../zee"
 require_relative "generators/app"
-require_relative "cli/credentials"
+require_relative "cli/secrets"
 
 module Zee
   # @private
@@ -31,8 +31,8 @@ module Zee
       generator.invoke_all
     end
 
-    desc "credentials SUBCOMMAND", "Credentials management"
-    subcommand "credentials", Credentials
+    desc "secrets SUBCOMMAND", "Secrets management"
+    subcommand "secrets", Secrets
 
     no_commands do
       # Add helper methods here

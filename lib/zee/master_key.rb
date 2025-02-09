@@ -6,7 +6,7 @@ module Zee
 
     def self.read(env)
       key = ENV[ZEE_MASTER_KEY]
-      key_file = "config/credentials/#{env}.key"
+      key_file = "config/secrets/#{env}.key"
 
       return key if key
       return File.read(key_file).chomp if File.file?(key_file)
