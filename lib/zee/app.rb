@@ -28,6 +28,8 @@ module Zee
     # Set the current environment.
     # @param env [String, Symbol]
     def env=(env)
+      raise AlreadyInitializedError if initialized?
+
       @env = Environment.new(env)
     end
 
@@ -69,11 +71,17 @@ module Zee
       )
     end
 
+    # Check if the app is initialized.
+    # @return [Boolean]
+    def initialized?
+      @initialized
+    end
+
     # Initialize the application.
     # This will load the necessary files and set up the application.
     # If a routes file exist at `config/routes.rb`, it will also be loaded.
     def initialize!
-      raise AlreadyInitializedError if @initialized
+      raise AlreadyInitializedError if initialized?
 
       @initialized = true
 

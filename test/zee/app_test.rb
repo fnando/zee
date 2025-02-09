@@ -54,4 +54,11 @@ class AppTest < Minitest::Test
 
     assert_raises(Zee::App::AlreadyInitializedError) { app.initialize! }
   end
+
+  test "prevents app from having the environment set after initialization" do
+    app = Zee::App.new
+    app.initialize!
+
+    assert_raises(Zee::App::AlreadyInitializedError) { app.env = :test }
+  end
 end
