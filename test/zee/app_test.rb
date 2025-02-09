@@ -61,4 +61,26 @@ class AppTest < Minitest::Test
 
     assert_raises(Zee::App::AlreadyInitializedError) { app.env = :test }
   end
+
+  test "runs init  blocks" do
+    app = Zee::App.new
+    called = []
+    this = nil
+
+    app.init do
+      called << 1
+      this = self
+    end
+
+    app.init do
+      called << 2
+    end
+
+    assert_empty called
+
+    app.initialize!
+
+    assert_equal [1, 2], called
+    assert_equal app, this
+  end
 end

@@ -20,9 +20,22 @@ module Zee
 
     def initialize(&)
       @initialized = false
+      @on_init = []
       self.root = Pathname.pwd
       self.env = compute_env
       instance_eval(&) if block_given?
+    end
+
+    # Lazily evaluate a block only when the app is initialized.
+    #
+    # @example
+    #   app.init do
+    #     env.on(:development) do
+    #       # do something only when the app is initialized
+    #     end
+    #   end
+    def init(&block)
+      @on_init << block
     end
 
     # Set the current environment.
@@ -109,6 +122,8 @@ module Zee
       push_dir.call "app/models", ::Models
       push_dir.call "app/views", ::Views
 
+      instance_eval(&@on_init.shift) while @on_init.any?
+
       enable_reloading
       loader.setup
 
@@ -138,9 +153,7 @@ module Zee
     end
 
     private def compute_env
-      env_name = ENV_NAMES.find { ENV[_1] }
-      env = ENV[env_name] if env_name
-      env = env.to_s
+      env = ENV_NAMES.map { ENV[_1] }.compact.first.to_s
 
       env.empty? ? "development" : env
     end
