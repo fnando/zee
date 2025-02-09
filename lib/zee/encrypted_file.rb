@@ -23,6 +23,11 @@ module Zee
       FileUtils.mv "#{path}.tmp", path
     end
 
+    # @private
+    def to_s
+      "#<Zee::EncryptedFile path=#{path}>"
+    end
+
     private def encrypt(content)
       cipher = OpenSSL::Cipher.new(CIPHER)
       cipher.encrypt

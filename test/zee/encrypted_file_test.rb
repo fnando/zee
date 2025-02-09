@@ -7,6 +7,15 @@ class EncryptedFileTest < Minitest::Test
     FileUtils.rm_rf "tmp/file.txt"
   end
 
+  test "overrides to_s" do
+    file = Zee::EncryptedFile.new(
+      path: "tmp/file.txt",
+      key: SecureRandom.random_bytes(32)
+    )
+
+    assert_equal "#<Zee::EncryptedFile path=tmp/file.txt>", file.to_s
+  end
+
   test "encrypts and decrypts a file" do
     file = Zee::EncryptedFile.new(
       path: "tmp/file.txt",

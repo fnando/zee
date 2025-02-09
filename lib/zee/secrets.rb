@@ -27,6 +27,11 @@ module Zee
       store.key?(name) || super
     end
 
+    # @private
+    def to_s
+      "#<Zee::Secrets secrets_file=#{@secrets_file}>"
+    end
+
     private def store
       @store ||= begin
         encrypted = EncryptedFile.new(path: @secrets_file, key: @key)
