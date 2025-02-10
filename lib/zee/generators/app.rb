@@ -16,12 +16,12 @@ module Zee
         template ".ruby-version.erb", ".ruby-version"
         template ".rubocop.yml.erb", ".rubocop.yml"
         template "config/app.rb.erb", "config/app.rb"
+        template ".env.development.erb", ".env.development"
+        template ".env.test.erb", ".env.test"
       end
 
       def files
         copy_file ".gitignore"
-        copy_file ".env.development"
-        copy_file ".env.test"
         copy_file "bin/dev"
         copy_file "bin/console"
         copy_file "tmp/.keep"
@@ -31,6 +31,8 @@ module Zee
         copy_file "Procfile.dev"
         copy_file "config.ru"
         copy_file "config/environment.rb"
+        create_file "storage/.keep"
+        create_file "db/migrations/.keep"
       end
 
       def controllers
@@ -108,6 +110,23 @@ module Zee
 
         def version(version, size = 3)
           version.split(".").take(size).join(".")
+        end
+
+        def app_name
+          File.basename(destination_root).tr("-", "_").downcase
+        end
+
+        def database_url(env)
+          case options[:database]
+          when "sqlite"
+            "sqlite://storage/#{env}.db"
+          when "postgresql"
+            "postgres:///#{app_name}_#{env}"
+          when "mysql", "mariadb"
+            "mysql2:///#{app_name}_#{env}?encoding=utf8mb4"
+          else
+            raise "Unsupported database: #{options[:database]}"
+          end
         end
       end
     end

@@ -36,6 +36,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_dependency "base64"
+  spec.add_dependency "dotenv", "~> 3.1"
   spec.add_dependency "mini_mime", "~> 1.1"
   spec.add_dependency "public_suffix", "~> 6.0"
   spec.add_dependency "rack", "~> 3.1"
@@ -50,5 +51,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rake"
   spec.add_development_dependency "rubocop"
   spec.add_development_dependency "rubocop-fnando"
+  spec.add_development_dependency "sequel"
   spec.add_development_dependency "simplecov"
+  spec.add_development_dependency "sqlite3"
 end

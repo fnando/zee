@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 module Zee
-  class CLI < Thor
-    class Secrets < Thor
+  class CLI < Command
+    class Secrets < Command
       desc "edit", "Edit secrets"
       option :environment,
              desc: "Environment to edit",
@@ -58,13 +58,13 @@ module Zee
         FileUtils.mkdir_p("config/secrets")
 
         if File.file?(key_file)
-          say_error "ERROR: #{key_file} already exists", :red
-          exit 1
+          raise Thor::Error,
+                set_color("ERROR: #{key_file} already exists", :red)
         end
 
         if File.file?(secrets_file)
-          say_error "ERROR: #{secrets_file} already exists", :red
-          exit 1
+          raise Thor::Error,
+                set_color("ERROR: #{secrets_file} already exists", :red)
         end
 
         key = SecureRandom.hex(16)
