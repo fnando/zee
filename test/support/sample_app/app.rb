@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 SampleApp = Zee::App.new do
   self.root = Pathname(__dir__)
 

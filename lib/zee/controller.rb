@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module Zee
   # Raised when a template is missing.
   MissingTemplateError = Class.new(StandardError)

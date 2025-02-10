@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # config/app.rb
 MyApp = App.new do
   # Can be inline or defined on config/routes.rb
