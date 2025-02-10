@@ -83,4 +83,28 @@ class AppTest < Minitest::Test
     assert_equal [1, 2], called
     assert_equal app, this
   end
+
+  test "sets configuration based on the environment" do
+    build_app = proc do |app_env|
+      Zee::App.new do
+        self.env = app_env
+
+        config :development do
+          set :domain, "example.dev"
+        end
+
+        config :production do
+          set :domain, "example.com"
+        end
+      end
+    end
+
+    app = build_app.call(:development)
+
+    assert_equal "example.dev", app.config.domain
+
+    app = build_app.call(:production)
+
+    assert_equal "example.com", app.config.domain
+  end
 end

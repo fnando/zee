@@ -39,7 +39,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "mini_mime", "~> 1.1"
   spec.add_dependency "public_suffix", "~> 6.0"
   spec.add_dependency "rack", "~> 3.1"
-  spec.add_dependency "superconfig", "~> 2.1"
+  spec.add_dependency "superconfig", "~> 2.2"
   spec.add_dependency "thor", "~> 1.3"
   spec.add_dependency "tilt", "~> 2.6"
   spec.add_dependency "zeitwerk", "~> 2.7"

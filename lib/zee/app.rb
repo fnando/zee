@@ -64,13 +64,28 @@ module Zee
     #
     # @return [Zee::Config]
     #
-    # @example
+    # @example Run config on every environment
     #   app.config do
     #     mandatory :database_url, string
     #   end
-    def config(&)
+    #
+    # @example Run config on every a specific environment
+    #   app.config :development do
+    #     set :domain, "example.dev"
+    #   end
+    #
+    # @example Run config on every a specific environment
+    #   app.config :development, :test do
+    #     set :domain, "example.dev"
+    #   end
+    def config(*envs, &)
       @config ||= Config.new
-      @config.instance_eval(&) if block_given?
+
+      write = block_given? &&
+              (envs.map(&:to_sym).include?(env.to_sym) || envs.empty?)
+
+      @config.instance_eval(&) if write
+
       @config
     end
 
