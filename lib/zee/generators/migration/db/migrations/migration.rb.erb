@@ -1,0 +1,20 @@
+# frozen_string_literal: true
+
+# About migrations:
+# https://sequel.jeremyevans.net/rdoc/files/doc/schema_modification_rdoc.html
+#
+# @example
+#   create_table :postw do
+#     primary_key :id
+#     String :title, null: false, size: 255
+#     String :body, text: true, null: false
+#     Time :created_at, null: false
+#     Time :updated_at, null: false
+#
+#     foreign_key :users, :users_id
+#   end
+Sequel.migration do
+  change do
+    # You schema here
+  end
+end

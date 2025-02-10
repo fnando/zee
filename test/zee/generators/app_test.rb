@@ -3,13 +3,17 @@
 require "test_helper"
 
 class AppTest < Minitest::Test
-  setup { FileUtils.rm_rf("tmp/app") }
-  teardown { FileUtils.rm_rf("tmp/app") }
-
   test "generates new app" do
-    app = Pathname("tmp/app")
+    app = Pathname("tmp")
+    generator = Zee::Generators::App.new
+    generator.options = {}
+    generator.destination_root = app
 
-    out, _ = capture_subprocess_io { Zee::CLI.start(["new", "tmp/app"]) }
+    out, _ = Dir.chdir(app) do
+      capture_subprocess_io do
+        generator.invoke_all
+      end
+    end
 
     assert app.join(".gitignore").file?
     assert app.join(".rubocop.yml").file?
@@ -41,7 +45,16 @@ class AppTest < Minitest::Test
   end
 
   test "skips bundle install" do
-    out, _ = capture_subprocess_io { Zee::CLI.start(["new", "tmp/app", "-B"]) }
+    app = Pathname("tmp")
+    generator = Zee::Generators::App.new
+    generator.options = {skip_bundle: true}
+    generator.destination_root = app
+
+    out, _ = Dir.chdir(app) do
+      capture_subprocess_io do
+        generator.invoke_all
+      end
+    end
 
     refute_includes out, "bundle install"
   end
