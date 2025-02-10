@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module Zee
   # The configuration for the application.
   # It uses {https://rubygems.org/gems/superconfig SuperConfig} to define the

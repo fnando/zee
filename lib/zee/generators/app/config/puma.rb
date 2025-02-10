@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # https://puma.io/puma/Puma/DSL.html
 threads_count = ENV.fetch("APP_MAX_THREADS", 3)
 threads threads_count, threads_count

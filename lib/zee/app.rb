@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module Zee
   class App
     # This error is raised whenever the app is initialized more than once.

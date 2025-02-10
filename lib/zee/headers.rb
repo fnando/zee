@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module Zee
   class Headers
     def initialize

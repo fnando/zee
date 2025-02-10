@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module Zee
   class Environment
     NAMES = %i[development test production local].freeze

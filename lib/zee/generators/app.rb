@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module Zee
   class Generator < Thor::Group
     include Thor::Actions

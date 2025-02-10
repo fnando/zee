@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module Zee
   class Response
     # The body of the response.
