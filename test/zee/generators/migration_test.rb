@@ -9,13 +9,12 @@ class MigrationTest < Minitest::Test
     generator.options = {name: "create_users"}
     generator.destination_root = app
     timestamp = Time.now.to_i
+    out = nil
 
     Time.stubs(:now).returns(Time.at(timestamp))
 
-    out, _ = Dir.chdir(app) do
-      capture_io do
-        generator.invoke_all
-      end
+    Dir.chdir(app) do
+      capture { generator.invoke_all } => {out:}
     end
 
     assert_path_exists app.join("db/migrations/#{timestamp}_create_users.rb")
@@ -32,9 +31,7 @@ class MigrationTest < Minitest::Test
     Time.stubs(:now).returns(Time.at(timestamp))
 
     Dir.chdir(app) do
-      capture_io do
-        generator.invoke_all
-      end
+      capture { generator.invoke_all }
     end
 
     assert_path_exists app.join("db/migrations/#{timestamp}_create_users.rb")

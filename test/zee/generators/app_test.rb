@@ -6,13 +6,12 @@ class AppTest < Minitest::Test
   test "generates new app" do
     app = Pathname("tmp")
     generator = Zee::Generators::App.new
-    generator.options = {}
+    generator.options = {database: "sqlite"}
     generator.destination_root = app
+    out = nil
 
-    out, _ = Dir.chdir(app) do
-      capture_subprocess_io do
-        generator.invoke_all
-      end
+    Dir.chdir(app) do
+      capture { generator.invoke_all } => {out:}
     end
 
     assert app.join(".gitignore").file?
@@ -47,15 +46,99 @@ class AppTest < Minitest::Test
   test "skips bundle install" do
     app = Pathname("tmp")
     generator = Zee::Generators::App.new
-    generator.options = {skip_bundle: true}
+    generator.options = {skip_bundle: true, database: "sqlite"}
     generator.destination_root = app
+    out = nil
 
-    out, _ = Dir.chdir(app) do
-      capture_subprocess_io do
-        generator.invoke_all
-      end
+    Dir.chdir(app) do
+      capture { generator.invoke_all } => {out:}
     end
 
     refute_includes out, "bundle install"
+  end
+
+  test "uses sqlite" do
+    app = Pathname("tmp")
+    generator = Zee::Generators::App.new
+    generator.options = {database: "sqlite"}
+    generator.destination_root = app
+
+    Dir.chdir(app) do
+      capture { generator.invoke_all }
+    end
+
+    assert app.join(".env.development").file?
+    assert app.join(".env.test").file?
+    assert_includes app.join(".env.development").read,
+                    "DATABASE_URL=sqlite://storage/development.db"
+    assert_includes app.join(".env.test").read,
+                    "DATABASE_URL=sqlite://storage/test.db"
+  end
+
+  test "uses postgresql" do
+    app = Pathname("tmp")
+    generator = Zee::Generators::App.new
+    generator.options = {database: "postgresql"}
+    generator.destination_root = app
+
+    Dir.chdir(app) do
+      capture { generator.invoke_all }
+    end
+
+    assert app.join(".env.development").file?
+    assert app.join(".env.test").file?
+    assert_includes app.join(".env.development").read,
+                    "DATABASE_URL=postgres:///tmp_development"
+    assert_includes app.join(".env.test").read,
+                    "DATABASE_URL=postgres:///tmp_test"
+  end
+
+  test "uses mysql" do
+    app = Pathname("tmp")
+    generator = Zee::Generators::App.new
+    generator.options = {database: "mysql"}
+    generator.destination_root = app
+
+    Dir.chdir(app) do
+      capture { generator.invoke_all }
+    end
+
+    assert app.join(".env.development").file?
+    assert app.join(".env.test").file?
+    assert_includes app.join(".env.development").read,
+                    "DATABASE_URL=mysql2:///tmp_development?encoding=utf8mb4"
+    assert_includes app.join(".env.test").read,
+                    "DATABASE_URL=mysql2:///tmp_test?encoding=utf8mb4"
+  end
+
+  test "uses mariadb" do
+    app = Pathname("tmp")
+    generator = Zee::Generators::App.new
+    generator.options = {database: "mariadb"}
+    generator.destination_root = app
+
+    Dir.chdir(app) do
+      capture { generator.invoke_all }
+    end
+
+    assert app.join(".env.development").file?
+    assert app.join(".env.test").file?
+    assert_includes app.join(".env.development").read,
+                    "DATABASE_URL=mysql2:///tmp_development?encoding=utf8mb4"
+    assert_includes app.join(".env.test").read,
+                    "DATABASE_URL=mysql2:///tmp_test?encoding=utf8mb4"
+  end
+
+  test "fails with an unsupported database" do
+    app = Pathname("tmp")
+    generator = Zee::Generators::App.new
+    generator.options = {database: "foo"}
+    generator.destination_root = app
+
+    error = assert_raises RuntimeError do
+      capture { generator.invoke_all }
+    end
+
+    assert_equal "Unsupported database: foo", error.message
   end
 end

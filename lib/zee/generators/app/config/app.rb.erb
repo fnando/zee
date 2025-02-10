@@ -2,4 +2,16 @@
 
 require_relative "boot"
 
-App = Zee::App.new
+App = Zee::App.new do
+  config do
+    # You can connect to the database by setting an environment variable
+    # `ENV["DATABASE_URL"]` or by using a .env file.
+    # @example
+    #   "postgres://localhost/myapp_development"
+    # @example
+    #   "sqlite://storage/development.db"
+    # @example
+    #   "mysql2://localhost/myapp_development"
+    mandatory :database_url, string
+  end
+end

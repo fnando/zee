@@ -1,10 +1,9 @@
 # frozen_string_literal: true
 
 module Zee
-  class CLI < Thor
-    class Generate < Thor
-      desc "generate SUBCOMMAND", "Generate new code"
-
+  class CLI < Command
+    class Generate < Command
+      desc "migration", "Generate new migration"
       option :name, type: :string,
                     required: true,
                     desc: "Generate a new migration",

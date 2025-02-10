@@ -6,13 +6,14 @@ class GenerateTest < Minitest::Test
   test "generates new migration" do
     app = Pathname("tmp")
     timestamp = Time.now.to_i
+    out = nil
 
     Time.stubs(:now).returns(Time.at(timestamp))
 
-    out, _ = Dir.chdir(app) do
-      capture_subprocess_io do
+    Dir.chdir(app) do
+      capture do
         Zee::CLI.start(["generate", "migration", "--name", "create_users"])
-      end
+      end => {out:}
     end
 
     assert_path_exists app.join("db/migrations/#{timestamp}_create_users.rb")

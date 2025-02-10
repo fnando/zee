@@ -6,12 +6,33 @@ ruby file: ".ruby-version"
 # A mini web framework.
 # [https://github.com/fnando/zee]
 gem "zee",
-    "~> <%= version(Zee::VERSION, 2) %>",
-    git: "https://github.com/fnando/zee.git"
+  "~> <%= version(Zee::VERSION, 2) %>",
+  git: "https://github.com/fnando/zee.git"
 
 # A Ruby/Rack web server built for parallelism.
 # [https://puma.io]
 gem "puma"
+
+# The Database Toolkit for Ruby
+# [https://sequel.jeremyevans.net]
+gem "sequel"
+
+<%- if options[:database] == "sqlite" -%>
+# Ruby library to interface with the SQLite3 database engine
+# (http://www.sqlite.org).
+# [https://github.com/sparklemotion/sqlite3-ruby]
+gem "sqlite3"
+<%- end -%>
+<%- if options[:database] == "postgresql" -%>
+# Pg is the Ruby interface to the PostgreSQL RDBMS
+# [https://github.com/ged/ruby-pg]
+gem "pg"
+<%- end -%>
+<%- if %w[mysql mariadb].include?(options[:database]) -%>
+# A simple, fast Mysql library for Ruby, binding to libmysql.
+# [https://github.com/brianmario/mysql2]
+gem "mysql2"
+<%- end -%>
 
 group :development do
   # Listen to file modifications
