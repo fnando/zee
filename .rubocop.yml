@@ -3,7 +3,7 @@ inherit_gem:
   rubocop-fnando: .rubocop.yml
 
 AllCops:
-  TargetRubyVersion: 3.3
+  TargetRubyVersion: 3.4
   NewCops: enable
   Exclude:
     - vendor/**/*
@@ -15,4 +15,7 @@ Naming/FileName:
     - API_DESIGN.rb
 
 Style/FetchEnvVar:
+  Enabled: false
+
+Style/FrozenStringLiteralComment:
   Enabled: false
