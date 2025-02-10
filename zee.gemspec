@@ -45,6 +45,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "zeitwerk", "~> 2.7"
   spec.add_development_dependency "minitest"
   spec.add_development_dependency "minitest-utils"
+  spec.add_development_dependency "mocha"
   spec.add_development_dependency "rack-test"
   spec.add_development_dependency "rake"
   spec.add_development_dependency "rubocop"
