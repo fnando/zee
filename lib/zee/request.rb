@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module Zee
   class Request < ::Rack::Request
     # The path of the request, without any trailing slashes.

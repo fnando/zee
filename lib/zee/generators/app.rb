@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module Zee
   module Generators
     class App < Thor::Group

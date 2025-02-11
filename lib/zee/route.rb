@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module Zee
   class Route
     attr_reader :path, :via, :to, :as, :constraints, :defaults, :matcher
