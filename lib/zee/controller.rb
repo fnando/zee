@@ -61,7 +61,14 @@ module Zee
     #
     # @example Render with a different status.
     #   render :show, status: :created
-    def render(template_name = action_name, status: :ok)
+    def render(template_name = action_name, status: :ok, **options)
+      if options.key?(:text)
+        response.status(status)
+        response.headers[:content_type] = TEXT_PLAIN
+        response.body = options.delete(:text).to_s
+        return
+      end
+
       accept = request.env[HTTP_ACCEPT] || TEXT_HTML
       mimes = Rack::Utils
               .q_values(accept)

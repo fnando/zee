@@ -2,7 +2,7 @@
 
 require "test_helper"
 
-class RenderTemplatesTest < Minitest::Test
+class RenderTest < Minitest::Test
   include Rack::Test::Methods
 
   def app
@@ -38,6 +38,14 @@ class RenderTemplatesTest < Minitest::Test
 
     assert last_response.not_found?
     assert_includes last_response.body, "404 Not Found"
+    assert_includes last_response.content_type, "text/plain"
+  end
+
+  test "renders text" do
+    get "/text"
+
+    assert last_response.ok?
+    assert_includes last_response.body, "Hello, World!"
     assert_includes last_response.content_type, "text/plain"
   end
 end

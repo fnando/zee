@@ -7,6 +7,7 @@ SampleApp = Zee::App.new do
     root to: "pages#home"
     get "missing-template", to: "pages#missing_template"
     get "hello", to: "pages#hello"
+    get "text", to: "formats#text"
   end
 end
 
