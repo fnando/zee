@@ -6,4 +6,5 @@ module Zee
   TEXT_HTML = "text/html"
   ENV_NAMES = %w[ZEE_ENV APP_ENV RACK_ENV].freeze
   ZEE_MASTER_KEY = "ZEE_MASTER_KEY"
+  ZEE_SESSION_KEY = "_zee_session"
 end

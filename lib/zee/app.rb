@@ -74,12 +74,12 @@ module Zee
     #     set :domain, "example.dev"
     #   end
     #
-    # @example Run config on every a specific environment
+    # @example Run config on every matching environment
     #   app.config :development, :test do
     #     set :domain, "example.dev"
     #   end
     def config(*envs, &)
-      @config ||= Config.new
+      @config ||= Config.new(self)
 
       write = block_given? &&
               (envs.map(&:to_sym).include?(env.to_sym) || envs.empty?)
@@ -103,6 +103,47 @@ module Zee
     # @return [Boolean]
     def initialized?
       @initialized
+    end
+
+    # Define the app's middleware stack.
+    # See {Zee::App#default_middleware_stack}.
+    # @return [Zee::MiddlewareStack]
+    def middleware(&)
+      @middleware ||= default_middleware_stack
+      @middleware.instance_eval(&) if block_given?
+      @middleware
+    end
+
+    # The default middleware stack.
+    # This is the stack that's included by default:
+    # - {https://github.com/rack/rack/blob/main/lib/rack/sendfile.rb Rack::Sendfile}
+    # - {https://github.com/rack/rack/blob/main/lib/rack/runtime.rb Rack::Runtime}
+    # - {https://github.com/rack/rack/blob/main/lib/rack/common_logger.rb Rack::CommonLogger}
+    # - {https://github.com/sinatra/sinatra/tree/main/rack-protection Rack::Protection}
+    # - {https://github.com/rack/rack-session Rack::Session::Cookie}
+    # - {https://github.com/rack/rack/blob/main/lib/rack/show_exceptions.rb Rack::ShowExceptions}
+    # - {https://github.com/rack/rack/blob/main/lib/rack/head.rb Rack::Head}
+    # - {https://github.com/rack/rack/blob/main/lib/rack/conditional_get.rb Rack::ConditionalGet}
+    # - {https://github.com/rack/rack/blob/main/lib/rack/etag.rb Rack::ETag}
+    # - {https://github.com/rack/rack/blob/main/lib/rack/tempfile_reaper.rb Rack::TempfileReaper}
+    # @return [Zee::MiddlewareStack]
+    def default_middleware_stack
+      MiddlewareStack.new.tap do |middleware|
+        middleware.use Rack::Sendfile
+        middleware.use Rack::Runtime
+        middleware.use Rack::CommonLogger
+        middleware.use Rack::Protection if defined?(Rack::Protection)
+
+        if defined?(Rack::Session) && config.respond_to?(:session_options)
+          middleware.use Rack::Session::Cookie, config.session_options
+        end
+
+        middleware.use Rack::ShowExceptions if env.development?
+        middleware.use Rack::Head
+        middleware.use Rack::ConditionalGet
+        middleware.use Rack::ETag
+        middleware.use Rack::TempfileReaper
+      end
     end
 
     # Initialize the application.
@@ -152,19 +193,22 @@ module Zee
       @loader ||= Zeitwerk::Loader.new
     end
 
-    def app
-      @app ||= begin
-        request_handler = RequestHandler.new(self)
-
-        Rack::Builder.app do
-          run request_handler
-        end
-      end
-    end
-
     def call(env)
       env[RACK_ZEE_APP] = self
       Dir.chdir(root) { return app.call(env) }
+    end
+
+    private def app
+      @app ||= begin
+        request_handler = RequestHandler.new(self)
+        stack = middleware.to_a
+
+        Rack::Builder.app do
+          stack.each {|middleware, args, block| use(middleware, *args, &block) }
+
+          run request_handler
+        end
+      end
     end
 
     private def compute_env

@@ -15,7 +15,6 @@ module Zee
         template "Gemfile.erb", "Gemfile"
         template ".ruby-version.erb", ".ruby-version"
         template ".rubocop.yml.erb", ".rubocop.yml"
-        template "config/app.rb.erb", "config/app.rb"
         template ".env.development.erb", ".env.development"
         template ".env.test.erb", ".env.test"
       end
@@ -24,6 +23,7 @@ module Zee
         copy_file ".gitignore"
         copy_file "bin/dev"
         copy_file "tmp/.keep"
+        copy_file "config/app.rb"
         copy_file "config/boot.rb"
         copy_file "config/puma.rb"
         copy_file "config/routes.rb"
@@ -100,7 +100,9 @@ module Zee
 
           encrypted_file.write <<~YAML
             ---
-            # Add your secrets here
+            # The session secret is used to sign the session cookie.
+            # It will also be used to sign the CSRF token.
+            session_secret: #{SecureRandom.hex(64)}
           YAML
 
           say_status :create, relative_secrets_file, :green

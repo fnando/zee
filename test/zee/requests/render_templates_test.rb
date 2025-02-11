@@ -19,7 +19,10 @@ class RenderTemplatesTest < Minitest::Test
   end
 
   test "handles missing template" do
-    assert_raises(Zee::MissingTemplateError) { get "/missing-template" }
+    get "/missing-template"
+
+    assert_equal 500, last_response.status
+    assert_includes last_response.body, "Zee::MissingTemplateError"
   end
 
   test "renders template with locals" do
@@ -28,5 +31,13 @@ class RenderTemplatesTest < Minitest::Test
     assert last_response.ok?
     assert_includes last_response.body, "Hello, World!"
     assert_includes last_response.content_type, "text/html"
+  end
+
+  test "renders page not found" do
+    get "/not-found"
+
+    assert last_response.not_found?
+    assert_includes last_response.body, "404 Not Found"
+    assert_includes last_response.content_type, "text/plain"
   end
 end

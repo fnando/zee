@@ -13,6 +13,11 @@ module Zee
       request = Request.new(env)
       response = Response.new
       route = app.routes.find(request)
+
+      unless route
+        return [404, {"content-type" => "text/plain"}, ["404 Not Found"]]
+      end
+
       controller_name, action_name = *route.to.split("#")
 
       controller_class = Object.const_get(

@@ -31,6 +31,7 @@ module Zee
     def to_s
       "#<Zee::Secrets secrets_file=#{@secrets_file}>"
     end
+    alias inspect to_s
 
     private def store
       @store ||= begin

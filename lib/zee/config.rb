@@ -10,7 +10,12 @@ module Zee
 
     undef_method :credential
 
-    def initialize(**)
+    # The application instance.
+    # @return [Zee::App]
+    attr_reader :app
+
+    def initialize(app = nil, **)
+      @app = app
       block = proc { true }
       super(**, &block)
     end
@@ -19,6 +24,7 @@ module Zee
     def to_s
       "#<Zee::Config>"
     end
+    alias inspect to_s
 
     # @private
     def mandatory(*, **)

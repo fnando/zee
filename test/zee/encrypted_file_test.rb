@@ -14,6 +14,7 @@ class EncryptedFileTest < Minitest::Test
     )
 
     assert_equal "#<Zee::EncryptedFile path=tmp/file.txt>", file.to_s
+    assert_equal "#<Zee::EncryptedFile path=tmp/file.txt>", file.inspect
   end
 
   test "encrypts and decrypts a file" do
