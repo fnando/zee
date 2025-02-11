@@ -7,6 +7,7 @@ class ConfigTest < Minitest::Test
     config = Zee::Config.new(env: {})
 
     assert_equal "#<Zee::Config>", config.to_s
+    assert_equal "#<Zee::Config>", config.inspect
   end
 
   test "removes the credential method" do

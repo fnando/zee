@@ -107,4 +107,15 @@ class AppTest < Minitest::Test
 
     assert_equal "example.com", app.config.domain
   end
+
+  test "sets default middleware stack" do
+    ENV["ZEE_ENV"] = "test"
+    app = Zee::App.new do
+      config do
+        set :session_options, secret: SecureRandom.hex(64)
+      end
+    end
+
+    assert_equal 9, app.middleware.to_a.size
+  end
 end

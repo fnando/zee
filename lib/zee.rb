@@ -4,6 +4,8 @@ require "rack"
 require "mini_mime"
 require "tilt"
 require "superconfig"
+require "forwardable"
+require "yaml"
 
 module Zee
   require_relative "zee/constants"
@@ -21,4 +23,5 @@ module Zee
   require_relative "zee/encrypted_file"
   require_relative "zee/master_key"
   require_relative "zee/secrets"
+  require_relative "zee/middleware_stack"
 end

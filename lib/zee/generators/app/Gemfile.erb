@@ -34,6 +34,19 @@ gem "pg"
 gem "mysql2"
 <%- end -%>
 
+# Protect against typical web attacks, works with all Rack apps, including
+# Rails.
+# [https://sinatrarb.com/protection/]
+gem "rack-protection"
+
+# A session implementation for Rack.
+# [https://github.com/rack/rack-session]
+gem "rack-session"
+
+# Middleware for enabling Cross-Origin Resource Sharing in Rack apps
+# [https://github.com/cyu/rack-cors]
+gem "rack-cors", "~> 2.0"
+
 group :development do
   # Listen to file modifications
   # [https://github.com/guard/listen]

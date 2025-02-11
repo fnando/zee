@@ -1,18 +1,19 @@
 <div align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="logo/zee-dark.svg">
-    <img alt="Zee" src="logo/zee-light.svg" width="250">
+    <source media="(prefers-color-scheme: dark)" srcset="https://github.com/fnando/zee/raw/main/logo/zee-dark.svg">
+    <img alt="Zee" src="https://github.com/fnando/zee/raw/main/logo/zee-light.svg" width="250">
   </picture>
 
-A mini web framework.
+  <p>A mini web framework.</p>
 
----
+  <hr>
 
-[![Tests](https://github.com/fnando/zee/workflows/ruby-tests/badge.svg)](https://github.com/fnando/zee)
-[![Gem](https://img.shields.io/gem/v/zee.svg)](https://rubygems.org/gems/zee)
-[![Gem](https://img.shields.io/gem/dt/zee.svg)](https://rubygems.org/gems/zee)
-[![MIT License](https://img.shields.io/:License-MIT-blue.svg)](https://tldrlegal.com/license/mit-license)
-
+  <p>
+    <a href="https://github.com/fnando/zee"><img src="https://github.com/fnando/zee/workflows/ruby-tests/badge.svg" alt="Tests"></a>
+    <a href="https://rubygems.org/gems/zee"><img src="https://img.shields.io/gem/v/zee.svg" alt="Gem"></a>
+    <a href="https://rubygems.org/gems/zee"><img src="https://img.shields.io/gem/dt/zee.svg" alt="Gem"></a>
+    <a href="https://tldrlegal.com/license/mit-license"><img src="https://img.shields.io/:License-MIT-blue.svg" alt="MIT License"></a>
+  </p>
 </div>
 
 ## Installation

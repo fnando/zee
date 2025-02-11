@@ -27,6 +27,7 @@ module Zee
     def to_s
       "#<Zee::EncryptedFile path=#{path}>"
     end
+    alias inspect to_s
 
     private def encrypt(content)
       cipher = OpenSSL::Cipher.new(CIPHER)

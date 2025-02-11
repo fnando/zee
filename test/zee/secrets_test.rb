@@ -24,5 +24,18 @@ class SecretsTest < Minitest::Test
       "#<Zee::Secrets secrets_file=test/fixtures/secrets/secrets.yml.enc>",
       secrets.to_s
     )
+    assert_equal(
+      "#<Zee::Secrets secrets_file=test/fixtures/secrets/secrets.yml.enc>",
+      secrets.inspect
+    )
+  end
+
+  test "implements respond_to?" do
+    secrets = Zee::Secrets.new(
+      key: File.read("test/fixtures/secrets/main.key"),
+      secrets_file: "test/fixtures/secrets/secrets.yml.enc"
+    )
+
+    assert_respond_to secrets, :api_key
   end
 end
