@@ -36,4 +36,14 @@ class MiddlewareStackTest < Minitest::Test
 
     assert_empty stack.to_a
   end
+
+  test "removes middleware" do
+    stack = Zee::MiddlewareStack.new
+    stack.use Rack::CommonLogger
+    stack.use Rack::Runtime
+
+    stack.delete Rack::CommonLogger
+
+    assert_equal [[Rack::Runtime, [], nil]], stack.to_a
+  end
 end

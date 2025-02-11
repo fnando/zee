@@ -31,5 +31,11 @@ module Zee
     def clear
       @store.clear
     end
+
+    # Remove a middleware from the stack.
+    # @param middleware [Class] The middleware to remove.
+    def delete(middleware)
+      @store.delete_if {|(m, _)| m == middleware }
+    end
   end
 end
