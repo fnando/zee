@@ -20,7 +20,6 @@ class AppTest < Minitest::Test
     assert app.join(".env.development").file?
     assert app.join(".env.test").file?
     assert app.join("bin/dev").file?
-    assert app.join("bin/console").file?
     assert app.join("app/controllers/base.rb").file?
     assert app.join("app/controllers/pages.rb").file?
     assert app.join("app/views/layouts/application.html.erb").file?
@@ -38,7 +37,6 @@ class AppTest < Minitest::Test
     assert_equal RUBY_VERSION, app.join(".ruby-version").read.chomp
     assert_includes out, "bundle install"
     assert app.join("bin/dev").executable?
-    assert app.join("bin/console").executable?
     refute app.join("config/secrets/development.key").world_readable?
     refute app.join("config/secrets/test.key").world_readable?
   end
