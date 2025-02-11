@@ -8,7 +8,7 @@ class SecretsTest < Minitest::Test
   test "generates a key" do
     Dir.chdir("tmp") do
       capture do
-        Zee::CLI::Secrets.start(["create", "-e", "development"])
+        Zee::CLI.start(["secrets:create", "-e", "development"])
       end
     end
 
@@ -25,7 +25,7 @@ class SecretsTest < Minitest::Test
 
     Dir.chdir("tmp") do
       capture do
-        Zee::CLI::Secrets.start(["create", "-e", "development"])
+        Zee::CLI.start(["secrets:create", "-e", "development"])
       end => {exit_code:, err:}
     end
 
@@ -40,7 +40,7 @@ class SecretsTest < Minitest::Test
 
     Dir.chdir("tmp") do
       capture do
-        Zee::CLI::Secrets.start(["create", "-e", "development"])
+        Zee::CLI.start(["secrets:create", "-e", "development"])
       end => {exit_code:, err:}
     end
 

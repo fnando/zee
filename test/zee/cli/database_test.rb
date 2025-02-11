@@ -31,7 +31,7 @@ class DatabaseTest < Minitest::Test
         end
       RUBY
 
-      capture { Zee::CLI.start(%w[db migrate --verbose]) } => {exit_code:, err:}
+      capture { Zee::CLI.start(%w[db:migrate --verbose]) } => {exit_code:, err:}
 
       assert_equal 1, exit_code
       assert_includes err, "ERROR: No connection string found"
@@ -63,7 +63,7 @@ class DatabaseTest < Minitest::Test
         end
       RUBY
 
-      capture { Zee::CLI.start(%w[db migrate --verbose]) } => {out:, exit_code:}
+      capture { Zee::CLI.start(%w[db:migrate --verbose]) } => {out:, exit_code:}
     end
 
     refute_equal 1, exit_code

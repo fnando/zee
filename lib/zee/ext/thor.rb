@@ -2,9 +2,11 @@
 
 Thor::Command.instance_eval do
   mod = Module.new do
-    def run(instance, *)
-      klass = instance.class
-      klass.before_run if klass.respond_to?(:before_run)
+    def run(instance, *args)
+      namespace, _ = *name.split(":").map(&:to_sym)
+
+      # Run before run hooks
+      Zee::CLI.before_run_hooks[namespace]&.each(&:call)
 
       super
     end

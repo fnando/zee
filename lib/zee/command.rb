@@ -8,10 +8,6 @@ module Zee
     def self.exit_on_failure?
       true
     end
-
-    def self.before_run
-      # noop
-    end
     # :nocov:
   end
 end
