@@ -45,6 +45,16 @@ module Zee
       locals.merge!(vars)
     end
 
+    # The session hash.
+    def session
+      @session ||= request.env[RACK_SESSION]
+    end
+
+    # Reset the session.
+    def reset_session
+      session.clear
+    end
+
     # Render a template. The default is to render a template with the same name
     # as the action. The template must be
     # named `:name.:content_type.:template_handler`, as in `home.html.erb`.
