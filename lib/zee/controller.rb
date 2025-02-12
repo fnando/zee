@@ -8,6 +8,8 @@ module Zee
   UnsafeRedirectError = Class.new(StandardError)
 
   class Controller
+    include Renderer
+
     # The current action name.
     # @return [String]
     attr_reader :action_name
@@ -24,9 +26,7 @@ module Zee
     # @return [Zee::Response]
     attr_reader :response
 
-    def initialize(config:, request:, response:, action_name: nil,
-                   controller_name: nil)
-      @_config = config
+    def initialize(request:, response:, action_name: nil, controller_name: nil)
       @request = request
       @response = response
       @action_name = action_name
@@ -60,61 +60,20 @@ module Zee
       session.clear
     end
 
-    # Render a template. The default is to render a template with the same name
-    # as the action. The template must be
-    # named `:name.:content_type.:template_handler`, as in `home.html.erb`.
-    #
-    # @param template_name [String] The name of the template to render.
-    #                               Defaults to the action name.
-    # @param status [Integer|Symbol] The status code of the response.
-    #                                Defaults to `:ok`.
-    # @example Implicit render uses the action name as the template name.
-    #   render
-    #
-    # @example Explicit render.
-    #   render :home
-    #
-    # @example Render with a different status.
-    #   render :show, status: :created
-    def render(template_name = action_name, status: :ok, **options)
-      return render_json(status, options.delete(:json)) if options.key?(:json)
-      return render_text(status, options.delete(:text)) if options.key?(:text)
-
-      accept = request.env[HTTP_ACCEPT] || TEXT_HTML
-      mimes = Rack::Utils
-              .q_values(accept)
-              .sort_by(&:last)
-              .reverse
-              .map { MiniMime.lookup_by_content_type(_1.first) }
-              .compact
-
-      root = request.env[RACK_ZEE_APP].root
-      base = root.join("app/views/#{controller_name}/#{template_name}")
-
-      # Get a list of files like `app/views/pages/home.html.erb`.
-      template_paths = build_template_paths(
-        mimes,
-        @_config.template_handlers,
-        base
-      )
-
-      # Find the first file that exists.
-      template_path = template_paths.find {|tp| File.file?(tp[:path]) }
-
-      unless template_path
-        list = template_paths
-               .map { _1[:path].relative_path_from(root) }
-               .join(", ")
-
-        raise MissingTemplateError,
-              "#{controller_name}##{template_name}: #{list}"
-      end
-
-      response.status(status)
-      response.headers[:content_type] = template_path[:mime]&.content_type
-      response.body = Tilt.new(template_path[:path]).render(Object.new, locals)
-    end
-
+    # Redirect to a different location.
+    # @param location [String] The location to redirect to.
+    # @param status [Integer, Symbol] The status code of the response.
+    # @param allow_other_host [Boolean] Allow redirects to other hosts.
+    # @raise [ArgumentError] If the location is empty.
+    # @raise [UnsafeRedirectError] If the redirect is unsafe (i.e. trying to
+    #                              redirect a different host without
+    #                              setting `allow_other_host`).
+    # @example Redirect to the home page.
+    #   redirect_to "/"
+    # @example Redirect to the home page with a 301 status.
+    #   redirect_to "/", status: :moved_permanently
+    # @example Redirect to a different host.
+    #   redirect_to "https://example.com", allow_other_host: true
     def redirect_to(location, status: :found, allow_other_host: false)
       raise ArgumentError, "location cannot be empty" if location.to_s.empty?
 
@@ -129,29 +88,6 @@ module Zee
       response.status(status)
       response.headers[:location] = location
       response.body = ""
-    end
-
-    private def build_template_paths(mimes, template_handlers, base_path)
-      mimes.flat_map do |mime|
-        template_handlers.map do |handler|
-          {
-            mime:,
-            path: Pathname("#{base_path}.#{mime.extension}.#{handler}")
-          }
-        end
-      end
-    end
-
-    private def render_text(status, text)
-      response.status(status)
-      response.headers[:content_type] = TEXT_PLAIN
-      response.body = text.to_s
-    end
-
-    private def render_json(status, data)
-      response.status(status)
-      response.headers[:content_type] = APPLICATION_JSON
-      response.body = @_config.json_serializer.dump(data)
     end
   end
 end

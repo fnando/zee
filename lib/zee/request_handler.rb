@@ -26,7 +26,6 @@ module Zee
          .cpath_expected_at("app/controllers/#{controller_name}.rb")
       )
       controller = controller_class.new(
-        config: app.config,
         request:,
         response:,
         action_name:,
