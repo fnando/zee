@@ -128,7 +128,7 @@ module Zee
     # - {https://github.com/rack/rack/blob/main/lib/rack/tempfile_reaper.rb Rack::TempfileReaper}
     # @return [Zee::MiddlewareStack]
     def default_middleware_stack
-      MiddlewareStack.new.tap do |middleware|
+      MiddlewareStack.new(self).tap do |middleware|
         middleware.use Rack::Sendfile
         middleware.use Rack::Runtime
         middleware.use Rack::CommonLogger

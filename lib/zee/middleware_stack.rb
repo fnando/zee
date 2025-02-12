@@ -2,7 +2,15 @@
 
 module Zee
   class MiddlewareStack
-    def initialize
+    # The application instance.
+    # @return [Zee::App]
+    attr_reader :app
+
+    # Initialize the middleware stack.
+    # @param app [Zee::App] The application instance.
+    # @return [Zee::MiddlewareStack]
+    def initialize(app = nil)
+      @app = app
       @store = []
     end
 
