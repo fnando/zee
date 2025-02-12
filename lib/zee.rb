@@ -7,6 +7,7 @@ require "superconfig"
 require "forwardable"
 require "yaml"
 require "json"
+require "securerandom"
 
 module Zee
   require_relative "zee/constants"
