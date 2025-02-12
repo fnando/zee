@@ -24,5 +24,13 @@ module Controllers
     def redirect_open
       redirect_to "https://example.com", allow_other_host: true
     end
+
+    def custom_layout
+      render layout: "custom"
+    end
+
+    def no_layout
+      render layout: false
+    end
   end
 end

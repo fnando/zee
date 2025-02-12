@@ -84,4 +84,42 @@ class RenderTest < Minitest::Test
     refute_includes last_response.body, "Zee::UnsafeRedirectError"
     assert_equal "https://example.com", last_response.location
   end
+
+  test "renders default layout" do
+    get "/"
+
+    assert last_response.ok?
+    assert_includes last_response.body, "<title>My app</title>"
+    assert_includes last_response.content_type, "text/html"
+  end
+
+  test "renders controller layout" do
+    get "/controller-layout"
+
+    assert last_response.ok?
+    assert_includes last_response.body, "<title>My things layout</title>"
+    assert_includes last_response.body,
+                    "sample_app:app/views/things/show.html.erb"
+    assert_includes last_response.content_type, "text/html"
+  end
+
+  test "renders custom layout" do
+    get "/custom-layout"
+
+    assert last_response.ok?
+    assert_includes last_response.body, "<title>My custom layout</title>"
+    assert_includes last_response.body,
+                    "sample_app:app/views/pages/custom_layout.html.erb"
+    assert_includes last_response.content_type, "text/html"
+  end
+
+  test "renders no layout" do
+    get "/no-layout"
+
+    assert last_response.ok?
+    refute_includes last_response.body, "<title>"
+    assert_includes last_response.body,
+                    "sample_app:app/views/pages/no_layout.html.erb"
+    assert_includes last_response.content_type, "text/html"
+  end
 end
