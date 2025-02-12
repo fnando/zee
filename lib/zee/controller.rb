@@ -4,6 +4,9 @@ module Zee
   # Raised when a template is missing.
   MissingTemplateError = Class.new(StandardError)
 
+  # Raised when a redirect is unsafe.
+  UnsafeRedirectError = Class.new(StandardError)
+
   class Controller
     # The current action name.
     # @return [String]
@@ -110,6 +113,22 @@ module Zee
       response.status(status)
       response.headers[:content_type] = template_path[:mime]&.content_type
       response.body = Tilt.new(template_path[:path]).render(Object.new, locals)
+    end
+
+    def redirect_to(location, status: :found, allow_other_host: false)
+      raise ArgumentError, "location cannot be empty" if location.to_s.empty?
+
+      uri = URI(location)
+
+      if uri.host && uri.host != request.host && !allow_other_host
+        raise UnsafeRedirectError,
+              "Unsafe redirect; " \
+              "pass `allow_other_host: true` to redirect anyway."
+      end
+
+      response.status(status)
+      response.headers[:location] = location
+      response.body = ""
     end
 
     private def build_template_paths(mimes, template_handlers, base_path)

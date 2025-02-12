@@ -58,4 +58,30 @@ class RenderTest < Minitest::Test
     assert_equal expected, JSON.parse(last_response.body)
     assert_includes last_response.content_type, "application/json"
   end
+
+  test "redirects to page" do
+    get "/redirect"
+
+    assert last_response.redirect?
+    assert_equal "/", last_response.location
+    assert_equal 302, last_response.status
+  end
+
+  test "rejects open redirects by default" do
+    get "/redirect-error"
+
+    assert last_response.server_error?
+    assert_includes last_response.body,
+                    "Zee::UnsafeRedirectError: Unsafe redirect; " \
+                    "pass `allow_other_host: true` to redirect anyway."
+    assert_nil last_response.location
+  end
+
+  test "allows open redirect" do
+    get "/redirect-open"
+
+    assert last_response.redirect?
+    refute_includes last_response.body, "Zee::UnsafeRedirectError"
+    assert_equal "https://example.com", last_response.location
+  end
 end

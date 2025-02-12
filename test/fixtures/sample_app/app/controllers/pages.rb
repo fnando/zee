@@ -12,5 +12,17 @@ module Controllers
     def hello
       expose message: "Hello, World!"
     end
+
+    def redirect
+      redirect_to "/"
+    end
+
+    def redirect_error
+      redirect_to "https://example.com"
+    end
+
+    def redirect_open
+      redirect_to "https://example.com", allow_other_host: true
+    end
   end
 end
