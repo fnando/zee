@@ -41,7 +41,7 @@ class AppTest < Minitest::Test
   end
 
   test "reads secrets" do
-    Dir.chdir("test/fixtures/app") do
+    Dir.chdir("test/fixtures/sample_app") do
       app = Zee::App.new
 
       assert_equal "some-api-key", app.secrets.api_key
@@ -110,11 +110,7 @@ class AppTest < Minitest::Test
 
   test "sets default middleware stack" do
     ENV["ZEE_ENV"] = "test"
-    app = Zee::App.new do
-      config do
-        set :session_options, secret: SecureRandom.hex(64)
-      end
-    end
+    app = Zee::App.new
 
     assert_equal 9, app.middleware.to_a.size
   end

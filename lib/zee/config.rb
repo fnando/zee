@@ -18,6 +18,11 @@ module Zee
       @app = app
       block = proc { true }
       super(**, &block)
+      set_default_options
+    end
+
+    private def set_default_options
+      set :session_options, secret: SecureRandom.hex(64)
     end
 
     # @private

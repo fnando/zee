@@ -3,10 +3,14 @@
 require "test_helper"
 
 class SecretsTest < Minitest::Test
+  let(:root) { "test/fixtures/sample_app/config/secrets" }
+  let(:key) { "#{root}/development.key" }
+  let(:secrets_file) { "#{root}/development.yml.enc" }
+
   test "reads secrets from encrypted file" do
     secrets = Zee::Secrets.new(
-      key: File.read("test/fixtures/secrets/main.key"),
-      secrets_file: "test/fixtures/secrets/secrets.yml.enc"
+      key: File.read(key),
+      secrets_file:
     )
 
     assert_equal "some-api-key", secrets[:api_key]
@@ -16,24 +20,18 @@ class SecretsTest < Minitest::Test
 
   test "overrides to_s" do
     secrets = Zee::Secrets.new(
-      key: File.read("test/fixtures/secrets/main.key"),
-      secrets_file: "test/fixtures/secrets/secrets.yml.enc"
+      key: File.read(key),
+      secrets_file:
     )
 
-    assert_equal(
-      "#<Zee::Secrets secrets_file=test/fixtures/secrets/secrets.yml.enc>",
-      secrets.to_s
-    )
-    assert_equal(
-      "#<Zee::Secrets secrets_file=test/fixtures/secrets/secrets.yml.enc>",
-      secrets.inspect
-    )
+    assert_equal "#<Zee::Secrets secrets_file=#{secrets_file}>", secrets.to_s
+    assert_equal "#<Zee::Secrets secrets_file=#{secrets_file}>", secrets.inspect
   end
 
   test "implements respond_to?" do
     secrets = Zee::Secrets.new(
-      key: File.read("test/fixtures/secrets/main.key"),
-      secrets_file: "test/fixtures/secrets/secrets.yml.enc"
+      key: File.read(key),
+      secrets_file:
     )
 
     assert_respond_to secrets, :api_key

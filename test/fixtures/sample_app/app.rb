@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# SampleApp = Dir.chdir(__dir__) do
 SampleApp = Zee::App.new do
   self.root = Pathname(__dir__)
 
@@ -21,5 +22,6 @@ SampleApp = Zee::App.new do
         secret: SecureRandom.hex(64)
   end
 end
+# end
 
 SampleApp.initialize!

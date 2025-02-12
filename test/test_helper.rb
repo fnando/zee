@@ -17,6 +17,10 @@ Dir["#{__dir__}/support/**/*.rb"].each do |file|
   require file
 end
 
+Dir.chdir(File.join(__dir__, "fixtures/sample_app")) do
+  require_relative "fixtures/sample_app/app"
+end
+
 module Minitest
   class Test
     setup { FileUtils.rm_rf("tmp") }
