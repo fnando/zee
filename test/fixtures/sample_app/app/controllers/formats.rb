@@ -5,5 +5,9 @@ module Controllers
     def text
       render text: "Hello, World!"
     end
+
+    def json
+      render json: {message: "Hello, World!"}
+    end
   end
 end

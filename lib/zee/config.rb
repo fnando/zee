@@ -14,6 +14,19 @@ module Zee
     # @return [Zee::App]
     attr_reader :app
 
+    # Initialize the configuration.
+    # It sets the following default options:
+    #
+    # - `config.session_options`: the session cookie options.
+    # - `config.json_serializer`: the default JSON serializer.
+    # - `config.template_handlers`: the list of template handlers that are
+    #    enabled by {https://github.com/jeremyevans/tilt Tilt}.
+    #
+    # @param app [Zee::App] The application instance.
+    # @return [Zee::Config]
+    #
+    # @example
+    #   config = Zee::Config.new(app)
     def initialize(app = nil, **)
       @app = app
       block = proc { true }
@@ -23,6 +36,8 @@ module Zee
 
     private def set_default_options
       set :session_options, secret: SecureRandom.hex(64)
+      set :json_serializer, JSON
+      set :template_handlers, %w[erb]
     end
 
     # @private

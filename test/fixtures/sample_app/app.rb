@@ -9,6 +9,7 @@ SampleApp = Zee::App.new do
     get "missing-template", to: "pages#missing_template"
     get "hello", to: "pages#hello"
     get "text", to: "formats#text"
+    get "json", to: "formats#json"
     post "session", to: "sessions#create"
     get "session", to: "sessions#show"
     delete "session", to: "sessions#delete"

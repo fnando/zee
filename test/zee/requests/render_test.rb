@@ -48,4 +48,14 @@ class RenderTest < Minitest::Test
     assert_includes last_response.body, "Hello, World!"
     assert_includes last_response.content_type, "text/plain"
   end
+
+  test "renders json" do
+    get "/json"
+
+    expected = {"message" => "Hello, World!"}
+
+    assert last_response.ok?
+    assert_equal expected, JSON.parse(last_response.body)
+    assert_includes last_response.content_type, "application/json"
+  end
 end

@@ -21,7 +21,9 @@ module Zee
     # @return [Zee::Response]
     attr_reader :response
 
-    def initialize(request:, response:, action_name: nil, controller_name: nil)
+    def initialize(config:, request:, response:, action_name: nil,
+                   controller_name: nil)
+      @_config = config
       @request = request
       @response = response
       @action_name = action_name
@@ -72,12 +74,8 @@ module Zee
     # @example Render with a different status.
     #   render :show, status: :created
     def render(template_name = action_name, status: :ok, **options)
-      if options.key?(:text)
-        response.status(status)
-        response.headers[:content_type] = TEXT_PLAIN
-        response.body = options.delete(:text).to_s
-        return
-      end
+      return render_json(status, options.delete(:json)) if options.key?(:json)
+      return render_text(status, options.delete(:text)) if options.key?(:text)
 
       accept = request.env[HTTP_ACCEPT] || TEXT_HTML
       mimes = Rack::Utils
@@ -90,11 +88,12 @@ module Zee
       root = request.env[RACK_ZEE_APP].root
       base = root.join("app/views/#{controller_name}/#{template_name}")
 
-      # TODO: make template handlers configurable
-      handlers = %w[erb]
-
       # Get a list of files like `app/views/pages/home.html.erb`.
-      template_paths = build_template_paths(mimes, handlers, base)
+      template_paths = build_template_paths(
+        mimes,
+        @_config.template_handlers,
+        base
+      )
 
       # Find the first file that exists.
       template_path = template_paths.find {|tp| File.file?(tp[:path]) }
@@ -122,6 +121,18 @@ module Zee
           }
         end
       end
+    end
+
+    private def render_text(status, text)
+      response.status(status)
+      response.headers[:content_type] = TEXT_PLAIN
+      response.body = text.to_s
+    end
+
+    private def render_json(status, data)
+      response.status(status)
+      response.headers[:content_type] = APPLICATION_JSON
+      response.body = @_config.json_serializer.dump(data)
     end
   end
 end

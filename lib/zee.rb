@@ -6,6 +6,7 @@ require "tilt"
 require "superconfig"
 require "forwardable"
 require "yaml"
+require "json"
 
 module Zee
   require_relative "zee/constants"
