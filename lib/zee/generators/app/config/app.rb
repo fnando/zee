@@ -47,7 +47,8 @@ App = Zee::App.new do
     # Protects against DNS rebinding and other Host header attacks.
     # [https://github.com/sinatra/sinatra/blob/main/rack-protection/lib/rack/protection/host_authorization.rb]
     use Rack::Protection::HostAuthorization,
-        permitted_hosts: [app.config.domain]
+        permitted_hosts: [app.config.domain],
+        logging: false
 
     # Protects against protocol downgrade attacks and cookie hijacking.
     # [https://github.com/sinatra/sinatra/blob/main/rack-protection/lib/rack/protection/strict_transport.rb]
