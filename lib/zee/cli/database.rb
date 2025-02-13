@@ -4,6 +4,29 @@ module Zee
   class CLI < Command
     module Database
       class Helpers < CLI::Helpers
+        def dump_schema
+          connection.extension(:schema_dumper)
+
+          content = <<~CONTENT
+            # frozen_string_literal: true
+
+            # This file is auto-generated from the current state of the database.
+            #
+            # You can use `zee db:schema:load` to load the schema, which tends to
+            # be faster and is potentially less error prone than running all of your
+            # migrations from scratch. Old migrations may fail to apply correctly if
+            # those migrations use external dependencies or application code.
+            #
+            # It's strongly recommended that you check this file into your version
+            # control system.
+            #{connection.dump_schema_migration.chomp}
+          CONTENT
+
+          content.gsub!(/^ +$/, "")
+
+          File.write("db/schema.rb", content)
+        end
+
         def connection
           @connection ||= Sequel.connect(connection_string, logger:)
         end
@@ -62,6 +85,19 @@ module Zee
         end
 
         base.class_eval do
+          define_common_options = lambda do
+            option :env,
+                   type: :string,
+                   default: "development",
+                   desc: "Set the environment",
+                   aliases: "-e",
+                   enum: %w[development test production]
+            option :connection_string,
+                   type: :string,
+                   desc: "Set the connection string",
+                   aliases: "-c"
+          end
+
           class_option :verbose,
                        type: :boolean,
                        default: false,
@@ -69,26 +105,42 @@ module Zee
                        aliases: "-v"
 
           desc "db:migrate", "Migrate the database"
-          option :env,
-                 type: :string,
-                 default: "development",
-                 desc: "Set the environment",
-                 aliases: "-e",
-                 enum: %w[development test production]
-          option :connection_string,
-                 type: :string,
-                 desc: "Set the connection string",
-                 aliases: "-c"
+          define_common_options.call
           define_method :"db:migrate" do
             Sequel.extension :migration, :core_extensions
             Sequel::Migrator.apply(
               db_helpers.connection,
               File.join(Dir.pwd, "db/migrations")
             )
+            db_helpers.dump_schema
           rescue Sequel::Migrator::Error => error
             # :nocov:
             raise Thor::Error, set_color("ERROR: #{error.message}", :red)
             # :nocov:
+          end
+
+          desc "db:schema:dump", "Dump the current database schema"
+          define_common_options.call
+          define_method :"db:schema:dump" do
+            db_helpers.dump_schema
+          end
+
+          desc "db:schema:load", "Load the database schema"
+          define_common_options.call
+          define_method :"db:schema:load" do
+            Sequel.extension :migration, :core_extensions
+
+            contents = File.read(File.join(Dir.pwd, "db/schema.rb"))
+            contents.gsub!(
+              "Sequel.migration",
+              "DatabaseSchema = Sequel.migration"
+            )
+            eval(contents) # rubocop:disable Security/Eval
+            DatabaseSchema.apply(db_helpers.connection, :up)
+            rows = Dir[File.join(Dir.pwd, "db/migrations/*.rb")]
+                   .map { {filename: File.basename(_1)} }
+
+            db_helpers.connection[:schema_migrations].multi_insert(rows)
           end
         end
       end
