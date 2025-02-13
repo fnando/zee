@@ -122,4 +122,20 @@ class RenderTest < Minitest::Test
                     "sample_app:app/views/pages/no_layout.html.erb"
     assert_includes last_response.content_type, "text/html"
   end
+
+  test "renders any available template when accepting `*/*`" do
+    get "/", {}, "HTTP_ACCEPT" => "*/*"
+
+    assert last_response.ok?
+    assert_includes last_response.body, "<title>My app</title>"
+    assert_includes last_response.content_type, "text/html"
+  end
+
+  test "renders html when no accept header is provided" do
+    get "/", {}, "HTTP_ACCEPT" => ""
+
+    assert last_response.ok?
+    assert_includes last_response.body, "<title>My app</title>"
+    assert_includes last_response.content_type, "text/html"
+  end
 end

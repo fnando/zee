@@ -26,10 +26,12 @@ module Zee
     # @example Render with a custom layout.
     #   render :home, layout: :custom
     def render(template_name = action_name, status: :ok, layout: nil, **options)
+      app = request.env[RACK_ZEE_APP]
+
       return render_json(status, options.delete(:json)) if options.key?(:json)
       return render_text(status, options.delete(:text)) if options.key?(:text)
 
-      accept = request.env[HTTP_ACCEPT] || TEXT_HTML
+      accept = (request.env[HTTP_ACCEPT] || TEXT_HTML).to_s.strip
       mimes = Rack::Utils
               .q_values(accept)
               .sort_by(&:last)
@@ -37,7 +39,17 @@ module Zee
               .map { MiniMime.lookup_by_content_type(_1.first) }
               .compact
 
-      app = request.env[RACK_ZEE_APP]
+      if accept == HTTP_ACCEPT_ALL || accept.empty?
+        # Try to find all possible mimes based on templates that exist.
+        mimes = app.root
+                   .glob("app/views/#{controller_name}/#{template_name}.*.*")
+                   .flat_map { _1.basename.to_s.split(".")[1] }
+                   .map { MiniMime.lookup_by_extension(_1) }
+
+        # If no mimes are found, then default to HTML.
+        mimes = [MiniMime.lookup_by_extension(HTML)] if mimes.empty?
+      end
+
       root = app.root
       view_base = root.join("app/views/#{controller_name}/#{template_name}")
       layout_bases = [

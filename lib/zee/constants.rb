@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 module Zee
+  HTML = "html"
+  HTTP_ACCEPT_ALL = "*/*"
   RACK_ZEE_APP = "zee.app"
   HTTP_ACCEPT = "HTTP_ACCEPT"
   TEXT_HTML = "text/html"
