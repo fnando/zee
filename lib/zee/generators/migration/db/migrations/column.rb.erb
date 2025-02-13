@@ -1,0 +1,20 @@
+# frozen_string_literal: true
+
+# About migrations:
+# - https://sequel.jeremyevans.net/rdoc/files/doc/schema_modification_rdoc.html
+# - https://sequel.jeremyevans.net/rdoc/files/doc/migration_rdoc.html
+Sequel.migration do
+  change do
+    alter_table :<%= locals[:table_name] %> do
+      <%- if locals[:operation] == :add_column -%>
+      <%- locals[:fields].each do |field| -%>
+      <%= locals[:operation] %> <%= "#{field.name.to_sym.inspect}, #{field.sequel_type}" %><%= ", #{field.options.inspect[1..-2]}" if field.options.any? %>
+      <%- end -%>
+      <%- else -%>
+      <%- locals[:column].each do |column| -%>
+      <%= locals[:operation] %> <%= column.to_sym.inspect %>
+      <%- end -%>
+      <%- end -%>
+    end
+  end
+end

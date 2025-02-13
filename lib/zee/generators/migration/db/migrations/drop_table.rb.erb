@@ -1,0 +1,12 @@
+# frozen_string_literal: true
+
+# About migrations:
+# - https://sequel.jeremyevans.net/rdoc/files/doc/schema_modification_rdoc.html
+# - https://sequel.jeremyevans.net/rdoc/files/doc/migration_rdoc.html
+Sequel.migration do
+  change do
+    <%- locals[:table_name].each do |table_name| -%>
+    <%= locals[:operation] %> :<%= table_name %>
+    <%- end -%>
+  end
+end

@@ -34,6 +34,10 @@ module Zee
         create_file "db/migrations/.keep"
       end
 
+      def models
+        create_file "app/models/.keep"
+      end
+
       def controllers
         copy_file "app/controllers/base.rb"
         copy_file "app/controllers/pages.rb"
