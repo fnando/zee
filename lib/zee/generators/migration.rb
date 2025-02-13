@@ -57,6 +57,11 @@ module Zee
           migration_file
         end
 
+        def render_options(options)
+          # TODO: remove this replace when support for ruby3.3 is dropped.
+          options.inspect.gsub(/:(\w+)=>/, "\\1: ")[1..-2]
+        end
+
         def parse_name(name, fields)
           default = {
             file: nil,

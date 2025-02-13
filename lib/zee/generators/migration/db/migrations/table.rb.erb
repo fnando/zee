@@ -7,7 +7,7 @@ Sequel.migration do
   change do
     <%= locals[:operation] %> :<%= locals[:table_name] %> do
       <%- locals[:fields].each do |field| -%>
-      <%= field.sequel_type %> :<%= field.name %><%= ", #{field.options.inspect[1..-2]}" if field.options.any? %>
+      <%= field.sequel_type %> :<%= field.name %><%= ", #{render_options(field.options)}" if field.options.any? %>
       <%- end -%>
     end
   end

@@ -62,4 +62,76 @@ class DatabaseTest < Minitest::Test
     assert_path_exists "tmp/storage/development.db"
     assert_includes out, "CREATE TABLE `users`"
   end
+
+  test "dumps database schema" do
+    ENV["DATABASE_URL"] = "sqlite://storage/development.db"
+    exit_code = nil
+
+    Dir.chdir("tmp") do
+      capture { Zee::CLI.start(%w[generate migration create_users]) }
+    end
+
+    Dir.chdir("tmp") do
+      migration_file = Pathname(Dir["db/migrations/*.rb"].first)
+
+      migration_file.write <<~RUBY
+        Sequel.migration do
+          change do
+            create_table(:users) do
+              primary_key :id
+            end
+          end
+        end
+      RUBY
+
+      capture { Zee::CLI.start(%w[db:migrate --verbose]) }
+      capture { Zee::CLI.start(%w[db:schema:dump]) } => {exit_code:}
+    end
+
+    # TODO: remove this replace when support for ruby3.3 is dropped.
+    actual_schema = File.read("tmp/db/schema.rb")
+                        .gsub(/:(\w+)=>/, "\\1: ")
+
+    assert_equal 0, exit_code
+    assert_path_exists "tmp/db/schema.rb"
+    assert_equal File.read("test/fixtures/schema.rb"),
+                 actual_schema
+  end
+
+  test "loads database schema" do
+    ENV["DATABASE_URL"] = "sqlite://storage/development.db"
+    exit_code = nil
+
+    Dir.chdir("tmp") do
+      capture { Zee::CLI.start(%w[generate migration create_users]) }
+    end
+
+    Dir.chdir("tmp") do
+      migration_file = Pathname(Dir["db/migrations/*.rb"].first)
+
+      migration_file.write <<~RUBY
+        Sequel.migration do
+          change do
+            create_table(:users) do
+              primary_key :id
+            end
+          end
+        end
+      RUBY
+
+      capture { Zee::CLI.start(%w[db:migrate --verbose]) }
+      capture { Zee::CLI.start(%w[db:schema:dump]) }
+      FileUtils.rm("storage/development.db")
+      capture { Zee::CLI.start(%w[db:schema:load]) } => {exit_code:}
+    end
+
+    assert_equal 0, exit_code
+    assert_path_exists "tmp/db/schema.rb"
+    assert_path_exists "tmp/storage/development.db"
+
+    db = Sequel.connect("sqlite://tmp/storage/development.db")
+    migration_name = db[:schema_migrations].first[:filename]
+
+    assert_match(/_create_users\.rb$/, migration_name)
+  end
 end
