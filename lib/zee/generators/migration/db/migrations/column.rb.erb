@@ -8,7 +8,7 @@ Sequel.migration do
     alter_table :<%= locals[:table_name] %> do
       <%- if locals[:operation] == :add_column -%>
       <%- locals[:fields].each do |field| -%>
-      <%= locals[:operation] %> <%= "#{field.name.to_sym.inspect}, #{field.sequel_type}" %><%= ", #{field.options.inspect[1..-2]}" if field.options.any? %>
+      <%= locals[:operation] %> <%= "#{field.name.to_sym.inspect}, #{field.sequel_type}" %><%= ", #{render_options(field.options)}" if field.options.any? %>
       <%- end -%>
       <%- else -%>
       <%- locals[:column].each do |column| -%>
