@@ -11,13 +11,7 @@ class DatabaseTest < Minitest::Test
     err = ""
 
     Dir.chdir("tmp") do
-      capture do
-        Zee::CLI.start([
-          "generate",
-          "migration",
-          "--name", "create_users"
-        ])
-      end
+      capture { Zee::CLI.start(%w[generate migration create_users]) }
 
       migration_file = Pathname(Dir["db/migrations/*.rb"].first)
 
@@ -45,9 +39,7 @@ class DatabaseTest < Minitest::Test
     out = ""
 
     Dir.chdir("tmp") do
-      capture do
-        Zee::CLI.start(["generate", "migration", "--name", "create_users"])
-      end
+      capture { Zee::CLI.start(%w[generate migration create_users]) }
     end
 
     Dir.chdir("tmp") do

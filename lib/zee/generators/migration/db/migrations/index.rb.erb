@@ -1,0 +1,12 @@
+# frozen_string_literal: true
+
+# About migrations:
+# - https://sequel.jeremyevans.net/rdoc/files/doc/schema_modification_rdoc.html
+# - https://sequel.jeremyevans.net/rdoc/files/doc/migration_rdoc.html
+Sequel.migration do
+  change do
+    alter_table :<%= locals[:table_name] %> do
+      <%= locals[:operation] %> <%= locals[:column].size > 1 ? "%i[#{locals[:column].join(" ")}]" : locals[:column].first.inspect %>
+    end
+  end
+end
