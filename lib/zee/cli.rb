@@ -56,7 +56,7 @@ module Zee
       generator.invoke_all
     end
 
-    desc "console", "Start a console"
+    desc "console", "Start a console (alias: c)"
     option :env,
            type: :string,
            default: "development",
@@ -92,7 +92,7 @@ module Zee
     end
     # :nocov:
 
-    desc "generate SUBCOMMAND", "Generate new code"
+    desc "generate SUBCOMMAND", "Generate new code (alias: g)"
     subcommand "generate", Generate
 
     no_commands do

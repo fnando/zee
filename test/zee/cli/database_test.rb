@@ -94,8 +94,7 @@ class DatabaseTest < Minitest::Test
 
     assert_equal 0, exit_code
     assert_path_exists "tmp/db/schema.rb"
-    assert_equal File.read("test/fixtures/schema.rb"),
-                 actual_schema
+    assert_equal File.read("test/fixtures/schema.rb"), actual_schema
   end
 
   test "loads database schema" do
@@ -132,6 +131,70 @@ class DatabaseTest < Minitest::Test
     db = Sequel.connect("sqlite://tmp/storage/development.db")
     migration_name = db[:schema_migrations].first[:filename]
 
+    assert_match(/_create_users\.rb$/, migration_name)
+  end
+
+  test "undoes schema" do
+    ENV["DATABASE_URL"] = "sqlite://storage/development.db"
+    exit_code = nil
+
+    Dir.chdir("tmp") do
+      capture { Zee::CLI.start(%w[generate migration create_users]) }
+    end
+
+    Dir.chdir("tmp") do
+      migration_file = Pathname(Dir["db/migrations/*.rb"].first)
+
+      migration_file.write <<~RUBY
+        Sequel.migration do
+          change do
+            create_table(:users) do
+              primary_key :id
+            end
+          end
+        end
+      RUBY
+
+      capture { Zee::CLI.start(%w[db:migrate]) }
+      capture { Zee::CLI.start(%w[db:undo]) } => {exit_code:}
+    end
+
+    db = Sequel.connect("sqlite://tmp/storage/development.db")
+
+    assert_equal 0, exit_code
+    assert_empty db[:schema_migrations].all
+    refute_includes File.read("tmp/db/schema.rb"), "Sequel.migrate"
+  end
+
+  test "redoes schema" do
+    ENV["DATABASE_URL"] = "sqlite://storage/development.db"
+    exit_code = nil
+
+    Dir.chdir("tmp") do
+      capture { Zee::CLI.start(%w[generate migration create_users]) }
+    end
+
+    Dir.chdir("tmp") do
+      migration_file = Pathname(Dir["db/migrations/*.rb"].first)
+
+      migration_file.write <<~RUBY
+        Sequel.migration do
+          change do
+            create_table(:users) do
+              primary_key :id
+            end
+          end
+        end
+      RUBY
+
+      capture { Zee::CLI.start(%w[db:migrate]) }
+      capture { Zee::CLI.start(%w[db:redo]) } => {exit_code:}
+    end
+
+    db = Sequel.connect("sqlite://tmp/storage/development.db")
+    migration_name = db[:schema_migrations].first[:filename]
+
+    assert_equal 0, exit_code
     assert_match(/_create_users\.rb$/, migration_name)
   end
 end

@@ -4,6 +4,17 @@ module Zee
   class CLI < Command
     module Database
       class Helpers < CLI::Helpers
+        def migrations_dir
+          Pathname("db/migrations")
+        end
+
+        def applied_migrations
+          connection[:schema_migrations]
+            .all
+            .map { _1[:filename] }
+            .sort
+        end
+
         def dump_schema
           connection.extension(:schema_dumper)
 
@@ -19,7 +30,7 @@ module Zee
             #
             # It's strongly recommended that you check this file into your version
             # control system.
-            #{connection.dump_schema_migration.chomp}
+            #{connection.dump_schema_migration.chomp if applied_migrations.any?}
           CONTENT
 
           content.gsub!(/^ +$/, "")
@@ -108,7 +119,7 @@ module Zee
           define_common_options.call
           define_method :"db:migrate" do
             Sequel.extension :migration, :core_extensions
-            Sequel::Migrator.apply(
+            Sequel::TimestampMigrator.apply(
               db_helpers.connection,
               File.join(Dir.pwd, "db/migrations")
             )
@@ -141,6 +152,32 @@ module Zee
                    .map { {filename: File.basename(_1)} }
 
             db_helpers.connection[:schema_migrations].multi_insert(rows)
+          end
+
+          desc "db:undo", "Rollback to the previous schema (alias: db:rollback)"
+          define_common_options.call
+          define_method :"db:undo" do
+            Sequel.extension :migration, :core_extensions
+            filenames = db_helpers
+                        .connection[:schema_migrations]
+                        .map {|opts| opts[:filename] }
+                        .sort
+
+            return if filenames.empty?
+
+            Sequel::TimestampMigrator.run_single(
+              db_helpers.connection,
+              db_helpers.migrations_dir.join(filenames.last),
+              direction: :down
+            )
+            db_helpers.dump_schema
+          end
+
+          desc "db:redo", "Re-apply the current migration"
+          define_common_options.call
+          define_method :"db:redo" do
+            public_send :"db:undo"
+            public_send :"db:migrate"
           end
         end
       end
