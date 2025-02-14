@@ -2,4 +2,13 @@
 # frozen_string_literal: true
 
 require_relative "../lib/zee/cli"
+
+aliases = {
+  "c" => "create",
+  "g" => "generate",
+  "db:rollback" => "db:undo"
+}
+
+ARGV[0] = aliases[ARGV[0]] if aliases[ARGV[0]]
+
 Zee::CLI.start
