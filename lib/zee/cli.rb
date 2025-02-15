@@ -168,12 +168,11 @@ module Zee
       ARGV.push("--name", options[:test]) if options[:test]
       ARGV.push("--seed", options[:seed]) if options[:seed]
 
-      require "minitest/autorun"
-
       if files.empty?
         raise Thor::Error, set_color("ERROR: No test files found.", :red)
       end
 
+      require "./test/test_helper" if File.file?("test/test_helper.rb")
       files.each { require _1 }
     end
 
