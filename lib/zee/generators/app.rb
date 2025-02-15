@@ -70,6 +70,11 @@ module Zee
 
         in_root do
           run "bundle install"
+          run "bundle lock --add-platform=x86_64-linux"
+
+          if RUBY_PLATFORM.start_with?("arm64")
+            run "bundle lock --add-platform=aarch64-linux"
+          end
         end
       end
 
