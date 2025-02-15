@@ -35,6 +35,10 @@ class GenerateTest < Minitest::Test
 
     assert_path_exists app.join("db/migrations/#{timestamp}_create_users.rb")
     assert_includes out, "db/migrations/#{timestamp}_create_users.rb"
+    assert_includes app.join("db/migrations/#{timestamp}_create_users.rb").read,
+                    "create_table :users do"
+    assert_includes app.join("db/migrations/#{timestamp}_create_users.rb").read,
+                    "primary_key :id"
     assert_path_exists app.join("app/models/user.rb")
     assert_includes out, "app/models/user.rb"
   end

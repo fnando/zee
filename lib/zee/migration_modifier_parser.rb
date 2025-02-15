@@ -9,6 +9,7 @@ module Zee
     NULL_VALUES = [nil, "true"].freeze
 
     FIELD_MAPPING = {
+      primary_key: ["primary_key"],
       integer: ["Integer", {}],
       string: ["String", {}],
       text: ["String", {text: true}],

@@ -19,6 +19,8 @@ module Zee
         name = name.tr("-", "_").gsub(/s$/, "")
         model_name = name.split("_").map(&:capitalize).join
 
+        fields << "id:primary_key" unless fields.any? { _1.start_with?("id:") }
+
         begin
           mod = Module.new
           mod.const_set(model_name, nil)

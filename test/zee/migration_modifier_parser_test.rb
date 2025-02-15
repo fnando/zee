@@ -29,6 +29,14 @@ class MigrationModifierParserTest < Minitest::Test
     assert_equal "Invalid modifier: \"name:string:invalid\"", error.message
   end
 
+  test "parses id:primary_key" do
+    field = Zee::MigrationModifierParser.call("id:primary_key")
+
+    assert_equal "id", field.name
+    assert_equal "primary_key", field.sequel_type
+    assert_empty field.options
+  end
+
   test "parses name:type" do
     field = Zee::MigrationModifierParser.call("name:string")
 
