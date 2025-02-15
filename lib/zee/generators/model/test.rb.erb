@@ -1,0 +1,9 @@
+# frozen_string_literal: true
+
+module Models
+  class <%= options[:model_name] %>Test < Minitest::Test
+    test "returns model class name" do
+      assert_equal "Models::<%= options[:model_name] %>", Models::<%= options[:model_name] %>.name
+    end
+  end
+end

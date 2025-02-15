@@ -50,7 +50,9 @@ module Zee
     def mandatory(*, **)
       super
     rescue SuperConfig::MissingEnvironmentVariable => error
+      # :nocov:
       raise MissingEnvironmentVariable, error.message
+      # :nocov:
     end
 
     # @private
@@ -59,6 +61,13 @@ module Zee
     rescue SuperConfig::MissingCallable
       raise MissingCallable,
             "arg[1] must respond to #call or a block must be provided"
+    end
+
+    # @private
+    def validate!(*)
+      super
+    rescue SuperConfig::MissingEnvironmentVariable => error
+      raise MissingEnvironmentVariable, error.message
     end
   end
 end

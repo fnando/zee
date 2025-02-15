@@ -61,6 +61,14 @@ group :development do
   # [https://github.com/rubocop/rubocop]
   gem "rubocop"
 
+  # Automatic Minitest code style checking tool.
+  # [https://rubygems.org/gems/rubocop-minitest]
+  gem "rubocop-minitest"
+
+  # A Sequel plugin for RuboCop
+  # [https://github.com/rubocop/rubocop-sequel]
+  gem "rubocop-sequel"
+
   # Ruby Style Guide, with linter & automatic code fixer
   # [https://github.com/standardrb/standard]
   gem "standard"
@@ -77,4 +85,10 @@ group :development do
   # Automatic performance checking tool for Ruby code.
   # [https://github.com/rubocop/rubocop-performance]
   gem "rubocop-performance"
+end
+
+group :test do
+  # Some utilities for your Minitest day-to-day usage.
+  # [http://github.com/fnando/minitest-utils]
+  gem "minitest-utils"
 end

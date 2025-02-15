@@ -36,8 +36,38 @@ module Zee
       @before_run_hooks ||= Hash.new {|h, k| h[k] = [] }
     end
 
+    def self.load_dotenv_files(*files)
+      require "dotenv"
+      Dotenv.load(*files)
+    rescue LoadError
+      # :nocov:
+      if files.any? {|file| File.exist?(file) }
+        raise Thor::Error,
+              set_color(
+                "ERROR: to use a dotenv file, add `gem \"dotenv\"` " \
+                "to your Gemfile",
+                :red
+              )
+      end
+
+      Dotenv.load(*files) if defined?(Dotenv)
+      # :nocov:
+    end
+
     include Database
     include Secrets
+
+    def self.handle_no_command_error(command, *)
+      bin = "./bin/#{command}" unless command == "zee"
+
+      return system(bin, *ARGV) if bin && File.exist?(bin)
+
+      shell = Thor::Base.shell.new
+      shell.say_error "ERROR: Could not find command `#{command}`.\n\n", :red
+      help(shell)
+
+      exit 1
+    end
 
     desc "new PATH", "Create a new app"
     option :skip_bundle, type: :boolean,
@@ -94,6 +124,67 @@ module Zee
 
     desc "generate SUBCOMMAND", "Generate new code (alias: g)"
     subcommand "generate", Generate
+
+    desc "test [FILE...]", "Run tests"
+    option :test,
+           type: :string,
+           aliases: "-t",
+           desc: "Run tests that match this name. " \
+                 "Use a full test name (e.g. test_do_something) or a regular " \
+                 "expression (e.g /something/)."
+    option :seed,
+           type: :string,
+           aliases: "-s",
+           desc: "Set a specific seed"
+    def test(*files)
+      cmd = [
+        "bin/zee test %{location} -t %{name}",
+        ("-s #{options[:seed]}" if options[:seed])
+      ].compact.join(" ").strip
+
+      $LOAD_PATH << File.join(Dir.pwd, "test")
+
+      ENV["MINITEST_TEST_COMMAND"] = cmd
+      ENV["ZEE_ENV"] = "test"
+      CLI.load_dotenv_files(".env.test", ".env")
+      ARGV.clear
+
+      files = files.map { File.expand_path(_1) }
+      pattern = ["./test/**/*_test.rb"]
+      pattern = files if files.any?
+      files = Dir[*pattern]
+
+      ARGV.push("--name", options[:test]) if options[:test]
+      ARGV.push("--seed", options[:seed]) if options[:seed]
+
+      require "minitest/autorun"
+
+      if files.empty?
+        raise Thor::Error, set_color("ERROR: No test files found.", :red)
+      end
+
+      files.each { require _1 }
+    end
+
+    desc "dev", "Start the dev server (requires ./bin/dev)"
+    # :nocov:
+    def dev
+      pid = Process.spawn("./bin/dev")
+      signals = %w[INT]
+
+      signals.each do |signal|
+        Signal.trap(signal) do
+          Process.kill(signal, pid)
+        rescue Errno::ESRCH
+          # Process already gone
+        end
+      rescue ArgumentError
+        # Skip signals that can't be trapped
+      end
+
+      Process.wait(pid)
+    end
+    # :nocov:
 
     no_commands do
       def db_helpers

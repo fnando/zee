@@ -22,6 +22,7 @@ module Zee
       def files
         copy_file ".gitignore"
         copy_file "bin/dev"
+        copy_file "bin/zee"
         copy_file "tmp/.keep"
         copy_file "config/app.rb"
         copy_file "config/boot.rb"
@@ -56,6 +57,7 @@ module Zee
       def permissions
         in_root do
           FileUtils.chmod(0o755, "bin/dev")
+          FileUtils.chmod(0o755, "bin/zee")
         end
       end
 

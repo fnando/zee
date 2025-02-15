@@ -3,6 +3,16 @@
 require "test_helper"
 
 class ConfigTest < Minitest::Test
+  test "raises exception for missing mandatory var" do
+    error = assert_raises(Zee::Config::MissingEnvironmentVariable) do
+      Zee::Config.new(env: {}).instance_eval do
+        mandatory :foo, string
+      end
+    end
+
+    assert_equal "FOO is not defined.", error.message
+  end
+
   test "overrides to_s" do
     config = Zee::Config.new(env: {})
 

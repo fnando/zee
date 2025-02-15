@@ -13,6 +13,7 @@ module Zee
 
       def templates
         template "model.rb.erb", "app/models/#{options[:file_name]}.rb"
+        template "test.rb.erb", "test/models/#{options[:file_name]}_test.rb"
       end
     end
   end

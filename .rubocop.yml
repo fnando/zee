@@ -9,6 +9,7 @@ AllCops:
     - vendor/**/*
     - gemfiles/**/*
     - test/fixtures/app/**/*
+    - test/fixtures/sample_app/**/*
 
 Naming/FileName:
   Exclude:

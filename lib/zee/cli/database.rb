@@ -59,25 +59,7 @@ module Zee
 
         def compute_connection_string
           dotenvs = [".env.#{env}", ".env"]
-
-          return ENV["DATABASE_URL"] if ENV["DATABASE_URL"]
-
-          begin
-            require "dotenv"
-          rescue LoadError
-            # :nocov:
-            if dotenvs.any? {|file| File.exist?(file) }
-              raise Thor::Error,
-                    set_color(
-                      "ERROR: to use a dotenv file, add `gem \"dotenv\"` " \
-                      "to your Gemfile",
-                      :red
-                    )
-            end
-            # :nocov:
-          end
-
-          Dotenv.load(*dotenvs) if defined?(Dotenv)
+          CLI.load_dotenv_files(*dotenvs)
 
           return ENV["DATABASE_URL"] if ENV["DATABASE_URL"]
 

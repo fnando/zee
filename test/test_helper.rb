@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
 require "simplecov"
-SimpleCov.start
+SimpleCov.start do
+  add_filter(/fixtures/)
+end
 
 require "bundler/setup"
 require "zee"
@@ -37,12 +39,6 @@ module Minitest
       end
 
       {out:, err:, exit_code:}
-    end
-
-    def capture_exit(&)
-      yield
-    rescue SystemExit => error
-      error.status
     end
   end
 end
