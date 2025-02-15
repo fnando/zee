@@ -84,6 +84,17 @@ module Zee
       generator.destination_root = File.expand_path(path)
       generator.options = options
       generator.invoke_all
+
+      say "\n==========", :red
+      say "Important!", :red
+      say "==========", :red
+      say "We generated encryption keys at config/secrets/*.key"
+      say "Save this in a password manager your team can access."
+      say "Without the key, no one, including you, " \
+          "can access the encrypted credentiails."
+
+      say "\nTo start the app, run:"
+      say "  bin/zee dev"
     end
 
     desc "console", "Start a console (alias: c)"

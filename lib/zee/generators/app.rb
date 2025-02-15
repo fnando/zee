@@ -69,19 +69,6 @@ module Zee
         end
       end
 
-      def instructions
-        say "\n==========", :red
-        say "Important!", :red
-        say "==========", :red
-        say "We generated encryption keys at config/secrets/*.key"
-        say "Save this in a password manager your team can access."
-        say "Without the key, no one, including you, " \
-            "can access the encrypted credentiails."
-
-        say "\nTo start the app, run:"
-        say "  bin/dev"
-      end
-
       no_commands do
         def create_key(env)
           key = SecureRandom.hex(16)
