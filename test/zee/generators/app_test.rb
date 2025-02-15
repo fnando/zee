@@ -34,6 +34,7 @@ class AppTest < Minitest::Test
     assert app.join("Gemfile").file?
     assert app.join("Procfile.dev").file?
     assert app.join("tmp/.keep").file?
+    assert app.join("test/test_helper.rb").file?
     assert_equal RUBY_VERSION, app.join(".ruby-version").read.chomp
     assert_includes out, "bundle install"
     assert app.join("bin/dev").executable?

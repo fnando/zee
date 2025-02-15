@@ -29,6 +29,7 @@ module Zee
         copy_file "config/puma.rb"
         copy_file "config/routes.rb"
         copy_file "Procfile.dev"
+        copy_file "test/test_helper.rb"
         copy_file "config.ru"
         copy_file "config/environment.rb"
         create_file "storage/.keep"
