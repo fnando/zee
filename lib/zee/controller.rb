@@ -33,6 +33,12 @@ module Zee
       @controller_name = controller_name
     end
 
+    # The parameters from the request.
+    # @return [Hash]
+    def params
+      request.params
+    end
+
     # The variables that will be exposed to templates.
     # @return [Hash]
     #
@@ -52,7 +58,7 @@ module Zee
 
     # The session hash.
     def session
-      @session ||= request.env[RACK_SESSION]
+      request.env[RACK_SESSION]
     end
 
     # Reset the session.

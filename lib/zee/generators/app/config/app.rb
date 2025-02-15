@@ -24,14 +24,7 @@ App = Zee::App.new do
 
     # Set the session options.
     # The session secret can be edited with `zee secrets:edit`.
-    set :session_options,
-        domain:,
-        path: "/",
-        expire_after: 86_400 * 30, # 30 days
-        secret: app.secrets.session_secret,
-        same_site: :strict,
-        secure: app.env.production?,
-        key: "_zee_session"
+    set :session_options, domain:
   end
 
   middleware do

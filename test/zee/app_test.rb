@@ -7,6 +7,16 @@ class AppTest < Minitest::Test
     Zee::ENV_NAMES.each {|name| ENV.delete(name) }
   end
 
+  test "sets root" do
+    app = Zee::App.new { root("/tmp") }
+
+    assert_equal "/tmp", app.root.to_s
+
+    app = Zee::App.new { self.root = "/tmp" }
+
+    assert_equal "/tmp", app.root.to_s
+  end
+
   test "uses ZEE_ENV as the env value" do
     ENV["ZEE_ENV"] = "production"
 
@@ -111,7 +121,18 @@ class AppTest < Minitest::Test
   test "sets default middleware stack" do
     ENV["ZEE_ENV"] = "test"
     app = Zee::App.new
+    stack = app.middleware.to_a.map(&:first)
 
-    assert_equal 9, app.middleware.to_a.size
+    assert_equal Rack::Sendfile, stack[0]
+    assert_equal Rack::Runtime, stack[1]
+    assert_equal Rack::CommonLogger, stack[2]
+    assert_equal Rack::Protection, stack[3]
+    assert_equal Zee::Middleware::Static, stack[4]
+    assert_equal Rack::Session::Cookie, stack[5]
+    assert_equal Rack::Head, stack[6]
+    assert_equal Rack::ConditionalGet, stack[7]
+    assert_equal Rack::ETag, stack[8]
+    assert_equal Rack::TempfileReaper, stack[9]
+    assert_equal 10, stack.size
   end
 end

@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
-# SampleApp = Dir.chdir(__dir__) do
 SampleApp = Zee::App.new do
-  self.root = Pathname(__dir__)
+  root Pathname(__dir__)
 
   routes do
     root to: "pages#home"
@@ -23,12 +22,7 @@ SampleApp = Zee::App.new do
 
   middleware do
     delete Rack::CommonLogger
-
-    use Rack::Session::Cookie,
-        key: Zee::ZEE_SESSION_KEY,
-        secret: SecureRandom.hex(64)
   end
 end
-# end
 
 SampleApp.initialize!

@@ -5,9 +5,6 @@ module Zee
     # This error is raised whenever the app is initialized more than once.
     AlreadyInitializedError = Class.new(StandardError)
 
-    # The root path of the application.
-    attr_accessor :root
-
     # The current environment. Defaults to "development".
     # It can be set using the following environment variables:
     #
@@ -21,9 +18,24 @@ module Zee
     def initialize(&)
       @initialized = false
       @on_init = []
-      self.root = Pathname.pwd
+      @root = Pathname.pwd
       self.env = compute_env
       instance_eval(&) if block_given?
+    end
+
+    # When `path` is set, defines the root directory of the application.
+    # Always returns the root directory.
+    #
+    # @param path [String, Pathname]
+    def root(path = nil)
+      @root = Pathname(path) if path
+      @root
+    end
+
+    # Alias for {#root}.
+    # @param path [String, Pathname]
+    def root=(path)
+      root(path)
     end
 
     # Lazily evaluate a block only when the app is initialized.
@@ -114,18 +126,57 @@ module Zee
       @middleware
     end
 
+    # The default session options.
+    # This is the default configuration for the session cookie:
+    #
+    # - `secret`: The session secret. Uses `config.secrets[:session_secret]` if
+    #   available, or a random 32-chars long string otherwise.
+    # - `path`: The path where the session cookie is available. Defaults to `/`.
+    # - `same_site`: The SameSite attribute for the session cookie. Defaults to
+    #   `:strict`.
+    # - `expire_after`: The expiration time for the session cookie. Defaults to
+    #   30 days.
+    # - `http_only`: The HttpOnly attribute for the session cookie. Defaults to
+    #   `true`.
+    # - `secure`: The Secure attribute for the session cookie. Defaults to
+    #   `true` in production, `false` otherwise.
+    #
+    # @return [Hash]
+    def default_session_options
+      secret = begin
+        secrets[:session_secret]
+      rescue MasterKey::MissingKeyError
+        SecureRandom.hex(32)
+      end
+
+      {
+        key: ZEE_SESSION_KEY,
+        path: "/",
+        secret:,
+        same_site: :strict,
+        expire_after: 86_400 * 30, # 30 days
+        http_only: true,
+        secure: env.production?
+      }
+    end
+
     # The default middleware stack.
     # This is the stack that's included by default:
     # - {https://github.com/rack/rack/blob/main/lib/rack/sendfile.rb Rack::Sendfile}
     # - {https://github.com/rack/rack/blob/main/lib/rack/runtime.rb Rack::Runtime}
     # - {https://github.com/rack/rack/blob/main/lib/rack/common_logger.rb Rack::CommonLogger}
     # - {https://github.com/sinatra/sinatra/tree/main/rack-protection Rack::Protection}
-    # - {https://github.com/rack/rack-session Rack::Session::Cookie}
+    #   (if available)
+    # - {https://github.com/rack/rack-session Rack::Session::Cookie} (also see
+    #   {#default_session_options})
     # - {https://github.com/rack/rack/blob/main/lib/rack/show_exceptions.rb Rack::ShowExceptions}
+    #   (development only)
     # - {https://github.com/rack/rack/blob/main/lib/rack/head.rb Rack::Head}
     # - {https://github.com/rack/rack/blob/main/lib/rack/conditional_get.rb Rack::ConditionalGet}
     # - {https://github.com/rack/rack/blob/main/lib/rack/etag.rb Rack::ETag}
     # - {https://github.com/rack/rack/blob/main/lib/rack/tempfile_reaper.rb Rack::TempfileReaper}
+    # - {https://github.com/rack/rack/blob/main/lib/rack/static.rb Rack::Static}
+    #   (development only)
     # @return [Zee::MiddlewareStack]
     def default_middleware_stack
       MiddlewareStack.new(self).tap do |middleware|
@@ -133,16 +184,19 @@ module Zee
         middleware.use Rack::Runtime
         middleware.use Rack::CommonLogger
         middleware.use Rack::Protection if defined?(Rack::Protection)
+        middleware.use Middleware::Static if config.serve_static_files
 
-        if defined?(Rack::Session) && config.respond_to?(:session_options)
-          middleware.use Rack::Session::Cookie, config.session_options
+        if defined?(Rack::Session)
+          middleware.use Rack::Session::Cookie,
+                         default_session_options.merge(config.session_options)
         end
 
-        middleware.use Rack::ShowExceptions if env.development?
         middleware.use Rack::Head
         middleware.use Rack::ConditionalGet
         middleware.use Rack::ETag
         middleware.use Rack::TempfileReaper
+
+        middleware.use Rack::ShowExceptions if env.development?
       end
     end
 

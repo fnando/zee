@@ -28,4 +28,5 @@ module Zee
   require_relative "zee/master_key"
   require_relative "zee/secrets"
   require_relative "zee/middleware_stack"
+  require_relative "zee/middleware/static"
 end

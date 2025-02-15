@@ -25,6 +25,7 @@ end
 
 module Minitest
   class Test
+    setup { ENV.delete("MINITEST_TEST_COMMAND") }
     setup { FileUtils.rm_rf("tmp") }
     setup { FileUtils.mkdir("tmp") }
     teardown { FileUtils.rm_rf("tmp") }

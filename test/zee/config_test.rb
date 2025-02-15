@@ -3,6 +3,14 @@
 require "test_helper"
 
 class ConfigTest < Minitest::Test
+  test "sets default config" do
+    config = Zee::Config.new(env: {})
+
+    assert_equal %i[secret], config.session_options.keys
+    assert_equal ::JSON, config.json_serializer
+    assert_equal %w[erb], config.template_handlers
+  end
+
   test "raises exception for missing mandatory var" do
     error = assert_raises(Zee::Config::MissingEnvironmentVariable) do
       Zee::Config.new(env: {}).instance_eval do
