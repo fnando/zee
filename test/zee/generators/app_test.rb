@@ -23,6 +23,7 @@ class AppTest < Minitest::Test
     assert app.join("app/controllers/base.rb").file?
     assert app.join("app/controllers/pages.rb").file?
     assert app.join("app/views/layouts/application.html.erb").file?
+    assert app.join("app/helpers/app.rb").file?
     assert app.join("app/views/pages/home.html.erb").file?
     assert app.join("config.ru").file?
     assert app.join("config/app.rb").file?

@@ -27,6 +27,7 @@ module Zee
         copy_file "config/app.rb"
         copy_file "config/boot.rb"
         copy_file "config/puma.rb"
+        copy_file "app/helpers/app.rb"
         copy_file "config/routes.rb"
         copy_file "Procfile.dev"
         copy_file "test/test_helper.rb"

@@ -80,7 +80,15 @@ module Zee
     # Set template helpers.
     # @return [Module] The module to include.
     private def helpers
-      @helpers ||= Module.new
+      @helpers ||= Module.new.tap do |target|
+        helpers = Module.new
+
+        ::Helpers.constants.each do |name|
+          helpers.include(::Helpers.const_get(name))
+        end
+
+        target.include(helpers)
+      end
     end
 
     # The session hash.

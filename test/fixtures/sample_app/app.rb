@@ -18,6 +18,7 @@ SampleApp = Zee::App.new do
     post "session", to: "sessions#create"
     get "session", to: "sessions#show"
     delete "session", to: "sessions#delete"
+    get "helpers", to: "helpers#show"
   end
 
   middleware do
