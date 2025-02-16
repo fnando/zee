@@ -181,10 +181,10 @@ module Zee
     def default_middleware_stack
       MiddlewareStack.new(self).tap do |middleware|
         middleware.use Rack::Sendfile
+        middleware.use Middleware::Static if config.serve_static_files
         middleware.use Rack::Runtime
         middleware.use Rack::CommonLogger
         middleware.use Rack::Protection if defined?(Rack::Protection)
-        middleware.use Middleware::Static if config.serve_static_files
 
         if defined?(Rack::Session)
           middleware.use Rack::Session::Cookie,

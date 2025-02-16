@@ -124,10 +124,10 @@ class AppTest < Minitest::Test
     stack = app.middleware.to_a.map(&:first)
 
     assert_equal Rack::Sendfile, stack[0]
-    assert_equal Rack::Runtime, stack[1]
-    assert_equal Rack::CommonLogger, stack[2]
-    assert_equal Rack::Protection, stack[3]
-    assert_equal Zee::Middleware::Static, stack[4]
+    assert_equal Zee::Middleware::Static, stack[1]
+    assert_equal Rack::Runtime, stack[2]
+    assert_equal Rack::CommonLogger, stack[3]
+    assert_equal Rack::Protection, stack[4]
     assert_equal Rack::Session::Cookie, stack[5]
     assert_equal Rack::Head, stack[6]
     assert_equal Rack::ConditionalGet, stack[7]
