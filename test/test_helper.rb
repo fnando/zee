@@ -2,7 +2,7 @@
 
 require "simplecov"
 SimpleCov.start do
-  add_filter(/fixtures/)
+  add_filter("test/")
 end
 
 require "bundler/setup"

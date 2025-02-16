@@ -87,10 +87,11 @@ module Zee
               "#{controller_name}##{template_name}: #{list}"
       end
 
-      body = Tilt.new(view_path[:path]).render(Object.new, locals)
+      ctx = Object.new.extend(helpers)
+      body = Tilt.new(view_path[:path]).render(ctx, locals)
 
       if layout != false && layout_path
-        body = Tilt.new(layout_path[:path]).render(Object.new, locals) do
+        body = Tilt.new(layout_path[:path]).render(ctx, locals) do
           body
         end
       end

@@ -7,6 +7,9 @@ module Zee
   # Raised when a redirect is unsafe.
   UnsafeRedirectError = Class.new(StandardError)
 
+  # Raised when trying to expose a public method as a helper.
+  UnsafeHelperError = Class.new(StandardError)
+
   class Controller
     include Renderer
 
@@ -48,12 +51,36 @@ module Zee
       @locals ||= {}
     end
 
-    # Expose variables to the template.
+    # Expose variables and methods to the template.
+    # @param helper_names [Array<Symbol>] The helper methods to expose. Notice
+    #                                     that methods must be private.
     # @param vars [Hash] The variables to expose.
-    # @example
+    # @example Expose a message to the template.
     #   expose message: "Hello, World!"
-    def expose(**vars)
+    # @example Expose a helper method to the template.
+    #   expose :say_hello
+    def expose(*helper_names, **vars)
+      helper_names.each do |name|
+        if self.class.public_method_defined?(name)
+          raise UnsafeHelperError, "#{name.inspect} must be a private method"
+        end
+
+        ref = method(name)
+
+        helpers.instance_eval do
+          define_method(name) do |*args, **kwargs, &block|
+            ref.call(*args, **kwargs, &block)
+          end
+        end
+      end
+
       locals.merge!(vars)
+    end
+
+    # Set template helpers.
+    # @return [Module] The module to include.
+    def helpers
+      @helpers ||= Module.new
     end
 
     # The session hash.
