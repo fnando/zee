@@ -42,26 +42,29 @@ module Zee
       end
 
       # @private
-      def define_callback(store:, method_names:, options:, block:)
+      def build_callback_conditions(options:)
         only = Array(options.delete(:only)).map(&:to_s)
         except = Array(options.delete(:except)).map(&:to_s)
         if_ = __normalize_callback_condition(options.delete(:if))
         unless_ = __normalize_callback_condition(options.delete(:unless))
 
-        conditions = []
-        conditions << proc { only.include?(action_name) } if only.any?
-        conditions << proc { !except.include?(action_name) } if except.any?
-        conditions << proc { instance_eval(&if_) } if if_
-        conditions << proc { !instance_eval(&unless_) } if unless_
+        [].tap do |conditions|
+          conditions << proc { only.include?(action_name) } if only.any?
+          conditions << proc { !except.include?(action_name) } if except.any?
+          conditions << proc { instance_eval(&if_) } if if_
+          conditions << proc { !instance_eval(&unless_) } if unless_
+        end
+      end
+
+      # @private
+      def define_callback(store:, method_names:, options:, block:)
+        conditions = build_callback_conditions(options:)
 
         if method_names.any? && block
           raise ArgumentError, "cannot pass both method names and a block"
         end
 
-        method_names.each do |name|
-          store << [proc { send(name) }, conditions]
-        end
-
+        method_names.each {|name| store << [proc { send(name) }, conditions] }
         store << [block, conditions] if block
       end
     end
