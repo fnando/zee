@@ -22,7 +22,7 @@ class RenderTest < Minitest::Test
     get "/missing-template"
 
     assert_equal 500, last_response.status
-    assert_includes last_response.body, "Zee::MissingTemplateError"
+    assert_includes last_response.body, "Zee::Controller::MissingTemplateError"
   end
 
   test "renders template with locals" do
@@ -72,7 +72,7 @@ class RenderTest < Minitest::Test
 
     assert last_response.server_error?
     assert_includes last_response.body,
-                    "Zee::UnsafeRedirectError: Unsafe redirect; " \
+                    "Zee::Controller::UnsafeRedirectError: Unsafe redirect; " \
                     "pass `allow_other_host: true` to redirect anyway."
     assert_nil last_response.location
   end
@@ -81,7 +81,7 @@ class RenderTest < Minitest::Test
     get "/redirect-open"
 
     assert last_response.redirect?
-    refute_includes last_response.body, "Zee::UnsafeRedirectError"
+    refute_includes last_response.body, "Zee::Controller::UnsafeRedirectError"
     assert_equal "https://example.com", last_response.location
   end
 

@@ -89,7 +89,7 @@ class ControllerTest < Minitest::Test
       end
     end
 
-    error = assert_raises Zee::UnsafeHelperError do
+    error = assert_raises Zee::Controller::UnsafeHelperError do
       controller_class.new(request:, response:).show
     end
 

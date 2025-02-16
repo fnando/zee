@@ -83,7 +83,7 @@ module Zee
                .map { _1[:path].relative_path_from(root) }
                .join(", ")
 
-        raise MissingTemplateError,
+        raise Controller::MissingTemplateError,
               "#{controller_name}##{template_name}: #{list}"
       end
 

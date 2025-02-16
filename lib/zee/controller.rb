@@ -1,16 +1,16 @@
 # frozen_string_literal: true
 
 module Zee
-  # Raised when a template is missing.
-  MissingTemplateError = Class.new(StandardError)
-
-  # Raised when a redirect is unsafe.
-  UnsafeRedirectError = Class.new(StandardError)
-
-  # Raised when trying to expose a public method as a helper.
-  UnsafeHelperError = Class.new(StandardError)
-
   class Controller
+    # Raised when a template is missing.
+    MissingTemplateError = Class.new(StandardError)
+
+    # Raised when a redirect is unsafe.
+    UnsafeRedirectError = Class.new(StandardError)
+
+    # Raised when trying to expose a public method as a helper.
+    UnsafeHelperError = Class.new(StandardError)
+
     include Renderer
 
     # The current action name.
