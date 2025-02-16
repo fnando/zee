@@ -9,6 +9,11 @@ module Zee
       end
 
       # @private
+      def after_action_callbacks
+        @after_action_callbacks ||= []
+      end
+
+      # @private
       def __normalize_callback_condition(condition)
         if condition.is_a?(Symbol) || condition.is_a?(String)
           proc { send(condition) }
@@ -19,6 +24,25 @@ module Zee
 
       # Define a before action callback.
       def before_action(*method_names, **options, &block)
+        define_callback(
+          store: before_action_callbacks,
+          method_names:,
+          options:,
+          block:
+        )
+      end
+
+      # Define an after action callback.
+      def after_action(*method_names, **options, &block)
+        define_callback(
+          store: after_action_callbacks,
+          method_names:,
+          options:, block:
+        )
+      end
+
+      # @private
+      def define_callback(store:, method_names:, options:, block:)
         only = Array(options.delete(:only)).map(&:to_s)
         except = Array(options.delete(:except)).map(&:to_s)
         if_ = __normalize_callback_condition(options.delete(:if))
@@ -35,10 +59,10 @@ module Zee
         end
 
         method_names.each do |name|
-          before_action_callbacks << [proc { send(name) }, conditions]
+          store << [proc { send(name) }, conditions]
         end
 
-        before_action_callbacks << [block, conditions] if block
+        store << [block, conditions] if block
       end
     end
   end

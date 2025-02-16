@@ -252,7 +252,7 @@ class CallbacksTest < Minitest::Test
     assert_empty controller.calls
   end
 
-  test "raises when passing a method and block simultaneously" do
+  test "raises when passing both a method and block to before_action" do
     error = assert_raises(ArgumentError) do
       Class.new(Zee::Controller) do
         before_action(:do_something) { calls << 1 }
@@ -280,6 +280,286 @@ class CallbacksTest < Minitest::Test
   test "redirecting from before action prevents action from being executed" do
     controller_class = Class.new(Zee::Controller) do
       before_action { redirect_to "/" }
+
+      def show
+        render text: "action"
+      end
+    end
+
+    build => {request:, response:}
+    controller = controller_class.new(request:, response:, action_name: "show")
+    controller.send(:call)
+
+    assert_equal 302, response.status
+  end
+
+  test "runs after action callback using block" do
+    controller_class = Class.new(Zee::Controller) do
+      after_action { calls << 1 }
+      after_action { calls << 2 }
+
+      def show
+        render text: ""
+      end
+
+      def calls
+        @calls ||= []
+      end
+    end
+
+    build => {request:, response:}
+    controller = controller_class.new(request:, response:, action_name: :show)
+    controller.send(:call)
+
+    assert_equal [1, 2], controller.calls
+  end
+
+  test "runs after action callback using method name" do
+    controller_class = Class.new(Zee::Controller) do
+      after_action :hook1
+      after_action :hook2
+
+      def show
+        render text: ""
+      end
+
+      def calls
+        @calls ||= []
+      end
+
+      private def hook1
+        calls << 1
+      end
+
+      private def hook2
+        calls << 2
+      end
+    end
+
+    build => {request:, response:}
+    controller = controller_class.new(request:, response:, action_name: :show)
+    controller.send(:call)
+
+    assert_equal [1, 2], controller.calls
+  end
+
+  test "runs after action only for a given action" do
+    controller_class = Class.new(Zee::Controller) do
+      after_action(only: :show) { calls << 1 }
+      after_action(only: :other) { calls << 2 }
+
+      def show
+        render text: ""
+      end
+
+      def other
+        render text: ""
+      end
+
+      def calls
+        @calls ||= []
+      end
+    end
+
+    build => {request:, response:}
+    controller = controller_class.new(request:, response:, action_name: "show")
+    controller.send(:call)
+
+    assert_equal [1], controller.calls
+
+    build => {request:, response:}
+    controller = controller_class.new(request:, response:, action_name: "other")
+    controller.send(:call)
+
+    assert_equal [2], controller.calls
+  end
+
+  test "runs after action except for a given action" do
+    controller_class = Class.new(Zee::Controller) do
+      after_action(except: :other) { calls << 1 }
+
+      def show
+        render text: ""
+      end
+
+      def other
+        render text: ""
+      end
+
+      def calls
+        @calls ||= []
+      end
+    end
+
+    build => {request:, response:}
+    controller = controller_class.new(request:, response:, action_name: "show")
+    controller.send(:call)
+
+    assert_equal [1], controller.calls
+
+    build => {request:, response:}
+    controller = controller_class.new(request:, response:, action_name: "other")
+    controller.send(:call)
+
+    assert_empty controller.calls
+  end
+
+  test "runs after action using lambda as :if condition" do
+    controller_class = Class.new(Zee::Controller) do
+      after_action(if: proc { action_name == "show" }) { calls << 1 }
+
+      def show
+        render text: ""
+      end
+
+      def other
+        render text: ""
+      end
+
+      def calls
+        @calls ||= []
+      end
+    end
+
+    build => {request:, response:}
+    controller = controller_class.new(request:, response:, action_name: "show")
+    controller.send(:call)
+
+    assert_equal [1], controller.calls
+
+    build => {request:, response:}
+    controller = controller_class.new(request:, response:, action_name: "other")
+    controller.send(:call)
+
+    assert_empty controller.calls
+  end
+
+  test "runs after action using method name as :if condition" do
+    controller_class = Class.new(Zee::Controller) do
+      after_action(if: :show?) { calls << 1 }
+
+      def show
+        render text: ""
+      end
+
+      def other
+        render text: ""
+      end
+
+      def calls
+        @calls ||= []
+      end
+
+      private def show?
+        action_name == "show"
+      end
+    end
+
+    build => {request:, response:}
+    controller = controller_class.new(request:, response:, action_name: "show")
+    controller.send(:call)
+
+    assert_equal [1], controller.calls
+
+    build => {request:, response:}
+    controller = controller_class.new(request:, response:, action_name: "other")
+    controller.send(:call)
+
+    assert_empty controller.calls
+  end
+
+  test "runs after action using lambda as :unless condition" do
+    controller_class = Class.new(Zee::Controller) do
+      after_action(unless: proc { action_name == "other" }) { calls << 1 }
+
+      def show
+        render text: ""
+      end
+
+      def other
+        render text: ""
+      end
+
+      def calls
+        @calls ||= []
+      end
+    end
+
+    build => {request:, response:}
+    controller = controller_class.new(request:, response:, action_name: "show")
+    controller.send(:call)
+
+    assert_equal [1], controller.calls
+
+    build => {request:, response:}
+    controller = controller_class.new(request:, response:, action_name: "other")
+    controller.send(:call)
+
+    assert_empty controller.calls
+  end
+
+  test "runs after action using method name as :unless condition" do
+    controller_class = Class.new(Zee::Controller) do
+      after_action(unless: :other?) { calls << 1 }
+
+      def show
+        render text: ""
+      end
+
+      def other
+        render text: ""
+      end
+
+      def calls
+        @calls ||= []
+      end
+
+      private def other?
+        action_name == "other"
+      end
+    end
+
+    build => {request:, response:}
+    controller = controller_class.new(request:, response:, action_name: "show")
+    controller.send(:call)
+
+    assert_equal [1], controller.calls
+
+    build => {request:, response:}
+    controller = controller_class.new(request:, response:, action_name: "other")
+    controller.send(:call)
+
+    assert_empty controller.calls
+  end
+
+  test "raises when passing both a method and block to after_action" do
+    error = assert_raises(ArgumentError) do
+      Class.new(Zee::Controller) do
+        after_action(:do_something) { calls << 1 }
+      end
+    end
+    assert_equal "cannot pass both method names and a block", error.message
+  end
+
+  test "rendering from after action prevents action from being executed" do
+    controller_class = Class.new(Zee::Controller) do
+      after_action { render text: "after_action" }
+
+      def show
+        render text: "action"
+      end
+    end
+
+    build => {request:, response:}
+    controller = controller_class.new(request:, response:, action_name: "show")
+    controller.send(:call)
+
+    assert_equal "after_action", response.body
+  end
+
+  test "redirecting from after action prevents action from being executed" do
+    controller_class = Class.new(Zee::Controller) do
+      after_action { redirect_to "/" }
 
       def show
         render text: "action"

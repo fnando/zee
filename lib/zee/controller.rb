@@ -156,6 +156,11 @@ module Zee
       # Execute the action on the controller.
       public_send(action_name)
 
+      # Run after action callbacks.
+      self.class.after_action_callbacks.each do |(callback, conditions)|
+        instance_eval(&callback) if conditions.all? { instance_eval(&_1) }
+      end
+
       # If no status is set, then let's assume the action is implicitly
       # rendering the template.
       render(action_name) unless response.status
