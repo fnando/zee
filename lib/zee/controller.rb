@@ -38,7 +38,7 @@ module Zee
 
     # The parameters from the request.
     # @return [Hash]
-    def params
+    private def params
       request.params
     end
 
@@ -47,7 +47,7 @@ module Zee
     #
     # @example
     #   locals[:name] = user.name
-    def locals
+    private def locals
       @locals ||= {}
     end
 
@@ -59,7 +59,7 @@ module Zee
     #   expose message: "Hello, World!"
     # @example Expose a helper method to the template.
     #   expose :say_hello
-    def expose(*helper_names, **vars)
+    private def expose(*helper_names, **vars)
       helper_names.each do |name|
         if self.class.public_method_defined?(name)
           raise UnsafeHelperError, "#{name.inspect} must be a private method"
@@ -79,17 +79,17 @@ module Zee
 
     # Set template helpers.
     # @return [Module] The module to include.
-    def helpers
+    private def helpers
       @helpers ||= Module.new
     end
 
     # The session hash.
-    def session
+    private def session
       request.env[RACK_SESSION]
     end
 
     # Reset the session.
-    def reset_session
+    private def reset_session
       session.clear
     end
 
@@ -107,7 +107,7 @@ module Zee
     #   redirect_to "/", status: :moved_permanently
     # @example Redirect to a different host.
     #   redirect_to "https://example.com", allow_other_host: true
-    def redirect_to(location, status: :found, allow_other_host: false)
+    private def redirect_to(location, status: :found, allow_other_host: false)
       raise ArgumentError, "location cannot be empty" if location.to_s.empty?
 
       uri = URI(location)

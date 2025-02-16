@@ -12,13 +12,13 @@ class ControllerTest < Minitest::Test
   test "returns params" do
     controller = Zee::Controller.new(request:, response:)
 
-    assert_same request.params, controller.params
+    assert_same request.params, controller.send(:params)
   end
 
   test "returns session" do
     controller = Zee::Controller.new(request:, response:)
 
-    assert_same request.session, controller.session
+    assert_same request.session, controller.send(:session)
   end
 
   test "exposes variable" do

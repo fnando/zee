@@ -1,4 +1,3 @@
 # To-do
 
-- [ ] Make all `Zee::Controller` methods private
-- [ ] Ensure only public methods are called by the router as an action
+- [ ] Load helper methods from `app/helpers/**/*`
