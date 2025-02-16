@@ -2,6 +2,9 @@
 inherit_gem:
   rubocop-fnando: .rubocop.yml
 
+require:
+  - rubocop-yard
+
 AllCops:
   TargetRubyVersion: 3.3
   NewCops: enable

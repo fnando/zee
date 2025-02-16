@@ -3,7 +3,7 @@
 module Zee
   # Create an enum object.
   # @param args [Array<Symbol>] List of keys.
-  # @param kwargs [Hash<Symbol, Object>] Hash of keys and values.
+  # @param kwargs [Hash] Hash of keys and values.
   # @return [Object] An enum object.
   #
   # @example

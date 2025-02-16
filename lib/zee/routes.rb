@@ -100,7 +100,7 @@ module Zee
 
     # Define a subdomain constraint.
     #
-    # @param subdomain [String|Regexp] the subdomain that should be matched.
+    # @param subdomain [String, Regexp] the subdomain that should be matched.
     # @example
     #   subdomain("api") do
     #     get "posts/:id", to: "posts#show"

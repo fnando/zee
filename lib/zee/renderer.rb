@@ -15,6 +15,10 @@ module Zee
     #                        matching the controller, then application).
     #                        To skip a layout file entirely,
     #                        use `layout: false`.
+    # @param options [Hash] Additional options.
+    # @option options [Object] :json Render object as `application/json`.
+    # @option options [Object] :text Render string as `text/plain`.
+    #
     # @example Implicit render uses the action name as the template name.
     #   render
     # @example Explicit render.
