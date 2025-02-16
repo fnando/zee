@@ -17,3 +17,6 @@ Naming/FileName:
 
 Style/FetchEnvVar:
   Enabled: false
+
+Performance/ChainArrayAllocation:
+  Enabled: false
