@@ -12,6 +12,7 @@ module Zee
     UnsafeHelperError = Class.new(StandardError)
 
     include Renderer
+    extend Callbacks
 
     # The current action name.
     # @return [String]
@@ -32,8 +33,8 @@ module Zee
     def initialize(request:, response:, action_name: nil, controller_name: nil)
       @request = request
       @response = response
-      @action_name = action_name
-      @controller_name = controller_name
+      @action_name = action_name.to_s
+      @controller_name = controller_name.to_s
     end
 
     # The parameters from the request.
@@ -129,6 +130,35 @@ module Zee
       response.status(status)
       response.headers[:location] = location
       response.body = ""
+    end
+
+    # @private
+    # Run the action on the controller.
+    # This will also run all callbacks defined by {#before_action}.
+    # @param action_name [String] The name of the action to run.
+    # @raise [MissingActionError] If the action is missing.
+    # @raise [MissingTemplateError] If the template is missing.
+    #
+    # @example Run the show action.
+    #   call("show")
+    private def call
+      # Run before action callbacks.
+      self.class.before_action_callbacks.each do |(callback, conditions)|
+        instance_eval(&callback) if conditions.all? { instance_eval(&_1) }
+
+        # If the response is already set, then stop processing.
+        return true if response.status
+      end
+
+      # If the action is missing, then raise an error.
+      raise ArgumentError, ":action_name is not set" if action_name.empty?
+
+      # Execute the action on the controller.
+      public_send(action_name)
+
+      # If no status is set, then let's assume the action is implicitly
+      # rendering the template.
+      render(action_name) unless response.status
     end
   end
 end

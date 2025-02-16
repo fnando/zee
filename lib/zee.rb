@@ -19,6 +19,7 @@ module Zee
   require_relative "zee/request"
   require_relative "zee/response"
   require_relative "zee/renderer"
+  require_relative "zee/controller/callbacks"
   require_relative "zee/controller"
   require_relative "zee/request_handler"
   require_relative "zee/headers"

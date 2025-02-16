@@ -32,12 +32,7 @@ module Zee
         controller_name:
       )
 
-      # Execute the action on the controller.
-      controller.public_send(action_name)
-
-      # If no status is set, then let's assume the action is implicitly
-      # rendering the template.
-      controller.render(action_name) unless response.status
+      controller.send(:call)
 
       content_type = response.headers[:content_type]
 
