@@ -171,7 +171,7 @@ module Zee
     def initialize(
       keyring,
       digest_salt: nil,
-      encryptor: Encryptor::AES::AES128CBC
+      encryptor: Encryptor::AES::AES256GCM
     )
       if digest_salt.nil?
         raise MissingDigestSalt,

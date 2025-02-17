@@ -10,8 +10,7 @@ class EncryptedFileTest < Minitest::Test
   let(:keyring) do
     Zee::Keyring.new(
       {"0" => SecureRandom.hex(32)},
-      digest_salt: SecureRandom.hex(32),
-      encryptor: Zee::Keyring::Encryptor::AES::AES256GCM
+      digest_salt: SecureRandom.hex(32)
     )
   end
 

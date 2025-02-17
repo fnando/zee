@@ -18,11 +18,7 @@ module Zee
       data = JSON.parse(key)
       digest_salt = data.delete("digest_salt")
 
-      Keyring.new(
-        data,
-        digest_salt:,
-        encryptor: Keyring::Encryptor::AES::AES256GCM
-      )
+      Keyring.new(data, digest_salt:)
     end
   end
 end

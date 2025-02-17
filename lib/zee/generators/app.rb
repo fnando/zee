@@ -101,11 +101,7 @@ module Zee
           end
           # :nocov:
 
-          keyring = Keyring.new(
-            {"0" => key},
-            digest_salt:,
-            encryptor: Keyring::Encryptor::AES::AES256GCM
-          )
+          keyring = Keyring.new({"0" => key}, digest_salt:)
 
           encrypted_file = EncryptedFile.new(
             path: secrets_file,

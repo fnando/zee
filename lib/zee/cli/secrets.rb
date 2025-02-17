@@ -89,11 +89,7 @@ module Zee
               session_secret: #{SecureRandom.hex(64)}
             YAML
 
-            keyring = Zee::Keyring.new(
-              {"0" => key},
-              digest_salt:,
-              encryptor: Keyring::Encryptor::AES::AES256GCM
-            )
+            keyring = Zee::Keyring.new({"0" => key}, digest_salt:)
 
             EncryptedFile.new(path: secrets_file, keyring:).write(content)
             File.chmod(0o600, key_file)
