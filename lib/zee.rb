@@ -26,7 +26,7 @@ module Zee
   require_relative "zee/environment"
   require_relative "zee/config"
   require_relative "zee/encrypted_file"
-  require_relative "zee/master_key"
+  require_relative "zee/main_keyring"
   require_relative "zee/secrets"
   require_relative "zee/middleware_stack"
   require_relative "zee/middleware/static"

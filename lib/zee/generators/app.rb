@@ -81,9 +81,11 @@ module Zee
 
       no_commands do
         def create_key(env)
-          key = SecureRandom.hex(16)
+          digest_salt = SecureRandom.hex(32)
+          key = SecureRandom.hex(32)
           key_file = "config/secrets/#{env}.key"
-          create_file key_file, key
+          raw = JSON.dump("0" => key, digest_salt:)
+          create_file key_file, raw
           saved_key = File.read(File.join(destination_root, key_file))
           secrets_file =
             "#{destination_root}/config/secrets/#{env}.yml.enc"
@@ -93,13 +95,22 @@ module Zee
           FileUtils.chmod(0o600, File.join(destination_root, key_file))
 
           # :nocov:
-          if key != saved_key
+          if raw != saved_key
             say_status :skip, relative_secrets_file, :yellow
             return
           end
           # :nocov:
 
-          encrypted_file = EncryptedFile.new(path: secrets_file, key:)
+          keyring = Keyring.new(
+            {"0" => key},
+            digest_salt:,
+            encryptor: Keyring::Encryptor::AES::AES256GCM
+          )
+
+          encrypted_file = EncryptedFile.new(
+            path: secrets_file,
+            keyring:
+          )
 
           encrypted_file.write <<~YAML
             ---

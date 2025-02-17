@@ -155,6 +155,14 @@ module Zee
     # Raised when the digest salt is missing.
     MissingDigestSalt = Class.new(StandardError)
 
+    # The encryptor that will be used on this keyring.
+    # Defaults to {Encryptor::AES::AES128CBC}.
+    attr_reader :encryptor
+
+    # The digest salt used to generate digests.
+    # @return [String]
+    attr_reader :digest_salt
+
     # Initialize a new keyring.
     # @param keyring [Hash{Integer => String}] the keyring.
     # @param [String, nil] digest_salt
@@ -174,7 +182,7 @@ module Zee
       @encryptor = encryptor
       @digest_salt = digest_salt
       @keyring = keyring.map do |id, value|
-        Key.new(id:, key: value, size: @encryptor.key_size)
+        Key.new(id:, key: value, size: encryptor.key_size)
       end
     end
 
@@ -203,7 +211,7 @@ module Zee
     # @param key [String]
     # @return [Key]
     def []=(id, key)
-      @keyring << Key.new(id:, key:, size: @encryptor.key_size)
+      @keyring << Key.new(id:, key:, size: encryptor.key_size)
     end
 
     # Removes all keys from the keyring.
@@ -227,7 +235,7 @@ module Zee
       key = self[keyring_id]
 
       [
-        @encryptor.encrypt(key, message),
+        encryptor.encrypt(key, message),
         keyring_id,
         digest(message)
       ]
@@ -239,14 +247,14 @@ module Zee
     # @return [String] the decrypted message.
     def decrypt(message, keyring_id)
       key = self[keyring_id]
-      @encryptor.decrypt(key, message)
+      encryptor.decrypt(key, message)
     end
 
     # Returns the SHA1 digest of a message.
     # @param message [String]
     # @return [String]
     def digest(message)
-      Digest::SHA1.hexdigest("#{message}#{@digest_salt}")
+      Digest::SHA1.hexdigest("#{message}#{digest_salt}")
     end
   end
 end

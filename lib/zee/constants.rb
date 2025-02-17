@@ -10,6 +10,6 @@ module Zee
   APPLICATION_JSON = "application/json"
   RACK_SESSION = "rack.session"
   ENV_NAMES = %w[ZEE_ENV APP_ENV RACK_ENV].freeze
-  ZEE_MASTER_KEY = "ZEE_MASTER_KEY"
+  ZEE_KEYRING = "ZEE_KEYRING"
   ZEE_SESSION_KEY = "_zee_session"
 end

@@ -6,8 +6,9 @@ class CLITest < Minitest::Test
   test "generates new app" do
     app = Pathname("tmp/app")
 
-    capture { Zee::CLI.start(["new", "tmp/app"]) } => {out:}
+    capture { Zee::CLI.start(["new", "tmp/app"]) } => {out:, exit_code:}
 
+    assert_equal 0, exit_code
     assert_includes out, "bundle install"
     assert app.join(".ruby-version").file?
   end
