@@ -95,4 +95,23 @@ class ControllerTest < Minitest::Test
 
     assert_equal ":current_user must be a private method", error.message
   end
+
+  test "exposes helper method for all controller methods" do
+    controller_class = Class.new(Zee::Controller) do
+      expose :say_hello
+
+      def show
+        render :helper
+      end
+
+      private def say_hello(name:)
+        "Hello, #{name}!"
+      end
+    end
+
+    controller_class.new(request:, response:, action_name: "show").send(:call)
+
+    assert_includes response.body, "Hello, John!"
+    assert_includes response.body, "Hello, Mary!"
+  end
 end

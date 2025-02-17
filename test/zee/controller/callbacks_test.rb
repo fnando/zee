@@ -572,4 +572,27 @@ class CallbacksTest < Minitest::Test
 
     assert_equal 302, response.status
   end
+
+  test "inherits callbacks" do
+    base_class = Class.new(Zee::Controller) do
+      before_action { calls << 1 }
+      before_action { calls << 2 }
+
+      def calls
+        @calls ||= []
+      end
+    end
+
+    controller_class = Class.new(base_class) do
+      def show
+        render text: ""
+      end
+    end
+
+    build => {request:, response:}
+    controller = controller_class.new(request:, response:, action_name: :show)
+    controller.send(:call)
+
+    assert_equal [1, 2], controller.calls
+  end
 end
