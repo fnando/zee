@@ -31,6 +31,7 @@ module Zee
   require_relative "zee/middleware_stack"
   require_relative "zee/middleware/static"
   require_relative "zee/keyring"
+  require_relative "zee/encoders/json_encoder"
   require_relative "zee/keyring/encryptor/aes"
   require_relative "zee/keyring/key"
 end
