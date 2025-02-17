@@ -23,3 +23,7 @@ Style/FetchEnvVar:
 
 Performance/ChainArrayAllocation:
   Enabled: false
+
+Minitest/NoAssertions:
+  Exclude:
+    - test/sequel/plugins/encrypted_attributes_test.rb

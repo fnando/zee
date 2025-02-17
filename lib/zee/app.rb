@@ -101,12 +101,29 @@ module Zee
       @config
     end
 
+    # Define the app's keyring. The keyring is used to encrypt and decrypt
+    # secrets. By default, AES-256-GCM is used.
+    #
+    # The keyring must be a valid JSON string with the following format:
+    #
+    #     {"0": "<64 bytes>", "digest_salt": "<64 bytes>"}
+    #
+    # The secrets file is encrypted using the keyring.
+    #
+    # @see Zee::Keyring
+    # @see Zee::MainKeyring
+    # @see Zee::Secrets
+    # @return [Zee::Keyring]
+    def keyring
+      @keyring ||= MainKeyring.read(env)
+    end
+
     # Define the app's secrets. See {Zee::Secrets}.
     #
     # @return [Zee::Secrets]
     def secrets
       @secrets ||= Secrets.new(
-        key: MasterKey.read(env),
+        keyring:,
         secrets_file: root.join("config/secrets/#{env}.yml.enc")
       )
     end
@@ -145,7 +162,7 @@ module Zee
     def default_session_options
       secret = begin
         secrets[:session_secret]
-      rescue MasterKey::MissingKeyError
+      rescue MainKeyring::MissingKeyError
         SecureRandom.hex(32)
       end
 

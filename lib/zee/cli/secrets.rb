@@ -23,10 +23,10 @@ module Zee
           define_method :"secrets:edit" do
             env = options["environment"]
 
-            key = begin
-              MasterKey.read(env)
-            rescue MasterKey::MissingKeyError
-              say_error "ERROR: Set ZEE_MASTER_KEY or create #{key_file}", :red
+            keyring = begin
+              MainKeyring.read(env)
+            rescue MainKeyring::MissingKeyError
+              say_error "ERROR: Set ZEE_KEYRING or create #{key_file}", :red
               say "\nTo create a new key, run the following command:\n" \
                   "zee secrets create -e #{env}"
               exit 1
@@ -38,7 +38,7 @@ module Zee
               File.join(Dir.pwd, "config/secrets", "#{env}.yml.enc")
             )
 
-            encrypted_file = EncryptedFile.new(path: secrets_file, key:)
+            encrypted_file = EncryptedFile.new(path: secrets_file, keyring:)
 
             if secrets_file.file?
               content = encrypted_file.read
@@ -78,14 +78,20 @@ module Zee
                     set_color("ERROR: #{secrets_file} already exists", :red)
             end
 
-            key = SecureRandom.hex(16)
-            File.write(key_file, key)
+            key = SecureRandom.hex(32)
+            digest_salt = SecureRandom.hex(32)
+
+            File.write(key_file, JSON.dump("0" => key, digest_salt:))
             content = <<~YAML
               ---
-              # Add your secrets here
+              # The session secret is used to sign the session cookie.
+              # It will also be used to sign the CSRF token.
+              session_secret: #{SecureRandom.hex(64)}
             YAML
 
-            EncryptedFile.new(path: secrets_file, key:).write(content)
+            keyring = Zee::Keyring.new({"0" => key}, digest_salt:)
+
+            EncryptedFile.new(path: secrets_file, keyring:).write(content)
             File.chmod(0o600, key_file)
           end
         end

@@ -4,10 +4,10 @@ module Zee
   class Secrets
     # Initialize the secrets object.
     # @param secrets_file [String] The path to the encrypted file.
-    # @param key [String] The key to decrypt the secrets file.
-    def initialize(secrets_file:, key:)
+    # @param keyring [Keyring] The key to decrypt the secrets file.
+    def initialize(secrets_file:, keyring:)
       @secrets_file = secrets_file
-      @key = key
+      @keyring = keyring
     end
 
     # Access secrets using hash-like syntax.
@@ -35,7 +35,7 @@ module Zee
 
     private def store
       @store ||= begin
-        encrypted = EncryptedFile.new(path: @secrets_file, key: @key)
+        encrypted = EncryptedFile.new(path: @secrets_file, keyring: @keyring)
         YAML.safe_load(encrypted.read, symbolize_names: true)
       end
     end

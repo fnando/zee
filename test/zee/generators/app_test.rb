@@ -44,6 +44,14 @@ class AppTest < Minitest::Test
     assert app.join("bin/dev").executable?
     refute app.join("config/secrets/development.key").world_readable?
     refute app.join("config/secrets/test.key").world_readable?
+
+    # Expect valid json files
+    assert_instance_of Hash,
+                       JSON.parse(
+                         app.join("config/secrets/development.key").read
+                       )
+    assert_instance_of Hash,
+                       JSON.parse(app.join("config/secrets/test.key").read)
   end
 
   test "skips bundle install" do
