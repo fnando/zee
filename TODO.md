@@ -1,3 +1,3 @@
 # To-do
 
-- [ ] Load helper methods from `app/helpers/**/*`
+- [ ] Add `ORIGIN` check to authenticity token verification

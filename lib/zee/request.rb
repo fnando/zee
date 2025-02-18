@@ -2,6 +2,22 @@
 
 module Zee
   class Request < ::Rack::Request
+    XHR_REGEX = /XMLHttpRequest/i
+
+    # The origin of the request.
+    # @return [String, NilClass]
+    def origin
+      get_header(HTTP_ORIGIN)
+    end
+
+    # Returns `true` if the `X-Requested-With` header contains `XMLHttpRequest`
+    # (case-insensitive), which may need to be manually added depending on the
+    # choice of JavaScript libraries and frameworks.
+    # @return [Boolean]
+    def xhr?
+      XHR_REGEX.match?(get_header(HTTP_X_REQUESTED_WITH).to_s)
+    end
+
     # The path of the request, without any trailing slashes.
     # @return [String]
     # @example

@@ -11,9 +11,18 @@ module Zee
     # Raised when trying to expose a public method as a helper.
     UnsafeHelperError = Class.new(StandardError)
 
+    class << self
+      # The CSRF parameter name.
+      # Defaults to `:_authenticity_token`.
+      # @return [String]
+      attr_accessor :csrf_param_name
+    end
+
+    self.csrf_param_name = :_authenticity_token
+
     include Renderer
-    extend Callbacks::ClassMethods
     include Callbacks
+    include AuthenticityToken
 
     # Expose helper methods to templates.
     # With this method, you can expose helper methods to all actions.
@@ -40,8 +49,12 @@ module Zee
     # @private
     def self.inherited(subclass)
       super
-      subclass.callbacks.merge!(callbacks)
-      subclass.skipped_callbacks.merge!(skipped_callbacks)
+
+      callbacks
+        .each {|type, list| subclass.callbacks[type] = list.dup }
+
+      skipped_callbacks
+        .each {|type, list| subclass.skipped_callbacks[type] = list.dup }
     end
 
     # The current action name.
