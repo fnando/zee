@@ -595,4 +595,54 @@ class CallbacksTest < Minitest::Test
 
     assert_equal [1, 2], controller.calls
   end
+
+  test "skip before action" do
+    controller_class = Class.new(Zee::Controller) do
+      before_action :hook
+      skip_before_action :hook
+
+      def show
+        render text: ""
+      end
+
+      def calls
+        @calls ||= []
+      end
+
+      private def hook
+        calls << 1
+      end
+    end
+
+    build => {request:, response:}
+    controller = controller_class.new(request:, response:, action_name: :show)
+    controller.send(:call)
+
+    assert_empty controller.calls
+  end
+
+  test "skip after action" do
+    controller_class = Class.new(Zee::Controller) do
+      after_action :hook
+      skip_after_action :hook
+
+      def show
+        render text: ""
+      end
+
+      def calls
+        @calls ||= []
+      end
+
+      private def hook
+        calls << 1
+      end
+    end
+
+    build => {request:, response:}
+    controller = controller_class.new(request:, response:, action_name: :show)
+    controller.send(:call)
+
+    assert_empty controller.calls
+  end
 end
