@@ -621,6 +621,41 @@ class CallbacksTest < Minitest::Test
     assert_empty controller.calls
   end
 
+  test "skip before action with condition" do
+    controller_class = Class.new(Zee::Controller) do
+      before_action :hook
+      skip_before_action :hook, only: :other
+
+      def show
+        render text: ""
+      end
+
+      def other
+        render text: ""
+      end
+
+      def calls
+        @calls ||= []
+      end
+
+      private def hook
+        calls << 1
+      end
+    end
+
+    build => {request:, response:}
+    controller = controller_class.new(request:, response:, action_name: :show)
+    controller.send(:call)
+
+    assert_equal [1], controller.calls
+
+    build => {request:, response:}
+    controller = controller_class.new(request:, response:, action_name: :other)
+    controller.send(:call)
+
+    assert_empty controller.calls
+  end
+
   test "skip after action" do
     controller_class = Class.new(Zee::Controller) do
       after_action :hook
@@ -644,5 +679,61 @@ class CallbacksTest < Minitest::Test
     controller.send(:call)
 
     assert_empty controller.calls
+  end
+
+  test "skip after action with condition" do
+    controller_class = Class.new(Zee::Controller) do
+      after_action :hook
+      skip_after_action :hook, only: :other
+
+      def show
+        render text: ""
+      end
+
+      def other
+        render text: ""
+      end
+
+      def calls
+        @calls ||= []
+      end
+
+      private def hook
+        calls << 1
+      end
+    end
+
+    build => {request:, response:}
+    controller = controller_class.new(request:, response:, action_name: :show)
+    controller.send(:call)
+
+    assert_equal [1], controller.calls
+
+    build => {request:, response:}
+    controller = controller_class.new(request:, response:, action_name: :other)
+    controller.send(:call)
+
+    assert_empty controller.calls
+  end
+
+  test "runs both before and after actions" do
+    controller_class = Class.new(Zee::Controller) do
+      after_action { calls << :after }
+      before_action { calls << :before }
+
+      def show
+        render text: ""
+      end
+
+      def calls
+        @calls ||= []
+      end
+    end
+
+    build => {request:, response:}
+    controller = controller_class.new(request:, response:, action_name: :show)
+    controller.send(:call)
+
+    assert_equal %i[before after], controller.calls
   end
 end

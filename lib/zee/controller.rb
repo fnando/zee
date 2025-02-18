@@ -12,7 +12,8 @@ module Zee
     UnsafeHelperError = Class.new(StandardError)
 
     include Renderer
-    extend Callbacks
+    extend Callbacks::ClassMethods
+    include Callbacks
 
     # Expose helper methods to templates.
     # With this method, you can expose helper methods to all actions.
@@ -164,7 +165,7 @@ module Zee
     private def call
       # Run before action callbacks.
       self.class.callbacks[:before].each do |(callback, conditions)|
-        instance_eval(&callback) if conditions.all? { instance_eval(&_1) }
+        instance_eval(&callback) if instance_eval(&conditions)
 
         # If the response is already set, then stop processing.
         return true if response.status
@@ -178,7 +179,7 @@ module Zee
 
       # Run after action callbacks.
       self.class.callbacks[:after].each do |(callback, conditions)|
-        instance_eval(&callback) if conditions.all? { instance_eval(&_1) }
+        instance_eval(&callback) if instance_eval(&conditions)
       end
 
       # If no status is set, then let's assume the action is implicitly
