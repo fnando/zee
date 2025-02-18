@@ -2,6 +2,7 @@
 
 module Zee
   HTML = "html"
+  DOUBLE_SLASH = "--"
   HTTP_ACCEPT_ALL = "*/*"
   RACK_ZEE_APP = "zee.app"
   HTTP_ORIGIN = "HTTP_ORIGIN"
@@ -15,4 +16,5 @@ module Zee
   ENV_NAMES = %w[ZEE_ENV APP_ENV RACK_ENV].freeze
   ZEE_KEYRING = "ZEE_KEYRING"
   ZEE_SESSION_KEY = "_zee_session"
+  ZEE_CSRF_TOKEN = "zee.csrf_token"
 end

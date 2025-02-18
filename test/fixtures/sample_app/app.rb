@@ -20,8 +20,12 @@ SampleApp = Zee::App.new do
     delete "session", to: "sessions#delete"
     get "helpers", to: "helpers#show"
 
+    # Routes related to CSRF protection
     get "posts/new", to: "posts#new", as: :new_post
-    post "posts/new", to: "posts#create", as: :posts
+    post "posts/new", to: "posts#create"
+    get "categories/new", to: "categories#new", as: :new_category
+    post "categories/new", to: "categories#create"
+    patch "categories/new", to: "categories#create"
   end
 
   middleware do

@@ -9,13 +9,13 @@ class AuthenticityTokenTest < Minitest::Test
     SampleApp
   end
 
-  test "fails if token is missing" do
+  test "rejects missing token" do
     post "/posts/new", {}
 
     assert_equal 422, last_response.status
   end
 
-  test "fails if token is invalid" do
+  test "rejects invalid token" do
     post "/posts/new", {Zee::Controller.csrf_param_name => SecureRandom.hex(32)}
 
     assert_equal 422, last_response.status
@@ -67,6 +67,46 @@ class AuthenticityTokenTest < Minitest::Test
 
     header "X-CSRF-TOKEN", authenticity_token
     post "/posts/new", {}
+
+    assert_equal 422, last_response.status
+  end
+
+  test "accepts valid token per form" do
+    get "/categories/new"
+    authenticity_token = last_response.body
+
+    post "/categories/new",
+         {Zee::Controller.csrf_param_name => authenticity_token}
+
+    assert_equal 200, last_response.status
+  end
+
+  test "rejects token per form without hmac" do
+    get "/categories/new"
+    authenticity_token = last_response.body.split("--").last
+
+    post "/posts/new",
+         {Zee::Controller.csrf_param_name => authenticity_token}
+
+    assert_equal 422, last_response.status
+  end
+
+  test "rejects token per form in a different url" do
+    get "/categories/new"
+    authenticity_token = last_response.body
+
+    post "/posts/new",
+         {Zee::Controller.csrf_param_name => authenticity_token}
+
+    assert_equal 422, last_response.status
+  end
+
+  test "rejects token per form in a different request method" do
+    get "/categories/new"
+    authenticity_token = last_response.body
+
+    patch "/categories/new",
+          {Zee::Controller.csrf_param_name => authenticity_token}
 
     assert_equal 422, last_response.status
   end
