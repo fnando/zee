@@ -269,6 +269,7 @@ module Zee
           helpers.include(::Helpers.const_get(name))
         end
 
+        target.include(routes.helpers)
         target.include(helpers)
       end
     end

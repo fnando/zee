@@ -9,6 +9,15 @@ class HelpersTest < Minitest::Test
     SampleApp
   end
 
+  test "includes defined helper modules" do
+    assert_includes SampleApp.helpers.included_modules, Helpers::I18n
+    assert_includes SampleApp.helpers.included_modules, Helpers::L10n
+  end
+
+  test "helpers include url helpers" do
+    assert_includes SampleApp.helpers.included_modules, SampleApp.routes.helpers
+  end
+
   test "renders root" do
     get "/helpers"
 
