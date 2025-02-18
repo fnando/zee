@@ -29,6 +29,7 @@ module Minitest
     setup { ENV.delete_if { _1.start_with?("ZEE") } }
     setup { FileUtils.rm_rf("tmp") }
     setup { FileUtils.mkdir("tmp") }
+    setup { Zee::Controller.reset_callbacks! }
     teardown { FileUtils.rm_rf("tmp") }
 
     def capture(&)

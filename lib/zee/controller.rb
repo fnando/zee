@@ -39,8 +39,8 @@ module Zee
     # @private
     def self.inherited(subclass)
       super
-      subclass.before_action_callbacks.push(*before_action_callbacks)
-      subclass.after_action_callbacks.push(*after_action_callbacks)
+      subclass.callbacks.merge!(callbacks)
+      subclass.skipped_callbacks.merge!(skipped_callbacks)
     end
 
     # The current action name.
@@ -163,7 +163,7 @@ module Zee
     #   call("show")
     private def call
       # Run before action callbacks.
-      self.class.before_action_callbacks.each do |(callback, conditions)|
+      self.class.callbacks[:before].each do |(callback, conditions)|
         instance_eval(&callback) if conditions.all? { instance_eval(&_1) }
 
         # If the response is already set, then stop processing.
@@ -177,7 +177,7 @@ module Zee
       public_send(action_name)
 
       # Run after action callbacks.
-      self.class.after_action_callbacks.each do |(callback, conditions)|
+      self.class.callbacks[:after].each do |(callback, conditions)|
         instance_eval(&callback) if conditions.all? { instance_eval(&_1) }
       end
 
