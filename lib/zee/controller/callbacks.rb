@@ -3,15 +3,11 @@
 module Zee
   class Controller
     module Callbacks
-      module ClassMethods
-        # @private
-        def reset_callbacks!
-          callbacks[:before].clear
-          callbacks[:after].clear
-          skipped_callbacks[:before].clear
-          skipped_callbacks[:after].clear
-        end
+      def self.included(base)
+        base.extend(Callbacks::ClassMethods)
+      end
 
+      module ClassMethods
         # @private
         def callbacks
           @callbacks ||= {before: [], after: []}
