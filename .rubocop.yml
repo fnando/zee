@@ -27,3 +27,6 @@ Performance/ChainArrayAllocation:
 Minitest/NoAssertions:
   Exclude:
     - test/sequel/plugins/encrypted_attributes_test.rb
+
+Style/DocumentDynamicEvalDefinition:
+  Enabled: false

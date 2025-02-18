@@ -2,14 +2,36 @@
 
 module Zee
   class Route
-    attr_reader :path, :via, :to, :as, :constraints, :defaults, :matcher
+    # The path of the route.
+    # @return [String]
+    attr_reader :path
 
-    def initialize(path:, via:, to:, as:, constraints:, defaults:)
+    # The HTTP methods of the route.
+    # @return [Array<Symbol>] the HTTP methods.
+    attr_reader :via
+
+    # The destination of the route.
+    # @return [String]
+    attr_reader :to
+
+    # The name of the route. When set, URL helpers are defined.
+    # @return [Symbol]
+    # @see {#helpers}
+    attr_reader :name
+
+    # The constraints of the route.
+    # @return [Array<Hash, Proc>]
+    attr_reader :constraints
+
+    # The default values of the route.
+    # @return [Hash]
+    attr_reader :defaults
+
+    def initialize(path:, via:, to:, name:, constraints:, defaults:)
       @path = normalize_slashes(path)
-      @matcher = parse_path(@path)
       @via = Array(via).compact.map(&:to_sym)
       @to = to
-      @as = as
+      @name = name
       @constraints = Array(constraints).flatten.compact
       @defaults = defaults || {}
     end
@@ -18,7 +40,7 @@ module Zee
       return false unless match_path?(request)
 
       params = request.path_with_no_trailing_slash
-                      .match(matcher)
+                      .match(parser.matcher)
                       .named_captures
                       .each_with_object({}) do |(key, value), hash|
                         key = key.to_sym
@@ -30,12 +52,14 @@ module Zee
         match_constraints?(request)
     end
 
-    def segments
-      @segments ||= path.scan(/:(\w+)/).flatten.map(&:to_sym)
+    # The parser for the route.
+    # @return [Parser]
+    def parser
+      @parser ||= Parser.new(path)
     end
 
     private def match_path?(request)
-      request.path_with_no_trailing_slash.match?(matcher)
+      request.path_with_no_trailing_slash.match?(parser.matcher)
     end
 
     private def match_request_method?(request)
@@ -60,7 +84,7 @@ module Zee
 
     private def match_hash_constraints?(request, constraints)
       constraints.all? do |key, constraint|
-        if segments.include?(key)
+        if parser.segments.key?(key)
           constraint === request.params[key] # rubocop:disable Style/CaseEquality
         elsif request.respond_to?(key)
           constraint === request.public_send(key) # rubocop:disable Style/CaseEquality
@@ -81,13 +105,6 @@ module Zee
     private def normalize_slashes(path)
       path = "/#{path}" unless path.start_with?("(")
       path.squeeze("/")
-    end
-
-    private def parse_path(path)
-      path = path
-             .gsub(/\((.*?)\)/, "(?:\\1)?")
-             .gsub(/:(\w+)/, "(?<\\1>[^/]+)")
-      Regexp.new("^#{path}$")
     end
   end
 end

@@ -13,7 +13,7 @@ class RoutesTest < Minitest::Test
     )
 
     refute_nil route
-    assert_equal :root, route.as
+    assert_equal :root, route.name
   end
 
   test "defines GET route" do

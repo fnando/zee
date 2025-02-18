@@ -15,6 +15,7 @@ module Zee
   require_relative "zee/app"
   require_relative "zee/enum"
   require_relative "zee/routes"
+  require_relative "zee/route/parser"
   require_relative "zee/route"
   require_relative "zee/request"
   require_relative "zee/response"

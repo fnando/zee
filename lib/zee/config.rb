@@ -17,6 +17,7 @@ module Zee
     # Initialize the configuration.
     # It sets the following default options:
     #
+    # - `config.default_url_options`: the default URL options.
     # - `config.session_options`: the session cookie options.
     # - `config.json_serializer`: the default JSON serializer.
     # - `config.template_handlers`: the list of template handlers that are
@@ -35,6 +36,7 @@ module Zee
     end
 
     private def set_default_options
+      set :default_url_options, {}
       set :session_options, secret: SecureRandom.hex(64)
       set :json_serializer, JSON
       set :template_handlers, %w[erb]

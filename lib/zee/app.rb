@@ -67,7 +67,7 @@ module Zee
     #     root to: "pages#home"
     #   end
     def routes(&)
-      @routes ||= Routes.new
+      @routes ||= Routes.new(config)
       @routes.instance_eval(&) if block_given?
       @routes
     end
