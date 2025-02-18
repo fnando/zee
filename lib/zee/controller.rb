@@ -107,18 +107,9 @@ module Zee
       locals.merge!(vars)
     end
 
-    # Set template helpers.
-    # @return [Module] The module to include.
+    # The helper object.
     private def helpers
-      @helpers ||= Module.new.tap do |target|
-        helpers = Module.new
-
-        ::Helpers.constants.each do |name|
-          helpers.include(::Helpers.const_get(name))
-        end
-
-        target.include(helpers)
-      end
+      request.env[RACK_ZEE_APP].helpers
     end
 
     # The session hash.

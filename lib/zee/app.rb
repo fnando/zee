@@ -67,7 +67,7 @@ module Zee
     #     root to: "pages#home"
     #   end
     def routes(&)
-      @routes ||= Routes.new
+      @routes ||= Routes.new(config)
       @routes.instance_eval(&) if block_given?
       @routes
     end
@@ -257,6 +257,20 @@ module Zee
       routes_file = root.join("config/routes.rb")
 
       require routes_file if routes_file.file?
+    end
+
+    # Set template helpers.
+    # @return [Module] The module to include.
+    def helpers
+      @helpers ||= Module.new.tap do |target|
+        helpers = Module.new
+
+        ::Helpers.constants.each do |name|
+          helpers.include(::Helpers.const_get(name))
+        end
+
+        target.include(helpers)
+      end
     end
 
     # @private
