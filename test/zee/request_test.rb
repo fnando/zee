@@ -14,4 +14,16 @@ class RequestTest < Minitest::Test
 
     assert_equal "/posts", request.path_with_no_trailing_slash
   end
+
+  test "returns origin" do
+    assert_equal "https://example.com",
+                 Zee::Request.new("HTTP_ORIGIN" => "https://example.com").origin
+  end
+
+  test "detects xhr" do
+    refute Zee::Request.new({}).xhr?
+    refute Zee::Request.new("HTTP_X_REQUESTED_WITH" => "something").xhr?
+    assert Zee::Request.new("HTTP_X_REQUESTED_WITH" => "XMLHttpRequest").xhr?
+    assert Zee::Request.new("HTTP_X_REQUESTED_WITH" => "xmlhttprequest").xhr?
+  end
 end
