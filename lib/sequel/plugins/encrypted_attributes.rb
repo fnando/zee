@@ -94,7 +94,7 @@ module Sequel
         def keyring(
           keyring = nil,
           digest_salt: nil,
-          encryptor: Zee::Keyring::Encryptor::AES::AES128CBC
+          encryptor: Zee::Keyring::Encryptor::AES::AES256GCM
         )
           @keyring ||= Zee::Keyring.new({}, digest_salt: "")
 

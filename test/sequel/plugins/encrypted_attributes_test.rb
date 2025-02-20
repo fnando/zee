@@ -3,6 +3,8 @@
 require "test_helper"
 
 class EncryptedAttributesTest < Minitest::Test
+  DEFAULT_KEYRING = {"0" => SecureRandom.bytes(64)}.freeze
+
   def create_model(&)
     db = Sequel.connect("sqlite::memory:")
     db.execute <<~SQL
@@ -24,7 +26,7 @@ class EncryptedAttributesTest < Minitest::Test
 
   test "works with inheritance" do
     model = create_model do
-      keyring Hash("0" => "uDiMcWVNTuz//naQ88sOcN+E40CyBRGzGTT7OkoBS6M="),
+      keyring DEFAULT_KEYRING,
               digest_salt: ""
       encrypt :secret
     end
@@ -58,7 +60,7 @@ class EncryptedAttributesTest < Minitest::Test
 
   test "encrypts value" do
     model = create_model do
-      keyring Hash("0" => "uDiMcWVNTuz//naQ88sOcN+E40CyBRGzGTT7OkoBS6M="),
+      keyring DEFAULT_KEYRING,
               digest_salt: ""
       encrypt :secret
     end
@@ -73,7 +75,7 @@ class EncryptedAttributesTest < Minitest::Test
 
   test "saves keyring id" do
     model = create_model do
-      keyring Hash("0" => "uDiMcWVNTuz//naQ88sOcN+E40CyBRGzGTT7OkoBS6M="),
+      keyring DEFAULT_KEYRING,
               digest_salt: ""
       encrypt :secret
     end
@@ -86,7 +88,7 @@ class EncryptedAttributesTest < Minitest::Test
 
   test "handles nil values during encryption" do
     model = create_model do
-      keyring Hash("0" => "uDiMcWVNTuz//naQ88sOcN+E40CyBRGzGTT7OkoBS6M="),
+      keyring DEFAULT_KEYRING,
               digest_salt: ""
       encrypt :secret, :other_secret
     end
@@ -100,7 +102,7 @@ class EncryptedAttributesTest < Minitest::Test
 
   test "saves digest value" do
     model = create_model do
-      keyring Hash("0" => "uDiMcWVNTuz//naQ88sOcN+E40CyBRGzGTT7OkoBS6M="),
+      keyring DEFAULT_KEYRING,
               digest_salt: "a"
       encrypt :secret
     end
@@ -112,7 +114,7 @@ class EncryptedAttributesTest < Minitest::Test
 
   test "finds record via digest value" do
     model = create_model do
-      keyring Hash("0" => "uDiMcWVNTuz//naQ88sOcN+E40CyBRGzGTT7OkoBS6M="),
+      keyring DEFAULT_KEYRING,
               digest_salt: "a"
       encrypt :secret
     end
@@ -125,7 +127,7 @@ class EncryptedAttributesTest < Minitest::Test
 
   test "updates encrypted value" do
     model = create_model do
-      keyring Hash("0" => "uDiMcWVNTuz//naQ88sOcN+E40CyBRGzGTT7OkoBS6M="),
+      keyring DEFAULT_KEYRING,
               digest_salt: ""
       encrypt :secret
     end
@@ -144,7 +146,7 @@ class EncryptedAttributesTest < Minitest::Test
 
   test "updates encrypted value using set" do
     model = create_model do
-      keyring Hash("0" => "uDiMcWVNTuz//naQ88sOcN+E40CyBRGzGTT7OkoBS6M="),
+      keyring DEFAULT_KEYRING,
               digest_salt: ""
       encrypt :secret
     end
@@ -163,7 +165,7 @@ class EncryptedAttributesTest < Minitest::Test
 
   test "updates digest" do
     model = create_model do
-      keyring Hash("0" => "uDiMcWVNTuz//naQ88sOcN+E40CyBRGzGTT7OkoBS6M="),
+      keyring DEFAULT_KEYRING,
               digest_salt: ""
       encrypt :secret
     end
@@ -181,7 +183,7 @@ class EncryptedAttributesTest < Minitest::Test
 
   test "assigns digest even without saving" do
     model = create_model do
-      keyring Hash("0" => "uDiMcWVNTuz//naQ88sOcN+E40CyBRGzGTT7OkoBS6M="),
+      keyring DEFAULT_KEYRING,
               digest_salt: ""
       encrypt :secret
     end
@@ -193,7 +195,7 @@ class EncryptedAttributesTest < Minitest::Test
 
   test "assigns nil values" do
     model = create_model do
-      keyring Hash("0" => "uDiMcWVNTuz//naQ88sOcN+E40CyBRGzGTT7OkoBS6M="),
+      keyring DEFAULT_KEYRING,
               digest_salt: ""
       encrypt :secret
     end
@@ -207,7 +209,7 @@ class EncryptedAttributesTest < Minitest::Test
 
   test "assigns non-string values" do
     model = create_model do
-      keyring Hash("0" => "uDiMcWVNTuz//naQ88sOcN+E40CyBRGzGTT7OkoBS6M="),
+      keyring DEFAULT_KEYRING,
               digest_salt: ""
       encrypt :secret
     end
@@ -220,7 +222,7 @@ class EncryptedAttributesTest < Minitest::Test
 
   test "assigns nil after saving encrypted value" do
     model = create_model do
-      keyring Hash("0" => "uDiMcWVNTuz//naQ88sOcN+E40CyBRGzGTT7OkoBS6M="),
+      keyring DEFAULT_KEYRING,
               digest_salt: ""
       encrypt :secret
     end
@@ -239,14 +241,14 @@ class EncryptedAttributesTest < Minitest::Test
 
   test "encrypts with newer key when assigning new value" do
     model = create_model do
-      keyring Hash("0" => "uDiMcWVNTuz//naQ88sOcN+E40CyBRGzGTT7OkoBS6M="),
+      keyring DEFAULT_KEYRING,
               digest_salt: ""
       encrypt :secret
     end
 
     user = model.create(secret: "42")
 
-    model.keyring["1"] = "VN8UXRVMNbIh9FWEFVde0q7GUA1SGOie1+FgAKlNYHc="
+    model.keyring["1"] = SecureRandom.bytes(64)
 
     user.update(secret: "new secret")
     user.reload
@@ -259,14 +261,14 @@ class EncryptedAttributesTest < Minitest::Test
 
   test "encrypts with newer key when saving" do
     model = create_model do
-      keyring Hash("0" => "uDiMcWVNTuz//naQ88sOcN+E40CyBRGzGTT7OkoBS6M="),
+      keyring DEFAULT_KEYRING,
               digest_salt: ""
       encrypt :secret
     end
 
     user = model.create(secret: "42")
 
-    model.keyring["1"] = "VN8UXRVMNbIh9FWEFVde0q7GUA1SGOie1+FgAKlNYHc="
+    model.keyring["1"] = SecureRandom.bytes(64)
 
     user.save
     user.reload
@@ -279,7 +281,7 @@ class EncryptedAttributesTest < Minitest::Test
 
   test "encrypts several columns at once" do
     model = create_model do
-      keyring Hash("0" => "uDiMcWVNTuz//naQ88sOcN+E40CyBRGzGTT7OkoBS6M="),
+      keyring DEFAULT_KEYRING,
               digest_salt: ""
       encrypt :secret, :other_secret
     end
@@ -298,7 +300,7 @@ class EncryptedAttributesTest < Minitest::Test
 
   test "encrypts columns with different keys set at different times" do
     model = create_model do
-      keyring Hash("0" => "uDiMcWVNTuz//naQ88sOcN+E40CyBRGzGTT7OkoBS6M="),
+      keyring DEFAULT_KEYRING,
               digest_salt: ""
       encrypt :secret, :other_secret
     end
@@ -310,7 +312,7 @@ class EncryptedAttributesTest < Minitest::Test
     assert_equal "other secret", user.other_secret
     assert_equal 0, user.keyring_id
 
-    model.keyring["1"] = "VN8UXRVMNbIh9FWEFVde0q7GUA1SGOie1+FgAKlNYHc="
+    model.keyring["1"] = SecureRandom.bytes(64)
 
     user.secret = "new secret"
     user.save
@@ -323,8 +325,8 @@ class EncryptedAttributesTest < Minitest::Test
 
   test "encrypts column with most recent key" do
     model = create_model do
-      keyring Hash("0" => "uDiMcWVNTuz//naQ88sOcN+E40CyBRGzGTT7OkoBS6M=",
-                   "1" => "VN8UXRVMNbIh9FWEFVde0q7GUA1SGOie1+FgAKlNYHc="),
+      keyring Hash("0" => SecureRandom.bytes(64),
+                   "1" => SecureRandom.bytes(64)),
               digest_salt: ""
       encrypt :secret
     end
@@ -338,7 +340,7 @@ class EncryptedAttributesTest < Minitest::Test
 
   test "raises exception when key is missing" do
     model = create_model do
-      keyring Hash("0" => "uDiMcWVNTuz//naQ88sOcN+E40CyBRGzGTT7OkoBS6M="),
+      keyring DEFAULT_KEYRING,
               digest_salt: ""
       encrypt :secret
     end
@@ -346,14 +348,14 @@ class EncryptedAttributesTest < Minitest::Test
     model.create(secret: "42")
 
     model.keyring.clear
-    model.keyring["1"] = "VN8UXRVMNbIh9FWEFVde0q7GUA1SGOie1+FgAKlNYHc="
+    model.keyring["1"] = SecureRandom.bytes(64)
 
     assert_raises(Zee::Keyring::UnknownKey) { model.first.secret }
   end
 
   test "caches decrypted value" do
     model = create_model do
-      keyring Hash("0" => "uDiMcWVNTuz//naQ88sOcN+E40CyBRGzGTT7OkoBS6M="),
+      keyring DEFAULT_KEYRING,
               digest_salt: ""
       encrypt :secret
     end
@@ -366,7 +368,7 @@ class EncryptedAttributesTest < Minitest::Test
 
   test "clears cache when assigning values" do
     model = create_model do
-      keyring Hash("0" => "uDiMcWVNTuz//naQ88sOcN+E40CyBRGzGTT7OkoBS6M="),
+      keyring DEFAULT_KEYRING,
               digest_salt: ""
       encrypt :secret
     end
@@ -381,7 +383,7 @@ class EncryptedAttributesTest < Minitest::Test
 
   test "rotates key" do
     model = create_model do
-      keyring Hash("0" => "uDiMcWVNTuz//naQ88sOcN+E40CyBRGzGTT7OkoBS6M="),
+      keyring DEFAULT_KEYRING,
               digest_salt: ""
       encrypt :secret
     end
@@ -392,7 +394,7 @@ class EncryptedAttributesTest < Minitest::Test
     assert_equal "42", user.secret
     assert_equal 0, user.keyring_id
 
-    model.keyring["1"] = "VN8UXRVMNbIh9FWEFVde0q7GUA1SGOie1+FgAKlNYHc="
+    model.keyring["1"] = SecureRandom.bytes(64)
 
     user.keyring_rotate!
     user.reload
@@ -403,7 +405,7 @@ class EncryptedAttributesTest < Minitest::Test
 
   test "encrypts all attributes when setting only one attribute" do
     model = create_model do
-      keyring Hash("0" => "uDiMcWVNTuz//naQ88sOcN+E40CyBRGzGTT7OkoBS6M="),
+      keyring DEFAULT_KEYRING,
               digest_salt: ""
       encrypt :secret, :other_secret
     end
@@ -414,7 +416,7 @@ class EncryptedAttributesTest < Minitest::Test
     assert_equal "42", user.secret
     assert_equal 0, user.keyring_id
 
-    model.keyring["1"] = "VN8UXRVMNbIh9FWEFVde0q7GUA1SGOie1+FgAKlNYHc="
+    model.keyring["1"] = SecureRandom.bytes(64)
 
     user.secret = "24"
     user.save
@@ -428,7 +430,7 @@ class EncryptedAttributesTest < Minitest::Test
 
   test "returns unitialized attributes" do
     model = create_model do
-      keyring Hash("0" => "uDiMcWVNTuz//naQ88sOcN+E40CyBRGzGTT7OkoBS6M="),
+      keyring DEFAULT_KEYRING,
               digest_salt: ""
       encrypt :secret
     end
@@ -494,8 +496,7 @@ class EncryptedAttributesTest < Minitest::Test
 
   test "wraps json attributes" do
     model = create_model do
-      keyring_store = {"0" => "uDiMcWVNTuz//naQ88sOcN+E40CyBRGzGTT7OkoBS6M="}
-      keyring keyring_store, digest_salt: ""
+      keyring DEFAULT_KEYRING, digest_salt: ""
       encrypt :secret, encoder: JSON
     end
 
@@ -507,8 +508,7 @@ class EncryptedAttributesTest < Minitest::Test
 
   test "wraps json with symbolized attributes" do
     model = create_model do
-      keyring_store = {"0" => "uDiMcWVNTuz//naQ88sOcN+E40CyBRGzGTT7OkoBS6M="}
-      keyring keyring_store, digest_salt: ""
+      keyring DEFAULT_KEYRING, digest_salt: ""
       encrypt :secret, encoder: Zee::Encoders::JSONEncoder
     end
 

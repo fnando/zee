@@ -164,7 +164,7 @@ module Zee
     attr_reader :digest_salt
 
     # Initialize a new keyring.
-    # @param keyring [Hash{Integer => String}] the keyring.
+    # @param keyring [Hash{Integer => String}, Keyring] the keyring.
     # @param [String, nil] digest_salt
     # @param [Object] encryptor
     # @return [Keyring]
@@ -181,9 +181,19 @@ module Zee
 
       @encryptor = encryptor
       @digest_salt = digest_salt
-      @keyring = keyring.map do |id, value|
-        Key.new(id:, key: value, size: encryptor.key_size)
-      end
+      @keyring = if keyring.is_a?(self.class)
+                   keyring.keys
+                 else
+                   keyring.map do |id, value|
+                     Key.new(id:, key: value, size: encryptor.key_size)
+                   end
+                 end
+    end
+
+    # Returns the keys in the keyring.
+    # @return [Array<Key>]
+    def keys
+      @keyring.dup
     end
 
     # Returns the current key.

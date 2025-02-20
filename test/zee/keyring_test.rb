@@ -3,6 +3,23 @@
 require "test_helper"
 
 class KeyringTest < Minitest::Test
+  test "accepts a keyring instance as a keyring" do
+    keys = {
+      "0" => "0dab9f80f8e1ebad17a080ee6b7616d773ea3f95bef9a88784c01c1ed4e28520"
+    }
+    keyring = Zee::Keyring.new(
+      Zee::Keyring.new(keys, digest_salt: ""),
+      digest_salt: ""
+    )
+
+    assert_equal 1, keyring.size
+
+    encrypted, keyring_id, _ = keyring.encrypt("42")
+    decrypted = keyring.decrypt(encrypted, keyring_id)
+
+    assert_equal "42", decrypted
+  end
+
   test "clears keyring" do
     keys = {
       "0" => "0dab9f80f8e1ebad17a080ee6b7616d773ea3f95bef9a88784c01c1ed4e28520"
