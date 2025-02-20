@@ -6,14 +6,36 @@ module Zee
     module Encryptor
       module AES
         class Base
-          SEPARATOR = "--"
-
           def self.build_cipher
             OpenSSL::Cipher.new(cipher_name)
           end
 
           def self.key_size
             @key_size ||= build_cipher.key_len
+          end
+
+          def self.hmac_size
+            32
+          end
+
+          def self.segment_ranges
+            cipher = build_cipher
+            start = 0
+            ranges = []
+            sizes = [
+              hmac_size,
+              cipher.iv_len,
+              (auth_tag_len if cipher.authenticated?)
+            ].compact
+
+            sizes.each do |size|
+              ranges << (start...(start + size))
+              start += size
+            end
+
+            ranges << (start..-1)
+
+            ranges
           end
 
           def self.encrypt(key, message)
@@ -28,18 +50,23 @@ module Zee
                    else
                      [iv, encrypted]
                    end
-            hmac = hmac_digest(key.signing_key, data.join(SEPARATOR))
+            hmac = hmac_digest(key.signing_key, data.join)
 
-            Base64.strict_encode64([hmac].concat(data).join(SEPARATOR))
+            Base64.strict_encode64([hmac].concat(data).join)
           end
 
           def self.decrypt(key, message)
             cipher = build_cipher
             cipher.decrypt
 
-            hmac, *data = *Base64.strict_decode64(message).split(SEPARATOR)
+            # hmac, *data = *Base64.strict_decode64(message).split
+            decoded = Base64.strict_decode64(message)
+            hmac, *data =
+              *segment_ranges.map do |range|
+                decoded.byteslice(range)
+              end
 
-            expected_hmac = hmac_digest(key.signing_key, data.join(SEPARATOR))
+            expected_hmac = hmac_digest(key.signing_key, data.join)
 
             unless verify_signature(expected_hmac, hmac)
               raise InvalidAuthentication,
@@ -92,6 +119,10 @@ module Zee
         class AES256GCM < Base
           def self.cipher_name
             "AES-256-GCM"
+          end
+
+          def self.auth_tag_len
+            16
           end
         end
       end

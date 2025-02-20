@@ -107,7 +107,7 @@ module Sequel
 
         # Set the keyring for this model.
         # @param keyring [Zee::Keyring] the keyring to use.
-        # @see {#keyring}
+        # @see #keyring
         def keyring=(keyring)
           @keyring = keyring
         end

@@ -14,7 +14,7 @@ module Zee
     attr_reader :path
 
     # The [Keyring] that will be used to encrypt and decrypt the file.
-    # @param path [String]
+    # @return [String]
     attr_reader :keyring
 
     # @param path [String]
