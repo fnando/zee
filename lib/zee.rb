@@ -11,6 +11,18 @@ require "yaml"
 require "json"
 require "securerandom"
 
+begin
+  # Phlex has a bunch of warnings. 😬
+  verbose = $VERBOSE
+  $VERBOSE = nil
+  require "phlex"
+  Phlex.eager_load
+rescue LoadError
+  # noop
+ensure
+  $VERBOSE = verbose
+end
+
 module Zee
   require_relative "zee/constants"
   require_relative "zee/version"
@@ -39,4 +51,13 @@ module Zee
   require_relative "zee/keyring/encryptor/aes"
   require_relative "zee/keyring/key"
   require_relative "zee/params"
+  require_relative "zee/form_builder"
+  require_relative "zee/form_builder/base"
+  require_relative "zee/form_builder/layout"
+  require_relative "zee/form_builder/helpers"
+  require_relative "zee/form_builder/form"
+  require_relative "zee/form_builder/input"
+  require_relative "zee/form_builder/label"
+  require_relative "zee/form_builder/hint"
+  require_relative "zee/form_builder/checkbox"
 end

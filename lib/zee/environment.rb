@@ -5,7 +5,7 @@ module Zee
     NAMES = %i[development test production local].freeze
 
     # Returns the name of the environment.
-    # @param name [Symbol]
+    # @return [Symbol]
     attr_reader :name
 
     # Initialize the environment.

@@ -6,11 +6,13 @@ SimpleCov.start do
 end
 
 require "bundler/setup"
-require "zee"
-require "zee/cli"
 require "rack/test"
 require "rack/session"
 require "rack/protection"
+
+require "zee"
+require "zee/cli"
+require "zee/test/html"
 
 require "minitest/utils"
 require "minitest/autorun"

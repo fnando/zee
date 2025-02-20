@@ -27,7 +27,7 @@ module Zee
     # Expose helper methods to templates.
     # With this method, you can expose helper methods to all actions.
     #
-    # @see {#expose}
+    # @see #expose
     #
     # @example Expose a helper method to all actions.
     #   class ApplicationController < Zee::Controller
@@ -169,7 +169,7 @@ module Zee
     # @private
     # Run the action on the controller.
     # This will also run all callbacks defined by {#before_action}.
-    # @param action_name [String] The name of the action to run.
+    #
     # @raise [MissingActionError] If the action is missing.
     # @raise [MissingTemplateError] If the template is missing.
     #

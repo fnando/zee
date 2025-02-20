@@ -16,7 +16,7 @@ module Zee
 
     # The name of the route. When set, URL helpers are defined.
     # @return [Symbol]
-    # @see {#helpers}
+    # @see #helpers
     attr_reader :name
 
     # The constraints of the route.
