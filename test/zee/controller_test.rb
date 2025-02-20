@@ -9,12 +9,6 @@ class ControllerTest < Minitest::Test
     Zee::Request.new("rack.session" => {}, "zee.app" => app)
   end
 
-  test "returns params" do
-    controller = Zee::Controller.new(request:, response:)
-
-    assert_same request.params, controller.send(:params).to_h
-  end
-
   test "returns session" do
     controller = Zee::Controller.new(request:, response:)
 

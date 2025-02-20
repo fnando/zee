@@ -104,6 +104,38 @@ class ParserTest < Minitest::Test
     assert_equal "/posts/1", parser.build_path(nil, "1")
   end
 
+  test "builds path using object that responds to to_param" do
+    object = Struct.new(:to_param).new("1")
+    parser = Zee::Route::Parser.new("/posts/:id")
+
+    assert_equal "/posts/1", parser.build_path(object)
+  end
+
+  test "builds path using string" do
+    object = "1"
+    parser = Zee::Route::Parser.new("/posts/:id")
+
+    assert_equal "/posts/1", parser.build_path(object)
+  end
+
+  test "builds path using symbol" do
+    object = :"1"
+    parser = Zee::Route::Parser.new("/posts/:id")
+
+    assert_equal "/posts/1", parser.build_path(object)
+  end
+
+  test "raises for object that doesn't implement to_param or id" do
+    object = Object.new
+    parser = Zee::Route::Parser.new("/posts/:id")
+
+    error = assert_raises(ArgumentError) do
+      parser.build_path(object)
+    end
+
+    assert_match(/Cannot convert #<Object:.*?> to param/, error.message)
+  end
+
   test "raises for missing required segment" do
     parser = Zee::Route::Parser.new("/posts/:id")
 

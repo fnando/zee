@@ -64,6 +64,22 @@ module Zee
         @components ||= pattern.gsub(/[()]/, "").split("/")
       end
 
+      def to_param(value)
+        return value.to_param if value.respond_to?(:to_param)
+        return value.id if value.respond_to?(:id)
+
+        primitive = value.nil? ||
+                    value.is_a?(String) ||
+                    value.is_a?(Symbol) ||
+                    value.is_a?(Integer)
+
+        return value.to_s if primitive
+
+        raise ArgumentError,
+              "Cannot convert #{value.inspect} to param; implement either " \
+              "#to_param or #id, or pass a string"
+      end
+
       def build_path(*args)
         return "/" if components.empty?
         return pattern if segments.empty?
@@ -74,7 +90,7 @@ module Zee
         components.each do |component|
           if component.start_with?(":")
             name = component[1..-1].to_sym
-            value = params[name].to_s
+            value = to_param(params[name])
 
             next if segments[name].optional? && value.empty?
 
