@@ -3,6 +3,8 @@
 require "rack"
 require "mini_mime"
 require "tilt"
+require "erubi"
+require "erubi/capture_block"
 require "superconfig"
 require "forwardable"
 require "yaml"

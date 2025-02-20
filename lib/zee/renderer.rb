@@ -92,12 +92,16 @@ module Zee
       end
 
       ctx = Object.new.extend(helpers)
-      body = Tilt.new(view_path[:path]).render(ctx, locals)
+      tilt_options = {engine_class: Erubi::CaptureBlockEngine}
+
+      body = Tilt
+             .new(view_path[:path], tilt_options)
+             .render(ctx, locals)
 
       if layout != false && layout_path
-        body = Tilt.new(layout_path[:path]).render(ctx, locals) do
-          body
-        end
+        body = Tilt
+               .new(layout_path[:path], tilt_options)
+               .render(ctx, locals) { body }
       end
 
       response.status(status)
