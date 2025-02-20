@@ -12,7 +12,7 @@ class ControllerTest < Minitest::Test
   test "returns params" do
     controller = Zee::Controller.new(request:, response:)
 
-    assert_same request.params, controller.send(:params)
+    assert_same request.params, controller.send(:params).to_h
   end
 
   test "returns session" do

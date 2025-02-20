@@ -36,4 +36,5 @@ module Zee
   require_relative "zee/encoders/json_encoder"
   require_relative "zee/keyring/encryptor/aes"
   require_relative "zee/keyring/key"
+  require_relative "zee/params"
 end

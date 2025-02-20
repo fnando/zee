@@ -47,12 +47,5 @@ module Zee
         PublicSuffix.parse(host).trd.to_s
       end
     end
-
-    # The request parameters.
-    # Any route parameters will also be available here.
-    # @return [Hash]
-    def params
-      @params ||= super.transform_keys(&:to_sym)
-    end
   end
 end

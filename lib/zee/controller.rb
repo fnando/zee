@@ -81,9 +81,9 @@ module Zee
     end
 
     # The parameters from the request.
-    # @return [Hash]
+    # @return [Params]
     private def params
-      request.params
+      @params ||= Params.new(request.params)
     end
 
     # The variables that will be exposed to templates.
