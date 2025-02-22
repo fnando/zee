@@ -30,6 +30,7 @@ SampleApp = Zee::App.new do
 
   middleware do
     delete Rack::CommonLogger
+    use Rack::ShowExceptions
   end
 end
 

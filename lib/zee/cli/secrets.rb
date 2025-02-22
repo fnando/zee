@@ -87,6 +87,9 @@ module Zee
               # The session secret is used to sign the session cookie.
               # It will also be used to sign the CSRF token.
               session_secret: #{SecureRandom.hex(64)}
+
+              # Set a digest salt for keyring.
+              digest_salt: #{SecureRandom.hex(64)}
             YAML
 
             keyring = Zee::Keyring.new({"0" => key}, digest_salt:)

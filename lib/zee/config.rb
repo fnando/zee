@@ -22,6 +22,7 @@ module Zee
     # - `config.json_serializer`: the default JSON serializer.
     # - `config.template_handlers`: the list of template handlers that are
     #    enabled by {https://github.com/jeremyevans/tilt Tilt}.
+    # - `config.enable_reloading`: whether to enable code reloading.
     #
     # @param app [Zee::App] The application instance.
     # @return [Zee::Config]
@@ -41,6 +42,7 @@ module Zee
       set :json_serializer, JSON
       set :template_handlers, %w[erb]
       set :serve_static_files, app&.env&.local?
+      set :enable_reloading, false
     end
 
     # @private

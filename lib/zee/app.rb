@@ -93,10 +93,10 @@ module Zee
     def config(*envs, &)
       @config ||= Config.new(self)
 
-      write = block_given? &&
-              (envs.map(&:to_sym).include?(env.to_sym) || envs.empty?)
+      run = block_given? &&
+            (envs.map(&:to_sym).include?(env.to_sym) || envs.empty?)
 
-      @config.instance_eval(&) if write
+      @config.instance_eval(&) if run
 
       @config
     end
@@ -249,15 +249,39 @@ module Zee
       push_dir.call "app/models", ::Models
       push_dir.call "app/views", ::Views
 
-      instance_eval(&@on_init.shift) while @on_init.any?
-
+      load_files
+      run_init
       enable_reloading
       loader.setup
-
-      routes_file = root.join("config/routes.rb")
-
-      require routes_file if routes_file.file?
     end
+
+    # @private
+    def run_init
+      @on_init.each { instance_eval(&_1) }
+    end
+
+    # @private
+    # Load the configuration files.
+    # This is mostly used for reloading in development.
+    # @param force [Boolean] If `true`, the files will be loaded using `load`
+    #                        instead of `require`.
+    # :nocov:
+    def load_files(force: false)
+      files = [root.join("config/config.rb"), root.join("config/routes.rb")]
+      files += root.join("config/environments").glob("**/*.rb")
+      files += root.join("config/initializers").glob("**/*.rb")
+
+      files.each do |file|
+        next unless file.file?
+
+        if force
+          load file
+        else
+          require file
+        end
+      end
+    end
+    # :nocov:
 
     # Set template helpers.
     # @return [Module] The module to include.
@@ -281,11 +305,11 @@ module Zee
 
     def call(env)
       env[RACK_ZEE_APP] = self
-      Dir.chdir(root) { return app.call(env) }
+      Dir.chdir(root) { return rack_app.call(env) }
     end
 
-    private def app
-      @app ||= begin
+    private def rack_app
+      @rack_app ||= begin
         request_handler = RequestHandler.new(self)
         stack = middleware.to_a
 
@@ -305,12 +329,24 @@ module Zee
 
     # :nocov:
     private def enable_reloading
-      return if env.development?
+      return unless config.enable_reloading
 
       require "listen"
       loader.enable_reloading
-      only = /\.rb|Gemfile.lock$/
-      listener = Listen.to(root, only:) { loader.reload }
+      only = /\.(rb|yml\.enc)|Gemfile.lock$/
+
+      listener = Listen.to(root, only:) do
+        @config = nil
+        @routes = nil
+        @secrets = nil
+        @on_init = []
+        @middleware = nil
+        @rack_app = nil
+
+        load_files force: true
+        run_init
+      end
+
       listener.start
     rescue LoadError
       warn "Please add `gem 'listen'` to your Gemfile to enable reloading."
