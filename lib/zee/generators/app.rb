@@ -29,6 +29,9 @@ module Zee
         copy_file "config/puma.rb"
         copy_file "app/helpers/app.rb"
         copy_file "config/routes.rb"
+        copy_file "config/config.rb"
+        copy_file "config/initializers/middleware.rb"
+        copy_file "config/initializers/sequel.rb"
         copy_file "Procfile.dev"
         copy_file "test/test_helper.rb"
         copy_file "config.ru"
@@ -113,6 +116,9 @@ module Zee
             # The session secret is used to sign the session cookie.
             # It will also be used to sign the CSRF token.
             session_secret: #{SecureRandom.hex(64)}
+
+            # Set a digest salt for keyring.
+            digest_salt: #{SecureRandom.hex(64)}
           YAML
 
           say_status :create, relative_secrets_file, :green

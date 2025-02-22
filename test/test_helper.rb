@@ -1,9 +1,14 @@
 # frozen_string_literal: true
 
+ENV["APP_ENV"] = "test"
+
 require "simplecov"
 SimpleCov.start do
   add_filter("test/")
 end
+
+require "nokogiri"
+require "sequel"
 
 require "bundler/setup"
 require "zee"
@@ -14,6 +19,8 @@ require "rack/protection"
 
 require "minitest/utils"
 require "minitest/autorun"
+
+Bundler.setup(:default, :development, :test)
 
 Dir["#{__dir__}/support/**/*.rb"].each do |file|
   require file

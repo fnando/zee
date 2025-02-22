@@ -28,6 +28,9 @@ class AppTest < Minitest::Test
     assert app.join("config.ru").file?
     assert app.join("config/app.rb").file?
     assert app.join("config/boot.rb").file?
+    assert app.join("config/config.rb").file?
+    assert app.join("config/initializers/middleware.rb").file?
+    assert app.join("config/initializers/sequel.rb").file?
     assert app.join("config/environment.rb").file?
     assert app.join("config/secrets/development.key").file?
     assert app.join("config/secrets/test.key").file?
