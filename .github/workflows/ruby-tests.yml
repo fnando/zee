@@ -30,7 +30,8 @@ jobs:
         with:
           path: vendor/bundle
           key: >
-            ${{ runner.os }}-${{ matrix.ruby }}-gems-${{ hashFiles(matrix.gemfile) }}
+            ${{ runner.os }}-${{ matrix.ruby }}-gems-${{
+            hashFiles(matrix.gemfile) }}-${{hashFiles('zee.gemspec')}}
 
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
@@ -42,6 +43,7 @@ jobs:
           BUNDLE_GEMFILE: ${{ matrix.gemfile }}
         run: |
           gem install bundler
+          bundle config set with default:development:test
           bundle config path vendor/bundle
           bundle update --jobs 4 --retry 3
 

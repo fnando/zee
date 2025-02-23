@@ -7,20 +7,18 @@ SimpleCov.start do
   add_filter("test/")
 end
 
-require "nokogiri"
-require "sequel"
-
 require "bundler/setup"
+Bundler.setup(:default, :development)
+
 require "zee"
 require "zee/cli"
 require "rack/test"
 require "rack/session"
 require "rack/protection"
-
+require "nokogiri"
+require "sequel"
 require "minitest/utils"
 require "minitest/autorun"
-
-Bundler.setup(:default, :development, :test)
 
 Dir["#{__dir__}/support/**/*.rb"].each do |file|
   require file
