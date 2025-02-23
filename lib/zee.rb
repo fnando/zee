@@ -39,4 +39,5 @@ module Zee
   require_relative "zee/keyring/encryptor/aes"
   require_relative "zee/keyring/key"
   require_relative "zee/params"
+  require_relative "zee/assets_manifest"
 end
