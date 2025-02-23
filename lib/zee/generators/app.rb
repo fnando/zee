@@ -22,6 +22,11 @@ module Zee
       def files
         copy_file ".gitignore"
         copy_file "app/helpers/app.rb"
+        copy_file "app/assets/styles/app.css"
+        create_file "app/assets/styles/app/.keep"
+        create_file "app/assets/scripts/app/.keep"
+        create_file "app/assets/images/.keep"
+        create_file "app/assets/fonts/.keep"
         copy_file "bin/assets"
         copy_file "bin/dev"
         copy_file "bin/zee"
@@ -64,6 +69,30 @@ module Zee
         create_key :test
       end
 
+      def js
+        case options[:js]
+        when "typescript"
+          copy_file "app/assets/scripts/app.ts"
+          copy_file "tsconfig.json"
+          add_npm_dependency "typescript" => "*"
+        when "js"
+          copy_file "app/assets/scripts/app.js"
+        else
+          raise Thor::Error, "Unsupported JS option: #{options[:js].inspect}"
+        end
+      end
+
+      def css
+        case options[:css]
+        when "tailwind"
+          add_npm_dependency "tailwindcss" => "*", "@tailwindcss/cli" => "*"
+        when "css"
+          # noop
+        else
+          raise Thor::Error, "Unsupported CSS option: #{options[:css].inspect}"
+        end
+      end
+
       def permissions
         in_root do
           FileUtils.chmod(0o755, "bin/assets")
@@ -86,6 +115,24 @@ module Zee
       end
 
       no_commands do
+        def add_npm_dependency(**deps)
+          path = File.join(destination_root, "package.json")
+          json = JSON.parse(File.read(path))
+
+          deps.each do |name, version|
+            if json["dependencies"].key?(name)
+              # :nocov:
+              say_status :skip, %[npm package "#{name}" already added], :blue
+              # :nocov:
+            else
+              json["dependencies"][name] = version
+              say_status :add, %[npm package "#{name}"], :green
+            end
+          end
+
+          File.write(path, JSON.pretty_generate(json))
+        end
+
         def create_key(env)
           digest_salt = SecureRandom.hex(32)
           key = SecureRandom.hex(32)

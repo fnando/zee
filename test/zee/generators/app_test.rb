@@ -6,7 +6,7 @@ class AppTest < Minitest::Test
   test "generates new app" do
     app = Pathname("tmp")
     generator = Zee::Generators::App.new
-    generator.options = {database: "sqlite"}
+    generator.options = {database: "sqlite", js: "typescript", css: "tailwind"}
     generator.destination_root = app
     out = nil
 
@@ -24,6 +24,9 @@ class AppTest < Minitest::Test
     assert app.join("bin/assets").file?
     assert app.join("package.json").file?
     assert app.join("app/controllers/base.rb").file?
+    assert app.join("app/assets/styles/app.css").file?
+    assert app.join("app/assets/scripts/app.ts").file?
+    assert app.join("app/assets/styles/app.css").file?
     assert app.join("app/controllers/pages.rb").file?
     assert app.join("app/views/layouts/application.html.erb").file?
     assert app.join("app/helpers/app.rb").file?
@@ -65,7 +68,12 @@ class AppTest < Minitest::Test
   test "skips bundle install" do
     app = Pathname("tmp")
     generator = Zee::Generators::App.new
-    generator.options = {skip_bundle: true, database: "sqlite"}
+    generator.options = {
+      skip_bundle: true,
+      database: "sqlite",
+      js: "typescript",
+      css: "tailwind"
+    }
     generator.destination_root = app
     out = nil
 
@@ -79,7 +87,7 @@ class AppTest < Minitest::Test
   test "uses sqlite" do
     app = Pathname("tmp")
     generator = Zee::Generators::App.new
-    generator.options = {database: "sqlite"}
+    generator.options = {database: "sqlite", js: "typescript", css: "tailwind"}
     generator.destination_root = app
 
     Dir.chdir(app) do
@@ -97,7 +105,11 @@ class AppTest < Minitest::Test
   test "uses postgresql" do
     app = Pathname("tmp")
     generator = Zee::Generators::App.new
-    generator.options = {database: "postgresql"}
+    generator.options = {
+      database: "postgresql",
+      js: "typescript",
+      css: "tailwind"
+    }
     generator.destination_root = app
 
     Dir.chdir(app) do
@@ -115,7 +127,7 @@ class AppTest < Minitest::Test
   test "uses mysql" do
     app = Pathname("tmp")
     generator = Zee::Generators::App.new
-    generator.options = {database: "mysql"}
+    generator.options = {database: "mysql", js: "typescript", css: "tailwind"}
     generator.destination_root = app
 
     Dir.chdir(app) do
@@ -133,7 +145,7 @@ class AppTest < Minitest::Test
   test "uses mariadb" do
     app = Pathname("tmp")
     generator = Zee::Generators::App.new
-    generator.options = {database: "mariadb"}
+    generator.options = {database: "mariadb", js: "typescript", css: "tailwind"}
     generator.destination_root = app
 
     Dir.chdir(app) do
@@ -148,10 +160,24 @@ class AppTest < Minitest::Test
                     "DATABASE_URL=mysql2:///tmp_test?encoding=utf8mb4"
   end
 
+  test "uses js" do
+    app = Pathname("tmp")
+    generator = Zee::Generators::App.new
+    generator.options = {database: "sqlite", js: "js", css: "tailwind"}
+    generator.destination_root = app
+
+    Dir.chdir(app) do
+      capture { generator.invoke_all }
+    end
+
+    assert app.join("app/assets/scripts/app.js").file?
+    refute_includes app.join("package.json").read, "typescript"
+  end
+
   test "fails with an unsupported database" do
     app = Pathname("tmp")
     generator = Zee::Generators::App.new
-    generator.options = {database: "foo"}
+    generator.options = {database: "foo", js: "typescript", css: "tailwind"}
     generator.destination_root = app
 
     error = assert_raises RuntimeError do
@@ -159,5 +185,31 @@ class AppTest < Minitest::Test
     end
 
     assert_equal "Unsupported database: foo", error.message
+  end
+
+  test "fails with unsupported css option" do
+    app = Pathname("tmp")
+    generator = Zee::Generators::App.new
+    generator.options = {database: "sqlite", js: "typescript", css: "foo"}
+    generator.destination_root = app
+
+    error = assert_raises Thor::Error do
+      capture { generator.invoke_all }
+    end
+
+    assert_equal "Unsupported CSS option: \"foo\"", error.message
+  end
+
+  test "fails with unsupported js option" do
+    app = Pathname("tmp")
+    generator = Zee::Generators::App.new
+    generator.options = {database: "sqlite", js: "foo", css: "css"}
+    generator.destination_root = app
+
+    error = assert_raises Thor::Error do
+      capture { generator.invoke_all }
+    end
+
+    assert_equal "Unsupported JS option: \"foo\"", error.message
   end
 end
