@@ -196,6 +196,36 @@ module Zee
     end
     # :nocov:
 
+    desc "assets", "Build assets"
+    option :digest,
+           type: :boolean,
+           default: true,
+           desc: "Enable asset digesting"
+    option :prefix,
+           type: :string,
+           default: "/assets",
+           desc: "The request path prefix"
+    def assets
+      bin = Pathname(Dir.pwd).join("bin/assets")
+
+      unless bin.file?
+        raise Thor::Error,
+              set_color("ERROR: bin/assets not found", :red)
+      end
+
+      unless bin.executable?
+        raise Thor::Error,
+              set_color("ERROR: bin/assets is not executable", :red)
+      end
+
+      system(bin.to_s)
+      AssetsManifest.new(
+        source: Pathname(Dir.pwd).join("public/assets"),
+        digest: options[:digest],
+        prefix: options[:prefix]
+      ).call
+    end
+
     no_commands do
       def db_helpers
         @db_helpers ||= Database::Helpers.new(options:, shell:)
