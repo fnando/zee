@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+# This script is used to generate the assets for the app.
+# By default, it calls scripts from your package.json file.
+# You can replace it with anything you want. The only requirement is that files
+# must be exported to the `public/assets` folder.
+#
+# When deploying your app, you must call `zee assets` to generate the assets.
+rm -rf public/assets
+mkdir public/assets
+npm run build:styles
+npm run build:scripts

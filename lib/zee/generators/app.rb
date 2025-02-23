@@ -12,35 +12,37 @@ module Zee
       end
 
       def templates
-        template "Gemfile.erb", "Gemfile"
-        template ".ruby-version.erb", ".ruby-version"
-        template ".rubocop.yml.erb", ".rubocop.yml"
         template ".env.development.erb", ".env.development"
         template ".env.test.erb", ".env.test"
+        template ".rubocop.yml.erb", ".rubocop.yml"
+        template ".ruby-version.erb", ".ruby-version"
+        template "Gemfile.erb", "Gemfile"
       end
 
       def files
         copy_file ".gitignore"
+        copy_file "app/helpers/app.rb"
+        copy_file "bin/assets"
         copy_file "bin/dev"
         copy_file "bin/zee"
-        copy_file "tmp/.keep"
+        copy_file "config.ru"
         copy_file "config/app.rb"
         copy_file "config/boot.rb"
-        copy_file "config/puma.rb"
-        copy_file "app/helpers/app.rb"
-        copy_file "config/routes.rb"
         copy_file "config/config.rb"
+        copy_file "config/environment.rb"
         copy_file "config/initializers/middleware.rb"
         copy_file "config/initializers/sequel.rb"
+        copy_file "config/puma.rb"
+        copy_file "config/routes.rb"
+        create_file "db/migrations/.keep"
+        copy_file "package.json"
         copy_file "Procfile.dev"
-        copy_file "test/test_helper.rb"
-        copy_file "config.ru"
+        copy_file "public/apple-touch-icon.png"
         copy_file "public/favicon.ico"
         copy_file "public/icon.svg"
-        copy_file "public/apple-touch-icon.png"
-        copy_file "config/environment.rb"
         create_file "storage/.keep"
-        create_file "db/migrations/.keep"
+        copy_file "test/test_helper.rb"
+        copy_file "tmp/.keep"
       end
 
       def models
@@ -64,6 +66,7 @@ module Zee
 
       def permissions
         in_root do
+          FileUtils.chmod(0o755, "bin/assets")
           FileUtils.chmod(0o755, "bin/dev")
           FileUtils.chmod(0o755, "bin/zee")
         end
