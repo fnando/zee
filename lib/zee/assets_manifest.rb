@@ -125,14 +125,19 @@ module Zee
       end
 
       def request_path
-        @request_path ||= format(
-          pattern,
-          prefix:,
-          dir: relative_dir,
-          name: basename,
-          digest:,
-          extension:
-        )
+        @request_path ||= begin
+          dir = relative_dir.to_s == "." ? "" : relative_dir.to_s
+          path = format(
+            pattern,
+            prefix:,
+            dir:,
+            name: basename,
+            digest:,
+            extension:
+          ).split("/").reject(&:empty?).join("/")
+
+          "/#{path}"
+        end
       end
 
       def text_based?

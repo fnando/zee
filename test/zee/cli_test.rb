@@ -115,7 +115,11 @@ class CLITest < Minitest::Test
     BASH
 
     FileUtils.mkdir_p("tmp/bin")
+    FileUtils.mkdir_p("tmp/app/assets/images")
+    FileUtils.mkdir_p("tmp/app/assets/fonts")
     FileUtils.mkdir_p("tmp/public/assets")
+    File.write("tmp/app/assets/images/image.png", "image.png")
+    File.write("tmp/app/assets/fonts/font.woff2", "font.woff2")
     File.write("tmp/bin/assets", content)
     FileUtils.chmod(0o755, "tmp/bin/assets")
 
@@ -130,6 +134,10 @@ class CLITest < Minitest::Test
       "tmp/public/assets/app-394b64b0fd9cab3020c832445614df2a.js"
     assert_path_exists \
       "tmp/public/assets/app-ff974d062358212ab3c71569650f232a.css"
+    assert_path_exists \
+      "tmp/public/assets/images/image-d2b5ca33bd970f64a6301fa75ae2eb22.png"
+    assert_path_exists \
+      "tmp/public/assets/fonts/font-591ad204f1c43e8838d3f605a9b4c74e.woff2"
     assert_includes out, "=> exported public/assets/app.js"
     assert_includes out, "=> exported public/assets/app.css"
   end

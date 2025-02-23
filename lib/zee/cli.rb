@@ -79,6 +79,16 @@ module Zee
                       desc: "Set the database",
                       aliases: "-d",
                       enum: %w[sqlite postgresql mysql mariadb]
+    option :css,
+           type: :string,
+           default: "tailwind",
+           enum: %w[tailwind],
+           desc: "Use a CSS framework"
+    option :js,
+           type: :string,
+           default: "typescript",
+           enum: %w[js typescript],
+           desc: "Use a JavaScript language"
     def new(path)
       generator = Generators::App.new
       generator.destination_root = File.expand_path(path)
@@ -218,7 +228,14 @@ module Zee
               set_color("ERROR: bin/assets is not executable", :red)
       end
 
+      # Export styles and scripts
       system(bin.to_s)
+
+      # Copy other assets
+      Dir["./app/assets/{fonts,images}"].each do |dir|
+        FileUtils.cp_r(dir, "public/assets/")
+      end
+
       AssetsManifest.new(
         source: Pathname(Dir.pwd).join("public/assets"),
         digest: options[:digest],

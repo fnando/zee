@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "target": "ES6",
+    "baseUrl": ".",
+    "strict": true,
+    "outDir": "tmp/dist",
+    "paths": {
+      "app/*": ["src/app/*"]
+    }
+  },
+  "exclude": ["node_modules", "tmp/dist", "**/*.test.ts"]
+}
