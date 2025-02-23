@@ -229,7 +229,10 @@ module Zee
       Bundler.require(env.to_sym)
 
       Object.const_set(:Actions, Module.new) unless defined?(::Actions)
-      Object.const_set(:Controllers, Module.new) unless defined?(::Controllers)
+      unless defined?(::Controllers)
+        Object.const_set(:Controllers,
+                         Module.new)
+      end
       Object.const_set(:Helpers, Module.new) unless defined?(::Helpers)
       Object.const_set(:Jobs, Module.new) unless defined?(::Jobs)
       Object.const_set(:Mailers, Module.new) unless defined?(::Mailers)
@@ -305,7 +308,17 @@ module Zee
 
     def call(env)
       env[RACK_ZEE_APP] = self
-      Dir.chdir(root) { return rack_app.call(env) }
+
+      if root == Dir.pwd
+        # :nocov:
+        rack_app.call(env)
+        # :nocov:
+      else
+        # Change the current directory to the root directory.
+        # This will likely raise errors when using `Middleware::Static`,
+        # due to nested `Dir.chdir` calls.
+        Dir.chdir(root) { rack_app.call(env) }
+      end
     end
 
     private def rack_app
@@ -333,7 +346,7 @@ module Zee
 
       require "listen"
       loader.enable_reloading
-      only = /\.(rb|yml\.enc)|Gemfile.lock$/
+      only = Regexp.union(/\.(rb|yml\.enc)|Gemfile.lock$/, %r{public/assets})
 
       listener = Listen.to(root, only:) do
         @config = nil

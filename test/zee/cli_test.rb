@@ -73,23 +73,48 @@ class CLITest < Minitest::Test
     assert_includes err, "ERROR: Could not find command `missing`."
   end
 
-  test "fails when no bin/assets is found" do
+  test "fails when no bin/styles is found" do
     exit_code = nil
+    err = nil
 
-    capture do
-      Zee::CLI.start(["assets"])
-    end => {exit_code:, err:}
+    Dir.chdir("tmp") do
+      FileUtils.mkdir("bin")
+      FileUtils.touch("bin/scripts")
+      File.chmod(0o755, "bin/scripts")
+
+      capture do
+        Zee::CLI.start(["assets"])
+      end => {exit_code:, err:}
+    end
 
     assert_equal 1, exit_code
-    assert_includes err, "ERROR: bin/assets not found"
+    assert_includes err, "ERROR: bin/styles not found"
   end
 
-  test "fails when no bin/assets is not executable" do
+  test "fails when no bin/scripts is found" do
+    err = nil
+    exit_code = nil
+
+    Dir.chdir("tmp") do
+      FileUtils.mkdir("bin")
+      FileUtils.touch("bin/styles")
+      File.chmod(0o755, "bin/styles")
+
+      capture do
+        Zee::CLI.start(["assets"])
+      end => {exit_code:, err:}
+    end
+
+    assert_equal 1, exit_code
+    assert_includes err, "ERROR: bin/scripts not found"
+  end
+
+  test "fails when no bin/styles is not executable" do
     exit_code = nil
     err = nil
 
     FileUtils.mkdir_p("tmp/bin")
-    FileUtils.touch("tmp/bin/assets")
+    FileUtils.touch("tmp/bin/styles")
 
     Dir.chdir("tmp") do
       capture do
@@ -98,18 +123,40 @@ class CLITest < Minitest::Test
     end
 
     assert_equal 1, exit_code
-    assert_includes err, "ERROR: bin/assets is not executable"
+    assert_includes err, "ERROR: bin/styles is not executable"
+  end
+
+  test "fails when no bin/scripts is not executable" do
+    exit_code = nil
+    err = nil
+
+    FileUtils.mkdir_p("tmp/bin")
+    FileUtils.touch("tmp/bin/styles")
+    File.chmod(0o755, "tmp/bin/styles")
+    FileUtils.touch("tmp/bin/scripts")
+
+    Dir.chdir("tmp") do
+      capture do
+        Zee::CLI.start(["assets"])
+      end => {exit_code:, err:}
+    end
+
+    assert_equal 1, exit_code
+    assert_includes err, "ERROR: bin/scripts is not executable"
   end
 
   test "builds assets with digest" do
     exit_code = nil
     out = nil
 
-    content = <<~BASH
+    scripts = <<~BASH
       #!/usr/bin/env bash
       echo 'console.log("hello");' > public/assets/app.js
       echo "=> exported public/assets/app.js"
+    BASH
 
+    styles = <<~BASH
+      #!/usr/bin/env bash
       echo 'body { font-family: sans-serif; }' > public/assets/app.css
       echo "=> exported public/assets/app.css"
     BASH
@@ -120,8 +167,10 @@ class CLITest < Minitest::Test
     FileUtils.mkdir_p("tmp/public/assets")
     File.write("tmp/app/assets/images/image.png", "image.png")
     File.write("tmp/app/assets/fonts/font.woff2", "font.woff2")
-    File.write("tmp/bin/assets", content)
-    FileUtils.chmod(0o755, "tmp/bin/assets")
+    File.write("tmp/bin/scripts", scripts)
+    File.write("tmp/bin/styles", styles)
+    FileUtils.chmod(0o755, "tmp/bin/scripts")
+    FileUtils.chmod(0o755, "tmp/bin/styles")
 
     Dir.chdir("tmp") do
       capture do
@@ -146,19 +195,28 @@ class CLITest < Minitest::Test
     exit_code = nil
     out = nil
 
-    content = <<~BASH
+    scripts = <<~BASH
       #!/usr/bin/env bash
       echo 'console.log("hello");' > public/assets/app.js
       echo "=> exported public/assets/app.js"
+    BASH
 
+    styles = <<~BASH
+      #!/usr/bin/env bash
       echo 'body { font-family: sans-serif; }' > public/assets/app.css
       echo "=> exported public/assets/app.css"
     BASH
 
     FileUtils.mkdir_p("tmp/bin")
+    FileUtils.mkdir_p("tmp/app/assets/images")
+    FileUtils.mkdir_p("tmp/app/assets/fonts")
     FileUtils.mkdir_p("tmp/public/assets")
-    File.write("tmp/bin/assets", content)
-    FileUtils.chmod(0o755, "tmp/bin/assets")
+    File.write("tmp/app/assets/images/image.png", "image.png")
+    File.write("tmp/app/assets/fonts/font.woff2", "font.woff2")
+    File.write("tmp/bin/scripts", scripts)
+    File.write("tmp/bin/styles", styles)
+    FileUtils.chmod(0o755, "tmp/bin/scripts")
+    FileUtils.chmod(0o755, "tmp/bin/styles")
 
     Dir.chdir("tmp") do
       capture do

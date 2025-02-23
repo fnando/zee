@@ -1,1 +1,3 @@
 web: PORT=3000 bundle exec puma -C config/puma.rb
+styles: bin/styles --watch
+scripts: bin/scripts --watch

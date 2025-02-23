@@ -216,20 +216,27 @@ module Zee
            default: "/assets",
            desc: "The request path prefix"
     def assets
-      bin = Pathname(Dir.pwd).join("bin/assets")
+      bins = %w[bin/styles bin/scripts]
 
-      unless bin.file?
-        raise Thor::Error,
-              set_color("ERROR: bin/assets not found", :red)
+      FileUtils.rm_rf("public/assets")
+      FileUtils.mkdir_p("public/assets")
+
+      bins.each do |bin|
+        bin = Pathname(bin)
+
+        unless bin.file?
+          raise Thor::Error,
+                set_color("ERROR: #{bin} not found", :red)
+        end
+
+        unless bin.executable?
+          raise Thor::Error,
+                set_color("ERROR: #{bin} is not executable", :red)
+        end
+
+        # Export styles and scripts
+        system(bin.to_s)
       end
-
-      unless bin.executable?
-        raise Thor::Error,
-              set_color("ERROR: bin/assets is not executable", :red)
-      end
-
-      # Export styles and scripts
-      system(bin.to_s)
 
       # Copy other assets
       Dir["./app/assets/{fonts,images}"].each do |dir|

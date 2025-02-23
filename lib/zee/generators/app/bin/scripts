@@ -1,0 +1,28 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# This script is used to generate the JS for the app.
+# When deploying your app, you must call `zee assets` to generate all the
+# assets. The only requirement is that files must be exported to the
+# `public/assets` folder.
+
+# Compute aliases for esbuild, so you can import files by referencing the
+# directory inside `app/assets/scripts` directly.
+aliases = Dir["app/assets/scripts/*"].filter_map do |entry|
+  next unless File.directory?(entry)
+
+  dir = File.basename(entry)
+  "--alias:#{dir}=./app/assets/scripts/#{dir}"
+end
+
+# Export script entrypoints
+Dir["app/assets/scripts/*.{ts,js}"].each do |file|
+  system "node_modules/.bin/esbuild",
+         file,
+         "--bundle",
+         "--minify",
+         "--sourcemap",
+         "--outdir=public/assets/scripts",
+         *aliases,
+         *ARGV
+end

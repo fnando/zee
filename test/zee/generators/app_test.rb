@@ -21,7 +21,8 @@ class AppTest < Minitest::Test
     assert app.join(".env.test").file?
     assert app.join("bin/dev").file?
     assert app.join("bin/zee").file?
-    assert app.join("bin/assets").file?
+    assert app.join("bin/scripts").file?
+    assert app.join("bin/styles").file?
     assert app.join("package.json").file?
     assert app.join("app/controllers/base.rb").file?
     assert app.join("app/assets/styles/app.css").file?
@@ -52,7 +53,8 @@ class AppTest < Minitest::Test
     assert_includes out, "bundle install"
     assert app.join("bin/dev").executable?
     assert app.join("bin/zee").executable?
-    assert app.join("bin/assets").executable?
+    assert app.join("bin/scripts").executable?
+    assert app.join("bin/styles").executable?
     refute app.join("config/secrets/development.key").world_readable?
     refute app.join("config/secrets/test.key").world_readable?
 

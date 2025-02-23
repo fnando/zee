@@ -27,7 +27,8 @@ module Zee
         create_file "app/assets/scripts/app/.keep"
         create_file "app/assets/images/.keep"
         create_file "app/assets/fonts/.keep"
-        copy_file "bin/assets"
+        copy_file "bin/styles"
+        copy_file "bin/scripts"
         copy_file "bin/dev"
         copy_file "bin/zee"
         copy_file "config.ru"
@@ -95,7 +96,8 @@ module Zee
 
       def permissions
         in_root do
-          FileUtils.chmod(0o755, "bin/assets")
+          FileUtils.chmod(0o755, "bin/styles")
+          FileUtils.chmod(0o755, "bin/scripts")
           FileUtils.chmod(0o755, "bin/dev")
           FileUtils.chmod(0o755, "bin/zee")
         end

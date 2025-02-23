@@ -1,0 +1,17 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# This script is used to generate the CSS for the app.
+# When deploying your app, you must call `zee assets` to generate all the
+# assets. The only requirement is that files must be exported to the
+# `public/assets` folder.
+
+# Export style entrypoints
+Dir["app/assets/styles/*.css"].each do |file|
+  system "node_modules/.bin/tailwindcss",
+         "--input", file,
+         "--optimize",
+         "--minify",
+         "--output", File.join("public/assets/styles", File.basename(file)),
+         *ARGV
+end
