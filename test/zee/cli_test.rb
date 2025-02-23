@@ -72,4 +72,96 @@ class CLITest < Minitest::Test
     assert_equal 1, exit_code
     assert_includes err, "ERROR: Could not find command `missing`."
   end
+
+  test "fails when no bin/assets is found" do
+    exit_code = nil
+
+    capture do
+      Zee::CLI.start(["assets"])
+    end => {exit_code:, err:}
+
+    assert_equal 1, exit_code
+    assert_includes err, "ERROR: bin/assets not found"
+  end
+
+  test "fails when no bin/assets is not executable" do
+    exit_code = nil
+    err = nil
+
+    FileUtils.mkdir_p("tmp/bin")
+    FileUtils.touch("tmp/bin/assets")
+
+    Dir.chdir("tmp") do
+      capture do
+        Zee::CLI.start(["assets"])
+      end => {exit_code:, err:}
+    end
+
+    assert_equal 1, exit_code
+    assert_includes err, "ERROR: bin/assets is not executable"
+  end
+
+  test "builds assets with digest" do
+    exit_code = nil
+    out = nil
+
+    content = <<~BASH
+      #!/usr/bin/env bash
+      echo 'console.log("hello");' > public/assets/app.js
+      echo "=> exported public/assets/app.js"
+
+      echo 'body { font-family: sans-serif; }' > public/assets/app.css
+      echo "=> exported public/assets/app.css"
+    BASH
+
+    FileUtils.mkdir_p("tmp/bin")
+    FileUtils.mkdir_p("tmp/public/assets")
+    File.write("tmp/bin/assets", content)
+    FileUtils.chmod(0o755, "tmp/bin/assets")
+
+    Dir.chdir("tmp") do
+      capture do
+        Zee::CLI.start(["assets"])
+      end => {exit_code:, out:}
+    end
+
+    assert_equal 0, exit_code
+    assert_path_exists \
+      "tmp/public/assets/app-394b64b0fd9cab3020c832445614df2a.js"
+    assert_path_exists \
+      "tmp/public/assets/app-ff974d062358212ab3c71569650f232a.css"
+    assert_includes out, "=> exported public/assets/app.js"
+    assert_includes out, "=> exported public/assets/app.css"
+  end
+
+  test "builds assets with no digest" do
+    exit_code = nil
+    out = nil
+
+    content = <<~BASH
+      #!/usr/bin/env bash
+      echo 'console.log("hello");' > public/assets/app.js
+      echo "=> exported public/assets/app.js"
+
+      echo 'body { font-family: sans-serif; }' > public/assets/app.css
+      echo "=> exported public/assets/app.css"
+    BASH
+
+    FileUtils.mkdir_p("tmp/bin")
+    FileUtils.mkdir_p("tmp/public/assets")
+    File.write("tmp/bin/assets", content)
+    FileUtils.chmod(0o755, "tmp/bin/assets")
+
+    Dir.chdir("tmp") do
+      capture do
+        Zee::CLI.start(["assets", "--no-digest"])
+      end => {exit_code:, out:}
+    end
+
+    assert_equal 0, exit_code
+    assert_path_exists "tmp/public/assets/app.js"
+    assert_path_exists "tmp/public/assets/app.css"
+    assert_includes out, "=> exported public/assets/app.js"
+    assert_includes out, "=> exported public/assets/app.css"
+  end
 end

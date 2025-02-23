@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["app.js"],
+  "sourcesContent": ["const logo = \"images/logo.png\";\nconsole.log(logo);\n"],
+  "mappings": ";;AAAA,MAAM,OAAO;AACb,UAAQ,IAAI,IAAI;",
+  "names": []
+}
