@@ -290,12 +290,15 @@ module Zee
     # @return [Module] The module to include.
     def helpers
       @helpers ||= Module.new.tap do |target|
-        helpers = Module.new
+        helpers = Module.new do
+          attr_reader :request
+        end
 
         ::Helpers.constants.each do |name|
           helpers.include(::Helpers.const_get(name))
         end
 
+        target.include(ViewHelpers::Assets)
         target.include(routes.helpers)
         target.include(helpers)
       end

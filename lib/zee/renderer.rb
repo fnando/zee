@@ -92,6 +92,7 @@ module Zee
       end
 
       ctx = Object.new.extend(helpers)
+      ctx.instance_variable_set(:@request, request)
       tilt_options = {engine_class: Erubi::CaptureBlockEngine}
 
       body = Tilt

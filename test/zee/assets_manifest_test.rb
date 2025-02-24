@@ -51,9 +51,9 @@ class AssetsManifestTest < Minitest::Test
     assert_path_exists source
       .join("fonts/font-0daf79671e01b6ef22bf498e444fe360.woff2")
     assert_path_exists source
-      .join("styles/app-6e45d30265185925b5dfbfa5c99d74c9.css")
+      .join("styles/app-a3240ed14fad89b186d34acb7a1a1b78.css")
     assert_path_exists source
-      .join("scripts/app-5e4d060574cc0606913df8da7e38a4f5.js")
+      .join("scripts/app-db6a8215764cc81381f488818bf030fa.js")
     assert_path_exists source
       .join("scripts/app-36c6fc9e7604afc6834d6283d8174554.js.map")
 
@@ -65,12 +65,15 @@ class AssetsManifestTest < Minitest::Test
                  entries["images/logo.png"]
     assert_equal "/assets/fonts/font-0daf79671e01b6ef22bf498e444fe360.woff2",
                  entries["fonts/font.woff2"]
-    assert_equal "/assets/styles/app-6e45d30265185925b5dfbfa5c99d74c9.css",
+    assert_equal "/assets/styles/app-a3240ed14fad89b186d34acb7a1a1b78.css",
                  entries["styles/app.css"]
-    assert_equal "/assets/scripts/app-5e4d060574cc0606913df8da7e38a4f5.js",
+    assert_equal "/assets/scripts/app-db6a8215764cc81381f488818bf030fa.js",
                  entries["scripts/app.js"]
     assert_equal "/assets/scripts/app-36c6fc9e7604afc6834d6283d8174554.js.map",
                  entries["scripts/app.js.map"]
+    assert_includes \
+      source.join("scripts/app-db6a8215764cc81381f488818bf030fa.js").read,
+      "sourceMappingURL=#{entries['scripts/app.js.map']}\n"
   end
 
   test "replaces path references in scripts and styles (with digest)" do
@@ -78,15 +81,15 @@ class AssetsManifestTest < Minitest::Test
     manifest.call
 
     assert_includes(
-      File.read(source.join("styles/app-6e45d30265185925b5dfbfa5c99d74c9.css")),
+      File.read(source.join("styles/app-a3240ed14fad89b186d34acb7a1a1b78.css")),
       'url("/assets/images/logo-20440336743d793e1c584ee061faf1d8.png")'
     )
     assert_includes(
-      File.read(source.join("scripts/app-5e4d060574cc0606913df8da7e38a4f5.js")),
+      File.read(source.join("scripts/app-db6a8215764cc81381f488818bf030fa.js")),
       'var logo = "/assets/images/logo-20440336743d793e1c584ee061faf1d8.png"'
     )
     assert_includes(
-      File.read(source.join("scripts/app-5e4d060574cc0606913df8da7e38a4f5.js")),
+      File.read(source.join("scripts/app-db6a8215764cc81381f488818bf030fa.js")),
       "sourceMappingURL=/assets/scripts/app-36c6fc9e7604afc6834d6283d8174554" \
       ".js.map"
     )

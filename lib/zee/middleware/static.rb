@@ -3,9 +3,12 @@
 module Zee
   module Middleware
     class Static
+      NOCACHE = "no-store, no-cache, max-age=0, must-revalidate"
+      CACHE_CONTROL = "cache-control"
+      SLASH_ASSETS = "/assets/"
+      PATH_INFO = "PATH_INFO"
       REQUEST_METHOD = "REQUEST_METHOD"
       METHODS = %w[GET HEAD].freeze
-      ASSETS_DIRS = %r{/assets/(images|)}
 
       def initialize(app)
         @app = app
@@ -30,7 +33,17 @@ module Zee
           )
         end
 
-        rack_app.call(env)
+        status, headers, body = *rack_app.call(env)
+
+        if dev?(env) && env[PATH_INFO]&.start_with?(SLASH_ASSETS)
+          headers = headers.merge(CACHE_CONTROL => NOCACHE)
+        end
+
+        [status, headers, body]
+      end
+
+      def dev?(env)
+        env[RACK_ZEE_APP]&.env&.development?
       end
     end
   end

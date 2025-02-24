@@ -55,8 +55,7 @@ module Zee
         contents = entry.path.read
 
         entries.each do |ref|
-          contents.gsub!(%["#{ref.origin_name}"], %["#{ref.request_path}"])
-          contents.gsub!(%['#{ref.origin_name}'], %['#{ref.request_path}'])
+          contents.gsub!(%[/assets/#{ref.origin_name}], ref.request_path.to_s)
         end
 
         if entry.js? && digest
@@ -66,7 +65,7 @@ module Zee
 
           if sourcemaps
             contents.gsub!(
-              "sourceMappingURL=#{sourcemaps.basename}",
+              "sourceMappingURL=#{sourcemaps.path.basename}",
               "sourceMappingURL=#{sourcemaps.request_path}"
             )
           end
