@@ -1,10 +1,6 @@
 {
   "name": "app",
   "private": true,
-  "scripts": {
-    "build:styles": "echo 'Update package.json to implement build:styles' && exit 1",
-    "build:scripts": "echo 'Update package.json to implement build:scripts' && exit 1"
-  },
   "dependencies": {
     "esbuild": "*"
   }
