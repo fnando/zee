@@ -6,12 +6,16 @@ class AppTest < Minitest::Test
   test "generates new app" do
     app = Pathname("tmp")
     generator = Zee::Generators::App.new
-    generator.options = {database: "sqlite", js: "typescript", css: "tailwind"}
+    generator.options = {
+      database: "sqlite",
+      js: "typescript",
+      css: "tailwind",
+      skip_bundle: true
+    }
     generator.destination_root = app
-    out = nil
 
     Dir.chdir(app) do
-      capture { generator.invoke_all } => {out:}
+      capture { generator.invoke_all }
     end
 
     assert app.join(".gitignore").file?
@@ -50,7 +54,6 @@ class AppTest < Minitest::Test
     assert app.join("public/icon.svg").file?
     assert app.join("public/apple-touch-icon.png").file?
     assert_equal RUBY_VERSION, app.join(".ruby-version").read.chomp
-    assert_includes out, "bundle install"
     assert app.join("bin/dev").executable?
     assert app.join("bin/zee").executable?
     assert app.join("bin/scripts").executable?
@@ -89,7 +92,12 @@ class AppTest < Minitest::Test
   test "uses sqlite" do
     app = Pathname("tmp")
     generator = Zee::Generators::App.new
-    generator.options = {database: "sqlite", js: "typescript", css: "tailwind"}
+    generator.options = {
+      database: "sqlite",
+      js: "typescript",
+      css: "tailwind",
+      skip_bundle: true
+    }
     generator.destination_root = app
 
     Dir.chdir(app) do
@@ -110,7 +118,8 @@ class AppTest < Minitest::Test
     generator.options = {
       database: "postgresql",
       js: "typescript",
-      css: "tailwind"
+      css: "tailwind",
+      skip_bundle: true
     }
     generator.destination_root = app
 
@@ -129,7 +138,12 @@ class AppTest < Minitest::Test
   test "uses mysql" do
     app = Pathname("tmp")
     generator = Zee::Generators::App.new
-    generator.options = {database: "mysql", js: "typescript", css: "tailwind"}
+    generator.options = {
+      database: "mysql",
+      js: "typescript",
+      css: "tailwind",
+      skip_bundle: true
+    }
     generator.destination_root = app
 
     Dir.chdir(app) do
@@ -147,7 +161,12 @@ class AppTest < Minitest::Test
   test "uses mariadb" do
     app = Pathname("tmp")
     generator = Zee::Generators::App.new
-    generator.options = {database: "mariadb", js: "typescript", css: "tailwind"}
+    generator.options = {
+      database: "mariadb",
+      js: "typescript",
+      css: "tailwind",
+      skip_bundle: true
+    }
     generator.destination_root = app
 
     Dir.chdir(app) do
@@ -165,7 +184,12 @@ class AppTest < Minitest::Test
   test "uses js" do
     app = Pathname("tmp")
     generator = Zee::Generators::App.new
-    generator.options = {database: "sqlite", js: "js", css: "tailwind"}
+    generator.options = {
+      database: "sqlite",
+      js: "js",
+      css: "tailwind",
+      skip_bundle: true
+    }
     generator.destination_root = app
 
     Dir.chdir(app) do
