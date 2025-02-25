@@ -46,6 +46,36 @@ class HTMLTest < Minitest::Test
                  html.to_s
   end
 
+  test "renders style tag" do
+    html = render(%[<%= style_tag("body { color: red; }") %>])
+
+    assert_equal "<style>body { color: red; }</style>", html.to_s
+  end
+
+  test "renders style tag using block" do
+    html = render <<~ERB
+      <%= style_tag do %>
+        body { color: red; }
+      <% end %>
+    ERB
+
+    assert_equal "<style>\n  body { color: red; }\n</style>",
+                 html.to_s
+  end
+
+  test "renders style tag with nonce" do
+    helpers.request.env[Zee::ZEE_CSP_NONCE] = "abc"
+
+    html = render <<~ERB
+      <%= style_tag do %>
+        body { color: red; }
+      <% end %>
+    ERB
+
+    assert_equal "<style nonce=\"abc\">\n  body { color: red; }\n</style>",
+                 html.to_s
+  end
+
   def render(template)
     erb = Tilt.new(
       "erb",
