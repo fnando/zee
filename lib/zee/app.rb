@@ -299,6 +299,8 @@ module Zee
         end
 
         target.include(ViewHelpers::Assets)
+        target.include(ViewHelpers::OutputSafety)
+        target.include(ViewHelpers::HTML)
         target.include(routes.helpers)
         target.include(helpers)
       end

@@ -2,17 +2,17 @@
 
 module Zee
   class AssetsManifest
-    # @param source [Pathname] the source directories. The relative path
-    #                          will be used as the request path.
+    # @return [Pathname] the source directories. The relative path will be used
+    #                    as the request path.
     attr_reader :source
 
-    # @param digest [Boolean] whether to digest the assets.
+    # @return [Boolean] whether to digest the assets.
     attr_reader :digest
 
-    # @param prefix [String] a path prefix that will be used to fetch the asset.
+    # @return [String] a path prefix that will be used to fetch the asset.
     attr_reader :prefix
 
-    # @param pattern [String] the request path format string.
+    # @return [String] the request path format string.
     attr_reader :pattern
 
     def initialize(source:, digest: true, prefix: "/assets")

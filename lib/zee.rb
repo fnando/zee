@@ -34,6 +34,7 @@ module Zee
   require_relative "zee/secrets"
   require_relative "zee/middleware_stack"
   require_relative "zee/middleware/static"
+  require_relative "zee/middleware/content_security_policy"
   require_relative "zee/keyring"
   require_relative "zee/encoders/json_encoder"
   require_relative "zee/keyring/encryptor/aes"
@@ -41,4 +42,7 @@ module Zee
   require_relative "zee/params"
   require_relative "zee/assets_manifest"
   require_relative "zee/view_helpers/assets"
+  require_relative "zee/view_helpers/output_safety"
+  require_relative "zee/view_helpers/html"
+  require_relative "zee/safe_buffer"
 end

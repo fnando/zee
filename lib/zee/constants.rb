@@ -17,4 +17,5 @@ module Zee
   ZEE_KEYRING = "ZEE_KEYRING"
   ZEE_SESSION_KEY = "_zee_session"
   ZEE_CSRF_TOKEN = "zee.csrf_token"
+  ZEE_CSP_NONCE = "zee.csp_nonce"
 end
