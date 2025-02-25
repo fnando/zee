@@ -32,7 +32,7 @@ module Zee
     def path_with_no_trailing_slash
       @path_with_no_trailing_slash ||= begin
         value = path.gsub(%r{^(.+)/+$}, "\\1")
-        value.empty? ? "/" : value
+        value.empty? ? SLASH : value
       end
     end
 

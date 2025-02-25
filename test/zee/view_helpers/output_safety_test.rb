@@ -26,4 +26,8 @@ class OutputSafetyTest < Minitest::Test
   test "escapes json" do
     assert_equal "\\u003cscript\\u003e", helpers.escape_json("<script>").to_s
   end
+
+  test "escapes html" do
+    assert_equal "&lt;script&gt;", helpers.escape_html("<script>").to_s
+  end
 end

@@ -103,8 +103,8 @@ module Zee
     end
 
     private def normalize_slashes(path)
-      path = "/#{path}" unless path.start_with?("(")
-      path.squeeze("/")
+      path = "/#{path}" unless path.start_with?(OPEN_PAREN)
+      path.squeeze(SLASH)
     end
   end
 end

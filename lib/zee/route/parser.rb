@@ -48,20 +48,20 @@ module Zee
       # The matcher for the pattern.
       # @return [Regexp] the matcher.
       def matcher
-        @matcher ||= if pattern == "/"
+        @matcher ||= if pattern == SLASH
                        %r{^/$}
                      else
                        regex = pattern
                                .gsub(%r{\(/:(.*?)\)}, "(/(?<\\1>[^/]+))?")
                                .gsub(/(?::(\w+))/, "(?<\\1>[^/]+)")
-                               .gsub("/", "\\/")
+                               .gsub(SLASH, "\\/")
 
                        Regexp.new("^#{regex}$")
                      end
       end
 
       def components
-        @components ||= pattern.gsub(/[()]/, "").split("/")
+        @components ||= pattern.gsub(/[()]/, "").split(SLASH)
       end
 
       def to_param(value)

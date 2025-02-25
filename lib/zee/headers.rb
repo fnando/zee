@@ -27,7 +27,7 @@ module Zee
     end
 
     private def transform_key(name)
-      name.to_s.tr("_", "-").downcase
+      name.to_s.tr(UNDERSCORE, DASH).downcase
     end
   end
 end

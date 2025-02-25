@@ -25,6 +25,16 @@ module Zee
       def escape_json(string)
         Zee::SafeBuffer.new(string).to_json
       end
+
+      # Escape the HTML string.
+      # @param input [Object] the input to escape.
+      # @return [String]
+      # @example
+      #   <%= escape_html("<script>alert(1)</script>") %>
+      #   #=> "&lt;script&gt;alert(1)&lt;/script&gt;"
+      def escape_html(input)
+        Zee::SafeBuffer.new.concat(input).to_s
+      end
     end
   end
 end

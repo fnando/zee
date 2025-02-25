@@ -16,9 +16,9 @@ module Zee
     attr_reader :pattern
 
     def initialize(source:, digest: true, prefix: "/assets")
-      @source = Pathname(source.to_s.delete_suffix("/"))
+      @source = Pathname(source.to_s.delete_suffix(SLASH))
       @digest = digest
-      @prefix = prefix.delete_suffix("/")
+      @prefix = prefix.delete_suffix(SLASH)
       @pattern = if digest
                    "%{prefix}/%{dir}/%{name}-%{digest}.%{extension}"
                  else
@@ -116,16 +116,16 @@ module Zee
       end
 
       def extension
-        @extension ||= path.basename.to_s.split(".")[1..-1].join(".")
+        @extension ||= path.basename.to_s.split(DOT)[1..-1].join(DOT)
       end
 
       def basename
-        @basename ||= path.basename.to_s.split(".").first
+        @basename ||= path.basename.to_s.split(DOT).first
       end
 
       def request_path
         @request_path ||= begin
-          dir = relative_dir.to_s == "." ? "" : relative_dir.to_s
+          dir = relative_dir.to_s == DOT ? EMPTY_STRING : relative_dir.to_s
           path = format(
             pattern,
             prefix:,
@@ -133,7 +133,7 @@ module Zee
             name: basename,
             digest:,
             extension:
-          ).split("/").reject(&:empty?).join("/")
+          ).split(SLASH).reject(&:empty?).join(SLASH)
 
           "/#{path}"
         end

@@ -2,6 +2,12 @@
 
 module Zee
   module Renderer
+    # @private
+    BUFVAR = "@output_buffer"
+
+    # @private
+    BUFVAL = "::Zee::SafeBuffer::Erubi.new"
+
     # Render a template. The default is to render a template with the same name
     # as the action. The template must be
     # named `:name.:content_type.:template_handler`, as in `home.html.erb`.
@@ -47,7 +53,7 @@ module Zee
         # Try to find all possible mimes based on templates that exist.
         mimes = app.root
                    .glob("app/views/#{controller_name}/#{template_name}.*.*")
-                   .flat_map { _1.basename.to_s.split(".")[1] }
+                   .flat_map { _1.basename.to_s.split(DOT)[1] }
                    .map { MiniMime.lookup_by_extension(_1) }
 
         # If no mimes are found, then default to HTML.
@@ -97,8 +103,8 @@ module Zee
         engine_class: Erubi::CaptureBlockEngine,
         freeze_template_literals: false,
         escape: true,
-        bufval: "::Zee::SafeBuffer::Erubi.new",
-        bufvar: "@output_buffer"
+        bufval: BUFVAL,
+        bufvar: BUFVAR
       }
 
       body = Tilt

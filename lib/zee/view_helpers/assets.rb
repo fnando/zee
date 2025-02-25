@@ -36,13 +36,13 @@ module Zee
 
         return manifest[source] if manifest[source]
 
-        source = "/assets/#{source}" unless source.start_with?("/")
+        source = "/assets/#{source}" unless source.start_with?(SLASH)
         source
       end
 
       def to_assets_path(ext:, source:, dir:)
         source = source.to_s
-        return source if source.start_with?("/")
+        return source if source.start_with?(SLASH)
 
         source = "#{dir}/#{source}" unless source.include?("#{dir}/")
         source = "#{source}.#{ext}" unless source.end_with?(".#{ext}")

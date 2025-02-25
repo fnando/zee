@@ -44,5 +44,6 @@ module Zee
   require_relative "zee/view_helpers/assets"
   require_relative "zee/view_helpers/output_safety"
   require_relative "zee/view_helpers/html"
+  require_relative "zee/view_helpers/capture"
   require_relative "zee/safe_buffer"
 end

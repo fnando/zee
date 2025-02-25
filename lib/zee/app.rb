@@ -168,7 +168,7 @@ module Zee
 
       {
         key: ZEE_SESSION_KEY,
-        path: "/",
+        path: SLASH,
         secret:,
         same_site: :strict,
         expire_after: 86_400 * 30, # 30 days
@@ -301,6 +301,7 @@ module Zee
         target.include(ViewHelpers::Assets)
         target.include(ViewHelpers::OutputSafety)
         target.include(ViewHelpers::HTML)
+        target.include(ViewHelpers::Capture)
         target.include(routes.helpers)
         target.include(helpers)
       end

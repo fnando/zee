@@ -149,7 +149,7 @@ module Zee
     # Define root route, like `GET /`.
     # See {#match} for more information.
     def root(to:, as: :root)
-      get("/", to:, as:)
+      get(SLASH, to:, as:)
     end
 
     # Define GET route.
