@@ -13,7 +13,7 @@ module Zee
       HEADER = "content-security-policy"
 
       def call(env)
-        env[ZEE_CSP_NONCE] = SecureRandom.hex(32)
+        env[ZEE_CSP_NONCE] = SecureRandom.hex(16)
 
         status, headers, body = super
 

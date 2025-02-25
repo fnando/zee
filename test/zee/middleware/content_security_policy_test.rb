@@ -4,7 +4,7 @@ require "test_helper"
 
 class ContentSecurityPolicyTest < Minitest::Test
   test "includes nonce" do
-    SecureRandom.expects(:hex).with(32).returns("abc")
+    SecureRandom.expects(:hex).with(16).returns("abc")
 
     app = Rack::Builder.app do
       use Zee::Middleware::ContentSecurityPolicy
