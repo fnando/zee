@@ -5,8 +5,7 @@ require "openssl"
 
 module Zee
   class EncryptedFile
-    ValidationError = Class.new(StandardError)
-
+    # @private
     SEPARATOR = "--"
 
     # Where the encrypted file will be saved.

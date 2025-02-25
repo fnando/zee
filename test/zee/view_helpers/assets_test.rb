@@ -34,7 +34,7 @@ class AssetsTest < Minitest::Test
     helpers.request = Zee::Request.new({"zee.app" => app})
 
     assert_equal %[<script src="/assets/scripts/app.js"></script>],
-                 helpers.javascript_include_tag(:app)
+                 helpers.javascript_include_tag(:app).to_s
   end
 
   test "returns javascript tag using arbitrary path" do
@@ -42,7 +42,7 @@ class AssetsTest < Minitest::Test
     helpers.request = Zee::Request.new({"zee.app" => app})
 
     assert_equal %[<script src="/some/script.js"></script>],
-                 helpers.javascript_include_tag("/some/script.js")
+                 helpers.javascript_include_tag("/some/script.js").to_s
   end
 
   test "returns javascript tag from manifest" do
@@ -55,7 +55,7 @@ class AssetsTest < Minitest::Test
     helpers.request = Zee::Request.new({"zee.app" => app})
 
     assert_equal %[<script src="/assets/scripts/app-hash.js"></script>],
-                 helpers.javascript_include_tag(:app)
+                 helpers.javascript_include_tag(:app).to_s
   end
 
   test "returns stylesheet tag using symbol" do
@@ -63,7 +63,7 @@ class AssetsTest < Minitest::Test
     helpers.request = Zee::Request.new({"zee.app" => app})
 
     assert_equal %[<link rel="stylesheet" href="/assets/styles/app.css">],
-                 helpers.stylesheet_link_tag(:app)
+                 helpers.stylesheet_link_tag(:app).to_s
   end
 
   test "returns stylesheet tag using arbitrary path" do
@@ -71,7 +71,7 @@ class AssetsTest < Minitest::Test
     helpers.request = Zee::Request.new({"zee.app" => app})
 
     assert_equal %[<link rel="stylesheet" href="/some/style.css">],
-                 helpers.stylesheet_link_tag("/some/style.css")
+                 helpers.stylesheet_link_tag("/some/style.css").to_s
   end
 
   test "returns stylesheet tag from manifest" do
@@ -84,6 +84,6 @@ class AssetsTest < Minitest::Test
     helpers.request = Zee::Request.new({"zee.app" => app})
 
     assert_equal %[<link rel="stylesheet" href="/assets/styles/app-hash.css">],
-                 helpers.stylesheet_link_tag(:app)
+                 helpers.stylesheet_link_tag(:app).to_s
   end
 end

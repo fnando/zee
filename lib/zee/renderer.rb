@@ -93,7 +93,13 @@ module Zee
 
       ctx = Object.new.extend(helpers)
       ctx.instance_variable_set(:@request, request)
-      tilt_options = {engine_class: Erubi::CaptureBlockEngine}
+      tilt_options = {
+        engine_class: Erubi::CaptureBlockEngine,
+        freeze_template_literals: false,
+        escape: true,
+        bufval: "::Zee::SafeBuffer::Erubi.new",
+        bufvar: "@output_buffer"
+      }
 
       body = Tilt
              .new(view_path[:path], tilt_options)
@@ -102,7 +108,7 @@ module Zee
       if layout != false && layout_path
         body = Tilt
                .new(layout_path[:path], tilt_options)
-               .render(ctx, locals) { body }
+               .render(ctx, locals) { SafeBuffer.new(body) }
       end
 
       response.status(status)
