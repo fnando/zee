@@ -2,12 +2,6 @@
 
 module Zee
   module Renderer
-    # @private
-    BUFVAR = "@output_buffer"
-
-    # @private
-    BUFVAL = "::Zee::SafeBuffer::Erubi.new"
-
     # Render a template. The default is to render a template with the same name
     # as the action. The template must be
     # named `:name.:content_type.:template_handler`, as in `home.html.erb`.
@@ -97,24 +91,12 @@ module Zee
               "#{controller_name}##{template_name}: #{list}"
       end
 
-      ctx = Object.new.extend(helpers)
-      ctx.instance_variable_set(:@request, request)
-      tilt_options = {
-        engine_class: Erubi::CaptureBlockEngine,
-        freeze_template_literals: false,
-        escape: true,
-        bufval: BUFVAL,
-        bufvar: BUFVAR
-      }
-
-      body = Tilt
-             .new(view_path[:path], tilt_options)
-             .render(ctx, locals)
+      body = app.render_template(view_path[:path], locals:)
 
       if layout != false && layout_path
-        body = Tilt
-               .new(layout_path[:path], tilt_options)
-               .render(ctx, locals) { SafeBuffer.new(body) }
+        body = app.render_template(layout_path[:path], locals:) do
+          SafeBuffer.new(body)
+        end
       end
 
       response.status(status)

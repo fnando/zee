@@ -327,6 +327,28 @@ module Zee
       end
     end
 
+    # Render a template.
+    # @param file [String] The path to the template file.
+    # @param locals [Hash] The variables to expose to the template.
+    # @param context [Object] The context to evaluate the template in.
+    # @param request [Zee::Request] The current request.
+    # @yield The block to evaluate in the template.
+    # @return [String] The rendered template.
+    def render_template(file, locals:, context: nil, request: nil, &)
+      context ||= Object.new.extend(helpers)
+      context.instance_variable_set(:@request, request)
+
+      options = {
+        engine_class: Erubi::CaptureBlockEngine,
+        freeze_template_literals: false,
+        escape: true,
+        bufval: BUFVAL,
+        bufvar: BUFVAR
+      }
+
+      Tilt.new(file, options).render(context, locals, &)
+    end
+
     private def rack_app
       @rack_app ||= begin
         request_handler = RequestHandler.new(self)

@@ -25,4 +25,12 @@ module Zee
   ZEE_SESSION_KEY = "_zee_session"
   ZEE_CSRF_TOKEN = "zee.csrf_token"
   ZEE_CSP_NONCE = "zee.csp_nonce"
+
+  # @private
+  # The name of the output buffer variable used by erubi templates.
+  BUFVAR = "@output_buffer"
+
+  # @private
+  # The initial output buffer value used by erubi templates.
+  BUFVAL = "::Zee::SafeBuffer::Erubi.new"
 end
