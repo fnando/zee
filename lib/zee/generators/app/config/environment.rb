@@ -2,4 +2,4 @@
 
 require_relative "app"
 
-App.initialize!
+Zee.app.initialize!

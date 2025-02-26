@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-App.middleware do
+Zee.app.middleware do
   # Provides support for Cross-Origin Resource Sharing (CORS).
   # [https://github.com/cyu/rack-cors]
   # unshift Rack::Cors do

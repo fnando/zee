@@ -123,7 +123,7 @@ module Zee
 
     # The helper object.
     private def helpers
-      request.env[RACK_ZEE_APP].helpers
+      Zee.app.helpers
     end
 
     # The session hash.

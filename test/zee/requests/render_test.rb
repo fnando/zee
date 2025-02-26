@@ -6,7 +6,7 @@ class RenderTest < Minitest::Test
   include Rack::Test::Methods
 
   def app
-    SampleApp
+    Zee.app
   end
 
   test "renders root" do

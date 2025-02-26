@@ -1,18 +1,18 @@
 # frozen_string_literal: true
 
-App.config :development do
+Zee.app.config :development do
   set :enable_reloading, true
 end
 
-App.config :development, :test do
+Zee.app.config :development, :test do
   set :domain, "localhost"
 end
 
-App.config :production do
+Zee.app.config :production do
   set :domain, "example.com"
 end
 
-App.config do
+Zee.app.config do
   # You can connect to the database by setting an environment variable
   # `ENV["DATABASE_URL"]` or by using a .env file.
   # @example

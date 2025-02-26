@@ -14,9 +14,7 @@ module Zee
       # Return the path to the manifest file.
       # @return [Pathname]
       def manifest_path
-        @manifest_path ||= request.env[RACK_ZEE_APP]
-                                  .root
-                                  .join("public/assets/.manifest.json")
+        @manifest_path ||= Zee.app.root.join("public/assets/.manifest.json")
       end
 
       # Returns the manifest file as a hash.

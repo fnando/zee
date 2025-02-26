@@ -1,6 +1,21 @@
 # frozen_string_literal: true
 
 module Zee
+  # Raised whenever trying to access the current app without setting it first.
+  MissingAppError = Class.new(StandardError)
+
+  class << self
+    # The current app.
+    # @return [Zee::App]
+    attr_writer :app
+
+    def app
+      raise MissingAppError, "No app has been set to #{name}.app" unless @app
+
+      @app
+    end
+  end
+
   class App
     # This error is raised whenever the app is initialized more than once.
     AlreadyInitializedError = Class.new(StandardError)
@@ -17,7 +32,7 @@ module Zee
 
     def initialize(&)
       @initialized = false
-      @on_init = []
+      @init = []
       @root = Pathname.pwd
       self.env = compute_env
       instance_eval(&) if block_given?
@@ -47,7 +62,9 @@ module Zee
     #     end
     #   end
     def init(&block)
-      @on_init << block
+      @init ||= []
+      @init << block if block
+      @init
     end
 
     # Set the current environment.
@@ -229,10 +246,7 @@ module Zee
       Bundler.require(env.to_sym)
 
       Object.const_set(:Actions, Module.new) unless defined?(::Actions)
-      unless defined?(::Controllers)
-        Object.const_set(:Controllers,
-                         Module.new)
-      end
+      Object.const_set(:Controllers, Module.new) unless defined?(::Controllers)
       Object.const_set(:Helpers, Module.new) unless defined?(::Helpers)
       Object.const_set(:Jobs, Module.new) unless defined?(::Jobs)
       Object.const_set(:Mailers, Module.new) unless defined?(::Mailers)
@@ -260,7 +274,7 @@ module Zee
 
     # @private
     def run_init
-      @on_init.each { instance_eval(&_1) }
+      init.each { instance_eval(&_1) }
     end
 
     # @private
@@ -313,8 +327,6 @@ module Zee
     end
 
     def call(env)
-      env[RACK_ZEE_APP] = self
-
       if root == Dir.pwd
         # :nocov:
         rack_app.call(env)
@@ -380,7 +392,6 @@ module Zee
         @config = nil
         @routes = nil
         @secrets = nil
-        @on_init = []
         @middleware = nil
         @rack_app = nil
 

@@ -2,4 +2,4 @@
 
 require_relative "config/environment"
 
-run App
+run Zee.app

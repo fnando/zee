@@ -35,15 +35,11 @@ module Zee
 
         status, headers, body = *rack_app.call(env)
 
-        if dev?(env) && env[PATH_INFO]&.start_with?(SLASH_ASSETS)
+        if Zee.app.env.development? && env[PATH_INFO]&.start_with?(SLASH_ASSETS)
           headers = headers.merge(CACHE_CONTROL => NOCACHE)
         end
 
         [status, headers, body]
-      end
-
-      def dev?(env)
-        env[RACK_ZEE_APP]&.env&.development?
       end
     end
   end

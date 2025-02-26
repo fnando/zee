@@ -6,16 +6,16 @@ class HelpersTest < Minitest::Test
   include Rack::Test::Methods
 
   def app
-    SampleApp
+    Zee.app
   end
 
   test "includes defined helper modules" do
-    assert_includes SampleApp.helpers.included_modules, Helpers::I18n
-    assert_includes SampleApp.helpers.included_modules, Helpers::L10n
+    assert_includes app.helpers.included_modules, Helpers::I18n
+    assert_includes app.helpers.included_modules, Helpers::L10n
   end
 
   test "helpers include url helpers" do
-    assert_includes SampleApp.helpers.included_modules, SampleApp.routes.helpers
+    assert_includes app.helpers.included_modules, app.routes.helpers
   end
 
   test "renders root" do

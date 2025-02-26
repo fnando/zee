@@ -5,9 +5,9 @@ require "test_helper"
 class ControllerTest < Minitest::Test
   let(:app) { Zee::App.new { root "test/fixtures/templates" } }
   let(:response) { Zee::Response.new }
-  let(:request) do
-    Zee::Request.new("rack.session" => {}, "zee.app" => app)
-  end
+  let(:request) { Zee::Request.new("rack.session" => {}) }
+
+  setup { Zee.app = app }
 
   test "returns session" do
     controller = Zee::Controller.new(request:, response:)

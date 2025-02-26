@@ -8,4 +8,10 @@ require_relative "boot"
 #
 # Adding configuration to this file is descouraged; code reloading in
 # development won't reload it.
-App = Zee::App.new
+class App < Zee::App
+end
+
+# Sets the global app instance.
+# This is used by things like mailers, helpers, etc, so you don't have to pass
+# the app instance around.
+Zee.app = App.new

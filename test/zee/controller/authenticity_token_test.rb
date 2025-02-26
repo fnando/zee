@@ -6,7 +6,7 @@ class AuthenticityTokenTest < Minitest::Test
   include Rack::Test::Methods
 
   def app
-    SampleApp
+    Zee.app
   end
 
   test "rejects missing token" do

@@ -20,11 +20,13 @@ module Zee
 
       controller_name, action_name = *route.to.split("#")
 
-      controller_class = Object.const_get(
+      expected_const =
         app
-         .loader
-         .cpath_expected_at("app/controllers/#{controller_name}.rb")
-      )
+        .loader
+        .cpath_expected_at("app/controllers/#{controller_name}.rb")
+
+      controller_class = Object.const_get(expected_const)
+
       controller = controller_class.new(
         request:,
         response:,

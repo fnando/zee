@@ -70,7 +70,7 @@ module Zee
       private def create_authenticity_token_hmac(input)
         OpenSSL::HMAC.hexdigest(
           OpenSSL::Digest.new("SHA256"),
-          request.env[RACK_ZEE_APP].secrets[:session_secret],
+          Zee.app.secrets[:session_secret],
           input
         )
       end

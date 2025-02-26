@@ -7,6 +7,16 @@ class AppTest < Minitest::Test
     Zee::ENV_NAMES.each {|name| ENV.delete(name) }
   end
 
+  test "raises when Zee.app is accesed without being set first" do
+    Zee.app = nil
+
+    error = assert_raises(Zee::MissingAppError) do
+      Zee.app
+    end
+
+    assert_equal "No app has been set to Zee.app", error.message
+  end
+
   test "sets root" do
     app = Zee::App.new { root("/tmp") }
 

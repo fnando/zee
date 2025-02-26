@@ -14,7 +14,7 @@ class StaticTest < Minitest::Test
 
         def call(env)
           app = Struct.new(:env).new(Zee::Environment.new(:development))
-          env["zee.app"] = app
+          Zee.app = app
           @app.call(env)
         end
       end

@@ -30,7 +30,7 @@ module Zee
     # @example Render with a custom layout.
     #   render :home, layout: :custom
     def render(template_name = action_name, status: :ok, layout: nil, **options)
-      app = request.env[RACK_ZEE_APP]
+      app = Zee.app
 
       return render_json(status, options.delete(:json)) if options.key?(:json)
       return render_text(status, options.delete(:text)) if options.key?(:text)
@@ -124,10 +124,7 @@ module Zee
     private def render_json(status, data)
       response.status(status)
       response.headers[:content_type] = APPLICATION_JSON
-      response.body = request.env[RACK_ZEE_APP]
-                             .config
-                             .json_serializer
-                             .dump(data)
+      response.body = Zee.app.config.json_serializer.dump(data)
     end
   end
 end
