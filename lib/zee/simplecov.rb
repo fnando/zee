@@ -1,5 +1,10 @@
 # frozen_string_literal: true
 
+module Zee
+  class Simplecov
+  end
+end
+
 require "simplecov"
 
 SimpleCov.profiles.define :zee do

@@ -30,3 +30,15 @@ Minitest/NoAssertions:
 
 Style/DocumentDynamicEvalDefinition:
   Enabled: false
+
+Minitest/TestFileName:
+  Exclude:
+    - lib/**/test.rb
+
+Minitest/NoTestCases:
+  Exclude:
+    - lib/**/test.rb
+
+Minitest/EmptyLineBeforeAssertionMethods:
+  Exclude:
+    - lib/**/test.rb

@@ -50,6 +50,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "tilt", "~> 2.6"
   spec.add_dependency "yaml", "~> 0.4"
   spec.add_dependency "zeitwerk", "~> 2.7"
+  spec.add_development_dependency "mail"
   spec.add_development_dependency "minitest"
   spec.add_development_dependency "minitest-utils"
   spec.add_development_dependency "mocha"

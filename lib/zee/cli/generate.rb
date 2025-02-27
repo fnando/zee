@@ -3,6 +3,17 @@
 module Zee
   class CLI < Command
     class Generate < Command
+      desc "mailer NAME [METHODS...]", "Generate new mailer"
+      def mailer(name, *methods)
+        options[:name] = name
+        options[:methods] = methods
+
+        generator = Generators::Mailer.new
+        generator.destination_root = File.expand_path(Dir.pwd)
+        generator.options = options
+        generator.invoke_all
+      end
+
       desc "migration NAME [FIELDS...]", "Generate new migration"
       def migration(name, *fields)
         options[:name] = name

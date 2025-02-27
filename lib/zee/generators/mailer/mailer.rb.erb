@@ -1,0 +1,17 @@
+# frozen_string_literal: true
+
+module Mailers
+  # To expose a variable to the email template, use the `expose` method.
+  # The example below can be used as `<%%= message %>`.
+  # expose message: "Hello, World!"
+  class <%= mailer_class_name %> < Zee::Mailer
+  <%- options[:methods].each_with_index do |method, index| -%>
+
+    def <%= method %>
+      mail to: "to@example.com",
+           from: "from@example.com",
+           subject: "<%= method.tr("_", " ").capitalize %>"
+    end
+  <%- end -%>
+  end
+end
