@@ -3,6 +3,47 @@
 require "test_helper"
 
 class CLITest < Minitest::Test
+  test "lists routes" do
+    exit_code = nil
+    out = nil
+
+    expected = <<~TEXT
+      ------------+------------------------+------------------+----------------------------
+       Verb       | Path                   | Prefix           | To
+      ------------+------------------------+------------------+----------------------------
+       GET        | /                      | root             | pages#home
+       GET        | /custom-layout         |                  | pages#custom_layout
+       GET        | /no-layout             |                  | pages#no_layout
+       GET        | /controller-layout     |                  | things#show
+       GET        | /missing-template      |                  | pages#missing_template
+       GET        | /hello                 |                  | pages#hello
+       GET        | /text                  |                  | formats#text
+       GET        | /json                  |                  | formats#json
+       GET        | /redirect              |                  | pages#redirect
+       GET        | /redirect-error        |                  | pages#redirect_error
+       GET        | /redirect-open         |                  | pages#redirect_open
+       POST       | /session               |                  | sessions#create
+       GET        | /session               |                  | sessions#show
+       DELETE     | /session               |                  | sessions#delete
+       GET        | /helpers               |                  | helpers#show
+       GET        | /posts/new             | new_post         | posts#new
+       POST       | /posts/new             |                  | posts#create
+       GET        | /categories/new        | new_category     | categories#new
+       POST       | /categories/new        |                  | categories#create
+       PATCH      | /categories/new        |                  | categories#create
+      ------------+------------------------+------------------+----------------------------
+    TEXT
+
+    Dir.chdir("test/fixtures/sample_app") do
+      capture do
+        Zee::CLI.start(["routes"])
+      end => {exit_code:, out:}
+    end
+
+    assert_equal 0, exit_code
+    assert_equal expected, out
+  end
+
   test "generates new app" do
     app = Pathname("tmp/app")
 
@@ -11,6 +52,25 @@ class CLITest < Minitest::Test
     assert_equal 0, exit_code
     assert_includes out, "bundle install"
     assert app.join(".ruby-version").file?
+  end
+
+  test "generates new mailer" do
+    app = Pathname("tmp/app")
+    exit_code = nil
+
+    capture { Zee::CLI.start(["new", "tmp/app", "-B"]) }
+    Dir.chdir(app) do
+      capture do
+        Zee::CLI.start(%w[g mailer messages hello bye])
+      end => {exit_code:}
+    end
+
+    assert_equal 0, exit_code
+    assert app.join("app/mailers/messages.rb").file?
+    assert app.join("app/views/messages/hello.text.erb").file?
+    assert app.join("app/views/messages/hello.html.erb").file?
+    assert app.join("app/views/messages/bye.text.erb").file?
+    assert app.join("app/views/messages/bye.html.erb").file?
   end
 
   test "skips bundle install" do

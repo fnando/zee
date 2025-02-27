@@ -46,6 +46,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "rake"
   spec.add_dependency "securerandom", "~> 0.4"
   spec.add_dependency "superconfig", "~> 2.2"
+  spec.add_dependency "terminal-table", "~> 4.0"
   spec.add_dependency "thor", "~> 1.3"
   spec.add_dependency "tilt", "~> 2.6"
   spec.add_dependency "yaml", "~> 0.4"

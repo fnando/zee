@@ -18,6 +18,9 @@ Naming/FileName:
   Exclude:
     - API_DESIGN.rb
 
+Lint/EmptyClass:
+  Enabled: false
+
 Style/FetchEnvVar:
   Enabled: false
 

@@ -3,6 +3,19 @@
 require "test_helper"
 
 class RoutesTest < Minitest::Test
+  test "returns routes" do
+    routes = Zee::Routes.new do
+      root to: "home#index"
+    end
+
+    route = routes.find(
+      Zee::Request.new("REQUEST_METHOD" => "GET", "PATH_INFO" => "/")
+    )
+
+    assert_equal 1, routes.to_a.size
+    assert_same route, routes.to_a.first
+  end
+
   test "defines root route" do
     routes = Zee::Routes.new do
       root to: "home#index"

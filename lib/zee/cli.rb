@@ -60,6 +60,34 @@ module Zee
       exit 1
     end
 
+    desc "routes", "List all routes"
+    def routes
+      require "bundler/setup"
+      require "dotenv"
+      require "terminal-table"
+
+      Dotenv.load(".env", ".env.development", ".env.test", ".env.production")
+      Bundler.require(:default)
+      require "./config/environment" if File.file?("./config/environment.rb")
+
+      routes = Zee.app.routes.to_a
+      headings = %w[Verb Path Prefix To]
+      rows = routes.map do |route|
+        [
+          route.via.map { _1.to_s.upcase }.join(", "),
+          route.path,
+          route.name,
+          route.to
+        ]
+      end
+
+      table = ::Terminal::Table.new(rows:, headings:) do |t|
+        t.style = {border_left: false, border_right: false, padding_right: 5}
+      end
+
+      puts table
+    end
+
     desc "new PATH", "Create a new app"
     option :skip_bundle, type: :boolean,
                          default: false,

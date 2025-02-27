@@ -14,6 +14,10 @@ module Zee
       instance_eval(&) if block_given?
     end
 
+    def to_a
+      @store.dup
+    end
+
     # Find a route by its name.
     # @param name [String] the name of the route.
     # @return [Zee::Route, nil] the route that matches the name.

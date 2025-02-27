@@ -17,4 +17,11 @@ class StringTest < Minitest::Test
     assert_equal "module/user_api", "Module::UserAPI".underscore
     assert_equal "module/html_encoder", "Module::HTMLEncoder".underscore
   end
+
+  test "converts to camelcase" do
+    assert_equal "User", "user".camelize
+    assert_equal "UserTag", "user_tag".camelize
+    assert_equal "Module::User", "module/user".camelize
+    assert_equal "Module::UserTag", "module/user_tag".camelize
+  end
 end

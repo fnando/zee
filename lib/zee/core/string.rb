@@ -13,7 +13,9 @@ module Zee
         end
 
         def camelize
-          split("/").map(&:capitalize).join
+          split("/").map do |part|
+            part.split("_").map(&:capitalize).join
+          end.join("::")
         end
       end
     end
