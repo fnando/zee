@@ -30,6 +30,8 @@ SampleAppInstance.routes do
   get "categories/new", to: "categories#new", as: :new_category
   post "categories/new", to: "categories#create"
   patch "categories/new", to: "categories#create"
+
+  get "login", to: "login#new", as: :login
 end
 
 SampleAppInstance.middleware do

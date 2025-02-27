@@ -144,4 +144,19 @@ class MailerTest < Zee::Mailer::Test
     assert_includes Zee::Mailer.deliveries.first.html_part.to_s, "rendered html"
     assert_includes Zee::Mailer.deliveries.first.text_part.to_s, "rendered text"
   end
+
+  test "makes route helpers available" do
+    Zee.app.routes.default_url_options = {
+      host: "example.com",
+      protocol: "http"
+    }
+
+    Dir.chdir("test/fixtures/sample_app") do
+      Mailers::Mailer.login("to@example.com").deliver
+    end
+
+    assert_mail_delivered
+    assert_includes Zee::Mailer.deliveries.first.text_part.to_s,
+                    "http://example.com/login"
+  end
 end

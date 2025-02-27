@@ -31,6 +31,7 @@ class CLITest < Minitest::Test
        GET        | /categories/new        | new_category     | categories#new
        POST       | /categories/new        |                  | categories#create
        PATCH      | /categories/new        |                  | categories#create
+       GET        | /login                 | login            | login#new
       ------------+------------------------+------------------+----------------------------
     TEXT
 
