@@ -3,5 +3,3 @@
 source "https://rubygems.org"
 
 gemspec
-
-gem "minitest-utils", path: "../minitest-utils"

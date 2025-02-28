@@ -6,6 +6,49 @@ module Zee
       include OutputSafety
       include Capture
 
+      # @private
+      OPEN_TAGS = %w[
+        area base br col command embed hr img input keygen link meta param
+        source track wbr
+      ].freeze
+
+      # @private
+      BOOLEAN_ATTRS = %w[
+        allowfullscreen async autofocus autoplay checked controls default defer
+        disabled formnovalidate hidden ismap itemscope loop multiple muted
+        nomodule novalidate open playsinline readonly required reversed selected
+        truespeed
+      ].freeze
+
+      # Returns an HTML tag with the specified content.
+      #
+      # @param name [String] the name of the tag.
+      # @param content [String, nil] the content to put inside the tag.
+      # @param attrs [Hash] the attributes to add to the tag.
+      # @return [Zee::SafeBuffer]
+      #
+      # @example Using a string
+      #   <%= tag(:div, "hello!") %>
+      #
+      # @example Passing attributes
+      #   <%= tag(:div, "hello!", id: "header") %>
+      #
+      # @example Open tags
+      #   <%= tag(:br, id: "header") %>
+      def tag(name, content = nil, **attrs)
+        open_tag = OPEN_TAGS.include?(name.to_s) || attrs.delete(:open)
+        attrs = html_attrs(attrs)
+        buffer = SafeBuffer.new
+        buffer << SafeBuffer.new("<#{name}#{attrs}>")
+
+        unless open_tag
+          buffer << content
+          buffer << SafeBuffer.new("</#{name}>")
+        end
+
+        buffer
+      end
+
       # Returns an HTML tag with the specified content.
       #
       # @param name [String] the name of the tag.
@@ -25,13 +68,8 @@ module Zee
       # @example Passing attributes
       #   <%= content_tag(:div, "hello!", id: "header") %>
       def content_tag(name, content = nil, **attrs, &)
-        attrs = html_attrs(attrs)
         content = capture(&) if block_given?
-        buffer = SafeBuffer.new
-        buffer << SafeBuffer.new("<#{name}#{attrs}>")
-        buffer << content
-        buffer << SafeBuffer.new("</#{name}>")
-        buffer
+        tag(name, content, **attrs)
       end
 
       # Returns a JavaScript tag with the content inside.
@@ -140,18 +178,39 @@ module Zee
       # @return [String]
       def html_attrs(attrs)
         attrs[:class] = class_names(attrs[:class]) if attrs[:class]
-        attrs = attrs.merge(data_attrs(attrs.delete(:data)))
-        attrs.map {|k, v| %[ #{escape_html(k)}="#{escape_html(v)}"] }.join
+        attrs = attrs.merge(ns_attrs(:data, attrs.delete(:data)))
+        attrs = attrs.merge(
+          ns_attrs(:aria, attrs.delete(:aria), stringify_value: true)
+        )
+        attrs.map {|k, v| build_attr(k, v) }.join
       end
 
       # @private
-      # Build the data attributes. Any key with an underscore will be converted
-      # to a dash.
+      # Build namespaced attributes. Any key with an underscore will be
+      # converted to a dash.
       # @param attrs [Hash{Symbol => Object}]
+      # @param stringify_value [Boolean] whether to convert the value to a
+      #                                  string.
       # @return [Hash{String => Object}]
-      private def data_attrs(attrs)
+      private def ns_attrs(namespace, attrs, stringify_value: false)
         Hash(attrs).each_with_object({}) do |(k, v), buffer|
-          buffer["data-#{k.to_s.tr(UNDERSCORE, DASH)}"] = v
+          v = v.to_s if stringify_value
+          buffer["#{namespace}-#{k.to_s.tr(UNDERSCORE, DASH)}"] = v
+        end
+      end
+
+      # @private
+      private def build_attr(name, value)
+        name = name.to_s
+
+        if BOOLEAN_ATTRS.include?(name)
+          if value
+            " #{name}"
+          else
+            ""
+          end
+        else
+          %[ #{escape_html(name)}="#{escape_html(value)}"]
         end
       end
     end
