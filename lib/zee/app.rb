@@ -313,7 +313,7 @@ module Zee
         end
 
         target.include(ViewHelpers::Assets)
-        target.include(ViewHelpers::HTML)
+        target.include(ViewHelpers::Form)
         target.include(routes.helpers)
         target.include(helpers)
       end
