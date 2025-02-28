@@ -70,18 +70,25 @@ class FormTest < Minitest::Test
   end
 
   test "renders date input" do
+    now = Time.now
+
     assert_tag helpers.date_field_tag("dob"),
                "input[type=date][name=dob]"
     assert_tag helpers.date_field_tag("dob", "2000-01-01"),
                "input[type=date][name=dob][value='2000-01-01']"
+    assert_tag helpers.date_field_tag("dob", now),
+               "input[type=date][name=dob][value='#{now.strftime('%Y-%m-%d')}']"
   end
 
   test "renders datetime input" do
-    date = Time.now.iso8601
+    now = Time.now
+    date = now.iso8601
 
     assert_tag helpers.datetime_field_tag("starts_at"),
                "input[type='datetime-local'][name=starts_at]"
     assert_tag helpers.datetime_field_tag("starts_at", date),
+               "input[type='datetime-local'][name=starts_at][value='#{date}']"
+    assert_tag helpers.datetime_field_tag("starts_at", now),
                "input[type='datetime-local'][name=starts_at][value='#{date}']"
   end
 
@@ -96,6 +103,17 @@ class FormTest < Minitest::Test
     assert_tag \
       helpers.form_tag(action: "/upload", multipart: true),
       "form[action='/upload'][method=post][enctype='multipart/form-data']"
+  end
+
+  test "renders form tag when using file input" do
+    html = render <<~ERB
+      <%= form_tag(action: "/upload") do %>
+        <%= file_field_tag(:avatar) %>
+      <% end %>
+    ERB
+
+    assert_tag html, "form[action='/upload'][method=post]" \
+                     "[enctype='multipart/form-data']"
   end
 
   test "renders form with block" do
@@ -119,7 +137,7 @@ class FormTest < Minitest::Test
 
     assert_tag html,
                "form[action='/posts'][method=post]>input[type=hidden]" \
-               "[name=authenticity_token][value=abc]"
+               "[name=_authenticity_token][value=abc]"
   end
 
   test "renders email input" do
@@ -135,6 +153,7 @@ class FormTest < Minitest::Test
     html = helpers.hidden_field_tag("authenticity_token", "abc")
 
     assert_tag html, "input[type=hidden][name=authenticity_token][value=abc]"
+    assert_tag html, "input[id]", count: 0
   end
 
   test "renders month input" do
@@ -440,6 +459,12 @@ class FormTest < Minitest::Test
     assert_tag helpers.label_tag("full_name"),
                "label[for=full_name]",
                text: "Full name"
+  end
+
+  test "renders label using block" do
+    assert_tag helpers.label_tag("name") { "Your name" },
+               "label[for=name]",
+               text: "Your name"
   end
 
   test "renders email input with disabled autocomplete" do
