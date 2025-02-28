@@ -1,29 +1,32 @@
 # frozen_string_literal: true
 
 module Zee
-  HTML = "html"
-  DOUBLE_SLASH = "--"
-  HTTP_ACCEPT_ALL = "*/*"
+  APPLICATION_JSON = "application/json"
+  CLOSE_SQUARE_BRACKET = "]"
+  COLON = ":"
   DASH = "-"
-  UNDERSCORE = "_"
-  EMPTY_STRING = ""
-  SLASH = "/"
-  OPEN_PAREN = "("
   DOT = "."
-  SPACE = " "
+  DOUBLE_SLASH = "--"
+  EMPTY_STRING = ""
+  ENV_NAMES = %w[ZEE_ENV APP_ENV RACK_ENV].freeze
+  HTML = "html"
+  HTTP_ACCEPT = "HTTP_ACCEPT"
+  HTTP_ACCEPT_ALL = "*/*"
   HTTP_ORIGIN = "HTTP_ORIGIN"
   HTTP_X_CSRF_TOKEN = "HTTP_X_CSRF_TOKEN"
   HTTP_X_REQUESTED_WITH = "HTTP_X_REQUESTED_WITH"
-  HTTP_ACCEPT = "HTTP_ACCEPT"
+  NS_SEPARATOR = "::"
+  OPEN_PAREN = "("
+  RACK_SESSION = "rack.session"
+  SLASH = "/"
+  SPACE = " "
   TEXT_HTML = "text/html"
   TEXT_PLAIN = "text/plain"
-  APPLICATION_JSON = "application/json"
-  RACK_SESSION = "rack.session"
-  ENV_NAMES = %w[ZEE_ENV APP_ENV RACK_ENV].freeze
+  UNDERSCORE = "_"
+  ZEE_CSP_NONCE = "zee.csp_nonce"
+  ZEE_CSRF_TOKEN = "zee.csrf_token"
   ZEE_KEYRING = "ZEE_KEYRING"
   ZEE_SESSION_KEY = "_zee_session"
-  ZEE_CSRF_TOKEN = "zee.csrf_token"
-  ZEE_CSP_NONCE = "zee.csp_nonce"
 
   # @private
   # The name of the output buffer variable used by erubi templates.
