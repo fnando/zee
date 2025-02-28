@@ -2,13 +2,7 @@
 
 require "test_helper"
 
-class RenderTest < Minitest::Test
-  include Rack::Test::Methods
-
-  def app
-    Zee.app
-  end
-
+class RenderTest < Zee::RequestTest
   test "renders root" do
     get "/"
 

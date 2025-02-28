@@ -2,13 +2,7 @@
 
 require "test_helper"
 
-class AuthenticityTokenTest < Minitest::Test
-  include Rack::Test::Methods
-
-  def app
-    Zee.app
-  end
-
+class AuthenticityTokenTest < Zee::RequestTest
   test "rejects missing token" do
     post "/posts/new", {}
 

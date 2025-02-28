@@ -2,13 +2,7 @@
 
 require "test_helper"
 
-class HelpersTest < Minitest::Test
-  include Rack::Test::Methods
-
-  def app
-    Zee.app
-  end
-
+class HelpersTest < Zee::RequestTest
   test "includes defined helper modules" do
     assert_includes app.helpers.included_modules, Helpers::I18n
     assert_includes app.helpers.included_modules, Helpers::L10n

@@ -2,13 +2,7 @@
 
 require "test_helper"
 
-class SessionTest < Minitest::Test
-  include Rack::Test::Methods
-
-  def app
-    Zee.app
-  end
-
+class SessionTest < Zee::RequestTest
   test "sets and reads session" do
     post "/session"
     get "/session"
