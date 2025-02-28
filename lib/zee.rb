@@ -22,6 +22,7 @@ loader.inflector.inflect(
   "aes" => "AES",
   "cli" => "CLI",
   "html" => "HTML",
+  "html_assertions" => "HTMLAssertions",
   "json_encoder" => "JSONEncoder"
 )
 loader.ignore("#{__dir__}/sequel")

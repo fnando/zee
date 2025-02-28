@@ -11,11 +11,16 @@ module Zee
     }.freeze
     JSON_ESCAPE_REGEXP = /[\u2028\u2029&><]/u
 
+    # @private
+    def self.safe_buffer_instance?(item)
+      item.class.ancestors.include?(SafeBuffer)
+    end
+
     # Escape HTML.
     # @param input [Object] the input to escape.
     # @return [String]
     def self.escape_html(input)
-      if input.is_a?(self)
+      if safe_buffer_instance?(input)
         input.to_s
       else
         new.concat(input).to_s
@@ -26,7 +31,7 @@ module Zee
     # @param input [Object] the input to escape.
     # @return [String]
     def self.escape_json(input)
-      if input.is_a?(self)
+      if safe_buffer_instance?(input)
         input.to_json
       else
         new.concat(input).to_json
@@ -36,7 +41,7 @@ module Zee
     # Create a new Zee::SafeBuffer instance.
     # You can pass a string to be used as the initial buffer.
     # This is useful when you want to append to an existing string.
-    # The initial buffer is always considered safe. If you're unsure if the
+    # **The initial buffer is always considered safe.** If you're unsure if the
     # input is safe, use something like `Zee::SafeBuffer.new.concat(input)`
     # instead.
     #
@@ -74,9 +79,13 @@ module Zee
     # Return the buffer as a string.
     # @return [String]
     def to_s
-      [@buffer[0]].concat(@buffer[1..-1].map { escape(_1) }).join
+      [@buffer[0]].concat(Array(@buffer[1..-1]).map { escape(_1) }).join
     end
-    alias inspect to_s
+
+    # @private
+    def inspect
+      to_s.inspect
+    end
 
     # Convert existing buffer into a safe one.
     # @return [Zee::SafeBuffer]
@@ -92,7 +101,7 @@ module Zee
 
     # @private
     private def escape(item)
-      if item.is_a?(self.class)
+      if self.class.safe_buffer_instance?(item)
         item.to_s
       else
         CGI.escape_html(item.to_s)
@@ -100,9 +109,35 @@ module Zee
     end
 
     # @private
-    class Erubi < ::Erubi::CaptureBlockEngine::Buffer
+    class Erubi < SafeBuffer
+      def initialize(safe_buffer = "", root: false)
+        super(safe_buffer)
+        @root = root
+      end
+
+      def root?
+        @root
+      end
+
+      def capture(*, &)
+        prev = @buffer
+        @buffer = []
+        @buffer = self.class.new
+        content = yield(*)
+        @buffer << content unless content.root?
+        @buffer
+      ensure
+        @buffer = prev
+      end
+
       def |(other)
-        concat(SafeBuffer.escape_html(other))
+        @buffer << other
+        self
+      end
+
+      def <<(other)
+        @buffer << SafeBuffer.new(other)
+        self
       end
     end
   end

@@ -3,49 +3,38 @@
 require "test_helper"
 
 class HTMLTest < Minitest::Test
-  let(:helpers) do
-    mod = Module.new do
-      attr_accessor :request
-
-      include Zee::ViewHelpers::OutputSafety
-      include Zee::ViewHelpers::HTML
-      include Zee::ViewHelpers::Capture
-    end
-
-    Object.new.extend(mod).tap do |helpers|
-      helpers.request = Zee::Request.new(Rack::MockRequest.env_for("/"))
-    end
-  end
+  include Zee::Test::HTMLAssertions
+  let(:helpers) { Object.new.extend(Zee::ViewHelpers::HTML) }
 
   test "renders javascript tag" do
-    html = render(%[<%= javascript_tag("console.log('Hello, World!')") %>])
+    html = render(%[<%= javascript_tag("console.log('Hello, World!');") %>])
 
-    assert_equal "<script>console.log('Hello, World!')</script>", html.to_s
+    assert_tag html, "script", html: /console\.log\('Hello, World!'\);/
   end
 
   test "renders javascript tag using block" do
     html = render <<~ERB
       <%= javascript_tag do %>
-        console.log('Hello, World!')
+        console.log('Hello, World!');
       <% end %>
     ERB
 
-    assert_equal "<script>\n  console.log('Hello, World!')\n</script>",
-                 html.to_s
+    assert_tag html, "script", html: /console\.log\('Hello, World!'\);/
   end
 
   test "renders javascript tag with nonce" do
-    helpers.request.env[Zee::ZEE_CSP_NONCE] = "abc"
+    request ||= Zee::Request.new(Rack::MockRequest.env_for("/"))
+    request.env[Zee::ZEE_CSP_NONCE] = "abc"
 
-    html = render <<~ERB
+    html = render <<~ERB, request
       <%= javascript_tag do %>
-        console.log('Hello, World!')
+        console.log('Hello, World!');
       <% end %>
     ERB
 
-    assert_equal "<script nonce=\"abc\">\n  console.log('Hello, World!')\n" \
-                 "</script>",
-                 html.to_s
+    assert_tag html,
+               "script[nonce=abc]",
+               html: /console\.log\('Hello, World!'\);/
   end
 
   test "renders style tag" do
@@ -61,21 +50,20 @@ class HTMLTest < Minitest::Test
       <% end %>
     ERB
 
-    assert_equal "<style>\n  body { color: red; }\n</style>",
-                 html.to_s
+    assert_tag html, "style", html: /body \{ color: red; \}/
   end
 
   test "renders style tag with nonce" do
-    helpers.request.env[Zee::ZEE_CSP_NONCE] = "abc"
+    request ||= Zee::Request.new(Rack::MockRequest.env_for("/"))
+    request.env[Zee::ZEE_CSP_NONCE] = "abc"
 
-    html = render <<~ERB
+    html = render <<~ERB, request
       <%= style_tag do %>
         body { color: red; }
       <% end %>
     ERB
 
-    assert_equal "<style nonce=\"abc\">\n  body { color: red; }\n</style>",
-                 html.to_s
+    assert_tag html, "style[nonce=abc]", html: /body \{ color: red; \}/
   end
 
   test "renders html tag" do
@@ -91,7 +79,7 @@ class HTMLTest < Minitest::Test
       <% end %>
     ERB
 
-    assert_equal "<p>\n  hello!\n</p>", html.to_s
+    assert_tag html, "p", text: /hello!/
   end
 
   test "renders html tag with attributes" do
@@ -101,7 +89,7 @@ class HTMLTest < Minitest::Test
       <% end %>
     ERB
 
-    assert_equal %[<header id="main-header">\n  hello!\n</header>], html.to_s
+    assert_tag html, "header#main-header", text: /hello!/
   end
 
   test "builds css classes" do
@@ -127,16 +115,10 @@ class HTMLTest < Minitest::Test
                  helpers.html_attrs(title: %[between "quotes"])
   end
 
-  def render(template)
-    erb = Tilt.new(
-      "erb",
-      engine_class: Erubi::CaptureBlockEngine,
-      freeze_template_literals: false,
-      escape: true,
-      bufval: "::Zee::SafeBuffer::Erubi.new",
-      bufvar: "@output_buffer"
-    ) { template }
+  def render(template, request = nil)
+    request ||= Zee::Request.new(Rack::MockRequest.env_for("/"))
 
-    erb.render(helpers)
+    File.write("tmp/template.erb", template)
+    Zee.app.render_template("tmp/template.erb", request:)
   end
 end

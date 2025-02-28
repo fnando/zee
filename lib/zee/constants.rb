@@ -31,5 +31,5 @@ module Zee
 
   # @private
   # The initial output buffer value used by erubi templates.
-  BUFVAL = "::Zee::SafeBuffer::Erubi.new"
+  BUFVAL = "::Zee::SafeBuffer::Erubi.new(root: true)"
 end
