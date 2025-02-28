@@ -3,7 +3,13 @@
 require "test_helper"
 
 class SafeBufferTest < Minitest::Test
+  include Zee::Test::HTMLAssertions
+
   let(:string) { Zee::SafeBuffer.new }
+
+  test "inspects buffer" do
+    assert_equal %["hello"], Zee::SafeBuffer.new("hello").inspect
+  end
 
   test "compares to strings" do
     assert_operator(string, :==, "") # rubocop:disable Minitest/AssertEqual
@@ -62,6 +68,42 @@ class SafeBufferTest < Minitest::Test
     string << Zee::SafeBuffer.new("<script>")
 
     assert_equal "&lt;script&gt;<script>", string.to_s
+  end
+
+  test "works with no output in erb context" do
+    File.write "tmp/template.erb", <<~ERB
+      Hello <3
+    ERB
+    html = Zee.app.render_template("tmp/template.erb")
+
+    assert_equal "Hello <3", html.to_s.strip
+  end
+
+  test "works with flat buffers in erb context" do
+    File.write "tmp/template.erb", <<~ERB
+      <%= content_tag :h1, "Hello <3" %>
+    ERB
+    html = Zee.app.render_template("tmp/template.erb")
+
+    assert_tag html, "h1", text: /Hello <3/, html: /Hello &lt;3/
+  end
+
+  test "works with nested buffers in erb context" do
+    File.write "tmp/template.erb", <<~ERB
+      <%= content_tag :div do %>
+        <%= content_tag :button do %>
+          <%= content_tag :span do %>
+            Click me <3
+          <% end %>
+        <% end %>
+      <% end %>
+    ERB
+    html = Zee.app.render_template("tmp/template.erb")
+
+    assert_tag html,
+               "div>button>span",
+               text: /Click me <3/,
+               html: /Click me &lt;3/
   end
 
   test "returns escaped strings when converting to json" do

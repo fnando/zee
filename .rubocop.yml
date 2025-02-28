@@ -36,12 +36,12 @@ Style/DocumentDynamicEvalDefinition:
 
 Minitest/TestFileName:
   Exclude:
-    - lib/**/test.rb
+    - lib/**/*.rb
 
 Minitest/NoTestCases:
   Exclude:
-    - lib/**/test.rb
+    - lib/**/*.rb
 
 Minitest/EmptyLineBeforeAssertionMethods:
   Exclude:
-    - lib/**/test.rb
+    - lib/**/*.rb

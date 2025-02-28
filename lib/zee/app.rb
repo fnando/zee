@@ -313,9 +313,7 @@ module Zee
         end
 
         target.include(ViewHelpers::Assets)
-        target.include(ViewHelpers::OutputSafety)
         target.include(ViewHelpers::HTML)
-        target.include(ViewHelpers::Capture)
         target.include(routes.helpers)
         target.include(helpers)
       end
@@ -346,7 +344,7 @@ module Zee
     # @param request [Zee::Request] The current request.
     # @yield The block to evaluate in the template.
     # @return [String] The rendered template.
-    def render_template(file, locals:, context: nil, request: nil, &)
+    def render_template(file, locals: {}, context: nil, request: nil, &)
       context ||= Object.new.extend(helpers)
       context.instance_variable_set(:@request, request)
 

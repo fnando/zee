@@ -3,6 +3,9 @@
 module Zee
   module ViewHelpers
     module HTML
+      include OutputSafety
+      include Capture
+
       # Returns an HTML tag with the specified content.
       #
       # @param name [String] the name of the tag.
@@ -46,11 +49,15 @@ module Zee
       # @example Passing a string
       #   <%= javascript_tag(%[console.log("Hello, World!");])
       def javascript_tag(content = nil, &)
-        content = capture(&) if block_given?
+        content = if block_given?
+                    capture(&).raw
+                  else
+                    SafeBuffer.new(content)
+                  end
         nonce = request.env[ZEE_CSP_NONCE]
         attrs = {nonce:} if nonce
 
-        content_tag :script, SafeBuffer.new(content), **attrs
+        content_tag :script, content, **attrs
       end
 
       # Returns a JavaScript tag with the content inside.
@@ -68,11 +75,15 @@ module Zee
       # @example Passing a string
       #   <%= style_tag("body { color: red; }")
       def style_tag(content = nil, &)
-        content = capture(&) if block_given?
+        content = if block_given?
+                    capture(&)&.raw
+                  else
+                    SafeBuffer.new(content)
+                  end
         nonce = request.env[ZEE_CSP_NONCE]
         attrs = {nonce:} if nonce
 
-        content_tag :style, SafeBuffer.new(content), **attrs
+        content_tag :style, content, **attrs
       end
 
       # Define the `class` attribute.
