@@ -9,6 +9,15 @@ module Zee
     TRUTHY_VALUES = %w[1 true yes TRUE YES].freeze
 
     # @private
+    SUBMIT = "submit"
+
+    # @private
+    FIELD_GROUP_HEADING = "field-group-heading"
+
+    # @private
+    FIELD_GROUP = "field-group"
+
+    # @private
     ERROR = "error"
 
     # @return [Object] The field value source.
@@ -285,10 +294,10 @@ module Zee
         hint_text = translation_for(:"_hints.#{value}", attr, default: nil)
         hint = @context.tag(:br) + hint(attr, hint_text) if hint_text
 
-        buffer << @context.content_tag(:div, class: "field-group") do
+        buffer << @context.content_tag(:div, class: FIELD_GROUP) do
           checkbox(attr, value) +
             @context.content_tag(:span, label([:tags, value], label) + hint,
-                                 class: "field-group-heading")
+                                 class: FIELD_GROUP_HEADING)
         end
       end
 
@@ -298,7 +307,7 @@ module Zee
     # Render a submit button field.
     # @param label [String, nil] The button label.
     def submit(label = "Submit", **, &)
-      @context.button_tag(label, **, type: "submit", &)
+      @context.button_tag(label, **, type: SUBMIT, &)
     end
 
     # Render a `label` tag.
@@ -401,7 +410,7 @@ module Zee
     # @param collection [Boolean] Whether the attribute is a collection.
     # @return [String]
     def name_for(attr, collection: false)
-      suffix = "[]" if collection
+      suffix = SQUARE_BRACKETS if collection
       "#{object_name}[#{attr}]#{suffix}"
     end
 

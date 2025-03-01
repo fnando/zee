@@ -20,6 +20,7 @@ module Zee
   RACK_SESSION = "rack.session"
   SLASH = "/"
   SPACE = " "
+  SQUARE_BRACKETS = "[]"
   TEXT_HTML = "text/html"
   TEXT_PLAIN = "text/plain"
   UNDERSCORE = "_"
