@@ -50,11 +50,11 @@ module Minitest
       {out:, err:, exit_code:}
     end
 
-    def render(template, request = nil)
+    def render(template, request: nil, locals: {})
       request ||= Zee::Request.new(Rack::MockRequest.env_for("/"))
 
       File.write("tmp/template.erb", template)
-      Zee.app.render_template("tmp/template.erb", request:)
+      Zee.app.render_template("tmp/template.erb", request:, locals:)
     end
   end
 end

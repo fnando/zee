@@ -38,11 +38,13 @@ class HTMLTest < Minitest::Test
     request = Zee::Request.new(Rack::MockRequest.env_for("/"))
     request.env[Zee::ZEE_CSP_NONCE] = "abc"
 
-    html = render <<~ERB, request
+    template = <<~ERB
       <%= javascript_tag do %>
         console.log('Hello, World!')
       <% end %>
     ERB
+
+    html = render(template, request:)
 
     assert_equal "<script nonce=\"abc\">\n  console.log('Hello, World!')\n" \
                  "</script>",
@@ -69,11 +71,13 @@ class HTMLTest < Minitest::Test
     request = Zee::Request.new(Rack::MockRequest.env_for("/"))
     request.env[Zee::ZEE_CSP_NONCE] = "abc"
 
-    html = render <<~ERB, request
+    template = <<~ERB
       <%= style_tag do %>
         body { color: red; }
       <% end %>
     ERB
+
+    html = render(template, request:)
 
     assert_tag html, "style[nonce=abc]", text: /body \{ color: red; \}/
   end
@@ -128,6 +132,7 @@ class HTMLTest < Minitest::Test
     assert_equal %[ title="between &quot;quotes&quot;"],
                  helpers.html_attrs(title: %[between "quotes"])
     assert_equal "", helpers.html_attrs(selected: false)
+    assert_equal "", helpers.html_attrs(id: false)
   end
 
   test "renders open tag" do

@@ -209,7 +209,7 @@ module Zee
           else
             ""
           end
-        else
+        elsif value
           %[ #{escape_html(name)}="#{escape_html(value)}"]
         end
       end

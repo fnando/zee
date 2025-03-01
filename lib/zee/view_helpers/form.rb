@@ -40,6 +40,9 @@ module Zee
       ID_CLEANER = "^-a-zA-Z0-9:."
 
       # @private
+      INPUT_FILE_RE = /<input.*?type="file"/
+
+      # @private
       MONTH = "month"
 
       # @private
@@ -87,6 +90,9 @@ module Zee
       # @private
       YEAR_MONTH = "%Y-%m"
 
+      # @private
+      YEAR_MONTH_DAY = "%Y-%m-%d"
+
       # Render a `button` tag.
       # By default, the type is set to `button`.
       #
@@ -102,10 +108,10 @@ module Zee
       # @param name [String, Symbol] The name of the field.
       # @param value [String] The value of the field.
       # @return [SafeBuffer] The HTML for the input field.
-      def check_box_tag(name, value = "1", **)
+      def checkbox_tag(name, value = "1", **)
         input_field_tag(name, value, **, type: CHECKBOX)
       end
-      alias checkbox_tag check_box_tag
+      alias check_box_tag checkbox_tag
 
       # Render a `input[type=color]` tag.
       #
@@ -122,6 +128,7 @@ module Zee
       # @param value [String] The value of the field.
       # @return [SafeBuffer] The HTML for the input field.
       def date_field_tag(name, value = Date.today.iso8601, **)
+        value = value.strftime(YEAR_MONTH_DAY) if value.respond_to?(:strftime)
         input_field_tag(name, value, **, type: DATE)
       end
 
@@ -131,6 +138,7 @@ module Zee
       # @param value [String] The value of the field.
       # @return [SafeBuffer] The HTML for the input field.
       def datetime_field_tag(name, value = Time.now.iso8601, **)
+        value = value.iso8601 if value.respond_to?(:iso8601)
         input_field_tag(name, value, **, type: DATETIME)
       end
 
@@ -194,19 +202,26 @@ module Zee
         **attrs,
         &
       )
-        attrs[:enctype] = MULTIPART if multipart
+        # Capture the content before doing anything else. This is required
+        # because we need to compute the `multipart` attribute if you're using
+        # a file input.
+        content = capture(&) if block_given?
+        has_input_file = content.to_s.match?(INPUT_FILE_RE)
+
+        attrs[:enctype] = MULTIPART if multipart || has_input_file
         buffer = SafeBuffer.new
         buffer << tag(:form, action:, method:, **attrs, open: true)
 
         if authenticity_token && method != :get
           buffer << input_field_tag(
-            :authenticity_token,
+            Controller.csrf_param_name,
             authenticity_token,
-            type: :hidden
+            type: :hidden,
+            id: false
           )
         end
 
-        buffer << capture(&) if block_given?
+        buffer << content
         buffer << SafeBuffer.new(FORM_END)
         buffer
       end
@@ -214,9 +229,11 @@ module Zee
       # Render a `input[type=hidden]` field.
       # @param name [String, Symbol] The name of the field.
       # @param value [String] The value of the field.
+      # @param attrs [Hash{Symbol => Object}] The input attributes.
       # @return [SafeBuffer] The HTML for the input field.
-      def hidden_field_tag(name, value = nil, **)
-        input_field_tag(name, value, **, type: HIDDEN)
+      def hidden_field_tag(name, value = nil, **attrs)
+        attrs[:id] = false unless attrs.key?(:id)
+        input_field_tag(name, value, **attrs, type: HIDDEN)
       end
 
       # Render a `label` tag.
@@ -224,12 +241,12 @@ module Zee
       # @param text [Object, nil] The label text.
       # @param attrs [Hash{Symbol => Object}] The label attributes.
       # @return [SafeBuffer] The HTML for the label.
-      def label_tag(name, text = nil, **attrs)
+      def label_tag(name, text = nil, **attrs, &)
         name = name.to_s
 
         attrs[:for] ||= normalize_id(name)
         text ||= (name[/\[([a-z_]+)\]/, 1] || name).humanize
-        content_tag(:label, text, **attrs)
+        content_tag(:label, text, **attrs, &)
       end
 
       # Render a `input[type=month]` field.
@@ -515,7 +532,7 @@ module Zee
       # @return [SafeBuffer] The HTML for the input field.
       def input_field_tag(name, value = nil, type: TEXT, **attrs)
         name = name.to_s
-        id = normalize_id(name) unless name.blank?
+        id = normalize_id(name) if !attrs.key?(:id) && name.present?
 
         if attrs[:autocomplete]
           attrs[:autocomplete] = attrs[:autocomplete].to_s.tr(UNDERSCORE, DASH)
@@ -527,6 +544,33 @@ module Zee
       # @private
       def normalize_id(name)
         name.to_s.delete(CLOSE_SQUARE_BRACKET).tr(ID_CLEANER, UNDERSCORE)
+      end
+
+      # Render a form for a given object.
+      # @param object [Object] The object to render the form for.
+      # @param action [String] The action attribute of the form.
+      # @param as [String] The name of the object.
+      # @return [SafeBuffer] The HTML for the form.
+      #
+      # @example
+      #   <%= form_for(user, action: "/users") do |f| %>
+      #     <p>
+      #       <%= f.label :name %>
+      #       <%= f.text_field :name %>
+      #     </p>
+      #
+      #     <p>
+      #       <%= f.label :email %>
+      #       <%= f.email_field :email %>
+      #     </p>
+      #
+      #     <p><%= f.submit %></p>
+      #   <% end %>
+      def form_for(object, action:, as: :form, **, &)
+        authenticity_token = request.env[ZEE_CSRF_TOKEN]
+
+        form = FormBuilder.new(object:, context: self, object_name: as, **)
+        form_tag(action:, authenticity_token:, **) { instance_exec(form, &) }
       end
     end
   end
