@@ -175,6 +175,19 @@ module Zee
     end
 
     # Render a `input[type=checkbox]` field.
+    #
+    # This method will render a hidden field with the same name as the checkbox,
+    # so a value is sent when the checkbox isn't checked.
+    #
+    # If `value` is provided, the checkbox will enter the collection mode.
+    # This means:
+    #
+    # - the `input[type=hidden]` won't be rendered
+    # - the `name` attribute will be suffixed with `[]`, e.g. `post[tags][]`.
+    #
+    # You can also prevent the hidden field from being rendered by passing `nil`
+    # as the `unchecked_value`.
+    #
     # @param attr [String, Symbol] The attribute name.
     # @param checked_value [String] The value that'll be used when the input is
     #                               checked.
@@ -182,15 +195,37 @@ module Zee
     #                                 is unchecked.
     # @param attrs [Hash{Symbol => Object}] The HTML attributes.
     # @see ViewHelpers::Form#checkbox_tag
-    def checkbox(attr, checked_value: "1", unchecked_value: "0", **attrs)
+    # @param [Object, nil] value
+    def checkbox(
+      attr,
+      value = nil,
+      checked_value: "1",
+      unchecked_value: "0",
+      **attrs
+    )
       attrs = add_error_class(attr, attrs)
-      value = value_for(attr).to_s
-      checked = value == checked_value || TRUTHY_VALUES.include?(value)
+      collection = value.to_s.present?
+      current_value = value_for(attr)
+
+      if collection
+        attrs[:id] ||= id_for(attr, value)
+        checked_value = value.to_s
+        checked = Array(current_value).map(&:to_s).include?(checked_value)
+      else
+        current_value = current_value.to_s
+
+        checked = current_value == checked_value ||
+                  TRUTHY_VALUES.include?(current_value)
+      end
 
       buffer = SafeBuffer.new
-      buffer << @context.hidden_field_tag(name_for(attr), unchecked_value)
+
+      unless unchecked_value.nil? || collection
+        buffer << @context.hidden_field_tag(name_for(attr), unchecked_value)
+      end
+
       buffer << @context.checkbox_tag(
-        name_for(attr),
+        name_for(attr, collection:),
         checked_value,
         checked:,
         **attrs
@@ -199,6 +234,62 @@ module Zee
     end
     alias check_box checkbox
 
+    # Render a group of `input[type=checkbox]` fields.
+    # This method also renders labels for each checkbox.
+    #
+    # You can provide an array of arrays, where each inner array contains the
+    # key and the label. If you provide only the key (i.e. a flat array), the
+    # label will be generated using I18n. The scope will be
+    # `[:form, object_name, attribute, :_values, value]`. For instance, say you
+    # have a `Theme` model and you're rendering a checkbox group for the `color`
+    # attribute. You must have a translation defined as follows:
+    #
+    #     en:
+    #       forms:
+    #         theme:
+    #           color:
+    #             _values:
+    #               red: "Red"
+    #               green: "Green"
+    #
+    # @param attr [String, Symbol] The attribute name.
+    # @param items [Array<Array<Object, Object>>] The checkbox items.
+    # @return [SafeBuffer]
+    #
+    # @example Providing both values and labels
+    #   checkbox_group :color, [["red", "Red"], ["green", "Green"]]
+    #   #=> <div class="field-group">
+    #   #=>   <label for="user_color_red">Red</label>
+    #   #=>   <input type="checkbox" name="user[color][]" value="red"
+    #   #=>          id="user_color_red">
+    #   #=> </div>
+    #   #=> <div class="field-group">
+    #   #=>   <label for="user_color_green">Green</label>
+    #   #=>   <input type="checkbox" name="user[color][]" value="green"
+    #   #=>          id="user_color_green">
+    #   #=> </div>
+    #
+    # @example Providing only values; labels will using I18n instead.
+    #   checkbox_group :color, ["red", "green"]
+    def checkbox_group(attr, items)
+      buffer = SafeBuffer.new
+
+      items.each do |item|
+        value, label = Array(item)
+        label ||= translation_for(
+          :"_values.#{value}",
+          attr,
+          default: value.to_s.humanize
+        )
+
+        buffer << @context.content_tag(:div, class: "field-group") do
+          label([:tags, value], label) + checkbox(attr, value)
+        end
+      end
+
+      buffer
+    end
+
     # Render a submit button field.
     # @param label [String, nil] The button label.
     def submit(label = "Submit", **, &)
@@ -206,6 +297,22 @@ module Zee
     end
 
     # Render a `label` tag.
+    #
+    # This method will generate a label tag for the provided attribute. If the
+    # `text` argument is not provided, a I18n translation will be used instead,
+    # defaulting to a humanized version of the attribute name.
+    #
+    # The scope for the translation will be
+    # `[:form, object_name, attribute, :label]`. Say you have a `User` model and
+    # you're rendering a label for the `name` attribute. You must have a
+    # translation defined as follows:
+    #
+    #     en:
+    #       forms:
+    #         user:
+    #           name:
+    #             label: "Your Name"
+    #
     # @param attr [String, Symbol] The attribute name.
     # @param text [String,  SafeBuffer, nil] The label text. When not provided,
     #                                        a label generated out of the
@@ -214,13 +321,29 @@ module Zee
     # @param attrs [Hash{Symbol => Object}] The HTML attributes.
     # @see ViewHelpers::Form#label_tag
     def label(attr, text = nil, **attrs, &)
-      text ||= attr.to_s.humanize
+      text ||= Array(attr).last.to_s.humanize
       text = translation_for :label, attr, default: text
       attrs = add_error_class(attr, attrs)
-      @context.label_tag(id_for(attr), text, **attrs, &)
+      @context.label_tag(id_for(*Array(attr)), text, **attrs, &)
     end
 
     # Render a hint message.
+    #
+    # This method will generate a hint element for the provided attribute. If
+    # the `text` argument is not provided, a I18n translation will be used
+    # instead.
+    #
+    # The scope for the translation will be
+    # `[:form, object_name, attribute, :hint]`. Say you have a `User` model and
+    # you're rendering a hint for the `name` attribute. You must have a
+    # translation defined as follows:
+    #
+    #     en:
+    #       forms:
+    #         user:
+    #           name:
+    #             hint: "This is how users will see you in the site."
+    #
     # @param attr [String, Symbol] The attribute name.
     # @param text [String,  SafeBuffer, nil] The label text. When not provided,
     #                                        a label generated out of the
@@ -269,16 +392,19 @@ module Zee
     # @private
     # Generate `name` attribute for the provided attribute.
     # The final form will be something like `user[name]`.
+    # @param attr [String, Symbol] The attribute name.
+    # @param collection [Boolean] Whether the attribute is a collection.
     # @return [String]
-    def name_for(attr)
-      "#{object_name}[#{attr}]"
+    def name_for(attr, collection: false)
+      suffix = "[]" if collection
+      "#{object_name}[#{attr}]#{suffix}"
     end
 
     # @private
     # Generate `id` attribute for the provided attribute.
     # @return [String]
-    def id_for(attr)
-      @context.normalize_id(name_for(attr))
+    def id_for(attr, value = nil)
+      @context.normalize_id([name_for(attr), value].compact.join(UNDERSCORE))
     end
 
     # @private

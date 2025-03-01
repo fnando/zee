@@ -385,6 +385,20 @@ class FormBuilderTest < Zee::Test
     assert_tag html, "label[for=user_name]", text: /Your name/
   end
 
+  test "renders default label using array" do
+    user = {}
+
+    template = <<~ERB
+      <%= form_for user, action: "/users", as: :user do |f| %>
+        <%= f.label [:foo, "bar"] %>
+      <% end %>
+    ERB
+
+    html = render(template, locals: {user:}, request:)
+
+    assert_tag html, "label[for=user_foo_bar]", text: /Bar/
+  end
+
   test "renders submit button with default text" do
     user = {}
 
@@ -484,13 +498,133 @@ class FormBuilderTest < Zee::Test
 
     html = render(template, locals: {user:}, request:)
 
-    assert_tag html,
-               "form>input[type=hidden][value=nope][name='user[enabled]']"
+    assert_tag html, "form>input[type=hidden][value=nope][name='user[enabled]']"
 
     assert_tag html,
                "form>input[type=hidden][name='user[enabled]']+" \
                "input#user_enabled[type=checkbox]" \
                "[value=yep][name='user[enabled]'][checked=checked]"
+  end
+
+  test "prevents checkbox's hidden input from being rendered" do
+    user = {}
+
+    template = <<~ERB
+      <%= form_for user, action: "/users", as: :user do |f| %>
+        <%= f.checkbox :enabled, unchecked_value: nil %>
+      <% end %>
+    ERB
+
+    html = render(template, locals: {user:}, request:)
+
+    assert_tag html, "form>input[type=hidden][name='user[enabled]']", count: 0
+  end
+
+  test "renders checkbox as an array" do
+    page = {tags: ["ruby"]}
+
+    template = <<~ERB
+      <%= form_for page, action: "/pages/1", as: :page do |f| %>
+        <%= f.checkbox :tags, "ruby" %>
+        <%= f.checkbox :tags, "python" %>
+      <% end %>
+    ERB
+
+    html = render(template, locals: {page:}, request:)
+
+    assert_tag html,
+               "form>input[type=hidden]:not([name=_authenticity_token])",
+               count: 0
+    assert_tag html, "input[type=checkbox][checked=checked]", count: 1
+    assert_tag html,
+               "input#page_tags_ruby[type=checkbox][value=ruby]" \
+               "[checked=checked]"
+    assert_tag html, "input#page_tags_python[type=checkbox][value=python]"
+  end
+
+  test "renders checkbox group" do
+    page = {tags: ["ruby"]}
+
+    template = <<~ERB
+      <%= form_for page, action: "/pages/1", as: :page do |f| %>
+        <%= f.checkbox_group :tags, [["ruby", "Ruby"], ["rust", "Rust"]] %>
+      <% end %>
+    ERB
+
+    html = render(template, locals: {page:}, request:)
+
+    assert_tag html, "form>.field-group", count: 2
+    assert_tag html, "form>.field-group>label[for=page_tags_ruby]", text: /Ruby/
+    assert_tag html, "form>.field-group>input[checked=checked]", count: 1
+    assert_tag html,
+               "form>.field-group>label[for=page_tags_ruby]+" \
+               "input#page_tags_ruby[type=checkbox][value=ruby]" \
+               "[checked=checked]"
+    assert_tag html, "form>.field-group>label[for=page_tags_rust]", text: /Rust/
+    assert_tag html,
+               "form>.field-group>label[for=page_tags_rust]+" \
+               "input#page_tags_rust[type=checkbox][value=rust]"
+  end
+
+  test "renders checkbox group using i18n labels" do
+    page = {tags: ["ruby"]}
+    store_translations(
+      :en,
+      form: {
+        page: {
+          tags: {
+            _values: {
+              ruby: "Ruby",
+              rust: "Rust"
+            }
+          }
+        }
+      }
+    )
+
+    template = <<~ERB
+      <%= form_for page, action: "/pages/1", as: :page do |f| %>
+        <%= f.checkbox_group :tags, ["ruby", "rust"] %>
+      <% end %>
+    ERB
+
+    html = render(template, locals: {page:}, request:)
+
+    assert_tag html, "form>.field-group", count: 2
+    assert_tag html, "form>.field-group>label[for=page_tags_ruby]", text: /Ruby/
+    assert_tag html, "form>.field-group>input[checked=checked]", count: 1
+    assert_tag html,
+               "form>.field-group>label[for=page_tags_ruby]+" \
+               "input#page_tags_ruby[type=checkbox][value=ruby]" \
+               "[checked=checked]"
+    assert_tag html, "form>.field-group>label[for=page_tags_rust]", text: /Rust/
+    assert_tag html,
+               "form>.field-group>label[for=page_tags_rust]+" \
+               "input#page_tags_rust[type=checkbox][value=rust]"
+  end
+
+  test "renders checkbox group using default labels" do
+    page = {tags: ["ruby"]}
+
+    template = <<~ERB
+      <%= form_for page, action: "/pages/1", as: :page do |f| %>
+        <%= f.checkbox_group :tags, ["ruby", "rust"] %>
+      <% end %>
+    ERB
+
+    html = render(template, locals: {page:}, request:)
+
+    assert_tag html, "form>.field-group", count: 2
+    assert_tag html, "form>.field-group>label[for=page_tags_ruby]", text: /Ruby/
+    assert_tag html, "form>.field-group>input[checked=checked]", count: 1
+    assert_tag html,
+               "form>.field-group>label[for=page_tags_ruby]+" \
+               "input#page_tags_ruby[type=checkbox][value=ruby]" \
+               "[checked=checked]"
+    assert_tag html, "form>.field-group>label[for=page_tags_rust]", text: /Rust/
+    assert_tag html,
+               "form>.field-group>label[for=page_tags_rust]+" \
+               "input#page_tags_rust[type=checkbox][value=rust]"
   end
 
   test "renders error message" do
