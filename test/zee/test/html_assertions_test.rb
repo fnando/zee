@@ -26,7 +26,7 @@ class HTMLAssertionsTest < Minitest::Test
 
     assert_includes error.message,
                     "Expected to find 2 tag(s) with selector \"div\", but " \
-                    "found 1."
+                    "found 1\n\n<div>Hello, World!</div>"
   end
 
   test "fails when text doesn't match string" do

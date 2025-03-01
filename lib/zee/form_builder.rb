@@ -282,8 +282,13 @@ module Zee
           default: value.to_s.humanize
         )
 
+        hint_text = translation_for(:"_hints.#{value}", attr, default: nil)
+        hint = @context.tag(:br) + hint(attr, hint_text) if hint_text
+
         buffer << @context.content_tag(:div, class: "field-group") do
-          label([:tags, value], label) + checkbox(attr, value)
+          checkbox(attr, value) +
+            @context.content_tag(:span, label([:tags, value], label) + hint,
+                                 class: "field-group-heading")
         end
       end
 

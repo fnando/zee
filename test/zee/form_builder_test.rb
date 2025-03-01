@@ -554,16 +554,15 @@ class FormBuilderTest < Zee::Test
     html = render(template, locals: {page:}, request:)
 
     assert_tag html, "form>.field-group", count: 2
-    assert_tag html, "form>.field-group>label[for=page_tags_ruby]", text: /Ruby/
     assert_tag html, "form>.field-group>input[checked=checked]", count: 1
-    assert_tag html,
-               "form>.field-group>label[for=page_tags_ruby]+" \
-               "input#page_tags_ruby[type=checkbox][value=ruby]" \
-               "[checked=checked]"
-    assert_tag html, "form>.field-group>label[for=page_tags_rust]", text: /Rust/
-    assert_tag html,
-               "form>.field-group>label[for=page_tags_rust]+" \
-               "input#page_tags_rust[type=checkbox][value=rust]"
+
+    group = assert_tag(html, "form>.field-group:nth-of-type(1)")
+    heading = assert_tag group, ":root>input#page_tags_ruby[type=checkbox]+span"
+    assert_tag heading, ":root.field-group-heading>label", text: /Ruby/
+
+    group = assert_tag(html, "form>.field-group:nth-of-type(2)")
+    heading = assert_tag group, ":root>input#page_tags_rust[type=checkbox]+span"
+    assert_tag heading, ":root.field-group-heading>label", text: /Rust/
   end
 
   test "renders checkbox group using i18n labels" do
@@ -591,16 +590,15 @@ class FormBuilderTest < Zee::Test
     html = render(template, locals: {page:}, request:)
 
     assert_tag html, "form>.field-group", count: 2
-    assert_tag html, "form>.field-group>label[for=page_tags_ruby]", text: /Ruby/
     assert_tag html, "form>.field-group>input[checked=checked]", count: 1
-    assert_tag html,
-               "form>.field-group>label[for=page_tags_ruby]+" \
-               "input#page_tags_ruby[type=checkbox][value=ruby]" \
-               "[checked=checked]"
-    assert_tag html, "form>.field-group>label[for=page_tags_rust]", text: /Rust/
-    assert_tag html,
-               "form>.field-group>label[for=page_tags_rust]+" \
-               "input#page_tags_rust[type=checkbox][value=rust]"
+
+    group = assert_tag(html, "form>.field-group:nth-of-type(1)")
+    heading = assert_tag group, ":root>input#page_tags_ruby[type=checkbox]+span"
+    assert_tag heading, ":root.field-group-heading>label", text: /Ruby/
+
+    group = assert_tag(html, "form>.field-group:nth-of-type(2)")
+    heading = assert_tag group, ":root>input#page_tags_rust[type=checkbox]+span"
+    assert_tag heading, ":root.field-group-heading>label", text: /Rust/
   end
 
   test "renders checkbox group using default labels" do
@@ -615,16 +613,15 @@ class FormBuilderTest < Zee::Test
     html = render(template, locals: {page:}, request:)
 
     assert_tag html, "form>.field-group", count: 2
-    assert_tag html, "form>.field-group>label[for=page_tags_ruby]", text: /Ruby/
     assert_tag html, "form>.field-group>input[checked=checked]", count: 1
-    assert_tag html,
-               "form>.field-group>label[for=page_tags_ruby]+" \
-               "input#page_tags_ruby[type=checkbox][value=ruby]" \
-               "[checked=checked]"
-    assert_tag html, "form>.field-group>label[for=page_tags_rust]", text: /Rust/
-    assert_tag html,
-               "form>.field-group>label[for=page_tags_rust]+" \
-               "input#page_tags_rust[type=checkbox][value=rust]"
+
+    group = assert_tag(html, "form>.field-group:nth-of-type(1)")
+    heading = assert_tag group, ":root>input#page_tags_ruby[type=checkbox]+span"
+    assert_tag heading, ":root.field-group-heading>label", text: /Ruby/
+
+    group = assert_tag(html, "form>.field-group:nth-of-type(2)")
+    heading = assert_tag group, ":root>input#page_tags_rust[type=checkbox]+span"
+    assert_tag heading, ":root.field-group-heading>label", text: /Rust/
   end
 
   test "renders error message" do
@@ -643,6 +640,49 @@ class FormBuilderTest < Zee::Test
     assert_tag html, "form>label.invalid"
     assert_tag html, "form>input.invalid"
     assert_tag html, "form>span.error", text: /can't be blank/
+  end
+
+  test "renders checkbox group using hints when available" do
+    page = {tags: ["ruby"]}
+    store_translations(
+      :en,
+      form: {
+        page: {
+          tags: {
+            _hints: {
+              ruby: "Elegant language focused on readability and happiness.",
+              rust: "Fast, memory-safe systems language without garbage " \
+                    "collection."
+            },
+            _values: {
+              ruby: "Ruby",
+              rust: "Rust"
+            }
+          }
+        }
+      }
+    )
+
+    template = <<~ERB
+      <%= form_for page, action: "/pages/1", as: :page do |f| %>
+        <%= f.checkbox_group :tags, ["ruby", "rust"] %>
+      <% end %>
+    ERB
+
+    html = render(template, locals: {page:}, request:)
+
+    assert_tag html, "form>.field-group", count: 2
+    assert_tag html, "form>.field-group>input[checked=checked]", count: 1
+
+    group = assert_tag(html, "form>.field-group:nth-of-type(1)")
+    heading = assert_tag group, ":root>input#page_tags_ruby[type=checkbox]+span"
+    assert_tag heading, ":root.field-group-heading>label", text: /Ruby/
+    assert_tag heading, ":root.field-group-heading>label~.hint", text: /Elegant/
+
+    group = assert_tag(html, "form>.field-group:nth-of-type(2)")
+    heading = assert_tag group, ":root>input#page_tags_rust[type=checkbox]+span"
+    assert_tag heading, ":root.field-group-heading>label", text: /Rust/
+    assert_tag heading, ":root.field-group-heading>label~.hint", text: /systems/
   end
 
   test "renders hint" do

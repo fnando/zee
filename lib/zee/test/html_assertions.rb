@@ -3,6 +3,10 @@
 module Zee
   class Test < Minitest::Test
     module HTMLAssertions
+      def indent_xsl
+        @indent_xsl ||= File.read(File.join(__dir__, "indent.xsl"))
+      end
+
       # Asserts that the given HTML contains a tag with the given selector.
       #
       # @param root [Nokogiri::HTML::DocumentFragment] the HTML to be checked.
@@ -12,17 +16,25 @@ module Zee
       #                                   the given value.
       # @param html [String, Regexp, nil] when provided, the tag's inner html
       #                                   must match the given value.
-      def assert_tag(root, selector, count: 1, text: nil, html: nil)
+      def assert_tag(root, selector, count: 1, text: nil, html: nil, &)
         root = Nokogiri::HTML.fragment(root.to_s)
         nodes = root.css(selector)
+        formatted_root = Nokogiri::XSLT(indent_xsl)
+                                 .apply_to(Nokogiri::XML(root.to_xml))
+                                 .lines[2..-1]
+                                 .join
 
         assert_equal count,
                      nodes.size,
                      "Expected to find #{count} tag(s) with selector " \
-                     "#{selector.inspect}, but found #{nodes.size}"
+                     "#{selector.inspect}, but found #{nodes.size}\n\n" \
+                     "#{formatted_root}"
 
         nodes.each { assert_tag_text(_1, text) } if text
         nodes.each { assert_tag_html(_1, html) } if html
+
+        yield nodes if block_given?
+        nodes
       end
 
       def assert_tag_text(node, text)
