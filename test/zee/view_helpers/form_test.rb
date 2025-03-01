@@ -54,11 +54,11 @@ class FormTest < Minitest::Test
   end
 
   test "renders checkbox" do
-    assert_tag helpers.check_box_tag("user[admin]"),
+    assert_tag helpers.checkbox_tag("user[admin]"),
                "input[type=checkbox][name='user[admin]'][value=1]"
-    assert_tag helpers.check_box_tag("langs[]", "ruby"),
+    assert_tag helpers.checkbox_tag("langs[]", "ruby"),
                "input[type=checkbox][name='langs[]'][value=ruby]"
-    assert_tag helpers.check_box_tag("langs[]", checked: true),
+    assert_tag helpers.checkbox_tag("langs[]", checked: true),
                "input[type=checkbox][name='langs[]'][checked=checked]"
   end
 
@@ -415,13 +415,15 @@ class FormTest < Minitest::Test
   end
 
   test "renders text area" do
-    assert_tag helpers.text_area_tag("bio"), "textarea#bio"
+    sleep 0.5
 
-    html = helpers.text_area_tag("bio", "hello <3")
+    assert_tag helpers.textarea_tag("bio"), "textarea#bio"
+
+    html = helpers.textarea_tag("bio", "hello <3")
 
     assert_includes html.to_s, "hello &lt;3"
 
-    html = helpers.text_area_tag("bio", "hello <3", escape: false)
+    html = helpers.textarea_tag("bio", "hello <3", escape: false)
 
     assert_includes html.to_s, "hello <3"
   end

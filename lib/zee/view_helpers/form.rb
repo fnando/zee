@@ -111,7 +111,7 @@ module Zee
       def checkbox_tag(name, value = "1", **)
         input_field_tag(name, value, **, type: CHECKBOX)
       end
-      alias check_box_tag checkbox_tag
+      alias checkbox_field_tag checkbox_tag
 
       # Render a `input[type=color]` tag.
       #
@@ -478,7 +478,7 @@ module Zee
 
         content_tag(:textarea, value, name:, id:, **)
       end
-      alias text_area_tag textarea_tag
+      alias textarea_field_tag textarea_tag
 
       # Render a `input[type=text]` field.
       # @param name [String, Symbol] The name of the field.

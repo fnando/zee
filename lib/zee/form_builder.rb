@@ -156,7 +156,7 @@ module Zee
     def textarea(attr, **attrs)
       build_input(:textarea, attr, **attrs)
     end
-    alias text_area textarea
+    alias textarea_field textarea
 
     # Render a `input[type=time]` field.
     # @param attr [String, Symbol] The attribute name.
@@ -232,7 +232,7 @@ module Zee
       )
       buffer
     end
-    alias check_box checkbox
+    alias checkbox_field checkbox
 
     # Render a group of `input[type=checkbox]` fields.
     # This method also renders labels for each checkbox.
