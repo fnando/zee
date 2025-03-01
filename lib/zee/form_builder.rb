@@ -8,6 +8,9 @@ module Zee
     # The values that will be used to mark a `input[type=checkbox]` as checked.
     TRUTHY_VALUES = %w[1 true yes TRUE YES].freeze
 
+    # @private
+    ERROR = "error"
+
     # @return [Object] The field value source.
     attr_reader :object
 
@@ -226,10 +229,9 @@ module Zee
     # @param attrs [Hash{Symbol => Object}] The HTML attributes.
     # @see ViewHelpers::Form#label_tag
     def hint(attr, text = nil, **attrs)
-      text ||= attr.to_s.humanize
-      text = translation_for :hint, attr, default: text
+      text ||= translation_for :hint, attr, default: EMPTY_STRING
       attrs = add_error_class(attr, attrs, :hint)
-      @context.content_tag(:span, text, **attrs)
+      @context.content_tag(:span, text, **attrs) unless text.blank?
     end
 
     # Retrieve the error messages for the provided attribute.
@@ -251,7 +253,7 @@ module Zee
     # @param attr [String, Symbol] The attribute name.
     # @param attrs [Hash] The HTML attributes.
     # @return [SafeBuffer, nil]
-    def error_for(attr, **attrs)
+    def error(attr, **attrs)
       error = error_messages_for(attr).first
 
       return unless error
@@ -260,7 +262,7 @@ module Zee
         :span,
         error,
         **attrs,
-        class: @context.class_names(attrs[:class], "error-message")
+        class: @context.class_names(attrs[:class], ERROR)
       )
     end
 

@@ -500,7 +500,7 @@ class FormBuilderTest < Zee::Test
       <%= form_for user, action: "/users", as: :user do |f| %>
         <%= f.label :name %>
         <%= f.text_field :name %>
-        <%= f.error_for :name %>
+        <%= f.error :name %>
       <% end %>
     ERB
 
@@ -508,7 +508,7 @@ class FormBuilderTest < Zee::Test
 
     assert_tag html, "form>label.invalid"
     assert_tag html, "form>input.invalid"
-    assert_tag html, "form>span.error-message", text: /can't be blank/
+    assert_tag html, "form>span.error", text: /can't be blank/
   end
 
   test "renders hint" do

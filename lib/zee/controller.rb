@@ -129,7 +129,7 @@ module Zee
 
       response.status(status)
       response.headers[:location] = location
-      response.body = ""
+      response.body = EMPTY_STRING
     end
 
     # @private

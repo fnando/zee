@@ -47,7 +47,7 @@ module Zee
     #
     # @param safe_input [Object] the initial buffer.
     # @return [Zee::SafeBuffer]
-    def initialize(safe_input = "")
+    def initialize(safe_input = EMPTY_STRING)
       @buffer = [safe_input]
     end
 
@@ -110,7 +110,7 @@ module Zee
 
     # @private
     class Erubi < SafeBuffer
-      def initialize(safe_buffer = "", root: false)
+      def initialize(safe_buffer = EMPTY_STRING, root: false)
         super(safe_buffer)
         @root = root
       end
@@ -124,7 +124,8 @@ module Zee
         @buffer = []
         @buffer = self.class.new
         content = yield(*)
-        @buffer << content unless content.root?
+        add = !content.respond_to?(:root?) || !content.root?
+        @buffer << content if add
         @buffer
       ensure
         @buffer = prev

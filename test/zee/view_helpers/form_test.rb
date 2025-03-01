@@ -149,6 +149,22 @@ class FormTest < Minitest::Test
                "input[autocomplete=email][inputmode=email]"
   end
 
+  test "renders email input with disabled autocomplete" do
+    [false, "off"].each do |autocomplete|
+      html = helpers.email_field_tag(
+        "user[email]",
+        "me@example.com",
+        autocomplete:
+      )
+
+      assert_tag html,
+                 "input[type=email][name='user[email]'][value='me@example.com']"
+      assert_tag html,
+                 "input[autocomplete=email][inputmode=email]",
+                 count: 0
+    end
+  end
+
   test "renders hidden input" do
     html = helpers.hidden_field_tag("authenticity_token", "abc")
 
@@ -465,21 +481,5 @@ class FormTest < Minitest::Test
     assert_tag helpers.label_tag("name") { "Your name" },
                "label[for=name]",
                text: "Your name"
-  end
-
-  test "renders email input with disabled autocomplete" do
-    [false, "off"].each do |autocomplete|
-      html = helpers.email_field_tag(
-        "user[email]",
-        "me@example.com",
-        autocomplete:
-      )
-
-      assert_tag html,
-                 "input[type=email][name='user[email]'][value='me@example.com']"
-      assert_tag html,
-                 "input[autocomplete=email][inputmode=email]",
-                 count: 0
-    end
   end
 end

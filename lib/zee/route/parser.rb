@@ -54,7 +54,7 @@ module Zee
       end
 
       def components
-        @components ||= pattern.gsub(/[()]/, "").split(SLASH)
+        @components ||= pattern.gsub(/[()]/, EMPTY_STRING).split(SLASH)
       end
 
       def to_param(value)

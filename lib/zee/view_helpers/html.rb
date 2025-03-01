@@ -3,6 +3,7 @@
 module Zee
   module ViewHelpers
     module HTML
+      using Core::String
       include OutputSafety
       include Capture
 
@@ -19,6 +20,9 @@ module Zee
         nomodule novalidate open playsinline readonly required reversed selected
         truespeed
       ].freeze
+
+      # @private
+      KEEP_BLANK_ATTRS = %w[value].freeze
 
       # Returns an HTML tag with the specified content.
       #
@@ -207,9 +211,13 @@ module Zee
           if value
             " #{name}"
           else
-            ""
+            EMPTY_STRING
           end
         elsif value
+          value = value.to_s
+          ignore = value.empty? && !KEEP_BLANK_ATTRS.include?(name)
+          return EMPTY_STRING if ignore
+
           %[ #{escape_html(name)}="#{escape_html(value)}"]
         end
       end

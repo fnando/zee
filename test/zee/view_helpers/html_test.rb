@@ -133,6 +133,7 @@ class HTMLTest < Minitest::Test
                  helpers.html_attrs(title: %[between "quotes"])
     assert_equal "", helpers.html_attrs(selected: false)
     assert_equal "", helpers.html_attrs(id: false)
+    assert_equal "", helpers.html_attrs(class: "")
   end
 
   test "renders open tag" do
