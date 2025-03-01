@@ -3,7 +3,7 @@
 require "test_helper"
 
 class HTMLTest < Minitest::Test
-  include Zee::Test::HTMLAssertions
+  include Zee::Test::Assertions::HTML
 
   let(:helpers) do
     mod = Module.new do

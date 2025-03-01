@@ -6,7 +6,7 @@ require "minitest"
 module Zee
   class RequestTest < Test
     include Rack::Test::Methods
-    include Test::HTMLAssertions
+    include Test::Assertions::HTML
 
     def app
       Zee.app

@@ -2,8 +2,8 @@
 
 require "test_helper"
 
-class HTMLAssertionsTest < Minitest::Test
-  include Zee::Test::HTMLAssertions
+class HTMLTest < Minitest::Test
+  include Zee::Test::Assertions::HTML
 
   test "finds element and matches text by string" do
     html = "<div>Hello, World!</div>"

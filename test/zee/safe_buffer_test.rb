@@ -3,7 +3,7 @@
 require "test_helper"
 
 class SafeBufferTest < Minitest::Test
-  include Zee::Test::HTMLAssertions
+  include Zee::Test::Assertions::HTML
 
   let(:string) { Zee::SafeBuffer.new }
 
