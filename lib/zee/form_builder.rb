@@ -30,8 +30,7 @@ module Zee
     # @param attrs [Hash{Symbol => Object}] The HTML attributes.
     # @see ViewHelpers::Form#text_field_tag
     def text_field(attr, **attrs)
-      attrs = add_error_class(attr, attrs)
-      @context.text_field_tag name_for(attr), value_for(attr), **attrs
+      build_input(:text, attr, **attrs)
     end
 
     # Render a `input[type=color]` field.
@@ -39,8 +38,7 @@ module Zee
     # @param attrs [Hash{Symbol => Object}] The HTML attributes.
     # @see ViewHelpers::Form#color_field_tag
     def color_field(attr, **attrs)
-      attrs = add_error_class(attr, attrs)
-      @context.color_field_tag name_for(attr), value_for(attr), **attrs
+      build_input(:color, attr, **attrs)
     end
 
     # Render a `input[type=date]` field.
@@ -48,8 +46,7 @@ module Zee
     # @param attrs [Hash{Symbol => Object}] The HTML attributes.
     # @see ViewHelpers::Form#date_field_tag
     def date_field(attr, **attrs)
-      attrs = add_error_class(attr, attrs)
-      @context.date_field_tag name_for(attr), value_for(attr), **attrs
+      build_input(:date, attr, **attrs)
     end
 
     # Render a `input[type=datetime]` field.
@@ -57,8 +54,7 @@ module Zee
     # @param attrs [Hash{Symbol => Object}] The HTML attributes.
     # @see ViewHelpers::Form#datetime_field_tag
     def datetime_field(attr, **attrs)
-      attrs = add_error_class(attr, attrs)
-      @context.datetime_field_tag name_for(attr), value_for(attr), **attrs
+      build_input(:datetime, attr, **attrs)
     end
 
     # Render a `input[type=file]` field.
@@ -66,8 +62,7 @@ module Zee
     # @param attrs [Hash{Symbol => Object}] The HTML attributes.
     # @see ViewHelpers::Form#text_field_tag
     def file_field(attr, **attrs)
-      attrs = add_error_class(attr, attrs)
-      @context.file_field_tag name_for(attr), value_for(attr), **attrs
+      build_input(:file, attr, **attrs)
     end
 
     # Render a `input[type=email]` field.
@@ -75,8 +70,7 @@ module Zee
     # @param attrs [Hash{Symbol => Object}] The HTML attributes.
     # @see ViewHelpers::Form#email_field_tag
     def email_field(attr, **attrs)
-      attrs = add_error_class(attr, attrs)
-      @context.email_field_tag name_for(attr), value_for(attr), **attrs
+      build_input(:email, attr, **attrs)
     end
 
     # Render a `input[type=hidden]` field.
@@ -84,8 +78,7 @@ module Zee
     # @param attrs [Hash{Symbol => Object}] The HTML attributes.
     # @see ViewHelpers::Form#hidden_field_tag
     def hidden_field(attr, **attrs)
-      attrs = add_error_class(attr, attrs)
-      @context.hidden_field_tag name_for(attr), value_for(attr), **attrs
+      build_input(:hidden, attr, **attrs)
     end
 
     # Render a `input[type=month]` field.
@@ -93,8 +86,7 @@ module Zee
     # @param attrs [Hash{Symbol => Object}] The HTML attributes.
     # @see ViewHelpers::Form#month_field_tag
     def month_field(attr, **attrs)
-      attrs = add_error_class(attr, attrs)
-      @context.month_field_tag name_for(attr), value_for(attr), **attrs
+      build_input(:month, attr, **attrs)
     end
 
     # Render a `input[type=number]` field.
@@ -102,8 +94,7 @@ module Zee
     # @param attrs [Hash{Symbol => Object}] The HTML attributes.
     # @see ViewHelpers::Form#number_field_tag
     def number_field(attr, **attrs)
-      attrs = add_error_class(attr, attrs)
-      @context.number_field_tag name_for(attr), value_for(attr), **attrs
+      build_input(:number, attr, **attrs)
     end
 
     # Render a `input[type=password]` field.
@@ -111,8 +102,7 @@ module Zee
     # @param attrs [Hash{Symbol => Object}] The HTML attributes.
     # @see ViewHelpers::Form#password_field_tag
     def password_field(attr, **attrs)
-      attrs = add_error_class(attr, attrs)
-      @context.password_field_tag name_for(attr), value_for(attr), **attrs
+      build_input(:password, attr, **attrs)
     end
 
     # Render a `input[type=tel]` field.
@@ -120,8 +110,7 @@ module Zee
     # @param attrs [Hash{Symbol => Object}] The HTML attributes.
     # @see ViewHelpers::Form#phone_field_tag
     def phone_field(attr, **attrs)
-      attrs = add_error_class(attr, attrs)
-      @context.phone_field_tag name_for(attr), value_for(attr), **attrs
+      build_input(:phone, attr, **attrs)
     end
 
     # Render a `input[type=radio]` field.
@@ -141,8 +130,7 @@ module Zee
     # @param attrs [Hash{Symbol => Object}] The HTML attributes.
     # @see ViewHelpers::Form#search_field_tag
     def search_field(attr, **attrs)
-      attrs = add_error_class(attr, attrs)
-      @context.search_field_tag name_for(attr), value_for(attr), **attrs
+      build_input(:search, attr, **attrs)
     end
 
     # Render a `select` field.
@@ -163,8 +151,7 @@ module Zee
     # @param attrs [Hash{Symbol => Object}] The HTML attributes.
     # @see ViewHelpers::Form#textarea_tag
     def textarea(attr, **attrs)
-      attrs = add_error_class(attr, attrs)
-      @context.textarea_tag name_for(attr), value_for(attr), **attrs
+      build_input(:textarea, attr, **attrs)
     end
     alias text_area textarea
 
@@ -173,8 +160,7 @@ module Zee
     # @param attrs [Hash{Symbol => Object}] The HTML attributes.
     # @see ViewHelpers::Form#time_field_tag
     def time_field(attr, **attrs)
-      attrs = add_error_class(attr, attrs)
-      @context.time_field_tag name_for(attr), value_for(attr), **attrs
+      build_input(:time, attr, **attrs)
     end
 
     # Render a `input[type=url]` field.
@@ -182,8 +168,7 @@ module Zee
     # @param attrs [Hash{Symbol => Object}] The HTML attributes.
     # @see ViewHelpers::Form#url_field_tag
     def url_field(attr, **attrs)
-      attrs = add_error_class(attr, attrs)
-      @context.url_field_tag name_for(attr), value_for(attr), **attrs
+      build_input(:url, attr, **attrs)
     end
 
     # Render a `input[type=checkbox]` field.
@@ -227,8 +212,24 @@ module Zee
     # @see ViewHelpers::Form#label_tag
     def label(attr, text = nil, **attrs, &)
       text ||= attr.to_s.humanize
+      text = translation_for :label, attr, default: text
       attrs = add_error_class(attr, attrs)
       @context.label_tag(id_for(attr), text, **attrs, &)
+    end
+
+    # Render a hint message.
+    # @param attr [String, Symbol] The attribute name.
+    # @param text [String,  SafeBuffer, nil] The label text. When not provided,
+    #                                        a label generated out of the
+    #                                        attribute name will be used
+    #                                        instead.
+    # @param attrs [Hash{Symbol => Object}] The HTML attributes.
+    # @see ViewHelpers::Form#label_tag
+    def hint(attr, text = nil, **attrs)
+      text ||= attr.to_s.humanize
+      text = translation_for :hint, attr, default: text
+      attrs = add_error_class(attr, attrs, :hint)
+      @context.content_tag(:span, text, **attrs)
     end
 
     # Retrieve the error messages for the provided attribute.
@@ -292,14 +293,37 @@ module Zee
     end
 
     # @private
-    def add_error_class(attr, attrs)
+    # @example
+    #   translation_for(:label, :name, default: "Name")
+    def translation_for(scope, attr, default: nil)
+      I18n.t(scope, scope: [:form, object_name, attr], default:)
+    end
+
+    # @private
+    def add_error_class(attr, attrs, *other_classes)
       {
         **attrs,
         class: @context.class_names(
           attrs.delete(:class),
-          {invalid: error?(attr)}
+          {invalid: error?(attr)},
+          *other_classes
         )
       }
+    end
+
+    # @private
+    def build_input(type, attr, **attrs)
+      attrs = add_error_class(attr, attrs)
+      attrs[:placeholder] ||=
+        translation_for(:placeholder, attr, default: false)
+
+      helper_name = :"#{type}_field_tag"
+      helper_name = :textarea_tag if type == :textarea
+
+      @context.send helper_name,
+                    name_for(attr),
+                    value_for(attr),
+                    **attrs
     end
   end
 end

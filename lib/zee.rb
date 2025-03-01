@@ -12,6 +12,7 @@ require "forwardable"
 require "yaml"
 require "json"
 require "securerandom"
+require "i18n"
 
 require_relative "zee/constants"
 require_relative "zee/enum"

@@ -35,6 +35,7 @@ module Minitest
     setup { FileUtils.rm_rf("tmp") }
     setup { FileUtils.mkdir("tmp") }
     setup { Zee.app = SampleAppInstance }
+    setup { I18n.backend.reload! }
 
     teardown { FileUtils.rm_rf("tmp") }
 

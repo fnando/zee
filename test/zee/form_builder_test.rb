@@ -17,6 +17,11 @@ class FormBuilderTest < Zee::Test
 
   let(:request) { Zee::Request.new(Rack::MockRequest.env_for("/")) }
   setup { request.env[Zee::ZEE_CSRF_TOKEN] = "abc" }
+  setup { I18n.available_locales = [:en] }
+
+  def store_translations(locale, translations)
+    I18n.backend.store_translations(locale, translations)
+  end
 
   test "builds form using hash" do
     user = {name: "Jane"}
@@ -504,5 +509,74 @@ class FormBuilderTest < Zee::Test
     assert_tag html, "form>label.invalid"
     assert_tag html, "form>input.invalid"
     assert_tag html, "form>span.error-message", text: /can't be blank/
+  end
+
+  test "renders hint" do
+    user = {}
+    template = <<~ERB
+      <%= form_for user, action: "/users", as: :user do |f| %>
+        <%= f.hint :name, "This is a hint" %>
+      <% end %>
+    ERB
+
+    html = render(template, locals: {user:}, request:)
+
+    assert_tag html, "span.hint", text: "This is a hint"
+  end
+
+  test "renders placeholder" do
+    user = {}
+    template = <<~ERB
+      <%= form_for user, action: "/users", as: :user do |f| %>
+        <%= f.text_field :name, placeholder: "E.g. Jane" %>
+      <% end %>
+    ERB
+
+    html = render(template, locals: {user:}, request:)
+
+    assert_tag html, "input#user_name[placeholder='E.g. Jane']"
+  end
+
+  test "renders hint using i18n" do
+    user = {}
+    store_translations(:en, form: {user: {name: {hint: "This is a hint"}}})
+    template = <<~ERB
+      <%= form_for user, action: "/users", as: :user do |f| %>
+        <%= f.hint :name %>
+      <% end %>
+    ERB
+
+    html = render(template, locals: {user:}, request:)
+
+    assert_tag html, "span.hint", text: "This is a hint"
+  end
+
+  test "renders label using i18n" do
+    user = {}
+    store_translations(:en, form: {user: {name: {label: "Your name"}}})
+    template = <<~ERB
+      <%= form_for user, action: "/users", as: :user do |f| %>
+        <%= f.label :name %>
+      <% end %>
+    ERB
+
+    html = render(template, locals: {user:}, request:)
+
+    assert_tag html, "label[for=user_name]", text: "Your name"
+  end
+
+  test "renders placeholder using i18n" do
+    user = {}
+    store_translations(:en, form: {user: {name: {placeholder: "E.g. Jane"}}})
+    template = <<~ERB
+      <%= form_for user, action: "/users", as: :user do |f| %>
+        <%= f.text_field :name %>
+      <% end %>
+    ERB
+
+    html = render(template, locals: {user:}, request:)
+
+    assert_tag html, "input#user_name[name='user[name]']" \
+                     "[placeholder='E.g. Jane']"
   end
 end
