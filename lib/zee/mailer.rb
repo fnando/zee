@@ -8,7 +8,7 @@ module Zee
     using Core::String
     include Controller::Locals
 
-    # @private
+    # @api private
     def self.method_missing(name, *, **)
       if respond_to_missing?(name)
         new.process_email(name, *, **)
@@ -17,12 +17,12 @@ module Zee
       end
     end
 
-    # @private
+    # @api private
     def self.respond_to_missing?(name, _all = true)
       instance_methods.include?(name)
     end
 
-    # @private
+    # @api private
     # The message object.
     def message
       @message ||= ::Mail.new
@@ -40,7 +40,7 @@ module Zee
       message
     end
 
-    # @private
+    # @api private
     def assign_body(type, content)
       content = content.to_s
 
@@ -54,24 +54,24 @@ module Zee
       end
     end
 
-    # @private
+    # @api private
     def assign_other_options(options)
       options.each {|key, value| message[key] = value }
     end
 
-    # @private
+    # @api private
     def assign_headers(headers)
       headers.each {|key, value| message.header[key.to_s.tr("_", "-")] = value }
     end
 
-    # @private
+    # @api private
     def assign_attachments(attachments)
       attachments.each do |filename, content|
         message.add_file(filename:, content:)
       end
     end
 
-    # @private
+    # @api private
     def process_email(name, *, **)
       send(name, *, **)
 
@@ -82,7 +82,7 @@ module Zee
       message
     end
 
-    # @private
+    # @api private
     def assign_body_from_template(name)
       return unless self.class.name
 

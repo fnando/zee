@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module Zee
+  # @api private
   class AssetsManifest
     # @return [Pathname] the source directories. The relative path will be used
     #                    as the request path.

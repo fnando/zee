@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Zee
-  # @private
+  # @api private
   class MigrationModifierParser
     InvalidModifierError = Class.new(StandardError)
     Modifier = Struct.new(:name, :sequel_type, :options, keyword_init: true)

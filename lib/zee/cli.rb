@@ -9,7 +9,7 @@ require_relative "ext/thor"
 require_relative "../zee"
 
 module Zee
-  # @private
+  # @api private
   class CLI < Command
     PROMPT_ALIASES = {
       development: "dev",

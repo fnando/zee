@@ -2,7 +2,7 @@
 
 require "test_helper"
 
-class RenderTest < Zee::RequestTest
+class RenderTest < Zee::Test::Request
   test "renders root" do
     get "/"
 

@@ -6,6 +6,7 @@ module Zee
       module HTML
         Minitest::Utils::Reporter.filters << %r{zee/test/assertions/html\.rb}
 
+        # @api private
         def indent_xsl
           @indent_xsl ||= File.read(File.join(__dir__, "indent.xsl"))
         end
@@ -40,6 +41,7 @@ module Zee
           nodes
         end
 
+        # @api private
         def assert_selector_text(node, text)
           case text
           when Regexp
@@ -50,6 +52,7 @@ module Zee
           end
         end
 
+        # @api private
         def assert_selector_html(node, html)
           case html
           when Regexp

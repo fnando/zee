@@ -4,6 +4,7 @@ module Zee
   class Controller
     module Locals
       # The variables that will be exposed to templates.
+      #
       # @return [Hash]
       #
       # @example
@@ -13,11 +14,16 @@ module Zee
       end
 
       # Expose variables and methods to the template.
+      #
       # @param helper_names [Array<Symbol>] The helper methods to expose. Notice
       #                                     that methods must be private.
       # @param vars [Hash] The variables to expose.
+      #
+      # @raise [UnsafeHelperError] If a helper method is not private.
+      #
       # @example Expose a message to the template.
       #   expose message: "Hello, World!"
+      #
       # @example Expose a helper method to the template.
       #   expose :say_hello
       private def expose(*helper_names, **vars)

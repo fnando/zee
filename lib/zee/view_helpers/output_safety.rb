@@ -7,7 +7,9 @@ module Zee
       # @param input [Object] the input to output.
       # @return [Zee::SafeBuffer]
       # @example
+      #   ```erb
       #   <%= raw("<script>alert(1)</script>") %>
+      #   ```
       def raw(input)
         if input.is_a?(Zee::SafeBuffer)
           input.raw
@@ -20,8 +22,9 @@ module Zee
       # @param string [Object] the input to escape.
       # @return [String]
       # @example
+      #   ```erb
       #   <%= escape_json("<script>alert(1)</script>".to_json) %>
-      #   #=> "\\u003cscript\\u003ealert(1)\\u003c/script\\u003e"
+      #   ```
       def escape_json(string)
         Zee::SafeBuffer.new(string).to_json
       end
@@ -30,8 +33,9 @@ module Zee
       # @param input [Object] the input to escape.
       # @return [String]
       # @example
+      #   ```erb
       #   <%= escape_html("<script>alert(1)</script>") %>
-      #   #=> "&lt;script&gt;alert(1)&lt;/script&gt;"
+      #   ```
       def escape_html(input)
         Zee::SafeBuffer.new.concat(input).to_s
       end

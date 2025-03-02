@@ -36,6 +36,7 @@ module Zee
       set_default_options
     end
 
+    # @api private
     private def set_default_options
       set :default_url_options, {}
       set :session_options, secret: SecureRandom.hex(64)
@@ -45,13 +46,13 @@ module Zee
       set :enable_reloading, false
     end
 
-    # @private
+    # @api private
     def to_s
       "#<Zee::Config>"
     end
     alias inspect to_s
 
-    # @private
+    # @api private
     def mandatory(*, **)
       super
     rescue SuperConfig::MissingEnvironmentVariable => error
@@ -60,7 +61,7 @@ module Zee
       # :nocov:
     end
 
-    # @private
+    # @api private
     def property(*, **, &)
       super
     rescue SuperConfig::MissingCallable
@@ -68,7 +69,7 @@ module Zee
             "arg[1] must respond to #call or a block must be provided"
     end
 
-    # @private
+    # @api private
     def validate!(*)
       super
     rescue SuperConfig::MissingEnvironmentVariable => error

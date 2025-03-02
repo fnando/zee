@@ -104,6 +104,7 @@ module Zee
       response.body = body
     end
 
+    # @api private
     private def build_template_paths(mimes, template_handlers, base_path)
       mimes.flat_map do |mime|
         template_handlers.map do |handler|
@@ -115,12 +116,14 @@ module Zee
       end
     end
 
+    # @api private
     private def render_text(status, text)
       response.status(status)
       response.headers[:content_type] = TEXT_PLAIN
       response.body = text.to_s
     end
 
+    # @api private
     private def render_json(status, data)
       response.status(status)
       response.headers[:content_type] = APPLICATION_JSON

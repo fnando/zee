@@ -16,21 +16,28 @@
   </p>
 </div>
 
-## Installation
+## Getting Started
 
-```bash
+First, install Zee if you haven't already:
+
+```
 gem install zee
 ```
 
-Or add the following line to your project's Gemfile:
+To create a new Zee application, run the following command. You can replace
+`myapp` with any name you like.
 
-```ruby
-gem "zee"
+```console
+$ zee new myapp
 ```
 
-## Usage
+Now, enter the app's directory and start the development server:
 
-TODO: Write gem usage
+```console
+$ zee dev
+```
+
+You can now visit <http://localhost:3000> to see your application.
 
 ## Maintainer
 

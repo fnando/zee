@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module Zee
+  # @api private
   class Simplecov
   end
 end

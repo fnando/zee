@@ -9,6 +9,9 @@ module Zee
     # @return [Zee::App]
     attr_writer :app
 
+    # The current app.
+    # @return [Zee::App]
+    # @raise [MissingAppError] If no app has been set.
     def app
       raise MissingAppError, "No app has been set to #{name}.app" unless @app
 
@@ -196,6 +199,7 @@ module Zee
 
     # The default middleware stack.
     # This is the stack that's included by default:
+    #
     # - {https://github.com/rack/rack/blob/main/lib/rack/sendfile.rb Rack::Sendfile}
     # - {https://github.com/rack/rack/blob/main/lib/rack/runtime.rb Rack::Runtime}
     # - {https://github.com/rack/rack/blob/main/lib/rack/common_logger.rb Rack::CommonLogger}
@@ -272,12 +276,12 @@ module Zee
       loader.setup
     end
 
-    # @private
+    # @api private
     def run_init
       init.each { instance_eval(&_1) }
     end
 
-    # @private
+    # @api private
     # Load the configuration files.
     # This is mostly used for reloading in development.
     # @param force [Boolean] If `true`, the files will be loaded using `load`
@@ -319,7 +323,7 @@ module Zee
       end
     end
 
-    # @private
+    # @api private
     def loader
       @loader ||= Zeitwerk::Loader.new
     end
@@ -359,6 +363,7 @@ module Zee
       Tilt.new(file, options).render(context, locals, &)
     end
 
+    # @api private
     private def rack_app
       @rack_app ||= begin
         request_handler = RequestHandler.new(self)
@@ -372,6 +377,7 @@ module Zee
       end
     end
 
+    # @api private
     private def compute_env
       env = ENV_NAMES.map { ENV[_1] }.compact.first.to_s
 
@@ -379,6 +385,7 @@ module Zee
     end
 
     # :nocov:
+    # @api private
     private def enable_reloading
       return unless config.enable_reloading
 

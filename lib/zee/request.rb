@@ -2,6 +2,7 @@
 
 module Zee
   class Request < ::Rack::Request
+    # @api private
     XHR_REGEX = /XMLHttpRequest/i
 
     # The origin of the request.

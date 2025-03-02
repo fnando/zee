@@ -2,6 +2,7 @@
 
 module Zee
   class MiddlewareStack
+    # @api private
     # The application instance.
     # @return [Zee::App]
     attr_reader :app

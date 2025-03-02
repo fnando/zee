@@ -10,6 +10,7 @@ module Zee
     #
     # The nonce can be accessed from `request.env["zee.csp_nonce"]`.
     class ContentSecurityPolicy < Rack::Protection::ContentSecurityPolicy
+      # @api private
       HEADER = "content-security-policy"
 
       def call(env)

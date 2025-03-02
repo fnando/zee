@@ -8,17 +8,17 @@ module Zee
       end
 
       module ClassMethods
-        # @private
+        # @api private
         def callbacks
           @callbacks ||= {before: [], after: []}
         end
 
-        # @private
+        # @api private
         def skipped_callbacks
           @skipped_callbacks ||= {before: [], after: []}
         end
 
-        # @private
+        # @api private
         def normalize_callback_condition(condition)
           if condition.is_a?(Symbol) || condition.is_a?(String)
             proc { send(condition) }
@@ -49,6 +49,7 @@ module Zee
         end
 
         # Skip a before action callback.
+        #
         # @param method_names [Array<Symbol>] The method names to skip.
         # @param options [Hash] The options to skip the callback.
         # @see #before_action
@@ -58,6 +59,7 @@ module Zee
         end
 
         # Skip a after action callback.
+        #
         # @param method_names [Array<Symbol>] The method names to skip.
         # @param options [Hash] The options to skip the callback.
         # @see #before_action
@@ -66,7 +68,7 @@ module Zee
           skipped_callbacks[:after] << [method_names, conditions]
         end
 
-        # @private
+        # @api private
         def build_callback_conditions(options:)
           only = Array(options.delete(:only)).map(&:to_s)
           except = Array(options.delete(:except)).map(&:to_s)
@@ -82,7 +84,7 @@ module Zee
           proc { conditions.all? { instance_eval(&_1) } }
         end
 
-        # @private
+        # @api private
         def define_callback(type:, store:, method_names:, options:, block:)
           conditions = build_callback_conditions(options:)
 
@@ -102,7 +104,7 @@ module Zee
         end
       end
 
-      # @private
+      # @api private
       def skip_callback?(type:, name:)
         self.class.skipped_callbacks[type].any? do |names, condition|
           names.include?(name) && instance_eval(&condition)

@@ -3,7 +3,7 @@
 module Zee
   module ViewHelpers
     module Assets
-      # @private
+      # @api private
       TYPE_TO_DIR_MAPPING = {
         js: "scripts",
         css: "styles",

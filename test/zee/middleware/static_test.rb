@@ -2,7 +2,7 @@
 
 require "test_helper"
 
-class StaticTest < Zee::RequestTest
+class StaticTest < Zee::Test::Request
   def app
     Rack::Builder.app do
       middleware = Class.new do

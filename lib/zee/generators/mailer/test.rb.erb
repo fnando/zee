@@ -2,7 +2,7 @@
 
 require "test_helper"
 
-class <%= mailer_class_name %>Test < Zee::Mailer::Test
+class <%= mailer_class_name %>Test < Zee::Test::Mailer
   <%- options[:methods].each do |method| -%>
 
   test "renders <%= method %> email" do
