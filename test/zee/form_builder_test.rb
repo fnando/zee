@@ -687,6 +687,61 @@ class FormBuilderTest < Zee::Test
     assert_tag heading, ":root.field-group-heading>label~.hint", text: /systems/
   end
 
+  test "renders radio group using hints when available" do
+    site = {theme: "light"}
+    store_translations(
+      :en,
+      form: {
+        site: {
+          theme: {
+            values: {
+              system: {
+                label: "Sync with system",
+                hint: "Theme will match your system active settings"
+              },
+              light: {
+                label: "Light Theme",
+                hint: "Bright, crisp interface with high contrast visuals."
+              },
+              dark: {
+                label: "Dark Theme",
+                hint: "Sleek, eye-friendly display for low-light settings."
+              }
+            }
+          }
+        }
+      }
+    )
+
+    template = <<~ERB
+      <%= form_for site, action: "/sites/1", as: :site do |f| %>
+        <%= f.radio_group :theme, ["system", "light", "dark"] %>
+      <% end %>
+    ERB
+
+    html = render(template, locals: {site:}, request:)
+
+    assert_tag html, "form>.field-group", count: 3
+    assert_tag html, "form>.field-group>input[checked=checked]", count: 1
+
+    group = assert_tag(html, "form>.field-group:nth-of-type(1)")
+    heading = assert_tag group, ":root>input#site_theme_system[type=radio]+span"
+    assert_tag heading, ":root.field-group-heading>label", text: /Sync/
+    assert_tag heading, ":root.field-group-heading>label~.hint", text: /system/
+
+    group = assert_tag(html, "form>.field-group:nth-of-type(2)")
+    heading = assert_tag group,
+                         ":root>input#site_theme_light[checked=checked]" \
+                         "[type=radio]+span"
+    assert_tag heading, ":root.field-group-heading>label", text: /Light Theme/
+    assert_tag heading, ":root.field-group-heading>label~.hint", text: /Bright/
+
+    group = assert_tag(html, "form>.field-group:nth-of-type(3)")
+    heading = assert_tag group, ":root>input#site_theme_dark[type=radio]+span"
+    assert_tag heading, ":root.field-group-heading>label", text: /Dark Theme/
+    assert_tag heading, ":root.field-group-heading>label~.hint", text: /Sleek/
+  end
+
   test "renders hint" do
     user = {}
     template = <<~ERB

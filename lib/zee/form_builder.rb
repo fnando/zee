@@ -163,12 +163,14 @@ module Zee
     # @param value [String] The input value.
     # @param attrs [Hash{Symbol => Object}] The HTML attributes.
     # @see ViewHelpers::Form#radio_button_tag
-    def radio_button(attr, value, **attrs)
+    def radio(attr, value, **attrs)
       attrs = add_error_class(attr, attrs)
       value = value.to_s
       checked = value == value_for(attr).to_s
       radio_button_tag name_for(attr), value, checked:, **attrs
     end
+    alias radio_field radio
+    alias radio_button radio
 
     # Render a `input[type=search]` field.
     # @param attr [String, Symbol] The attribute name.
@@ -282,7 +284,7 @@ module Zee
     # You can provide an array of arrays, where each inner array contains the
     # key and the label. If you provide only the key (i.e. a flat array), the
     # label will be generated using I18n. You can set both the label and hint
-    # text for each `color` value. You must have a translation defined as
+    # text for each attribute value. You must have a translation defined as
     # follows:
     #
     #     en:
@@ -317,6 +319,55 @@ module Zee
     # @example Providing only values; labels will using I18n instead.
     #   checkbox_group :color, ["red", "green"]
     def checkbox_group(attr, items)
+      control_group(attr, items, :checkbox)
+    end
+
+    # Render a group of `input[type=radio]` fields.
+    # This method also renders labels for each radio button.
+    #
+    # You can provide an array of arrays, where each inner array contains the
+    # key and the label. If you provide only the key (i.e. a flat array), the
+    # label will be generated using I18n. You can set both the label and hint
+    # text for each attribute value. You must have a translation defined as
+    # follows:
+    #
+    #     en:
+    #       forms:
+    #         settings:
+    #           theme:
+    #             values:
+    #               light:
+    #                 label: "Light Theme"
+    #                 hint: "Bright, crisp interface with high contrast visuals"
+    #               green:
+    #                 label: "Dark Theme"
+    #                 hint: "Sleek, eye-friendly display for low-light settings"
+    #
+    # @param attr [String, Symbol] The attribute name.
+    # @param items [Array<Array<Object, Object>>] The radio items.
+    # @return [SafeBuffer]
+    #
+    # @example Providing both values and labels
+    #   radio_group :color, [["red", "Red"], ["green", "Green"]]
+    #   #=> <div class="field-group">
+    #   #=>   <label for="user_color_red">Red</label>
+    #   #=>   <input type="radio" name="user[color][]" value="red"
+    #   #=>          id="user_color_red">
+    #   #=> </div>
+    #   #=> <div class="field-group">
+    #   #=>   <label for="user_color_green">Green</label>
+    #   #=>   <input type="radio" name="user[color][]" value="green"
+    #   #=>          id="user_color_green">
+    #   #=> </div>
+    #
+    # @example Providing only values; labels will using I18n instead.
+    #   checkbox_group :color, ["red", "green"]
+    def radio_group(attr, items)
+      control_group(attr, items, :radio)
+    end
+
+    # @private
+    def control_group(attr, items, field_type)
       buffer = SafeBuffer.new
 
       items.each do |item|
@@ -335,7 +386,7 @@ module Zee
         hint = tag(:br) + hint(attr, hint_text) if hint_text
 
         buffer << content_tag(:div, class: FIELD_GROUP) do
-          checkbox(attr, value) +
+          send(field_type, attr, value) +
             content_tag(:span, label([:tags, value], label) + hint,
                         class: FIELD_GROUP_HEADING)
         end
