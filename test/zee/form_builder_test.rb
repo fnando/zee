@@ -649,14 +649,16 @@ class FormBuilderTest < Zee::Test
       form: {
         page: {
           tags: {
-            _hints: {
-              ruby: "Elegant language focused on readability and happiness.",
-              rust: "Fast, memory-safe systems language without garbage " \
-                    "collection."
-            },
-            _values: {
-              ruby: "Ruby",
-              rust: "Rust"
+            values: {
+              ruby: {
+                label: "Ruby",
+                hint: "Elegant language focused on readability and happiness."
+              },
+              rust: {
+                label: "Rust",
+                hint: "Fast, memory-safe systems language without garbage " \
+                      "collection."
+              }
             }
           }
         }

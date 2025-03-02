@@ -281,18 +281,21 @@ module Zee
     #
     # You can provide an array of arrays, where each inner array contains the
     # key and the label. If you provide only the key (i.e. a flat array), the
-    # label will be generated using I18n. The scope will be
-    # `[:form, object_name, attribute, :_values, value]`. For instance, say you
-    # have a `Theme` model and you're rendering a checkbox group for the `color`
-    # attribute. You must have a translation defined as follows:
+    # label will be generated using I18n. You can set both the label and hint
+    # text for each `color` value. You must have a translation defined as
+    # follows:
     #
     #     en:
     #       forms:
     #         theme:
     #           color:
-    #             _values:
-    #               red: "Red"
-    #               green: "Green"
+    #             values:
+    #               red:
+    #                 label: "Red"
+    #                 hint: "This is a hint"
+    #               green:
+    #                 label: "Green"
+    #                 hint: "This is also a hint"
     #
     # @param attr [String, Symbol] The attribute name.
     # @param items [Array<Array<Object, Object>>] The checkbox items.
@@ -319,12 +322,16 @@ module Zee
       items.each do |item|
         value, label = Array(item)
         label ||= translation_for(
-          :"_values.#{value}",
+          :"values.#{value}.label",
           attr,
           default: value.to_s.humanize
         )
 
-        hint_text = translation_for(:"_hints.#{value}", attr, default: nil)
+        hint_text = translation_for(
+          :"values.#{value}.hint",
+          attr,
+          default: nil
+        )
         hint = tag(:br) + hint(attr, hint_text) if hint_text
 
         buffer << content_tag(:div, class: FIELD_GROUP) do
