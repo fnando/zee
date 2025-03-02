@@ -85,7 +85,7 @@ class SafeBufferTest < Minitest::Test
     ERB
     html = Zee.app.render_template("tmp/template.erb")
 
-    assert_tag html, "h1", text: /Hello <3/, html: /Hello &lt;3/
+    assert_selector html, "h1", text: /Hello <3/, html: /Hello &lt;3/
   end
 
   test "works with nested buffers in erb context" do
@@ -100,10 +100,10 @@ class SafeBufferTest < Minitest::Test
     ERB
     html = Zee.app.render_template("tmp/template.erb")
 
-    assert_tag html,
-               "div>button>span",
-               text: /Click me <3/,
-               html: /Click me &lt;3/
+    assert_selector html,
+                    "div>button>span",
+                    text: /Click me <3/,
+                    html: /Click me &lt;3/
   end
 
   test "returns escaped strings when converting to json" do

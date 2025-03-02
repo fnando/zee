@@ -8,20 +8,20 @@ class HTMLTest < Minitest::Test
   test "finds element and matches text by string" do
     html = "<div>Hello, World!</div>"
 
-    assert_tag html, "div", text: "Hello, World!"
+    assert_selector html, "div", text: "Hello, World!"
   end
 
   test "finds element and matches text by regex" do
     html = "<div>Hello, World!</div>"
 
-    assert_tag html, "div", text: /hello/i
+    assert_selector html, "div", text: /hello/i
   end
 
   test "fails when count differs" do
     html = "<div>Hello, World!</div>"
 
     error = assert_raises(Minitest::Assertion) do
-      assert_tag html, "div", count: 2
+      assert_selector html, "div", count: 2
     end
 
     assert_includes error.message,
@@ -33,7 +33,7 @@ class HTMLTest < Minitest::Test
     html = "<div>Hello, World!</div>"
 
     error = assert_raises(Minitest::Assertion) do
-      assert_tag html, "div", text: "hello"
+      assert_selector html, "div", text: "hello"
     end
 
     assert_includes error.message,
@@ -44,7 +44,7 @@ class HTMLTest < Minitest::Test
     html = "<div>Hello, World!</div>"
 
     error = assert_raises(Minitest::Assertion) do
-      assert_tag html, "div", text: /hello/
+      assert_selector html, "div", text: /hello/
     end
 
     assert_includes error.message,

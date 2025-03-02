@@ -64,7 +64,7 @@ class HTMLTest < Minitest::Test
       <% end %>
     ERB
 
-    assert_tag html, "style", text: /body \{ color: red; \}/
+    assert_selector html, "style", text: /body \{ color: red; \}/
   end
 
   test "renders style tag with nonce" do
@@ -79,7 +79,7 @@ class HTMLTest < Minitest::Test
 
     html = render(template, request:)
 
-    assert_tag html, "style[nonce=abc]", text: /body \{ color: red; \}/
+    assert_selector html, "style[nonce=abc]", text: /body \{ color: red; \}/
   end
 
   test "renders html tag" do
@@ -95,7 +95,7 @@ class HTMLTest < Minitest::Test
       <% end %>
     ERB
 
-    assert_tag html, "p", text: /hello!/
+    assert_selector html, "p", text: /hello!/
   end
 
   test "renders html tag with attributes" do
@@ -105,7 +105,7 @@ class HTMLTest < Minitest::Test
       <% end %>
     ERB
 
-    assert_tag html, "header#main-header", text: /hello!/
+    assert_selector html, "header#main-header", text: /hello!/
   end
 
   test "builds css classes" do

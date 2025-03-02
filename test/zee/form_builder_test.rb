@@ -34,13 +34,14 @@ class FormBuilderTest < Zee::Test
 
     html = render(template, locals: {user:}, request:)
 
-    assert_tag html, "form"
-    assert_tag html,
-               "form>input[type=hidden][name='_authenticity_token'][value=abc]"
+    assert_selector html, "form"
+    assert_selector html,
+                    "form>input[type=hidden][name='_authenticity_token']" \
+                    "[value=abc]"
 
-    assert_tag html,
-               "form[action='/users'][method=post]>input#user_name[type=text]" \
-               "[value='Jane'][name='user[name]']"
+    assert_selector html,
+                    "form[action='/users'][method=post]>input#user_name" \
+                    "[type=text][value='Jane'][name='user[name]']"
   end
 
   test "builds form using object" do
@@ -54,13 +55,14 @@ class FormBuilderTest < Zee::Test
 
     html = render(template, locals: {user:}, request:)
 
-    assert_tag html, "form"
-    assert_tag html,
-               "form>input[type=hidden][name='_authenticity_token'][value=abc]"
+    assert_selector html, "form"
+    assert_selector html,
+                    "form>input[type=hidden][name='_authenticity_token']" \
+                    "[value=abc]"
 
-    assert_tag html,
-               "form[action='/users'][method=post]>input#user_name[type=text]" \
-               "[value='Jane'][name='user[name]']"
+    assert_selector html,
+                    "form[action='/users'][method=post]>input#user_name" \
+                    "[type=text][value='Jane'][name='user[name]']"
   end
 
   test "renders text field" do
@@ -74,8 +76,9 @@ class FormBuilderTest < Zee::Test
 
     html = render(template, locals: {user:}, request:)
 
-    assert_tag html,
-               "input#user_name[type=text][value='Jane'][name='user[name]']"
+    assert_selector html,
+                    "input#user_name[type=text][value='Jane']" \
+                    "[name='user[name]']"
   end
 
   test "renders color field" do
@@ -89,9 +92,9 @@ class FormBuilderTest < Zee::Test
 
     html = render(template, locals: {page:}, request:)
 
-    assert_tag html,
-               "input#page_bgcolor[type=color][value='#ff0']" \
-               "[name='page[bgcolor]']"
+    assert_selector html,
+                    "input#page_bgcolor[type=color][value='#ff0']" \
+                    "[name='page[bgcolor]']"
   end
 
   test "renders date field" do
@@ -107,9 +110,9 @@ class FormBuilderTest < Zee::Test
 
     html = render(template, locals: {page:}, request:)
 
-    assert_tag html,
-               "input#page_published_at[type=date][value='#{value}']" \
-               "[name='page[published_at]']"
+    assert_selector html,
+                    "input#page_published_at[type=date][value='#{value}']" \
+                    "[name='page[published_at]']"
   end
 
   test "renders datetime field" do
@@ -125,9 +128,9 @@ class FormBuilderTest < Zee::Test
 
     html = render(template, locals: {page:}, request:)
 
-    assert_tag html,
-               "input#page_published_at[type=datetime-local]" \
-               "[value='#{value}'][name='page[published_at]']"
+    assert_selector html,
+                    "input#page_published_at[type=datetime-local]" \
+                    "[value='#{value}'][name='page[published_at]']"
   end
 
   test "renders file field" do
@@ -141,8 +144,8 @@ class FormBuilderTest < Zee::Test
 
     html = render(template, locals: {page:}, request:)
 
-    assert_tag html, "form[enctype='multipart/form-data']>" \
-                     "input#page_header[type=file][name='page[header]']"
+    assert_selector html, "form[enctype='multipart/form-data']>" \
+                          "input#page_header[type=file][name='page[header]']"
   end
 
   test "renders email field" do
@@ -156,8 +159,8 @@ class FormBuilderTest < Zee::Test
 
     html = render(template, locals: {user:}, request:)
 
-    assert_tag html, "input#user_email[type=email][name='user[email]']" \
-                     "[value='me@example.com']"
+    assert_selector html, "input#user_email[type=email][name='user[email]']" \
+                          "[value='me@example.com']"
   end
 
   test "renders hidden field" do
@@ -171,7 +174,8 @@ class FormBuilderTest < Zee::Test
 
     html = render(template, locals: {user:}, request:)
 
-    assert_tag html, "input[type=hidden][name='user[ref]'][value='ref_code']"
+    assert_selector html,
+                    "input[type=hidden][name='user[ref]'][value='ref_code']"
   end
 
   test "renders month field" do
@@ -186,8 +190,8 @@ class FormBuilderTest < Zee::Test
 
     html = render(template, locals: {user:}, request:)
 
-    assert_tag html, "input[type=month][name='user[published_at]']" \
-                     "[value='#{now.strftime('%Y-%m')}']"
+    assert_selector html, "input[type=month][name='user[published_at]']" \
+                          "[value='#{now.strftime('%Y-%m')}']"
   end
 
   test "renders number field" do
@@ -201,8 +205,8 @@ class FormBuilderTest < Zee::Test
 
     html = render(template, locals: {product:}, request:)
 
-    assert_tag html, "input#product_quantity[type=number]" \
-                     "[name='product[quantity]'][value=5]"
+    assert_selector html, "input#product_quantity[type=number]" \
+                          "[name='product[quantity]'][value=5]"
   end
 
   test "renders password field" do
@@ -216,7 +220,8 @@ class FormBuilderTest < Zee::Test
 
     html = render(template, locals: {user:}, request:)
 
-    assert_tag html, "input#user_password[type=password][name='user[password]']"
+    assert_selector html,
+                    "input#user_password[type=password][name='user[password]']"
   end
 
   test "renders phone field" do
@@ -230,8 +235,8 @@ class FormBuilderTest < Zee::Test
 
     html = render(template, locals: {user:}, request:)
 
-    assert_tag html, "input#user_mobile_phone[type=tel]" \
-                     "[name='user[mobile_phone]'][value='+15555555555']"
+    assert_selector html, "input#user_mobile_phone[type=tel]" \
+                          "[name='user[mobile_phone]'][value='+15555555555']"
   end
 
   test "renders radio button" do
@@ -246,11 +251,12 @@ class FormBuilderTest < Zee::Test
 
     html = render(template, locals: {page:}, request:)
 
-    assert_tag html, "input[type=radio]", count: 2
-    assert_tag html, "input#page_status_disabled[type=radio][value=disabled]" \
-                     "[name='page[status]']"
-    assert_tag html, "input#page_status_enabled[type=radio][value=enabled]" \
-                     "[name='page[status]'][checked=checked]"
+    assert_selector html, "input[type=radio]", count: 2
+    assert_selector html, "input#page_status_disabled[type=radio]" \
+                          "[value=disabled][name='page[status]']"
+    assert_selector html, "input#page_status_enabled[type=radio]" \
+                          "[value=enabled][name='page[status]']" \
+                          "[checked=checked]"
   end
 
   test "renders search field" do
@@ -264,8 +270,8 @@ class FormBuilderTest < Zee::Test
 
     html = render(template, locals: {search:}, request:)
 
-    assert_tag html, "input#search_query[type=search]" \
-                     "[name='search[query]'][value='ruby']"
+    assert_selector html, "input#search_query[type=search]" \
+                          "[name='search[query]'][value='ruby']"
   end
 
   test "renders select field" do
@@ -284,16 +290,16 @@ class FormBuilderTest < Zee::Test
 
     html = render(template, locals: {user:, options:}, request:)
 
-    assert_tag html,
-               "select#user_country[name='user[country]']>option",
-               count: 4
-    assert_tag html, "option[selected]", count: 1
-    assert_tag html, "option:nth-child(1)[value='']"
-    assert_tag html, "option:nth-child(2)[value=CA]", text: /Canada/
-    assert_tag html,
-               "option:nth-child(3)[value=BR][selected=selected]",
-               text: /Brazil/
-    assert_tag html, "option:nth-child(4)[value=MX]", text: /Mexico/
+    assert_selector html,
+                    "select#user_country[name='user[country]']>option",
+                    count: 4
+    assert_selector html, "option[selected]", count: 1
+    assert_selector html, "option:nth-child(1)[value='']"
+    assert_selector html, "option:nth-child(2)[value=CA]", text: /Canada/
+    assert_selector html,
+                    "option:nth-child(3)[value=BR][selected=selected]",
+                    text: /Brazil/
+    assert_selector html, "option:nth-child(4)[value=MX]", text: /Mexico/
   end
 
   test "renders textarea" do
@@ -307,7 +313,8 @@ class FormBuilderTest < Zee::Test
 
     html = render(template, locals: {user:}, request:)
 
-    assert_tag html, "textarea#user_bio[name='user[bio]']", text: /I love Ruby/
+    assert_selector html, "textarea#user_bio[name='user[bio]']",
+                    text: /I love Ruby/
   end
 
   test "renders time field" do
@@ -322,8 +329,8 @@ class FormBuilderTest < Zee::Test
 
     html = render(template, locals: {event:}, request:)
 
-    assert_tag html, "input#event_time[type=time]" \
-                     "[name='event[time]'][value='#{now.strftime('%H:%M')}']"
+    assert_selector html, "input#event_time[type=time][name='event[time]']" \
+                          "[value='#{now.strftime('%H:%M')}']"
   end
 
   test "renders url field" do
@@ -337,8 +344,8 @@ class FormBuilderTest < Zee::Test
 
     html = render(template, locals: {event:}, request:)
 
-    assert_tag html, "input#event_url[type=url]" \
-                     "[name='event[url]'][value='https://example.com']"
+    assert_selector html, "input#event_url[type=url]" \
+                          "[name='event[url]'][value='https://example.com']"
   end
 
   test "renders label with default text" do
@@ -352,7 +359,7 @@ class FormBuilderTest < Zee::Test
 
     html = render(template, locals: {user:}, request:)
 
-    assert_tag html, "label[for=user_name]", text: "Name"
+    assert_selector html, "label[for=user_name]", text: "Name"
   end
 
   test "renders label with provided text" do
@@ -366,7 +373,7 @@ class FormBuilderTest < Zee::Test
 
     html = render(template, locals: {user:}, request:)
 
-    assert_tag html, "label[for=user_name]", text: "Your name"
+    assert_selector html, "label[for=user_name]", text: "Your name"
   end
 
   test "renders label using a block" do
@@ -382,7 +389,7 @@ class FormBuilderTest < Zee::Test
 
     html = render(template, locals: {user:}, request:)
 
-    assert_tag html, "label[for=user_name]", text: /Your name/
+    assert_selector html, "label[for=user_name]", text: /Your name/
   end
 
   test "renders default label using array" do
@@ -396,7 +403,7 @@ class FormBuilderTest < Zee::Test
 
     html = render(template, locals: {user:}, request:)
 
-    assert_tag html, "label[for=user_foo_bar]", text: /Bar/
+    assert_selector html, "label[for=user_foo_bar]", text: /Bar/
   end
 
   test "renders submit button with default text" do
@@ -410,7 +417,7 @@ class FormBuilderTest < Zee::Test
 
     html = render(template, locals: {user:}, request:)
 
-    assert_tag html, "button[type=submit]", text: /Submit/
+    assert_selector html, "button[type=submit]", text: /Submit/
   end
 
   test "renders submit button with custom text" do
@@ -424,7 +431,7 @@ class FormBuilderTest < Zee::Test
 
     html = render(template, locals: {user:}, request:)
 
-    assert_tag html, "form>button[type=submit]", text: /Save/
+    assert_selector html, "form>button[type=submit]", text: /Save/
   end
 
   test "renders checkbox" do
@@ -438,13 +445,13 @@ class FormBuilderTest < Zee::Test
 
     html = render(template, locals: {user:}, request:)
 
-    assert_tag html,
-               "form>input[type=hidden][value=0][name='user[enabled]']"
+    assert_selector html,
+                    "form>input[type=hidden][value=0][name='user[enabled]']"
 
-    assert_tag html,
-               "form>input[type=hidden][name='user[enabled]']+" \
-               "input#user_enabled[type=checkbox]" \
-               "[value=1][name='user[enabled]']"
+    assert_selector html,
+                    "form>input[type=hidden][name='user[enabled]']+" \
+                    "input#user_enabled[type=checkbox]" \
+                    "[value=1][name='user[enabled]']"
   end
 
   test "checks checkbox with boolean value" do
@@ -458,13 +465,13 @@ class FormBuilderTest < Zee::Test
 
     html = render(template, locals: {user:}, request:)
 
-    assert_tag html,
-               "form>input[type=hidden][value=0][name='user[enabled]']"
+    assert_selector html,
+                    "form>input[type=hidden][value=0][name='user[enabled]']"
 
-    assert_tag html,
-               "form>input[type=hidden][name='user[enabled]']+" \
-               "input#user_enabled[type=checkbox]" \
-               "[value=1][name='user[enabled]'][checked=checked]"
+    assert_selector html,
+                    "form>input[type=hidden][name='user[enabled]']+" \
+                    "input#user_enabled[type=checkbox]" \
+                    "[value=1][name='user[enabled]'][checked=checked]"
   end
 
   test "checks checkbox with matching value" do
@@ -478,13 +485,13 @@ class FormBuilderTest < Zee::Test
 
     html = render(template, locals: {user:}, request:)
 
-    assert_tag html,
-               "form>input[type=hidden][value=0][name='user[enabled]']"
+    assert_selector html,
+                    "form>input[type=hidden][value=0][name='user[enabled]']"
 
-    assert_tag html,
-               "form>input[type=hidden][name='user[enabled]']+" \
-               "input#user_enabled[type=checkbox]" \
-               "[value=1][name='user[enabled]'][checked=checked]"
+    assert_selector html,
+                    "form>input[type=hidden][name='user[enabled]']+" \
+                    "input#user_enabled[type=checkbox]" \
+                    "[value=1][name='user[enabled]'][checked=checked]"
   end
 
   test "checks checkbox with custom values" do
@@ -498,12 +505,13 @@ class FormBuilderTest < Zee::Test
 
     html = render(template, locals: {user:}, request:)
 
-    assert_tag html, "form>input[type=hidden][value=nope][name='user[enabled]']"
+    assert_selector html,
+                    "form>input[type=hidden][value=nope][name='user[enabled]']"
 
-    assert_tag html,
-               "form>input[type=hidden][name='user[enabled]']+" \
-               "input#user_enabled[type=checkbox]" \
-               "[value=yep][name='user[enabled]'][checked=checked]"
+    assert_selector html,
+                    "form>input[type=hidden][name='user[enabled]']+" \
+                    "input#user_enabled[type=checkbox]" \
+                    "[value=yep][name='user[enabled]'][checked=checked]"
   end
 
   test "prevents checkbox's hidden input from being rendered" do
@@ -517,7 +525,8 @@ class FormBuilderTest < Zee::Test
 
     html = render(template, locals: {user:}, request:)
 
-    assert_tag html, "form>input[type=hidden][name='user[enabled]']", count: 0
+    assert_selector html, "form>input[type=hidden][name='user[enabled]']",
+                    count: 0
   end
 
   test "renders checkbox as an array" do
@@ -532,14 +541,14 @@ class FormBuilderTest < Zee::Test
 
     html = render(template, locals: {page:}, request:)
 
-    assert_tag html,
-               "form>input[type=hidden]:not([name=_authenticity_token])",
-               count: 0
-    assert_tag html, "input[type=checkbox][checked=checked]", count: 1
-    assert_tag html,
-               "input#page_tags_ruby[type=checkbox][value=ruby]" \
-               "[checked=checked]"
-    assert_tag html, "input#page_tags_python[type=checkbox][value=python]"
+    assert_selector html,
+                    "form>input[type=hidden]:not([name=_authenticity_token])",
+                    count: 0
+    assert_selector html, "input[type=checkbox][checked=checked]", count: 1
+    assert_selector html,
+                    "input#page_tags_ruby[type=checkbox][value=ruby]" \
+                    "[checked=checked]"
+    assert_selector html, "input#page_tags_python[type=checkbox][value=python]"
   end
 
   test "renders checkbox group" do
@@ -553,16 +562,18 @@ class FormBuilderTest < Zee::Test
 
     html = render(template, locals: {page:}, request:)
 
-    assert_tag html, "form>.field-group", count: 2
-    assert_tag html, "form>.field-group>input[checked=checked]", count: 1
+    assert_selector html, "form>.field-group", count: 2
+    assert_selector html, "form>.field-group>input[checked=checked]", count: 1
 
-    group = assert_tag(html, "form>.field-group:nth-of-type(1)")
-    heading = assert_tag group, ":root>input#page_tags_ruby[type=checkbox]+span"
-    assert_tag heading, ":root.field-group-heading>label", text: /Ruby/
+    group = assert_selector(html, "form>.field-group:nth-of-type(1)")
+    heading = assert_selector group,
+                              ":root>input#page_tags_ruby[type=checkbox]+span"
+    assert_selector heading, ":root.field-group-heading>label", text: /Ruby/
 
-    group = assert_tag(html, "form>.field-group:nth-of-type(2)")
-    heading = assert_tag group, ":root>input#page_tags_rust[type=checkbox]+span"
-    assert_tag heading, ":root.field-group-heading>label", text: /Rust/
+    group = assert_selector(html, "form>.field-group:nth-of-type(2)")
+    heading = assert_selector group,
+                              ":root>input#page_tags_rust[type=checkbox]+span"
+    assert_selector heading, ":root.field-group-heading>label", text: /Rust/
   end
 
   test "renders checkbox group using i18n labels" do
@@ -589,16 +600,18 @@ class FormBuilderTest < Zee::Test
 
     html = render(template, locals: {page:}, request:)
 
-    assert_tag html, "form>.field-group", count: 2
-    assert_tag html, "form>.field-group>input[checked=checked]", count: 1
+    assert_selector html, "form>.field-group", count: 2
+    assert_selector html, "form>.field-group>input[checked=checked]", count: 1
 
-    group = assert_tag(html, "form>.field-group:nth-of-type(1)")
-    heading = assert_tag group, ":root>input#page_tags_ruby[type=checkbox]+span"
-    assert_tag heading, ":root.field-group-heading>label", text: /Ruby/
+    group = assert_selector(html, "form>.field-group:nth-of-type(1)")
+    heading = assert_selector group,
+                              ":root>input#page_tags_ruby[type=checkbox]+span"
+    assert_selector heading, ":root.field-group-heading>label", text: /Ruby/
 
-    group = assert_tag(html, "form>.field-group:nth-of-type(2)")
-    heading = assert_tag group, ":root>input#page_tags_rust[type=checkbox]+span"
-    assert_tag heading, ":root.field-group-heading>label", text: /Rust/
+    group = assert_selector(html, "form>.field-group:nth-of-type(2)")
+    heading = assert_selector group,
+                              ":root>input#page_tags_rust[type=checkbox]+span"
+    assert_selector heading, ":root.field-group-heading>label", text: /Rust/
   end
 
   test "renders checkbox group using default labels" do
@@ -612,16 +625,18 @@ class FormBuilderTest < Zee::Test
 
     html = render(template, locals: {page:}, request:)
 
-    assert_tag html, "form>.field-group", count: 2
-    assert_tag html, "form>.field-group>input[checked=checked]", count: 1
+    assert_selector html, "form>.field-group", count: 2
+    assert_selector html, "form>.field-group>input[checked=checked]", count: 1
 
-    group = assert_tag(html, "form>.field-group:nth-of-type(1)")
-    heading = assert_tag group, ":root>input#page_tags_ruby[type=checkbox]+span"
-    assert_tag heading, ":root.field-group-heading>label", text: /Ruby/
+    group = assert_selector(html, "form>.field-group:nth-of-type(1)")
+    heading = assert_selector group,
+                              ":root>input#page_tags_ruby[type=checkbox]+span"
+    assert_selector heading, ":root.field-group-heading>label", text: /Ruby/
 
-    group = assert_tag(html, "form>.field-group:nth-of-type(2)")
-    heading = assert_tag group, ":root>input#page_tags_rust[type=checkbox]+span"
-    assert_tag heading, ":root.field-group-heading>label", text: /Rust/
+    group = assert_selector(html, "form>.field-group:nth-of-type(2)")
+    heading = assert_selector group,
+                              ":root>input#page_tags_rust[type=checkbox]+span"
+    assert_selector heading, ":root.field-group-heading>label", text: /Rust/
   end
 
   test "renders error message" do
@@ -637,9 +652,9 @@ class FormBuilderTest < Zee::Test
 
     html = render(template, locals: {user:}, request:)
 
-    assert_tag html, "form>label.invalid"
-    assert_tag html, "form>input.invalid"
-    assert_tag html, "form>span.error", text: /can't be blank/
+    assert_selector html, "form>label.invalid"
+    assert_selector html, "form>input.invalid"
+    assert_selector html, "form>span.error", text: /can't be blank/
   end
 
   test "renders checkbox group using hints when available" do
@@ -673,18 +688,22 @@ class FormBuilderTest < Zee::Test
 
     html = render(template, locals: {page:}, request:)
 
-    assert_tag html, "form>.field-group", count: 2
-    assert_tag html, "form>.field-group>input[checked=checked]", count: 1
+    assert_selector html, "form>.field-group", count: 2
+    assert_selector html, "form>.field-group>input[checked=checked]", count: 1
 
-    group = assert_tag(html, "form>.field-group:nth-of-type(1)")
-    heading = assert_tag group, ":root>input#page_tags_ruby[type=checkbox]+span"
-    assert_tag heading, ":root.field-group-heading>label", text: /Ruby/
-    assert_tag heading, ":root.field-group-heading>label~.hint", text: /Elegant/
+    group = assert_selector(html, "form>.field-group:nth-of-type(1)")
+    heading = assert_selector group,
+                              ":root>input#page_tags_ruby[type=checkbox]+span"
+    assert_selector heading, ":root.field-group-heading>label", text: /Ruby/
+    assert_selector heading, ":root.field-group-heading>label~.hint",
+                    text: /Elegant/
 
-    group = assert_tag(html, "form>.field-group:nth-of-type(2)")
-    heading = assert_tag group, ":root>input#page_tags_rust[type=checkbox]+span"
-    assert_tag heading, ":root.field-group-heading>label", text: /Rust/
-    assert_tag heading, ":root.field-group-heading>label~.hint", text: /systems/
+    group = assert_selector(html, "form>.field-group:nth-of-type(2)")
+    heading = assert_selector group,
+                              ":root>input#page_tags_rust[type=checkbox]+span"
+    assert_selector heading, ":root.field-group-heading>label", text: /Rust/
+    assert_selector heading, ":root.field-group-heading>label~.hint",
+                    text: /systems/
   end
 
   test "renders radio group using hints when available" do
@@ -721,25 +740,32 @@ class FormBuilderTest < Zee::Test
 
     html = render(template, locals: {site:}, request:)
 
-    assert_tag html, "form>.field-group", count: 3
-    assert_tag html, "form>.field-group>input[checked=checked]", count: 1
+    assert_selector html, "form>.field-group", count: 3
+    assert_selector html, "form>.field-group>input[checked=checked]", count: 1
 
-    group = assert_tag(html, "form>.field-group:nth-of-type(1)")
-    heading = assert_tag group, ":root>input#site_theme_system[type=radio]+span"
-    assert_tag heading, ":root.field-group-heading>label", text: /Sync/
-    assert_tag heading, ":root.field-group-heading>label~.hint", text: /system/
+    group = assert_selector(html, "form>.field-group:nth-of-type(1)")
+    heading = assert_selector group,
+                              ":root>input#site_theme_system[type=radio]+span"
+    assert_selector heading, ":root.field-group-heading>label", text: /Sync/
+    assert_selector heading, ":root.field-group-heading>label~.hint",
+                    text: /system/
 
-    group = assert_tag(html, "form>.field-group:nth-of-type(2)")
-    heading = assert_tag group,
-                         ":root>input#site_theme_light[checked=checked]" \
-                         "[type=radio]+span"
-    assert_tag heading, ":root.field-group-heading>label", text: /Light Theme/
-    assert_tag heading, ":root.field-group-heading>label~.hint", text: /Bright/
+    group = assert_selector(html, "form>.field-group:nth-of-type(2)")
+    heading = assert_selector group,
+                              ":root>input#site_theme_light[checked=checked]" \
+                              "[type=radio]+span"
+    assert_selector heading, ":root.field-group-heading>label",
+                    text: /Light Theme/
+    assert_selector heading, ":root.field-group-heading>label~.hint",
+                    text: /Bright/
 
-    group = assert_tag(html, "form>.field-group:nth-of-type(3)")
-    heading = assert_tag group, ":root>input#site_theme_dark[type=radio]+span"
-    assert_tag heading, ":root.field-group-heading>label", text: /Dark Theme/
-    assert_tag heading, ":root.field-group-heading>label~.hint", text: /Sleek/
+    group = assert_selector(html, "form>.field-group:nth-of-type(3)")
+    heading = assert_selector group,
+                              ":root>input#site_theme_dark[type=radio]+span"
+    assert_selector heading, ":root.field-group-heading>label",
+                    text: /Dark Theme/
+    assert_selector heading, ":root.field-group-heading>label~.hint",
+                    text: /Sleek/
   end
 
   test "renders hint" do
@@ -752,7 +778,7 @@ class FormBuilderTest < Zee::Test
 
     html = render(template, locals: {user:}, request:)
 
-    assert_tag html, "span.hint", text: "This is a hint"
+    assert_selector html, "span.hint", text: "This is a hint"
   end
 
   test "renders placeholder" do
@@ -765,7 +791,7 @@ class FormBuilderTest < Zee::Test
 
     html = render(template, locals: {user:}, request:)
 
-    assert_tag html, "input#user_name[placeholder='E.g. Jane']"
+    assert_selector html, "input#user_name[placeholder='E.g. Jane']"
   end
 
   test "renders hint using i18n" do
@@ -779,7 +805,7 @@ class FormBuilderTest < Zee::Test
 
     html = render(template, locals: {user:}, request:)
 
-    assert_tag html, "span.hint", text: "This is a hint"
+    assert_selector html, "span.hint", text: "This is a hint"
   end
 
   test "renders label using i18n" do
@@ -793,7 +819,7 @@ class FormBuilderTest < Zee::Test
 
     html = render(template, locals: {user:}, request:)
 
-    assert_tag html, "label[for=user_name]", text: "Your name"
+    assert_selector html, "label[for=user_name]", text: "Your name"
   end
 
   test "renders placeholder using i18n" do
@@ -807,7 +833,7 @@ class FormBuilderTest < Zee::Test
 
     html = render(template, locals: {user:}, request:)
 
-    assert_tag html, "input#user_name[name='user[name]']" \
-                     "[placeholder='E.g. Jane']"
+    assert_selector html, "input#user_name[name='user[name]']" \
+                          "[placeholder='E.g. Jane']"
   end
 end
