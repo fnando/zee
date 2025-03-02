@@ -3,6 +3,33 @@
 module Zee
   class FormBuilder
     using Core::String
+    extend Forwardable
+
+    def_delegators :@context,
+                   :button_tag,
+                   :checkbox_tag,
+                   :class_names,
+                   :color_field_tag,
+                   :content_tag,
+                   :date_field_tag,
+                   :datetime_field_tag,
+                   :email_field_tag,
+                   :file_field_tag,
+                   :hidden_field_tag,
+                   :label_tag,
+                   :month_field_tag,
+                   :normalize_id,
+                   :number_field_tag,
+                   :password_field_tag,
+                   :phone_field_tag,
+                   :radio_button_tag,
+                   :search_field_tag,
+                   :select_tag,
+                   :tag,
+                   :text_field_tag,
+                   :textarea_field_tag,
+                   :time_field_tag,
+                   :url_field_tag
 
     # @private
     # The values that will be used to mark a `input[type=checkbox]` as checked.
@@ -10,6 +37,15 @@ module Zee
 
     # @private
     SUBMIT = "submit"
+
+    # @private
+    FIELD = "field"
+
+    # @private
+    FIELD_INFO = "field-info"
+
+    # @private
+    FIELD_CONTROLS = "field-controls"
 
     # @private
     FIELD_GROUP_HEADING = "field-group-heading"
@@ -25,9 +61,6 @@ module Zee
 
     # @return [Symbol, String] The form namespace name.
     attr_reader :object_name
-
-    # @return [Object] The helpers context.
-    attr_reader :context
 
     # The form builder's most common usage is by using the `form_for` method.
     # @see ViewHelpers::Form#form_for
@@ -134,7 +167,7 @@ module Zee
       attrs = add_error_class(attr, attrs)
       value = value.to_s
       checked = value == value_for(attr).to_s
-      @context.radio_button_tag name_for(attr), value, checked:, **attrs
+      radio_button_tag name_for(attr), value, checked:, **attrs
     end
 
     # Render a `input[type=search]` field.
@@ -152,10 +185,10 @@ module Zee
     # @see ViewHelpers::Form#select_tag
     def select(attr, options = [], **attrs)
       attrs = add_error_class(attr, attrs)
-      @context.select_tag name_for(attr),
-                          options,
-                          **attrs,
-                          selected: value_for(attr)
+      select_tag name_for(attr),
+                 options,
+                 **attrs,
+                 selected: value_for(attr)
     end
 
     # Render a `textarea` field.
@@ -230,10 +263,10 @@ module Zee
       buffer = SafeBuffer.new
 
       unless unchecked_value.nil? || collection
-        buffer << @context.hidden_field_tag(name_for(attr), unchecked_value)
+        buffer << hidden_field_tag(name_for(attr), unchecked_value)
       end
 
-      buffer << @context.checkbox_tag(
+      buffer << checkbox_tag(
         name_for(attr, collection:),
         checked_value,
         checked:,
@@ -292,12 +325,12 @@ module Zee
         )
 
         hint_text = translation_for(:"_hints.#{value}", attr, default: nil)
-        hint = @context.tag(:br) + hint(attr, hint_text) if hint_text
+        hint = tag(:br) + hint(attr, hint_text) if hint_text
 
-        buffer << @context.content_tag(:div, class: FIELD_GROUP) do
+        buffer << content_tag(:div, class: FIELD_GROUP) do
           checkbox(attr, value) +
-            @context.content_tag(:span, label([:tags, value], label) + hint,
-                                 class: FIELD_GROUP_HEADING)
+            content_tag(:span, label([:tags, value], label) + hint,
+                        class: FIELD_GROUP_HEADING)
         end
       end
 
@@ -307,7 +340,7 @@ module Zee
     # Render a submit button field.
     # @param label [String, nil] The button label.
     def submit(label = "Submit", **, &)
-      @context.button_tag(label, **, type: SUBMIT, &)
+      button_tag(label, **, type: SUBMIT, &)
     end
 
     # Render a `label` tag.
@@ -338,7 +371,7 @@ module Zee
       text ||= Array(attr).last.to_s.humanize
       text = translation_for :label, attr, default: text
       attrs = add_error_class(attr, attrs)
-      @context.label_tag(id_for(*Array(attr)), text, **attrs, &)
+      label_tag(id_for(*Array(attr)), text, **attrs, &)
     end
 
     # Render a hint message.
@@ -368,7 +401,7 @@ module Zee
     def hint(attr, text = nil, **attrs)
       text ||= translation_for :hint, attr, default: EMPTY_STRING
       attrs = add_error_class(attr, attrs, :hint)
-      @context.content_tag(:span, text, **attrs) unless text.blank?
+      content_tag(:span, text, **attrs) unless text.blank?
     end
 
     # Retrieve the error messages for the provided attribute.
@@ -395,11 +428,11 @@ module Zee
 
       return unless error
 
-      @context.content_tag(
+      content_tag(
         :span,
         error,
         **attrs,
-        class: @context.class_names(attrs[:class], ERROR)
+        class: class_names(attrs[:class], ERROR)
       )
     end
 
@@ -418,7 +451,7 @@ module Zee
     # Generate `id` attribute for the provided attribute.
     # @return [String]
     def id_for(attr, value = nil)
-      @context.normalize_id([name_for(attr), value].compact.join(UNDERSCORE))
+      normalize_id([name_for(attr), value].compact.join(UNDERSCORE))
     end
 
     # @private
@@ -445,7 +478,7 @@ module Zee
     def add_error_class(attr, attrs, *other_classes)
       {
         **attrs,
-        class: @context.class_names(
+        class: class_names(
           attrs.delete(:class),
           {invalid: error?(attr)},
           *other_classes
@@ -460,12 +493,11 @@ module Zee
         translation_for(:placeholder, attr, default: false)
 
       helper_name = :"#{type}_field_tag"
-      helper_name = :textarea_tag if type == :textarea
 
-      @context.send helper_name,
-                    name_for(attr),
-                    value_for(attr),
-                    **attrs
+      send helper_name,
+           name_for(attr),
+           value_for(attr),
+           **attrs
     end
   end
 end
