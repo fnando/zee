@@ -501,13 +501,13 @@ class FormTest < Minitest::Test
     assert_selector helpers.label_tag("name"), "label[for=name]", text: "Name"
 
     assert_selector helpers.label_tag("full_name"),
-                    "label[for=full_name]",
+                    "label.label[for=full_name]",
                     text: "Full name"
   end
 
   test "renders label using block" do
     assert_selector helpers.label_tag("name") { "Your name" },
-                    "label[for=name]",
+                    "label.label[for=name]",
                     text: "Your name"
   end
 end

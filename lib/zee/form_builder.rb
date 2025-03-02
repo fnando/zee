@@ -64,7 +64,7 @@ module Zee
 
     # The form builder's most common usage is by using the `form_for` method.
     # @see ViewHelpers::Form#form_for
-    def initialize(object:, context:, object_name:, **)
+    def initialize(object:, context:, object_name:)
       @object = object
       @object_name = object_name
       @context = context
@@ -367,7 +367,7 @@ module Zee
     end
 
     # @private
-    def control_group(attr, items, field_type)
+    private def control_group(attr, items, field_type)
       buffer = SafeBuffer.new
 
       items.each do |item|
@@ -387,12 +387,51 @@ module Zee
 
         buffer << content_tag(:div, class: FIELD_GROUP) do
           send(field_type, attr, value) +
-            content_tag(:span, label([:tags, value], label) + hint,
-                        class: FIELD_GROUP_HEADING)
+            content_tag(
+              :span,
+              label([attr, value], label) + hint,
+              class: FIELD_GROUP_HEADING
+            )
         end
       end
 
       buffer
+    end
+
+    # Render a field, which includes all elements to render a form field, like
+    # label, input, hint and error message.
+    # @param attr [String, Symbol] The attribute name.
+    # @param values [Array<Object>] The values for the field when `:type` is
+    #                               either `:checkbox_group` or `:radio_group`.
+    # @param type [Symbol] The field type. Must match a input type supported by
+    #                      this form builder.
+    # @return [SafeBuffer]
+    def field(attr, values = nil, type: :text)
+      case type
+      when :radio_group
+        label = tag(:span, label_text(attr), class: :label)
+        input = radio_group(attr, values)
+      when :checkbox_group
+        label = tag(:span, label_text(attr), class: :label)
+        input = checkbox_group(attr, values)
+      else
+        label = label(attr)
+        input = build_input(type, attr)
+      end
+
+      hint = hint(attr)
+      error = error(attr)
+
+      content_tag :div, class: class_names(FIELD, {invalid: error}) do
+        info = content_tag :div, class: FIELD_INFO do
+          label + hint
+        end
+        control = content_tag :div, class: FIELD_CONTROLS do
+          input + error
+        end
+
+        info + control
+      end
     end
 
     # Render a submit button field.
@@ -426,10 +465,19 @@ module Zee
     # @param attrs [Hash{Symbol => Object}] The HTML attributes.
     # @see ViewHelpers::Form#label_tag
     def label(attr, text = nil, **attrs, &)
-      text ||= Array(attr).last.to_s.humanize
-      text = translation_for :label, attr, default: text
       attrs = add_error_class(attr, attrs)
-      label_tag(id_for(*Array(attr)), text, **attrs, &)
+      label_tag(id_for(*Array(attr)), label_text(attr, text), **attrs, &)
+    end
+
+    # @private
+    private def label_text(attr, text = nil)
+      text ||= Array(attr).last.to_s.humanize
+      translation_for :label, attr, default: text
+    end
+
+    # @private
+    private def hint_text(attr, text)
+      text || translation_for(:hint, attr, default: EMPTY_STRING)
     end
 
     # Render a hint message.
@@ -457,8 +505,8 @@ module Zee
     # @param attrs [Hash{Symbol => Object}] The HTML attributes.
     # @see ViewHelpers::Form#label_tag
     def hint(attr, text = nil, **attrs)
-      text ||= translation_for :hint, attr, default: EMPTY_STRING
       attrs = add_error_class(attr, attrs, :hint)
+      text = hint_text(attr, text)
       content_tag(:span, text, **attrs) unless text.blank?
     end
 
@@ -500,7 +548,7 @@ module Zee
     # @param attr [String, Symbol] The attribute name.
     # @param collection [Boolean] Whether the attribute is a collection.
     # @return [String]
-    def name_for(attr, collection: false)
+    private def name_for(attr, collection: false)
       suffix = SQUARE_BRACKETS if collection
       "#{object_name}[#{attr}]#{suffix}"
     end
@@ -508,7 +556,7 @@ module Zee
     # @private
     # Generate `id` attribute for the provided attribute.
     # @return [String]
-    def id_for(attr, value = nil)
+    private def id_for(attr, value = nil)
       normalize_id([name_for(attr), value].compact.join(UNDERSCORE))
     end
 
@@ -517,7 +565,7 @@ module Zee
     # If the object responds to `#[](attr)`, that will be used. Otherwise, we'll
     # call `object.attr`.
     # @return [Object]
-    def value_for(attr)
+    private def value_for(attr)
       if object.respond_to?(:[])
         object[attr]
       elsif object.respond_to?(attr)
@@ -528,12 +576,12 @@ module Zee
     # @private
     # @example
     #   translation_for(:label, :name, default: "Name")
-    def translation_for(scope, attr, default: nil)
+    private def translation_for(scope, attr, default: nil)
       I18n.t(scope, scope: [:form, object_name, attr], default:)
     end
 
     # @private
-    def add_error_class(attr, attrs, *other_classes)
+    private def add_error_class(attr, attrs, *other_classes)
       {
         **attrs,
         class: class_names(
@@ -545,7 +593,7 @@ module Zee
     end
 
     # @private
-    def build_input(type, attr, **attrs)
+    private def build_input(type, attr, **attrs)
       attrs = add_error_class(attr, attrs)
       attrs[:placeholder] ||=
         translation_for(:placeholder, attr, default: false)

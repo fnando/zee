@@ -4,6 +4,8 @@ module Zee
   class Test < Minitest::Test
     module Assertions
       module HTML
+        Minitest::Utils::Reporter.filters << %r{zee/test/assertions/html\.rb}
+
         def indent_xsl
           @indent_xsl ||= File.read(File.join(__dir__, "indent.xsl"))
         end

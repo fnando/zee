@@ -243,7 +243,7 @@ module Zee
       # @return [SafeBuffer] The HTML for the label.
       def label_tag(name, text = nil, **attrs, &)
         name = name.to_s
-
+        attrs[:class] = class_names(attrs[:class], :label)
         attrs[:for] ||= normalize_id(name)
         text ||= (name[/\[([a-z_]+)\]/, 1] || name).humanize
         content_tag(:label, text, **attrs, &)

@@ -583,9 +583,9 @@ class FormBuilderTest < Zee::Test
       form: {
         page: {
           tags: {
-            _values: {
-              ruby: "Ruby",
-              rust: "Rust"
+            values: {
+              ruby: {label: "Ruby (.rb)"},
+              rust: {label: "Rust (.rs)"}
             }
           }
         }
@@ -606,12 +606,12 @@ class FormBuilderTest < Zee::Test
     group = assert_selector(html, "form>.field-group:nth-of-type(1)")
     heading = assert_selector group,
                               ":root>input#page_tags_ruby[type=checkbox]+span"
-    assert_selector heading, ":root.field-group-heading>label", text: /Ruby/
+    assert_selector heading, ":root.field-group-heading>label", text: /\.rb/
 
     group = assert_selector(html, "form>.field-group:nth-of-type(2)")
     heading = assert_selector group,
                               ":root>input#page_tags_rust[type=checkbox]+span"
-    assert_selector heading, ":root.field-group-heading>label", text: /Rust/
+    assert_selector heading, ":root.field-group-heading>label", text: /\.rs/
   end
 
   test "renders checkbox group using default labels" do
@@ -704,6 +704,135 @@ class FormBuilderTest < Zee::Test
     assert_selector heading, ":root.field-group-heading>label", text: /Rust/
     assert_selector heading, ":root.field-group-heading>label~.hint",
                     text: /systems/
+  end
+
+  test "renders checkbox group field with all elements" do
+    project = {
+      features: %w[wikis],
+      errors: {features: ["`foo` is not a valid feature"]}
+    }
+    store_translations(
+      :en,
+      form: {
+        project: {
+          features: {
+            hint: "Define which features will be available on your project",
+            values: {
+              wikis: {
+                label: "Wikis",
+                hint: "Wikis host documentation for your project."
+              },
+              issues: {
+                label: "Issues",
+                hint: "Issues integrate task tracking into your project."
+              }
+            }
+          }
+        }
+      }
+    )
+
+    template = <<~ERB
+      <%= form_for project, action: "/projects/1", as: :project do |f| %>
+        <%= f.field :features, %w[wikis issues], type: :checkbox_group %>
+      <% end %>
+    ERB
+    html = render(template, locals: {project:}, request:)
+
+    assert_selector html,
+                    ".field.invalid>.field-info>span.label",
+                    text: /Features/
+    assert_selector html,
+                    ".field.invalid>.field-info>.hint",
+                    text: /Define which features/
+
+    group = assert_selector html,
+                            ".field>.field-controls>.field-group:nth-child(1)"
+    assert_selector group, ":root>#project_features_wikis[checked=checked]"
+    assert_selector group,
+                    ":root>input+.field-group-heading>label",
+                    text: "Wikis"
+    assert_selector group,
+                    ":root>input+.field-group-heading>label~.hint",
+                    text: /Wikis host/
+
+    group = assert_selector html,
+                            ".field>.field-controls>.field-group:nth-child(2)"
+    assert_selector group,
+                    ":root>#project_features_issues:not([checked=checked])"
+    assert_selector group,
+                    ":root>input+.field-group-heading>label",
+                    text: "Issues"
+    assert_selector group,
+                    ":root>input+.field-group-heading>label~.hint",
+                    text: /Issues integrate/
+  end
+
+  test "renders radio field with all elements" do
+    site = {theme: "light"}
+    store_translations(
+      :en,
+      form: {
+        site: {
+          theme: {
+            hint: "Chose how the interface will look for you",
+            values: {
+              system: {
+                label: "Sync with system",
+                hint: "Theme will match your system active settings"
+              },
+              light: {
+                label: "Light Theme",
+                hint: "Bright, crisp interface with high contrast visuals."
+              },
+              dark: {
+                label: "Dark Theme",
+                hint: "Sleek, eye-friendly display for low-light settings."
+              }
+            }
+          }
+        }
+      }
+    )
+
+    template = <<~ERB
+      <%= form_for site, action: "/sites/1", as: :site do |f| %>
+        <%= f.field :theme, ["system", "light", "dark"], type: :radio_group %>
+      <% end %>
+    ERB
+
+    html = render(template, locals: {site:}, request:)
+
+    assert_selector html, "form>.field", count: 1
+    assert_selector html, "form>.field>.field-controls>.field-group", count: 3
+    assert_selector html, "form>.field input[checked=checked]", count: 1
+
+    group = assert_selector html,
+                            ".field>.field-controls>.field-group:nth-of-type(1)"
+    heading = assert_selector group,
+                              ":root>input#site_theme_system[type=radio]+span"
+    assert_selector heading, ":root.field-group-heading>label", text: /Sync/
+    assert_selector heading, ":root.field-group-heading>label~.hint",
+                    text: /system/
+
+    group = assert_selector html,
+                            ".field>.field-controls>.field-group:nth-of-type(2)"
+    heading = assert_selector group,
+                              ":root>input#site_theme_light[checked=checked]" \
+                              "[type=radio]+span"
+    assert_selector heading, ":root.field-group-heading>label",
+                    text: /Light Theme/
+    assert_selector heading, ":root.field-group-heading>label~.hint",
+                    text: /Bright/
+
+    group = assert_selector html,
+                            ".field>.field-controls>.field-group:nth-of-type(3)"
+    heading = assert_selector group,
+                              ":root>input#site_theme_dark[type=radio]+span"
+    assert_selector heading, ":root.field-group-heading>label",
+                    text: /Dark Theme/
+    assert_selector heading, ":root.field-group-heading>label~.hint",
+                    text: /Sleek/
   end
 
   test "renders radio group using hints when available" do
@@ -835,5 +964,52 @@ class FormBuilderTest < Zee::Test
 
     assert_selector html, "input#user_name[name='user[name]']" \
                           "[placeholder='E.g. Jane']"
+  end
+
+  test "renders text field with all elements" do
+    user = {errors: {name: ["can't be blank"]}}
+    store_translations(:en,
+                       form: {user: {name: {hint: "How users will see you"}}})
+    template = <<~ERB
+      <%= form_for user, action: "/users", as: :user do |f| %>
+        <%= f.field :name %>
+      <% end %>
+    ERB
+    html = render(template, locals: {user:}, request:)
+
+    assert_selector html, ".field.invalid>.field-info>label", text: /Name/
+    assert_selector html, ".field>.field-info>label+.hint", text: /How/
+    assert_selector html, ".field>.field-controls>input[type=text]"
+    assert_selector html, ".field>.field-controls>input+.error", text: /can't/
+  end
+
+  test "renders text field with without hint" do
+    user = {errors: {name: ["can't be blank"]}}
+    template = <<~ERB
+      <%= form_for user, action: "/users", as: :user do |f| %>
+        <%= f.field :name %>
+      <% end %>
+    ERB
+    html = render(template, locals: {user:}, request:)
+
+    assert_selector html, ".field>.field-info>label", text: /Name/
+    assert_selector html, ".field>.field-info>label+.hint", count: 0
+    assert_selector html, ".field>.field-controls>input[type=text]"
+    assert_selector html, ".field>.field-controls>input+.error", text: /can't/
+  end
+
+  test "renders text field with without error" do
+    user = {}
+    template = <<~ERB
+      <%= form_for user, action: "/users", as: :user do |f| %>
+        <%= f.field :name %>
+      <% end %>
+    ERB
+    html = render(template, locals: {user:}, request:)
+
+    assert_selector html, ".field:not(.invalid)>.field-info>label", text: /Name/
+    assert_selector html, ".field>.field-info>label+.hint", count: 0
+    assert_selector html, ".field>.field-controls>input[type=text]"
+    assert_selector html, ".field>.field-controls>input+.error", count: 0
   end
 end
