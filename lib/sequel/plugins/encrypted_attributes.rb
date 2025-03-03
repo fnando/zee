@@ -10,7 +10,7 @@ module Sequel
     # plain text (e.g. storing OAuth token from users). Passwords do not fall in
     # that category.
     #
-    # == Configuration
+    # ## Configuration
     #
     # As far as database schema goes:
     #
@@ -64,7 +64,7 @@ module Sequel
       end
 
       module ClassMethods
-        # @private
+        # @api private
         def inherited(subclass)
           super
 
@@ -148,14 +148,14 @@ module Sequel
           end
         end
 
-        # @private
+        # @api private
         def define_encrypted_attribute_writer(attribute)
           define_method(:"#{attribute}=") do |value|
             encrypt_column(attribute, value)
           end
         end
 
-        # @private
+        # @api private
         def define_encrypted_attribute_reader(attribute)
           define_method(attribute) do
             decrypt_column(attribute)
@@ -164,7 +164,7 @@ module Sequel
       end
 
       module InstanceMethods
-        # @private
+        # @api private
         def before_save
           super
           migrate_to_latest_encryption_key
@@ -179,7 +179,7 @@ module Sequel
           save
         end
 
-        # @private
+        # @api private
         private def encrypt_column(attribute, value)
           clear_decrypted_column_cache(attribute)
           unless encryptable_value?(value)
@@ -202,7 +202,7 @@ module Sequel
           public_send(:"#{attribute}_digest=", digest)
         end
 
-        # @private
+        # @api private
         private def decrypt_column(attribute)
           cache_name = :"@#{attribute}"
 
@@ -225,7 +225,7 @@ module Sequel
           instance_variable_set(cache_name, decrypted_value)
         end
 
-        # @private
+        # @api private
         private def clear_decrypted_column_cache(attribute)
           cache_name = :"@#{attribute}"
 
@@ -234,7 +234,7 @@ module Sequel
           remove_instance_variable(cache_name)
         end
 
-        # @private
+        # @api private
         private def reset_encrypted_column(attribute)
           public_send(:"encrypted_#{attribute}=", nil)
           if respond_to?(:"#{attribute}_digest=")
@@ -243,7 +243,7 @@ module Sequel
           nil
         end
 
-        # @private
+        # @api private
         private def migrate_to_latest_encryption_key
           return unless self.class.keyring.current_key
 
@@ -268,7 +268,7 @@ module Sequel
           public_send(:"#{self.class.keyring_column_name}=", keyring_id)
         end
 
-        # @private
+        # @api private
         private def encryptable_value?(value)
           return false if value.nil?
           return false if value.is_a?(String) && value.empty?

@@ -3,11 +3,22 @@
 module Zee
   module Middleware
     class Static
+      # @api private
       NOCACHE = "no-store, no-cache, max-age=0, must-revalidate"
+
+      # @api private
       CACHE_CONTROL = "cache-control"
+
+      # @api private
       SLASH_ASSETS = "/assets/"
+
+      # @api private
       PATH_INFO = "PATH_INFO"
+
+      # @api private
       REQUEST_METHOD = "REQUEST_METHOD"
+
+      # @api private
       METHODS = %w[GET HEAD].freeze
 
       def initialize(app)

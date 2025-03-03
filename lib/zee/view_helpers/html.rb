@@ -7,13 +7,13 @@ module Zee
       include OutputSafety
       include Capture
 
-      # @private
+      # @api private
       OPEN_TAGS = %w[
         area base br col command embed hr img input keygen link meta param
         source track wbr
       ].freeze
 
-      # @private
+      # @api private
       BOOLEAN_ATTRS = %w[
         allowfullscreen async autofocus autoplay checked controls default defer
         disabled formnovalidate hidden ismap itemscope loop multiple muted
@@ -21,7 +21,7 @@ module Zee
         truespeed
       ].freeze
 
-      # @private
+      # @api private
       KEEP_BLANK_ATTRS = %w[value].freeze
 
       # Returns an HTML tag with the specified content.
@@ -32,13 +32,19 @@ module Zee
       # @return [Zee::SafeBuffer]
       #
       # @example Using a string
+      #   ```erb
       #   <%= tag(:div, "hello!") %>
+      #   ```
       #
       # @example Passing attributes
+      #   ```erb
       #   <%= tag(:div, "hello!", id: "header") %>
+      #   ```
       #
       # @example Open tags
+      #   ```erb
       #   <%= tag(:br, id: "header") %>
+      #   ```
       def tag(name, content = nil, **attrs)
         open_tag = OPEN_TAGS.include?(name.to_s) || attrs.delete(:open)
         attrs = html_attrs(attrs)
@@ -62,15 +68,21 @@ module Zee
       # @return [Zee::SafeBuffer]
       #
       # @example Using a block
+      #   ```erb
       #   <%= content_tag(:div) do %>
       #     Hello, World!
       #   <% end %>
+      #   ```
       #
       # @example Using a string
+      #   ```erb
       #   <%= content_tag(:div, "hello!") %>
+      #   ```
       #
       # @example Passing attributes
+      #   ```erb
       #   <%= content_tag(:div, "hello!", id: "header") %>
+      #   ```
       def content_tag(name, content = nil, **attrs, &)
         content = capture(&) if block_given?
         tag(name, content, **attrs)
@@ -84,12 +96,16 @@ module Zee
       # @return [Zee::SafeBuffer]
       #
       # @example Using a block
+      #   ```erb
       #   <%= javascript_tag do %>
       #     console.log("Hello, World!");
       #   <% end %>
+      #   ```
       #
       # @example Passing a string
+      #   ```erb
       #   <%= javascript_tag(%[console.log("Hello, World!");])
+      #   ```
       def javascript_tag(content = nil, &)
         content = if block_given?
                     capture(&).raw
@@ -110,12 +126,16 @@ module Zee
       # @return [Zee::SafeBuffer]
       #
       # @example Using a block
+      #   ```erb
       #   <%= style_tag do %>
       #     body { color: red; }
       #   <% end %>
+      #   ```
       #
       # @example Passing a string
+      #   ```erb
       #   <%= style_tag("body { color: red; }")
+      #   ```
       def style_tag(content = nil, &)
         content = if block_given?
                     capture(&)&.raw
@@ -176,7 +196,7 @@ module Zee
         escape_html(classes.map(&:to_s).uniq.join(SPACE))
       end
 
-      # @private
+      # @api private
       # Build the HTML attributes.
       # @param attrs [Hash{Symbol => Object}]
       # @return [String]
@@ -189,7 +209,7 @@ module Zee
         attrs.map {|k, v| build_attr(k, v) }.join
       end
 
-      # @private
+      # @api private
       # Build namespaced attributes. Any key with an underscore will be
       # converted to a dash.
       # @param attrs [Hash{Symbol => Object}]
@@ -203,7 +223,7 @@ module Zee
         end
       end
 
-      # @private
+      # @api private
       private def build_attr(name, value)
         name = name.to_s
 

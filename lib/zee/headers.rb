@@ -26,6 +26,7 @@ module Zee
       @store
     end
 
+    # @api private
     private def transform_key(name)
       name.to_s.tr(UNDERSCORE, DASH).downcase
     end

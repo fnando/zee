@@ -580,12 +580,14 @@ class FormBuilderTest < Zee::Test
     page = {tags: ["ruby"]}
     store_translations(
       :en,
-      form: {
-        page: {
-          tags: {
-            values: {
-              ruby: {label: "Ruby (.rb)"},
-              rust: {label: "Rust (.rs)"}
+      zee: {
+        forms: {
+          page: {
+            tags: {
+              values: {
+                ruby: {label: "Ruby (.rb)"},
+                rust: {label: "Rust (.rs)"}
+              }
             }
           }
         }
@@ -661,18 +663,20 @@ class FormBuilderTest < Zee::Test
     page = {tags: ["ruby"]}
     store_translations(
       :en,
-      form: {
-        page: {
-          tags: {
-            values: {
-              ruby: {
-                label: "Ruby",
-                hint: "Elegant language focused on readability and happiness."
-              },
-              rust: {
-                label: "Rust",
-                hint: "Fast, memory-safe systems language without garbage " \
-                      "collection."
+      zee: {
+        forms: {
+          page: {
+            tags: {
+              values: {
+                ruby: {
+                  label: "Ruby",
+                  hint: "Elegant language focused on readability and happiness."
+                },
+                rust: {
+                  label: "Rust",
+                  hint: "Fast, memory-safe systems language without garbage " \
+                        "collection."
+                }
               }
             }
           }
@@ -713,18 +717,20 @@ class FormBuilderTest < Zee::Test
     }
     store_translations(
       :en,
-      form: {
-        project: {
-          features: {
-            hint: "Define which features will be available on your project",
-            values: {
-              wikis: {
-                label: "Wikis",
-                hint: "Wikis host documentation for your project."
-              },
-              issues: {
-                label: "Issues",
-                hint: "Issues integrate task tracking into your project."
+      zee: {
+        forms: {
+          project: {
+            features: {
+              hint: "Define which features will be available on your project",
+              values: {
+                wikis: {
+                  label: "Wikis",
+                  hint: "Wikis host documentation for your project."
+                },
+                issues: {
+                  label: "Issues",
+                  hint: "Issues integrate task tracking into your project."
+                }
               }
             }
           }
@@ -772,22 +778,24 @@ class FormBuilderTest < Zee::Test
     site = {theme: "light"}
     store_translations(
       :en,
-      form: {
-        site: {
-          theme: {
-            hint: "Chose how the interface will look for you",
-            values: {
-              system: {
-                label: "Sync with system",
-                hint: "Theme will match your system active settings"
-              },
-              light: {
-                label: "Light Theme",
-                hint: "Bright, crisp interface with high contrast visuals."
-              },
-              dark: {
-                label: "Dark Theme",
-                hint: "Sleek, eye-friendly display for low-light settings."
+      zee: {
+        forms: {
+          site: {
+            theme: {
+              hint: "Chose how the interface will look for you",
+              values: {
+                system: {
+                  label: "Sync with system",
+                  hint: "Theme will match your system active settings"
+                },
+                light: {
+                  label: "Light Theme",
+                  hint: "Bright, crisp interface with high contrast visuals."
+                },
+                dark: {
+                  label: "Dark Theme",
+                  hint: "Sleek, eye-friendly display for low-light settings."
+                }
               }
             }
           }
@@ -839,21 +847,23 @@ class FormBuilderTest < Zee::Test
     site = {theme: "light"}
     store_translations(
       :en,
-      form: {
-        site: {
-          theme: {
-            values: {
-              system: {
-                label: "Sync with system",
-                hint: "Theme will match your system active settings"
-              },
-              light: {
-                label: "Light Theme",
-                hint: "Bright, crisp interface with high contrast visuals."
-              },
-              dark: {
-                label: "Dark Theme",
-                hint: "Sleek, eye-friendly display for low-light settings."
+      zee: {
+        forms: {
+          site: {
+            theme: {
+              values: {
+                system: {
+                  label: "Sync with system",
+                  hint: "Theme will match your system active settings"
+                },
+                light: {
+                  label: "Light Theme",
+                  hint: "Bright, crisp interface with high contrast visuals."
+                },
+                dark: {
+                  label: "Dark Theme",
+                  hint: "Sleek, eye-friendly display for low-light settings."
+                }
               }
             }
           }
@@ -925,7 +935,8 @@ class FormBuilderTest < Zee::Test
 
   test "renders hint using i18n" do
     user = {}
-    store_translations(:en, form: {user: {name: {hint: "This is a hint"}}})
+    store_translations(:en,
+                       zee: {forms: {user: {name: {hint: "This is a hint"}}}})
     template = <<~ERB
       <%= form_for user, action: "/users", as: :user do |f| %>
         <%= f.hint :name %>
@@ -939,7 +950,7 @@ class FormBuilderTest < Zee::Test
 
   test "renders label using i18n" do
     user = {}
-    store_translations(:en, form: {user: {name: {label: "Your name"}}})
+    store_translations(:en, zee: {forms: {user: {name: {label: "Your name"}}}})
     template = <<~ERB
       <%= form_for user, action: "/users", as: :user do |f| %>
         <%= f.label :name %>
@@ -953,7 +964,8 @@ class FormBuilderTest < Zee::Test
 
   test "renders placeholder using i18n" do
     user = {}
-    store_translations(:en, form: {user: {name: {placeholder: "E.g. Jane"}}})
+    store_translations(:en,
+                       zee: {forms: {user: {name: {placeholder: "E.g. Jane"}}}})
     template = <<~ERB
       <%= form_for user, action: "/users", as: :user do |f| %>
         <%= f.text_field :name %>
@@ -968,8 +980,18 @@ class FormBuilderTest < Zee::Test
 
   test "renders text field with all elements" do
     user = {errors: {name: ["can't be blank"]}}
-    store_translations(:en,
-                       form: {user: {name: {hint: "How users will see you"}}})
+    store_translations(
+      :en,
+      zee: {
+        forms: {
+          user: {
+            name: {
+              hint: "How users will see you"
+            }
+          }
+        }
+      }
+    )
     template = <<~ERB
       <%= form_for user, action: "/users", as: :user do |f| %>
         <%= f.field :name %>

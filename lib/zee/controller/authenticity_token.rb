@@ -3,6 +3,7 @@
 module Zee
   class Controller
     module AuthenticityToken
+      # @api private
       def self.included(base)
         base.before_action { renew_authenticity_token! if request.get? }
       end
@@ -31,8 +32,9 @@ module Zee
         render status: 422, text: "Invalid authenticity token"
       end
 
-      # @private
+      # @api private
       # Verify the authenticity token.
+      #
       # @param expected [String] The expected token.
       # @param actual [String] The actual token.
       # @return [Boolean]
@@ -53,8 +55,9 @@ module Zee
         OpenSSL.secure_compare(expected_token, actual_token.to_s)
       end
 
-      # @private
+      # @api private
       # Skip the authenticity token verification.
+      #
       # @return [Boolean]
       private def skip_authenticity_token_verification?
         request.get? || request.head?
@@ -67,6 +70,7 @@ module Zee
         session[ZEE_CSRF_TOKEN] = SecureRandom.hex(32)
       end
 
+      # @api private
       private def create_authenticity_token_hmac(input)
         OpenSSL::HMAC.hexdigest(
           OpenSSL::Digest.new("SHA256"),
@@ -77,6 +81,7 @@ module Zee
 
       # @!visibility public
       # The authenticity token.
+      #
       # @param request_method [String] The request method.
       # @param path [String] The request path.
       # @return [String]

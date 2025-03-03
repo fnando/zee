@@ -2,6 +2,7 @@
 
 module Zee
   class SafeBuffer
+    # @api private
     JSON_ESCAPE = {
       "&" => '\u0026',
       ">" => '\u003e',
@@ -9,9 +10,11 @@ module Zee
       "\u2028" => '\u2028',
       "\u2029" => '\u2029'
     }.freeze
+
+    # @api private
     JSON_ESCAPE_REGEXP = /[\u2028\u2029&><]/u
 
-    # @private
+    # @api private
     def self.safe_buffer_instance?(item)
       item.class.ancestors.include?(SafeBuffer)
     end
@@ -82,7 +85,7 @@ module Zee
       [@buffer[0]].concat(Array(@buffer[1..-1]).map { escape(_1) }).join
     end
 
-    # @private
+    # @api private
     def inspect
       to_s.inspect
     end
@@ -99,7 +102,7 @@ module Zee
       raw.to_s.gsub(JSON_ESCAPE_REGEXP, JSON_ESCAPE)
     end
 
-    # @private
+    # @api private
     private def escape(item)
       if self.class.safe_buffer_instance?(item)
         item.to_s
@@ -108,7 +111,7 @@ module Zee
       end
     end
 
-    # @private
+    # @api private
     class Erubi < SafeBuffer
       def initialize(safe_buffer = EMPTY_STRING, root: false)
         super(safe_buffer)

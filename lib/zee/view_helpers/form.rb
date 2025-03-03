@@ -6,91 +6,91 @@ module Zee
       using Core::String
       include HTML
 
-      # @private
+      # @api private
       BUTTON_LABEL = "Button"
 
-      # @private
+      # @api private
       CHECKBOX = "checkbox"
 
-      # @private
+      # @api private
       COLOR = "color"
 
-      # @private
+      # @api private
       DATE = "date"
 
-      # @private
+      # @api private
       DATETIME = "datetime-local"
 
-      # @private
+      # @api private
       DOUBLE_ZERO = "00"
 
-      # @private
+      # @api private
       EMAIL = "email"
 
-      # @private
+      # @api private
       FILE = "file"
 
-      # @private
+      # @api private
       FORM_END = "</form>"
 
-      # @private
+      # @api private
       HIDDEN = "hidden"
 
-      # @private
+      # @api private
       ID_CLEANER = "^-a-zA-Z0-9:."
 
-      # @private
+      # @api private
       INPUT_FILE_RE = /<input.*?type="file"/
 
-      # @private
+      # @api private
       MONTH = "month"
 
-      # @private
+      # @api private
       MULTIPART = "multipart/form-data"
 
-      # @private
+      # @api private
       NUMBER = "number"
 
-      # @private
+      # @api private
       OFF = "off"
 
-      # @private
+      # @api private
       PASSWORD = "password"
 
-      # @private
+      # @api private
       RADIO = "radio"
 
-      # @private
+      # @api private
       RANGE = "range"
 
-      # @private
+      # @api private
       SEARCH = "search"
 
-      # @private
+      # @api private
       TEL = "tel"
 
-      # @private
+      # @api private
       TEXT = "text"
 
-      # @private
+      # @api private
       TIME = "time"
 
-      # @private
+      # @api private
       TIME_WITH_SECONDS = "%H:%M:%S"
 
-      # @private
+      # @api private
       TIME_WITHOUT_SECONDS = "%H:%M"
 
-      # @private
+      # @api private
       URL = "url"
 
-      # @private
+      # @api private
       URL_PATTERN = "^https?://"
 
-      # @private
+      # @api private
       YEAR_MONTH = "%Y-%m"
 
-      # @private
+      # @api private
       YEAR_MONTH_DAY = "%Y-%m-%d"
 
       # Render a `button` tag.
@@ -176,24 +176,32 @@ module Zee
       # @return [SafeBuffer] The HTML for the form.
       #
       # @example Without passing a block
+      #   ```erb
       #   <%= form_tag(action: "/login") %>
+      #   ```
       #
       # @example Passing a block
+      #   ```erb
       #   <%= form_tag(action: "/login") do %>
       #     <p><%= email_field_tag :email, params[:email] %></p>
       #     <p><%= submit_tag "Log in" %></p>
       #   <% end %>
+      #   ```
       #
       # @example Defining a multipart form
+      #   ```erb
       #   <%= form_tag(action: "/upload", multipart: true) do %>
       #     <p><%= file_field_tag :avatar, params[:avatar] %></p>
       #     <p><%= submit_tag "Upload" %></p>
       #   <% end %>
+      #   ```
       #
       # @example Using authenticity token
+      #   ```erb
       #   <%= form_tag(action: "/upload", authenticity_token: "abc") do %>
       #     <p><%= submit_tag "Upload" %></p>
       #   <% end %>
+      #   ```
       def form_tag(
         action:,
         method: :post,
@@ -541,7 +549,7 @@ module Zee
         tag(:input, name:, value:, type:, id:, **attrs)
       end
 
-      # @private
+      # @api private
       def normalize_id(name)
         name.to_s.delete(CLOSE_SQUARE_BRACKET).tr(ID_CLEANER, UNDERSCORE)
       end
@@ -553,6 +561,7 @@ module Zee
       # @return [SafeBuffer] The HTML for the form.
       #
       # @example
+      #   ```erb
       #   <%= form_for(user, action: "/users") do |f| %>
       #     <p>
       #       <%= f.label :name %>
@@ -566,6 +575,7 @@ module Zee
       #
       #     <p><%= f.submit %></p>
       #   <% end %>
+      #   ```
       def form_for(object, action:, as: :form, **, &)
         authenticity_token = request.env[ZEE_CSRF_TOKEN]
 

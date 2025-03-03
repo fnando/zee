@@ -2,6 +2,7 @@
 
 module Zee
   class Environment
+    # @api private
     NAMES = %i[development test production local].freeze
 
     # Returns the name of the environment.
@@ -19,26 +20,32 @@ module Zee
     end
 
     # Returns true if the environment is development.
+    # @return [Boolean]
     def development?
       name == :development
     end
 
     # Returns true if the environment is test.
+    # @return [Boolean]
     def test?
       name == :test
     end
 
     # Returns true if the environment is production.
+    # @return [Boolean]
     def production?
       name == :production
     end
 
     # Returns true if the environment is local (either `test` or `development`).
+    # @return [Boolean]
     def local?
       test? || development?
     end
 
     # Implements equality for the environment.
+    # @param other [Symbol, String] The environment to compare.
+    # @return [Boolean]
     def ==(other)
       name == other || name.to_s == other
     end

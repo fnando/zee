@@ -31,29 +31,29 @@ module Zee
                    :time_field_tag,
                    :url_field_tag
 
-    # @private
+    # @api private
     # The values that will be used to mark a `input[type=checkbox]` as checked.
     TRUTHY_VALUES = %w[1 true yes TRUE YES].freeze
 
-    # @private
+    # @api private
     SUBMIT = "submit"
 
-    # @private
+    # @api private
     FIELD = "field"
 
-    # @private
+    # @api private
     FIELD_INFO = "field-info"
 
-    # @private
+    # @api private
     FIELD_CONTROLS = "field-controls"
 
-    # @private
+    # @api private
     FIELD_GROUP_HEADING = "field-group-heading"
 
-    # @private
+    # @api private
     FIELD_GROUP = "field-group"
 
-    # @private
+    # @api private
     ERROR = "error"
 
     # @return [Object] The field value source.
@@ -73,6 +73,7 @@ module Zee
     # Render a `input[type=text]` field.
     # @param attr [String, Symbol] The attribute name.
     # @param attrs [Hash{Symbol => Object}] The HTML attributes.
+    # @return [SafeBuffer]
     # @see ViewHelpers::Form#text_field_tag
     def text_field(attr, **attrs)
       build_input(:text, attr, **attrs)
@@ -81,6 +82,7 @@ module Zee
     # Render a `input[type=color]` field.
     # @param attr [String, Symbol] The attribute name.
     # @param attrs [Hash{Symbol => Object}] The HTML attributes.
+    # @return [SafeBuffer]
     # @see ViewHelpers::Form#color_field_tag
     def color_field(attr, **attrs)
       build_input(:color, attr, **attrs)
@@ -89,6 +91,7 @@ module Zee
     # Render a `input[type=date]` field.
     # @param attr [String, Symbol] The attribute name.
     # @param attrs [Hash{Symbol => Object}] The HTML attributes.
+    # @return [SafeBuffer]
     # @see ViewHelpers::Form#date_field_tag
     def date_field(attr, **attrs)
       build_input(:date, attr, **attrs)
@@ -97,6 +100,7 @@ module Zee
     # Render a `input[type=datetime]` field.
     # @param attr [String, Symbol] The attribute name.
     # @param attrs [Hash{Symbol => Object}] The HTML attributes.
+    # @return [SafeBuffer]
     # @see ViewHelpers::Form#datetime_field_tag
     def datetime_field(attr, **attrs)
       build_input(:datetime, attr, **attrs)
@@ -105,6 +109,7 @@ module Zee
     # Render a `input[type=file]` field.
     # @param attr [String, Symbol] The attribute name.
     # @param attrs [Hash{Symbol => Object}] The HTML attributes.
+    # @return [SafeBuffer]
     # @see ViewHelpers::Form#text_field_tag
     def file_field(attr, **attrs)
       build_input(:file, attr, **attrs)
@@ -113,6 +118,7 @@ module Zee
     # Render a `input[type=email]` field.
     # @param attr [String, Symbol] The attribute name.
     # @param attrs [Hash{Symbol => Object}] The HTML attributes.
+    # @return [SafeBuffer]
     # @see ViewHelpers::Form#email_field_tag
     def email_field(attr, **attrs)
       build_input(:email, attr, **attrs)
@@ -121,6 +127,7 @@ module Zee
     # Render a `input[type=hidden]` field.
     # @param attr [String, Symbol] The attribute name.
     # @param attrs [Hash{Symbol => Object}] The HTML attributes.
+    # @return [SafeBuffer]
     # @see ViewHelpers::Form#hidden_field_tag
     def hidden_field(attr, **attrs)
       build_input(:hidden, attr, **attrs)
@@ -129,6 +136,7 @@ module Zee
     # Render a `input[type=month]` field.
     # @param attr [String, Symbol] The attribute name.
     # @param attrs [Hash{Symbol => Object}] The HTML attributes.
+    # @return [SafeBuffer]
     # @see ViewHelpers::Form#month_field_tag
     def month_field(attr, **attrs)
       build_input(:month, attr, **attrs)
@@ -137,6 +145,7 @@ module Zee
     # Render a `input[type=number]` field.
     # @param attr [String, Symbol] The attribute name.
     # @param attrs [Hash{Symbol => Object}] The HTML attributes.
+    # @return [SafeBuffer]
     # @see ViewHelpers::Form#number_field_tag
     def number_field(attr, **attrs)
       build_input(:number, attr, **attrs)
@@ -145,6 +154,7 @@ module Zee
     # Render a `input[type=password]` field.
     # @param attr [String, Symbol] The attribute name.
     # @param attrs [Hash{Symbol => Object}] The HTML attributes.
+    # @return [SafeBuffer]
     # @see ViewHelpers::Form#password_field_tag
     def password_field(attr, **attrs)
       build_input(:password, attr, **attrs)
@@ -153,6 +163,7 @@ module Zee
     # Render a `input[type=tel]` field.
     # @param attr [String, Symbol] The attribute name.
     # @param attrs [Hash{Symbol => Object}] The HTML attributes.
+    # @return [SafeBuffer]
     # @see ViewHelpers::Form#phone_field_tag
     def phone_field(attr, **attrs)
       build_input(:phone, attr, **attrs)
@@ -162,6 +173,7 @@ module Zee
     # @param attr [String, Symbol] The attribute name.
     # @param value [String] The input value.
     # @param attrs [Hash{Symbol => Object}] The HTML attributes.
+    # @return [SafeBuffer]
     # @see ViewHelpers::Form#radio_button_tag
     def radio(attr, value, **attrs)
       attrs = add_error_class(attr, attrs)
@@ -175,6 +187,7 @@ module Zee
     # Render a `input[type=search]` field.
     # @param attr [String, Symbol] The attribute name.
     # @param attrs [Hash{Symbol => Object}] The HTML attributes.
+    # @return [SafeBuffer]
     # @see ViewHelpers::Form#search_field_tag
     def search_field(attr, **attrs)
       build_input(:search, attr, **attrs)
@@ -184,6 +197,7 @@ module Zee
     # @param attr [String, Symbol] The attribute name.
     # @param options [Array<Object>] The `select` options.
     # @param attrs [Hash{Symbol => Object}] The HTML attributes.
+    # @return [SafeBuffer]
     # @see ViewHelpers::Form#select_tag
     def select(attr, options = [], **attrs)
       attrs = add_error_class(attr, attrs)
@@ -196,6 +210,7 @@ module Zee
     # Render a `textarea` field.
     # @param attr [String, Symbol] The attribute name.
     # @param attrs [Hash{Symbol => Object}] The HTML attributes.
+    # @return [SafeBuffer]
     # @see ViewHelpers::Form#textarea_tag
     def textarea(attr, **attrs)
       build_input(:textarea, attr, **attrs)
@@ -205,6 +220,7 @@ module Zee
     # Render a `input[type=time]` field.
     # @param attr [String, Symbol] The attribute name.
     # @param attrs [Hash{Symbol => Object}] The HTML attributes.
+    # @return [SafeBuffer]
     # @see ViewHelpers::Form#time_field_tag
     def time_field(attr, **attrs)
       build_input(:time, attr, **attrs)
@@ -213,6 +229,7 @@ module Zee
     # Render a `input[type=url]` field.
     # @param attr [String, Symbol] The attribute name.
     # @param attrs [Hash{Symbol => Object}] The HTML attributes.
+    # @return [SafeBuffer]
     # @see ViewHelpers::Form#url_field_tag
     def url_field(attr, **attrs)
       build_input(:url, attr, **attrs)
@@ -238,8 +255,10 @@ module Zee
     # @param unchecked_value [String] The value that'll be used when the input
     #                                 is unchecked.
     # @param attrs [Hash{Symbol => Object}] The HTML attributes.
+    # @param value [Object, nil] When set, the checkbox will be in collection
+    #                            mode.
+    # @return [SafeBuffer]
     # @see ViewHelpers::Form#checkbox_tag
-    # @param [Object, nil] value
     def checkbox(
       attr,
       value = nil,
@@ -287,17 +306,20 @@ module Zee
     # text for each attribute value. You must have a translation defined as
     # follows:
     #
-    #     en:
-    #       forms:
-    #         theme:
-    #           color:
-    #             values:
-    #               red:
-    #                 label: "Red"
-    #                 hint: "This is a hint"
-    #               green:
-    #                 label: "Green"
-    #                 hint: "This is also a hint"
+    # ```yaml
+    # en:
+    #   zee:
+    #     forms:
+    #       theme:
+    #         color:
+    #           values:
+    #             red:
+    #               label: "Red"
+    #               hint: "This is a hint"
+    #             green:
+    #               label: "Green"
+    #               hint: "This is also a hint"
+    # ```
     #
     # @param attr [String, Symbol] The attribute name.
     # @param items [Array<Array<Object, Object>>] The checkbox items.
@@ -331,17 +353,20 @@ module Zee
     # text for each attribute value. You must have a translation defined as
     # follows:
     #
-    #     en:
-    #       forms:
-    #         settings:
-    #           theme:
-    #             values:
-    #               light:
-    #                 label: "Light Theme"
-    #                 hint: "Bright, crisp interface with high contrast visuals"
-    #               green:
-    #                 label: "Dark Theme"
-    #                 hint: "Sleek, eye-friendly display for low-light settings"
+    # ```yaml
+    # en:
+    #   zee:
+    #     forms:
+    #       settings:
+    #         theme:
+    #           values:
+    #             light:
+    #               label: "Light Theme"
+    #               hint: "Bright, crisp interface with high contrast visuals"
+    #             green:
+    #               label: "Dark Theme"
+    #               hint: "Sleek, eye-friendly display for low-light settings"
+    # ```
     #
     # @param attr [String, Symbol] The attribute name.
     # @param items [Array<Array<Object, Object>>] The radio items.
@@ -366,7 +391,7 @@ module Zee
       control_group(attr, items, :radio)
     end
 
-    # @private
+    # @api private
     private def control_group(attr, items, field_type)
       buffer = SafeBuffer.new
 
@@ -436,6 +461,7 @@ module Zee
 
     # Render a submit button field.
     # @param label [String, nil] The button label.
+    # @return [SafeBuffer]
     def submit(label = "Submit", **, &)
       button_tag(label, **, type: SUBMIT, &)
     end
@@ -447,15 +473,18 @@ module Zee
     # defaulting to a humanized version of the attribute name.
     #
     # The scope for the translation will be
-    # `[:form, object_name, attribute, :label]`. Say you have a `User` model and
-    # you're rendering a label for the `name` attribute. You must have a
-    # translation defined as follows:
+    # `[:zee, :forms, object_name, attribute, :label]`. Say you have a `User`
+    # model and you're rendering a label for the `name` attribute. You must have
+    # a translation defined as follows:
     #
-    #     en:
-    #       forms:
-    #         user:
-    #           name:
-    #             label: "Your Name"
+    # ```yaml
+    # en:
+    #   zee:
+    #     forms:
+    #       user:
+    #         name:
+    #           label: "Your Name"
+    # ```
     #
     # @param attr [String, Symbol] The attribute name.
     # @param text [String,  SafeBuffer, nil] The label text. When not provided,
@@ -469,13 +498,13 @@ module Zee
       label_tag(id_for(*Array(attr)), label_text(attr, text), **attrs, &)
     end
 
-    # @private
+    # @api private
     private def label_text(attr, text = nil)
       text ||= Array(attr).last.to_s.humanize
       translation_for :label, attr, default: text
     end
 
-    # @private
+    # @api private
     private def hint_text(attr, text)
       text || translation_for(:hint, attr, default: EMPTY_STRING)
     end
@@ -491,11 +520,14 @@ module Zee
     # you're rendering a hint for the `name` attribute. You must have a
     # translation defined as follows:
     #
-    #     en:
-    #       forms:
-    #         user:
-    #           name:
-    #             hint: "This is how users will see you in the site."
+    # ```yaml
+    # en:
+    #   zee:
+    #     forms:
+    #       user:
+    #         name:
+    #           hint: "This is how users will see you in the site."
+    # ```
     #
     # @param attr [String, Symbol] The attribute name.
     # @param text [String,  SafeBuffer, nil] The label text. When not provided,
@@ -503,6 +535,7 @@ module Zee
     #                                        attribute name will be used
     #                                        instead.
     # @param attrs [Hash{Symbol => Object}] The HTML attributes.
+    # @return [SafeBuffer, nil]
     # @see ViewHelpers::Form#label_tag
     def hint(attr, text = nil, **attrs)
       attrs = add_error_class(attr, attrs, :hint)
@@ -542,7 +575,7 @@ module Zee
       )
     end
 
-    # @private
+    # @api private
     # Generate `name` attribute for the provided attribute.
     # The final form will be something like `user[name]`.
     # @param attr [String, Symbol] The attribute name.
@@ -553,14 +586,14 @@ module Zee
       "#{object_name}[#{attr}]#{suffix}"
     end
 
-    # @private
+    # @api private
     # Generate `id` attribute for the provided attribute.
     # @return [String]
     private def id_for(attr, value = nil)
       normalize_id([name_for(attr), value].compact.join(UNDERSCORE))
     end
 
-    # @private
+    # @api private
     # Retrieve the value out of the object source.
     # If the object responds to `#[](attr)`, that will be used. Otherwise, we'll
     # call `object.attr`.
@@ -573,14 +606,14 @@ module Zee
       end
     end
 
-    # @private
+    # @api private
     # @example
     #   translation_for(:label, :name, default: "Name")
     private def translation_for(scope, attr, default: nil)
-      I18n.t(scope, scope: [:form, object_name, attr], default:)
+      I18n.t(scope, scope: [:zee, :forms, object_name, attr], default:)
     end
 
-    # @private
+    # @api private
     private def add_error_class(attr, attrs, *other_classes)
       {
         **attrs,
@@ -592,7 +625,7 @@ module Zee
       }
     end
 
-    # @private
+    # @api private
     private def build_input(type, attr, **attrs)
       attrs = add_error_class(attr, attrs)
       attrs[:placeholder] ||=

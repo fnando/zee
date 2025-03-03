@@ -14,6 +14,8 @@ module Zee
       instance_eval(&) if block_given?
     end
 
+    # Get all routes in array form.
+    # @return [Array<Zee::Route>]
     def to_a
       @store.dup
     end
@@ -146,6 +148,7 @@ module Zee
     # Find a route that matches the current request.
     #
     # @param request [Zee::Request] the current request.
+    # @return [Zee::Route, nil] the route that matches the request.
     def find(request)
       @store.find { _1.match?(request) }
     end
@@ -259,6 +262,7 @@ module Zee
       @constraints.pop if constraints
     end
 
+    # @api private
     private def merge_hash(list, other)
       list.push(other)
           .flatten

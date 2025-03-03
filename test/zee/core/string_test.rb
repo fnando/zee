@@ -23,12 +23,21 @@ class StringTest < Minitest::Test
     assert_equal "UserTag", "user_tag".camelize
     assert_equal "Module::User", "module/user".camelize
     assert_equal "Module::UserTag", "module/user_tag".camelize
+
+    assert_equal "user", "user".camelize(:lower)
+    assert_equal "userTag", "user_tag".camelize(:lower)
+    assert_equal "module::User", "module/user".camelize(:lower)
+    assert_equal "module::UserTag", "module/user_tag".camelize(:lower)
+
+    error = assert_raises(ArgumentError) { "user".camelize(:invalid) }
+    assert_equal "invalid option: :invalid", error.message
   end
 
   test "#humanize" do
     assert_equal "Name", "name".humanize
     assert_equal "Full name", "full_name".humanize
     assert_equal "User", "user_id".humanize
+    assert_equal "User", "_user".humanize
     assert_equal "User id", "user_id".humanize(keep_id_suffix: true)
   end
 

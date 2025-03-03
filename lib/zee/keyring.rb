@@ -3,9 +3,9 @@
 module Zee
   # Simple encryption-at-rest with key rotation support for Ruby.
   #
-  # == Encryption
+  # ## Encryption
   #
-  # By default, AES-128-CBC is the algorithm used for encryption. This algorithm
+  # By default, AES-256-GCM is the algorithm used for encryption. This algorithm
   # uses 16 bytes keys, but you're required to use a key that's double the size
   # because half of that keys will be used to generate the HMAC. The first 16
   # bytes will be used as the encryption key, and the last 16 bytes will be used
@@ -14,14 +14,16 @@ module Zee
   # Using random data base64-encoded is the recommended way. You can easily
   # generate keys by using the following command:
   #
-  #     $ dd if=/dev/urandom bs=32 count=1 2>/dev/null | openssl base64 -A
-  #     qUjOJFgZsZbTICsN0TMkKqUvSgObYxnkHDsazTqE5tM=
+  # ```console
+  # $ dd if=/dev/urandom bs=32 count=1 2>/dev/null | openssl base64 -A
+  # qUjOJFgZsZbTICsN0TMkKqUvSgObYxnkHDsazTqE5tM=
+  # ```
   #
   # Include the result of this command in the `value` section of the key
   # description in the keyring. Half this key is used for encryption, and half
   # for the HMAC.
   #
-  # == Key Size
+  # ## Key Size
   #
   # The key size depends on the algorithm being used. The key size should be
   # double the size as half of it is used for HMAC computation.
@@ -31,7 +33,7 @@ module Zee
   # - `aes-256-cbc`: 32 bytes (encryption) + 32 bytes (HMAC).
   # - `aes-256-gcm`: 32 bytes (encryption) + 32 bytes (HMAC).
   #
-  # == About the encrypted message
+  # ## About the encrypted message
   #
   # Initialization vectors (IV) should be unpredictable and unique; ideally,
   # they will be cryptographically random. They do not have to be secret: IVs
@@ -43,40 +45,45 @@ module Zee
   # With that in mind, the format for `AES-128-CBC`, `AES-192-CBC` and
   # `AES-256-CBC`{Zee::Keyring} is:
   #
-  #     message_hmac = hmac(iv + "--" + encrypted)
-  #     base64(message_hmac + "--" + unencrypted iv + "--" + encrypted message)
+  # ```
+  # message_hmac = hmac(iv + "--" + encrypted)
+  # base64(message_hmac + "--" + unencrypted iv + "--" + encrypted message)
+  # ```
   #
   # For `AES-256-GCM`, the format also includes the auth tag:
   #
-  #     base64(
-  #       message_hmac + "--" +
-  #       unencrypted iv + "--" +
-  #       unencrypted auth tag + "--" +
-  #       encrypted message
-  #     )
+  # ```
+  # base64(
+  #   message_hmac + "--" +
+  #   unencrypted iv + "--" +
+  #   unencrypted auth tag + "--" +
+  #   encrypted message
+  # )
+  # ```
   #
   # If you're planning to migrate from other encryption mechanisms or read
   # encrypted values from the database without using {Zee::Keyring}, make sure
   # you account for this. The HMAC is 32-bytes long and the IV is 16-bytes long.
   #
-  # == Keyring
+  # ## Keyring
   #
   # Keys are managed through a keyring--a short JSON document describing your
   # encryption keys. The keyring must be a JSON object mapping numeric ids of
   # the keys to the key values. A keyring must have at least one key. For
   # example:
   #
-  #     {
-  #       "1": "uDiMcWVNTuz//naQ88sOcN+E40CyBRGzGTT7OkoBS6M=",
-  #       "2": "VN8UXRVMNbIh9FWEFVde0q7GUA1SGOie1+FgAKlNYHc="
-  #     }
+  # ```json
+  # {
+  #   "1": "uDiMcWVNTuz//naQ88sOcN+E40CyBRGzGTT7OkoBS6M=",
+  #   "2": "VN8UXRVMNbIh9FWEFVde0q7GUA1SGOie1+FgAKlNYHc="
+  # }
   # ```
   #
   # The `id` is used to track which key encrypted which piece of data; a key
   # with a larger id is assumed to be newer. The value is the actual bytes of
   # the encryption key.
   #
-  # == Looking Up Records
+  # ## Looking Up Records
   #
   # One tricky aspect of encryption is looking up records by known secret. E.g.
   # `User.where(email: "john@example.com")` is trivial with plain text fields,
@@ -88,9 +95,11 @@ module Zee
   # recommended; this way you can avoid leaking your users' info via rainbow
   # tables.
   #
-  #     User.where(email: User.keyring.digest("john@example.com")).first
+  # ```ruby
+  # User.where(email: User.keyring.digest("john@example.com")).first
+  # ```
   #
-  # == Key Rotation
+  # ## Key Rotation
   #
   # Because attr_keyring uses a keyring, with access to multiple keys at once,
   # key rotation is fairly straightforward: if you add a key to the keyring with
@@ -100,15 +109,19 @@ module Zee
   #
   # To check if an existing key with id `123` is still in use, run:
   #
-  #     # For a large dataset, you may want to index the `keyring_id` column.
-  #     User.where(keyring_id: 123).empty?
+  # ```ruby
+  # # For a large dataset, you may want to index the `keyring_id` column.
+  # User.where(keyring_id: 123).empty?
+  # ```
   #
   # You may not want to wait for records to be updated (e.g. key leaking). In
   # that case, you can rollout a key rotation:
   #
-  #     User.where(keyring_id: 1234).find_each do |user|
-  #       user.keyring_rotate!
-  #     end
+  # ```ruby
+  # User.where(keyring_id: 1234).find_each do |user|
+  #   user.keyring_rotate!
+  # end
+  # ```
   #
   # @example Basic usage
   #   keyring = Zee::Keyring.new(
@@ -156,7 +169,7 @@ module Zee
     MissingDigestSalt = Class.new(StandardError)
 
     # The encryptor that will be used on this keyring.
-    # Defaults to {Encryptor::AES::AES128CBC}.
+    # Defaults to {Encryptor::AES::AES256CBC}.
     attr_reader :encryptor
 
     # The digest salt used to generate digests.

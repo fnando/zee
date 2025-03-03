@@ -13,7 +13,7 @@ module Zee
 
     class << self
       # The CSRF parameter name.
-      # Defaults to `:_authenticity_token`.
+      # Defaults to `_authenticity_token`.
       # @return [String]
       attr_accessor :csrf_param_name
     end
@@ -28,7 +28,7 @@ module Zee
     # Expose helper methods to templates.
     # With this method, you can expose helper methods to all actions.
     #
-    # @see #expose
+    # @see Locals#expose
     #
     # @example Expose a helper method to all actions.
     #   class ApplicationController < Zee::Controller
@@ -47,7 +47,7 @@ module Zee
       before_action { expose(*, **) }
     end
 
-    # @private
+    # @api private
     def self.inherited(subclass)
       super
 
@@ -132,15 +132,13 @@ module Zee
       response.body = EMPTY_STRING
     end
 
-    # @private
+    # @api private
     # Run the action on the controller.
-    # This will also run all callbacks defined by {#before_action}.
+    # This will also run all callbacks defined by {#Callbacks#before_action}.
     #
     # @raise [MissingActionError] If the action is missing.
     # @raise [MissingTemplateError] If the template is missing.
-    #
-    # @example Run the show action.
-    #   call("show")
+    # @return [void]
     private def call
       # Run before action callbacks.
       self.class.callbacks[:before].each do |(callback, conditions)|

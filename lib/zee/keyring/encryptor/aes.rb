@@ -2,7 +2,7 @@
 
 module Zee
   class Keyring
-    # @private
+    # @api private
     module Encryptor
       module AES
         class Base

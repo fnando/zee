@@ -2,7 +2,7 @@
 
 module Zee
   class Keyring
-    # @private
+    # @api private
     class Key
       attr_reader :id, :signing_key, :encryption_key
 
@@ -12,11 +12,13 @@ module Zee
         @encryption_key, @signing_key = parse_key(key)
       end
 
+      # @api private
       def to_s
         "#<#{self.class.name} id=#{id.inspect}>"
       end
       alias inspect to_s
 
+      # @api private
       private def parse_key(key)
         expected_size = @size * 2
         secret = decode_key(key, expected_size)
@@ -33,6 +35,7 @@ module Zee
         [encryption_key, signing_key]
       end
 
+      # @api private
       private def decode_key(key, size)
         if key.bytesize == size
           key

@@ -1,0 +1,5 @@
+:root {
+  --sans-font: ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --monospace-font: ui-monospace, monospace;
+  --bg-pre: #f9f9f9;
+}
