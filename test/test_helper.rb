@@ -36,6 +36,7 @@ module Minitest
     setup { FileUtils.mkdir("tmp") }
     setup { Zee.app = SampleAppInstance }
     setup { I18n.backend.reload! }
+    setup { I18n.available_locales = [:en] }
 
     teardown { FileUtils.rm_rf("tmp") }
 
@@ -56,6 +57,10 @@ module Minitest
 
       File.write("tmp/template.erb", template)
       Zee.app.render_template("tmp/template.erb", request:, locals:)
+    end
+
+    def store_translations(locale, translations)
+      I18n.backend.store_translations(locale, translations)
     end
   end
 end

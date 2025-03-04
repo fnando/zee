@@ -1,0 +1,29 @@
+---
+en:
+  sequel:
+    errors:
+      exact_length:
+        one: "must have exactly one character"
+        other: "must have exactly %{count} characters"
+      format: "is invalid"
+      includes: "must be one of %{list}"
+      integer: "is not a number"
+      numeric: "is not a number"
+      length_range: "must have between %{lower} and %{upper} characters"
+      not_present: "is not present"
+      not_null: "is not present"
+      no_null_byte: "contains a null byte"
+      type: "must be %{type}"
+      unique: "is already taken"
+      max_length:
+        one: "must be have up to 1 character"
+        other: "must be have up to %{count} characters"
+      min_length:
+        one: "must be have at least 1 character"
+        other: "must be have at least %{count} characters"
+      max_value:
+        one: "must be smaller than %{count}"
+        other: "must be smaller than %{count}"
+      min_value:
+        one: "must be greater than %{count}"
+        other: "must be greater than %{count}"
