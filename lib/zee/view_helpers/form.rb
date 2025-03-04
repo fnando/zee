@@ -168,7 +168,7 @@ module Zee
       end
 
       # Render a `form` tag.
-      # @param action [String] The action attribute of the form.
+      # @param url [String] The action attribute of the form.
       # @param method [Symbol] The method attribute of the form.
       # @param multipart [Boolean] Whether the form is multipart.
       # @param authenticity_token [String] The authenticity token.
@@ -177,12 +177,12 @@ module Zee
       #
       # @example Without passing a block
       #   ```erb
-      #   <%= form_tag(action: "/login") %>
+      #   <%= form_tag(url: "/login") %>
       #   ```
       #
       # @example Passing a block
       #   ```erb
-      #   <%= form_tag(action: "/login") do %>
+      #   <%= form_tag(url: "/login") do %>
       #     <p><%= email_field_tag :email, params[:email] %></p>
       #     <p><%= submit_tag "Log in" %></p>
       #   <% end %>
@@ -190,7 +190,7 @@ module Zee
       #
       # @example Defining a multipart form
       #   ```erb
-      #   <%= form_tag(action: "/upload", multipart: true) do %>
+      #   <%= form_tag(url: "/upload", multipart: true) do %>
       #     <p><%= file_field_tag :avatar, params[:avatar] %></p>
       #     <p><%= submit_tag "Upload" %></p>
       #   <% end %>
@@ -198,12 +198,12 @@ module Zee
       #
       # @example Using authenticity token
       #   ```erb
-      #   <%= form_tag(action: "/upload", authenticity_token: "abc") do %>
+      #   <%= form_tag(url: "/upload", authenticity_token: "abc") do %>
       #     <p><%= submit_tag "Upload" %></p>
       #   <% end %>
       #   ```
       def form_tag(
-        action:,
+        url:,
         method: :post,
         multipart: false,
         authenticity_token: nil,
@@ -218,7 +218,7 @@ module Zee
 
         attrs[:enctype] = MULTIPART if multipart || has_input_file
         buffer = SafeBuffer.new
-        buffer << tag(:form, action:, method:, **attrs, open: true)
+        buffer << tag(:form, action: url, method:, **attrs, open: true)
 
         if authenticity_token && method != :get
           buffer << input_field_tag(
@@ -556,13 +556,13 @@ module Zee
 
       # Render a form for a given object.
       # @param object [Object] The object to render the form for.
-      # @param action [String] The action attribute of the form.
+      # @param url [String] The action attribute of the form.
       # @param as [String] The name of the object.
       # @return [SafeBuffer] The HTML for the form.
       #
       # @example
       #   ```erb
-      #   <%= form_for(user, action: "/users") do |f| %>
+      #   <%= form_for(user, url: "/users") do |f| %>
       #     <p>
       #       <%= f.label :name %>
       #       <%= f.text_field :name %>
@@ -576,11 +576,11 @@ module Zee
       #     <p><%= f.submit %></p>
       #   <% end %>
       #   ```
-      def form_for(object, action:, as: :form, **, &)
+      def form_for(object, url:, as: :form, **, &)
         authenticity_token = request.env[ZEE_CSRF_TOKEN]
 
         form = FormBuilder.new(object:, context: self, object_name: as, **)
-        form_tag(action:, authenticity_token:, **) { instance_exec(form, &) }
+        form_tag(url:, authenticity_token:, **) { instance_exec(form, &) }
       end
     end
   end

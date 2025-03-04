@@ -101,17 +101,17 @@ class FormTest < Minitest::Test
   end
 
   test "renders form tag" do
-    assert_selector helpers.form_tag(action: "/login"),
+    assert_selector helpers.form_tag(url: "/login"),
                     "form[action='/login'][method=post]"
 
     assert_selector \
-      helpers.form_tag(action: "/upload", multipart: true),
+      helpers.form_tag(url: "/upload", multipart: true),
       "form[action='/upload'][method=post][enctype='multipart/form-data']"
   end
 
   test "renders form tag when using file input" do
     html = render <<~ERB
-      <%= form_tag(action: "/upload") do %>
+      <%= form_tag(url: "/upload") do %>
         <%= file_field_tag(:avatar) %>
       <% end %>
     ERB
@@ -122,7 +122,7 @@ class FormTest < Minitest::Test
 
   test "renders form with block" do
     html = render <<~ERB
-      <%= form_tag(action: "/posts") do %>
+      <%= form_tag(url: "/posts") do %>
         <%= button_tag("Save", type: :submit) %>
       <% end %>
     ERB
@@ -134,7 +134,7 @@ class FormTest < Minitest::Test
 
   test "renders form with authenticity token" do
     html = render <<~ERB
-      <%= form_tag(action: "/posts", authenticity_token: "abc") do %>
+      <%= form_tag(url: "/posts", authenticity_token: "abc") do %>
         <%= button_tag("Save", type: :submit) %>
       <% end %>
     ERB

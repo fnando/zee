@@ -23,7 +23,7 @@ class FormBuilderTest < Zee::Test
     user = {name: "Jane"}
 
     template = <<~ERB
-      <%= form_for user, action: "/users", as: :user do |f| %>
+      <%= form_for user, url: "/users", as: :user do |f| %>
         <%= f.text_field :name %>
       <% end %>
     ERB
@@ -44,7 +44,7 @@ class FormBuilderTest < Zee::Test
     user = mock(name: "Jane")
 
     template = <<~ERB
-      <%= form_for user, action: "/users", as: :user do |f| %>
+      <%= form_for user, url: "/users", as: :user do |f| %>
         <%= f.text_field :name %>
       <% end %>
     ERB
@@ -65,7 +65,7 @@ class FormBuilderTest < Zee::Test
     user = {name: "Jane"}
 
     template = <<~ERB
-      <%= form_for user, action: "/users", as: :user do |f| %>
+      <%= form_for user, url: "/users", as: :user do |f| %>
         <%= f.text_field :name %>
       <% end %>
     ERB
@@ -81,7 +81,7 @@ class FormBuilderTest < Zee::Test
     page = {bgcolor: "#ff0"}
 
     template = <<~ERB
-      <%= form_for page, action: "/pages/1", as: :page do |f| %>
+      <%= form_for page, url: "/pages/1", as: :page do |f| %>
         <%= f.color_field :bgcolor %>
       <% end %>
     ERB
@@ -99,7 +99,7 @@ class FormBuilderTest < Zee::Test
     page = {published_at:}
 
     template = <<~ERB
-      <%= form_for page, action: "/pages/1", as: :page do |f| %>
+      <%= form_for page, url: "/pages/1", as: :page do |f| %>
         <%= f.date_field :published_at %>
       <% end %>
     ERB
@@ -117,7 +117,7 @@ class FormBuilderTest < Zee::Test
     page = {published_at:}
 
     template = <<~ERB
-      <%= form_for page, action: "/pages/1", as: :page do |f| %>
+      <%= form_for page, url: "/pages/1", as: :page do |f| %>
         <%= f.datetime_field :published_at %>
       <% end %>
     ERB
@@ -133,7 +133,7 @@ class FormBuilderTest < Zee::Test
     page = {}
 
     template = <<~ERB
-      <%= form_for page, action: "/pages/1", as: :page do |f| %>
+      <%= form_for page, url: "/pages/1", as: :page do |f| %>
         <%= f.file_field :header %>
       <% end %>
     ERB
@@ -148,7 +148,7 @@ class FormBuilderTest < Zee::Test
     user = {email: "me@example.com"}
 
     template = <<~ERB
-      <%= form_for user, action: "/users/1", as: :user do |f| %>
+      <%= form_for user, url: "/users/1", as: :user do |f| %>
         <%= f.email_field :email %>
       <% end %>
     ERB
@@ -163,7 +163,7 @@ class FormBuilderTest < Zee::Test
     user = {ref: "ref_code"}
 
     template = <<~ERB
-      <%= form_for user, action: "/users/1", as: :user do |f| %>
+      <%= form_for user, url: "/users/1", as: :user do |f| %>
         <%= f.hidden_field :ref %>
       <% end %>
     ERB
@@ -179,7 +179,7 @@ class FormBuilderTest < Zee::Test
     user = {published_at: now}
 
     template = <<~ERB
-      <%= form_for user, action: "/users/1", as: :user do |f| %>
+      <%= form_for user, url: "/users/1", as: :user do |f| %>
         <%= f.month_field :published_at %>
       <% end %>
     ERB
@@ -194,7 +194,7 @@ class FormBuilderTest < Zee::Test
     product = {quantity: 5}
 
     template = <<~ERB
-      <%= form_for product, action: "/products/1", as: :product do |f| %>
+      <%= form_for product, url: "/products/1", as: :product do |f| %>
         <%= f.number_field :quantity %>
       <% end %>
     ERB
@@ -209,7 +209,7 @@ class FormBuilderTest < Zee::Test
     user = {}
 
     template = <<~ERB
-      <%= form_for user, action: "/users/1", as: :user do |f| %>
+      <%= form_for user, url: "/users/1", as: :user do |f| %>
         <%= f.password_field :password %>
       <% end %>
     ERB
@@ -224,7 +224,7 @@ class FormBuilderTest < Zee::Test
     user = {mobile_phone: "+15555555555"}
 
     template = <<~ERB
-      <%= form_for user, action: "/users/1", as: :user do |f| %>
+      <%= form_for user, url: "/users/1", as: :user do |f| %>
         <%= f.phone_field :mobile_phone %>
       <% end %>
     ERB
@@ -239,7 +239,7 @@ class FormBuilderTest < Zee::Test
     page = {status: "enabled"}
 
     template = <<~ERB
-      <%= form_for page, action: "/pages/1", as: :page do |f| %>
+      <%= form_for page, url: "/pages/1", as: :page do |f| %>
         <%= f.radio_button :status, "disabled" %>
         <%= f.radio_button :status, "enabled" %>
       <% end %>
@@ -259,7 +259,7 @@ class FormBuilderTest < Zee::Test
     search = {query: "ruby"}
 
     template = <<~ERB
-      <%= form_for search, action: "/search", as: :search do |f| %>
+      <%= form_for search, url: "/search", as: :search do |f| %>
         <%= f.search_field :query %>
       <% end %>
     ERB
@@ -279,7 +279,7 @@ class FormBuilderTest < Zee::Test
     ]
 
     template = <<~ERB
-      <%= form_for user, action: "/users/1", as: :user do |f| %>
+      <%= form_for user, url: "/users/1", as: :user do |f| %>
         <%= f.select :country, options %>
       <% end %>
     ERB
@@ -302,7 +302,7 @@ class FormBuilderTest < Zee::Test
     user = {bio: "I love Ruby"}
 
     template = <<~ERB
-      <%= form_for user, action: "/user", as: :user do |f| %>
+      <%= form_for user, url: "/user", as: :user do |f| %>
         <%= f.textarea :bio %>
       <% end %>
     ERB
@@ -318,7 +318,7 @@ class FormBuilderTest < Zee::Test
     event = {time: now}
 
     template = <<~ERB
-      <%= form_for event, action: "/events/1", as: :event do |f| %>
+      <%= form_for event, url: "/events/1", as: :event do |f| %>
         <%= f.time_field :time %>
       <% end %>
     ERB
@@ -333,7 +333,7 @@ class FormBuilderTest < Zee::Test
     event = {url: "https://example.com"}
 
     template = <<~ERB
-      <%= form_for event, action: "/events/1", as: :event do |f| %>
+      <%= form_for event, url: "/events/1", as: :event do |f| %>
         <%= f.url_field :url %>
       <% end %>
     ERB
@@ -348,7 +348,7 @@ class FormBuilderTest < Zee::Test
     user = {}
 
     template = <<~ERB
-      <%= form_for user, action: "/users", as: :user do |f| %>
+      <%= form_for user, url: "/users", as: :user do |f| %>
         <%= f.label :name %>
       <% end %>
     ERB
@@ -362,7 +362,7 @@ class FormBuilderTest < Zee::Test
     user = {}
 
     template = <<~ERB
-      <%= form_for user, action: "/users", as: :user do |f| %>
+      <%= form_for user, url: "/users", as: :user do |f| %>
         <%= f.label :name, "Your name" %>
       <% end %>
     ERB
@@ -376,7 +376,7 @@ class FormBuilderTest < Zee::Test
     user = {}
 
     template = <<~ERB
-      <%= form_for user, action: "/users", as: :user do |f| %>
+      <%= form_for user, url: "/users", as: :user do |f| %>
         <%= f.label :name do %>
           Your name
         <% end %>
@@ -392,7 +392,7 @@ class FormBuilderTest < Zee::Test
     user = {}
 
     template = <<~ERB
-      <%= form_for user, action: "/users", as: :user do |f| %>
+      <%= form_for user, url: "/users", as: :user do |f| %>
         <%= f.label [:foo, "bar"] %>
       <% end %>
     ERB
@@ -406,7 +406,7 @@ class FormBuilderTest < Zee::Test
     user = {}
 
     template = <<~ERB
-      <%= form_for user, action: "/users", as: :user do |f| %>
+      <%= form_for user, url: "/users", as: :user do |f| %>
         <%= f.submit %>
       <% end %>
     ERB
@@ -420,7 +420,7 @@ class FormBuilderTest < Zee::Test
     user = {}
 
     template = <<~ERB
-      <%= form_for user, action: "/users", as: :user do |f| %>
+      <%= form_for user, url: "/users", as: :user do |f| %>
         <%= f.submit "Save" %>
       <% end %>
     ERB
@@ -434,7 +434,7 @@ class FormBuilderTest < Zee::Test
     user = {}
 
     template = <<~ERB
-      <%= form_for user, action: "/users", as: :user do |f| %>
+      <%= form_for user, url: "/users", as: :user do |f| %>
         <%= f.checkbox :enabled %>
       <% end %>
     ERB
@@ -454,7 +454,7 @@ class FormBuilderTest < Zee::Test
     user = {enabled: true}
 
     template = <<~ERB
-      <%= form_for user, action: "/users", as: :user do |f| %>
+      <%= form_for user, url: "/users", as: :user do |f| %>
         <%= f.checkbox :enabled %>
       <% end %>
     ERB
@@ -474,7 +474,7 @@ class FormBuilderTest < Zee::Test
     user = {enabled: "1"}
 
     template = <<~ERB
-      <%= form_for user, action: "/users", as: :user do |f| %>
+      <%= form_for user, url: "/users", as: :user do |f| %>
         <%= f.checkbox :enabled %>
       <% end %>
     ERB
@@ -494,7 +494,7 @@ class FormBuilderTest < Zee::Test
     user = {enabled: "yep"}
 
     template = <<~ERB
-      <%= form_for user, action: "/users", as: :user do |f| %>
+      <%= form_for user, url: "/users", as: :user do |f| %>
         <%= f.checkbox :enabled, checked_value: "yep", unchecked_value: "nope" %>
       <% end %>
     ERB
@@ -514,7 +514,7 @@ class FormBuilderTest < Zee::Test
     user = {}
 
     template = <<~ERB
-      <%= form_for user, action: "/users", as: :user do |f| %>
+      <%= form_for user, url: "/users", as: :user do |f| %>
         <%= f.checkbox :enabled, unchecked_value: nil %>
       <% end %>
     ERB
@@ -529,7 +529,7 @@ class FormBuilderTest < Zee::Test
     page = {tags: ["ruby"]}
 
     template = <<~ERB
-      <%= form_for page, action: "/pages/1", as: :page do |f| %>
+      <%= form_for page, url: "/pages/1", as: :page do |f| %>
         <%= f.checkbox :tags, "ruby" %>
         <%= f.checkbox :tags, "python" %>
       <% end %>
@@ -551,7 +551,7 @@ class FormBuilderTest < Zee::Test
     page = {tags: ["ruby"]}
 
     template = <<~ERB
-      <%= form_for page, action: "/pages/1", as: :page do |f| %>
+      <%= form_for page, url: "/pages/1", as: :page do |f| %>
         <%= f.checkbox_group :tags, [["ruby", "Ruby"], ["rust", "Rust"]] %>
       <% end %>
     ERB
@@ -591,7 +591,7 @@ class FormBuilderTest < Zee::Test
     )
 
     template = <<~ERB
-      <%= form_for page, action: "/pages/1", as: :page do |f| %>
+      <%= form_for page, url: "/pages/1", as: :page do |f| %>
         <%= f.checkbox_group :tags, ["ruby", "rust"] %>
       <% end %>
     ERB
@@ -616,7 +616,7 @@ class FormBuilderTest < Zee::Test
     page = {tags: ["ruby"]}
 
     template = <<~ERB
-      <%= form_for page, action: "/pages/1", as: :page do |f| %>
+      <%= form_for page, url: "/pages/1", as: :page do |f| %>
         <%= f.checkbox_group :tags, ["ruby", "rust"] %>
       <% end %>
     ERB
@@ -641,7 +641,7 @@ class FormBuilderTest < Zee::Test
     user = {errors: {name: ["can't be blank"]}}
 
     template = <<~ERB
-      <%= form_for user, action: "/users", as: :user do |f| %>
+      <%= form_for user, url: "/users", as: :user do |f| %>
         <%= f.label :name %>
         <%= f.text_field :name %>
         <%= f.error :name %>
@@ -681,7 +681,7 @@ class FormBuilderTest < Zee::Test
     )
 
     template = <<~ERB
-      <%= form_for page, action: "/pages/1", as: :page do |f| %>
+      <%= form_for page, url: "/pages/1", as: :page do |f| %>
         <%= f.checkbox_group :tags, ["ruby", "rust"] %>
       <% end %>
     ERB
@@ -735,7 +735,7 @@ class FormBuilderTest < Zee::Test
     )
 
     template = <<~ERB
-      <%= form_for project, action: "/projects/1", as: :project do |f| %>
+      <%= form_for project, url: "/projects/1", as: :project do |f| %>
         <%= f.field :features, %w[wikis issues], type: :checkbox_group %>
       <% end %>
     ERB
@@ -800,7 +800,7 @@ class FormBuilderTest < Zee::Test
     )
 
     template = <<~ERB
-      <%= form_for site, action: "/sites/1", as: :site do |f| %>
+      <%= form_for site, url: "/sites/1", as: :site do |f| %>
         <%= f.field :theme, ["system", "light", "dark"], type: :radio_group %>
       <% end %>
     ERB
@@ -868,7 +868,7 @@ class FormBuilderTest < Zee::Test
     )
 
     template = <<~ERB
-      <%= form_for site, action: "/sites/1", as: :site do |f| %>
+      <%= form_for site, url: "/sites/1", as: :site do |f| %>
         <%= f.radio_group :theme, ["system", "light", "dark"] %>
       <% end %>
     ERB
@@ -906,7 +906,7 @@ class FormBuilderTest < Zee::Test
   test "renders hint" do
     user = {}
     template = <<~ERB
-      <%= form_for user, action: "/users", as: :user do |f| %>
+      <%= form_for user, url: "/users", as: :user do |f| %>
         <%= f.hint :name, "This is a hint" %>
       <% end %>
     ERB
@@ -919,7 +919,7 @@ class FormBuilderTest < Zee::Test
   test "renders placeholder" do
     user = {}
     template = <<~ERB
-      <%= form_for user, action: "/users", as: :user do |f| %>
+      <%= form_for user, url: "/users", as: :user do |f| %>
         <%= f.text_field :name, placeholder: "E.g. Jane" %>
       <% end %>
     ERB
@@ -934,7 +934,7 @@ class FormBuilderTest < Zee::Test
     store_translations(:en,
                        zee: {forms: {user: {name: {hint: "This is a hint"}}}})
     template = <<~ERB
-      <%= form_for user, action: "/users", as: :user do |f| %>
+      <%= form_for user, url: "/users", as: :user do |f| %>
         <%= f.hint :name %>
       <% end %>
     ERB
@@ -948,7 +948,7 @@ class FormBuilderTest < Zee::Test
     user = {}
     store_translations(:en, zee: {forms: {user: {name: {label: "Your name"}}}})
     template = <<~ERB
-      <%= form_for user, action: "/users", as: :user do |f| %>
+      <%= form_for user, url: "/users", as: :user do |f| %>
         <%= f.label :name %>
       <% end %>
     ERB
@@ -963,7 +963,7 @@ class FormBuilderTest < Zee::Test
     store_translations(:en,
                        zee: {forms: {user: {name: {placeholder: "E.g. Jane"}}}})
     template = <<~ERB
-      <%= form_for user, action: "/users", as: :user do |f| %>
+      <%= form_for user, url: "/users", as: :user do |f| %>
         <%= f.text_field :name %>
       <% end %>
     ERB
@@ -989,7 +989,7 @@ class FormBuilderTest < Zee::Test
       }
     )
     template = <<~ERB
-      <%= form_for user, action: "/users", as: :user do |f| %>
+      <%= form_for user, url: "/users", as: :user do |f| %>
         <%= f.field :name %>
       <% end %>
     ERB
@@ -1004,7 +1004,7 @@ class FormBuilderTest < Zee::Test
   test "renders text field with without hint" do
     user = {errors: {name: ["can't be blank"]}}
     template = <<~ERB
-      <%= form_for user, action: "/users", as: :user do |f| %>
+      <%= form_for user, url: "/users", as: :user do |f| %>
         <%= f.field :name %>
       <% end %>
     ERB
@@ -1019,7 +1019,7 @@ class FormBuilderTest < Zee::Test
   test "renders text field with without error" do
     user = {}
     template = <<~ERB
-      <%= form_for user, action: "/users", as: :user do |f| %>
+      <%= form_for user, url: "/users", as: :user do |f| %>
         <%= f.field :name %>
       <% end %>
     ERB
