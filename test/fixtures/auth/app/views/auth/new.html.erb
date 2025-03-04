@@ -1,0 +1,7 @@
+<%= form_for user, as: :user, url: login_path do |f| %>
+  <%= f.field :email %>
+
+  <p>
+    <%= f.submit "Log in" %>
+  </p>
+<% end %>

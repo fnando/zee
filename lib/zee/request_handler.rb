@@ -34,6 +34,7 @@ module Zee
         controller_name:
       )
 
+      controller.extend(app.routes.helpers)
       controller.send(:call)
 
       content_type = response.headers[:content_type]

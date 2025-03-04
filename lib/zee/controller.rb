@@ -25,10 +25,6 @@ module Zee
     include AuthenticityToken
     include Locals
 
-    def self.enable(*modules)
-      p modules
-    end
-
     # Expose helper methods to templates.
     # With this method, you can expose helper methods to all actions.
     #
