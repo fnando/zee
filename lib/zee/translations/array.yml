@@ -1,0 +1,15 @@
+---
+en:
+  zee:
+    core:
+      array:
+        to_sentence:
+          and:
+            words_connector: ", "
+            two_words_connector: " and "
+            last_word_connector: ", and "
+
+          or:
+            words_connector: ", "
+            two_words_connector: " or "
+            last_word_connector: ", or "

@@ -19,10 +19,6 @@ class FormBuilderTest < Zee::Test
   setup { request.env[Zee::ZEE_CSRF_TOKEN] = "abc" }
   setup { I18n.available_locales = [:en] }
 
-  def store_translations(locale, translations)
-    I18n.backend.store_translations(locale, translations)
-  end
-
   test "builds form using hash" do
     user = {name: "Jane"}
 

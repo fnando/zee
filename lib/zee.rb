@@ -27,3 +27,5 @@ loader.inflector.inflect(
 )
 loader.ignore("#{__dir__}/sequel")
 loader.setup
+
+I18n.load_path += Dir["#{__dir__}/zee/translations/**/*.yml"]

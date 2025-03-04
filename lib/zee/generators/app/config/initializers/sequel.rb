@@ -8,6 +8,11 @@ Zee.app.init do
   Sequel::Model.db.loggers.clear
   Sequel::Model.db.loggers << Logger.new($stdout) if env.development?
 
+  # Enable plugin with localized validators.
+  # @see https://github.com/fnando/zee/tree/main/lib/sequel/plugins/validations.rb
+  # @see https://sequel.jeremyevans.net/rdoc-plugins/classes/Sequel/Plugins/ValidationHelpers.html
+  Sequel::Model.plugin :validations
+
   # Enable plugin that sets timestamp columns.
   Sequel::Model.plugin :timestamps, update_on_create: true
 
