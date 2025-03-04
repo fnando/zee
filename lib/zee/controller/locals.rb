@@ -34,7 +34,7 @@ module Zee
 
           ref = method(name)
 
-          helpers.instance_eval do
+          Zee.app.helpers_module.class_eval do
             define_method(name) do |*args, **kwargs, &block|
               ref.call(*args, **kwargs, &block)
             end

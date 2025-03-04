@@ -91,12 +91,17 @@ module Zee
               "#{controller_name}##{template_name}: #{list}"
       end
 
-      body = app.render_template(view_path[:path], locals:)
+      context = app.helpers
+      body = app.render_template(view_path[:path], locals:, request:, context:)
 
       if layout != false && layout_path
-        body = app.render_template(layout_path[:path], locals:) do
-          SafeBuffer.new(body)
-        end
+        body =
+          app.render_template(
+            layout_path[:path],
+            context:,
+            locals:,
+            request:
+          ) { SafeBuffer.new(body) }
       end
 
       response.status(status)

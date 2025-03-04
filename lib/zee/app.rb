@@ -304,10 +304,10 @@ module Zee
     end
     # :nocov:
 
-    # Set template helpers.
+    # Set template helpers module.
     # @return [Module] The module to include.
-    def helpers
-      @helpers ||= Module.new.tap do |target|
+    def helpers_module
+      @helpers_module ||= Module.new.tap do |target|
         helpers = Module.new do
           attr_reader :request
         end
@@ -323,6 +323,12 @@ module Zee
       end
     end
 
+    # The helpers context.
+    # @return [Object]
+    def helpers
+      @helpers ||= Object.new.extend(helpers_module)
+    end
+
     # @api private
     def loader
       @loader ||= Zeitwerk::Loader.new
@@ -334,9 +340,6 @@ module Zee
         rack_app.call(env)
         # :nocov:
       else
-        # Change the current directory to the root directory.
-        # This will likely raise errors when using `Middleware::Static`,
-        # due to nested `Dir.chdir` calls.
         Dir.chdir(root) { rack_app.call(env) }
       end
     end
@@ -349,7 +352,7 @@ module Zee
     # @yield The block to evaluate in the template.
     # @return [String] The rendered template.
     def render_template(file, locals: {}, context: nil, request: nil, &)
-      context ||= Object.new.extend(helpers)
+      context ||= Object.new.extend(helpers_module)
       context.instance_variable_set(:@request, request)
 
       options = {
@@ -399,6 +402,8 @@ module Zee
         @secrets = nil
         @middleware = nil
         @rack_app = nil
+        @helpers = nil
+        @helpers_module = nil
 
         load_files force: true
         run_init

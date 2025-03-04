@@ -87,11 +87,6 @@ module Zee
       @params ||= Params.new(request.params)
     end
 
-    # The helper object.
-    private def helpers
-      Zee.app.helpers
-    end
-
     # The session hash.
     private def session
       request.env[RACK_SESSION]
