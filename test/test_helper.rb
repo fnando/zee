@@ -28,6 +28,8 @@ Dir.chdir(File.join(__dir__, "fixtures/sample_app")) do
   require_relative "fixtures/sample_app/app"
 end
 
+Minitest::Utils::Reporter.filters << %r{/gems/}
+
 module Minitest
   class Test
     setup { ENV.delete("MINITEST_TEST_COMMAND") }

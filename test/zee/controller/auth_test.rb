@@ -5,24 +5,25 @@ require "test_helper"
 class AuthenticationTest < Zee::Test::Integration
   include Capybara::DSL
 
-  class App < Zee::App
-    include Singleton
+  setup do
+    app_class = Class.new(Zee::App)
+    app = app_class.new
+    Zee.app = app
+
+    app.root =
+      Pathname(File.expand_path(File.join("./test/fixtures/auth")))
+
+    app.routes do
+      root to: "home#show"
+      get "login", to: "auth#new", as: "login"
+      post "login", to: "auth#create"
+      get "dashboard", to: "dashboard#show", as: :dashboard
+    end
+
+    app.initialize!
   end
 
-  App.instance.root =
-    Pathname(File.expand_path(File.join("./test/fixtures/auth")))
-
-  Zee.app = App.instance
-
-  App.instance.routes do
-    root to: "home#show"
-    get "login", to: "auth#new", as: "login"
-    post "login", to: "auth#create"
-    get "dashboard", to: "dashboard#show", as: :dashboard
-  end
-
-  setup { Zee.app = App.instance }
-  setup { Zee.app.initialize! unless Zee.app.initialized? }
+  teardown { Zee.app.loader.unregister }
 
   test "logs in a user" do
     visit "/"
