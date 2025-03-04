@@ -9,6 +9,8 @@ end
 
 require "bundler/setup"
 Bundler.setup(:default, :development)
+require "warning"
+Gem.path.each {|path| Warning.ignore(//, path) }
 
 require "zee"
 require "zee/cli"
@@ -27,6 +29,8 @@ end
 Dir.chdir(File.join(__dir__, "fixtures/sample_app")) do
   require_relative "fixtures/sample_app/app"
 end
+
+Minitest::Utils::Reporter.filters << %r{/gems/}
 
 module Minitest
   class Test
@@ -54,9 +58,11 @@ module Minitest
 
     def render(template, request: nil, locals: {})
       request ||= Zee::Request.new(Rack::MockRequest.env_for("/"))
-
+      context = Struct.new(:request).new(request)
+                      .extend(Zee::ViewHelpers::Form)
+                      .extend(Zee::ViewHelpers::HTML)
       File.write("tmp/template.erb", template)
-      Zee.app.render_template("tmp/template.erb", request:, locals:)
+      Zee.app.render_template("tmp/template.erb", request:, locals:, context:)
     end
 
     def store_translations(locale, translations)

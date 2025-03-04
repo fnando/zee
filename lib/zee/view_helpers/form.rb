@@ -6,6 +6,9 @@ module Zee
       using Core::String
       include HTML
 
+      # Raised when the request is not set.
+      RequestNotSet = Class.new(StandardError)
+
       # @api private
       BUTTON_LABEL = "Button"
 
@@ -577,6 +580,8 @@ module Zee
       #   <% end %>
       #   ```
       def form_for(object, url:, as: :form, **, &)
+        raise RequestNotSet, "request is not set for some reason" unless request
+
         authenticity_token = request.env[ZEE_CSRF_TOKEN]
 
         form = FormBuilder.new(object:, context: self, object_name: as, **)

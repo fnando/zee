@@ -21,7 +21,7 @@ module Zee
     #                       text: "Sign in to your account"
     #     end
     #   end
-    class Mailer < Minitest::Test
+    class Mailer < Test
       include Test::Assertions::HTML
 
       setup { Mail.defaults { delivery_method :test } }

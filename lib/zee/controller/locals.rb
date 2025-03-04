@@ -33,12 +33,13 @@ module Zee
           end
 
           ref = method(name)
+          file, line = ref.source_location
 
-          Zee.app.helpers_module.class_eval do
-            define_method(name) do |*args, **kwargs, &block|
-              ref.call(*args, **kwargs, &block)
-            end
-          end
+          helpers.instance_eval <<~RUBY, file, line # rubocop:disable Style/EvalWithLocation
+            def #{name}(*, **)                   # def hello(*, **)
+              controller.send(:"#{name}", *, **) #  controller.send(:hello, *, **)
+            end                                  # end
+          RUBY
         end
 
         locals.merge!(vars)

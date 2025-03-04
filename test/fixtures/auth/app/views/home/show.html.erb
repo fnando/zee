@@ -1,0 +1,7 @@
+<% if user_logged_in? %>
+  <p>
+    You're logged in with <%= current_user[:email] %>
+  </p>
+<% else %>
+  <a href="<%= login_path %>">Log in</a>
+<% end %>
