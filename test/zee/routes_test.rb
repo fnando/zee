@@ -113,6 +113,34 @@ class RoutesTest < Minitest::Test
     refute_nil route
   end
 
+  test "matches all request methods" do
+    routes = Zee::Routes.new do
+      match "posts/:id", to: "posts#show", via: :all
+    end
+
+    refute_nil routes.find(
+      Zee::Request.new("REQUEST_METHOD" => "GET", "PATH_INFO" => "/posts/1")
+    )
+    refute_nil routes.find(
+      Zee::Request.new("REQUEST_METHOD" => "POST", "PATH_INFO" => "/posts/1")
+    )
+    refute_nil routes.find(
+      Zee::Request.new("REQUEST_METHOD" => "PUT", "PATH_INFO" => "/posts/1")
+    )
+    refute_nil routes.find(
+      Zee::Request.new("REQUEST_METHOD" => "PATCH", "PATH_INFO" => "/posts/1")
+    )
+    refute_nil routes.find(
+      Zee::Request.new("REQUEST_METHOD" => "OPTIONS", "PATH_INFO" => "/posts/1")
+    )
+    refute_nil routes.find(
+      Zee::Request.new("REQUEST_METHOD" => "DELETE", "PATH_INFO" => "/posts/1")
+    )
+    refute_nil routes.find(
+      Zee::Request.new("REQUEST_METHOD" => "HEAD", "PATH_INFO" => "/posts/1")
+    )
+  end
+
   test "defines route with leading optional segment" do
     routes = Zee::Routes.new do
       get "(/:locale)/posts/:id", to: "posts#show"

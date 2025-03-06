@@ -63,7 +63,7 @@ module Zee
     end
 
     private def match_request_method?(request)
-      via.include?(request.request_method.downcase.to_sym)
+      via.include?(:all) || via.include?(request.request_method.downcase.to_sym)
     end
 
     private def match_constraints?(request)
