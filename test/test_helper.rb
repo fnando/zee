@@ -9,9 +9,8 @@ end
 
 require "bundler/setup"
 Bundler.setup(:default, :development)
-require "warning"
-Gem.path.each {|path| Warning.ignore(//, path) }
 
+require_relative "support/warning"
 require "zee"
 require "zee/cli"
 require "rack/test"
