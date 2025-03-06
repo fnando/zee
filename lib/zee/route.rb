@@ -34,9 +34,20 @@ module Zee
       @name = name
       @constraints = Array(constraints).flatten.compact
       @defaults = defaults || {}
+      @app = to.respond_to?(:call)
     end
 
+    # Whether the route is a rack app.
+    # @return [Boolean]
+    def app?
+      @app
+    end
+
+    # Whether the route matches the request.
+    # @param request [Request] the request.
+    # @return [Boolean]
     def match?(request)
+      return true if app? && match_app?(request)
       return false unless match_path?(request)
 
       params = request.path_with_no_trailing_slash
@@ -58,14 +69,31 @@ module Zee
       @parser ||= Parser.new(path)
     end
 
+    # Whether the route matches the request path for a rack app.
+    # @param request [Request] the request.
+    # @return [Boolean]
+    private def match_app?(request)
+      request.path_with_no_trailing_slash == path ||
+      request.path_with_no_trailing_slash.start_with?("#{path}/")
+    end
+
+    # Whether the route matches the request path.
+    # @param request [Request] the request.
+    # @return [Boolean]
     private def match_path?(request)
       request.path_with_no_trailing_slash.match?(parser.matcher)
     end
 
+    # Whether the route matches the request method.
+    # @param request [Request] the request.
+    # @return [Boolean]
     private def match_request_method?(request)
       via.include?(:all) || via.include?(request.request_method.downcase.to_sym)
     end
 
+    # Whether the route matches the request constraints.
+    # @param request [Request] the request.
+    # @return [Boolean]
     private def match_constraints?(request)
       return true if constraints.empty?
 
@@ -82,6 +110,12 @@ module Zee
       match_callable_constraints?(request, callable)
     end
 
+    # Whether the request matches the hash constraints.
+    # The hash constraints will be matched first against segments and then
+    # against the request object.
+    # @param request [Request] the request.
+    # @param constraints [Hash] the constraints.
+    # @return [Boolean]
     private def match_hash_constraints?(request, constraints)
       constraints.all? do |key, constraint|
         if parser.segments.key?(key)
@@ -92,6 +126,11 @@ module Zee
       end
     end
 
+    # Whether the request matches the callable constraints.
+    # If a constraint responds to #call or #match?, it will be called with the
+    # request object.
+    # @param request [Request] the request.
+    # @param constraints [Array<#call, #match?>] the constraints.
     private def match_callable_constraints?(request, constraints)
       constraints.all? do |constraint|
         if constraint.respond_to?(:call)
@@ -102,6 +141,9 @@ module Zee
       end
     end
 
+    # Normalize the slashes in the path.
+    # @param path [String] the path.
+    # @return [String]
     private def normalize_slashes(path)
       path = "/#{path}" unless path.start_with?(OPEN_PAREN)
       path.squeeze(SLASH)

@@ -11,6 +11,7 @@ class URLHelpersTest < Minitest::Test
       get "(/:locale)/tags(/:tag)",
           to: "tags#show",
           as: :tag
+      mount ->(_env) { [200, {}, []] }, at: "/mount", as: :mount
     end
 
     helpers = Object.new.extend(routes.helpers)
@@ -43,6 +44,10 @@ class URLHelpersTest < Minitest::Test
                  helpers.root_path(a: 1, host: "example.com",
                                    protocol: :https,
                                    anchor: "top")
+
+    assert_equal "/mount", helpers.mount_path
+    assert_equal "https://example.com/mount",
+                 helpers.mount_url(host: "example.com", protocol: :https)
   end
 
   test "raises when using url without setting a host" do

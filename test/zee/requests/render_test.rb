@@ -132,4 +132,20 @@ class RenderTest < Zee::Test::Request
     assert_includes last_response.body, "<title>My app</title>"
     assert_includes last_response.content_type, "text/html"
   end
+
+  test "renders rack app (lambda)" do
+    get "/proc-app"
+
+    assert last_response.ok?
+    assert_includes last_response.body, "hello from rack app"
+    assert_includes last_response.content_type, "text/html"
+  end
+
+  test "renders rack app (class)" do
+    get "/class-app"
+
+    assert last_response.ok?
+    assert_includes last_response.body, "hello from my app"
+    assert_includes last_response.content_type, "text/html"
+  end
 end

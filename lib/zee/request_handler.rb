@@ -18,6 +18,9 @@ module Zee
         return [404, {"content-type" => "text/plain"}, ["404 Not Found"]]
       end
 
+      # If the route is a rack app, route to it.
+      return route_to_app(env, route) if route.to.respond_to?(:call)
+
       controller_name, action_name = *route.to.split("#")
 
       expected_const =
@@ -47,6 +50,18 @@ module Zee
       end
 
       [response.status, response.headers.to_h, [response.body]]
+    end
+
+    # @api private
+    # This will route the request to the rack app.
+    # We use [Rack::URLMap](https://www.rubydoc.info/gems/rack/Rack/URLMap),
+    # because it handles the `SCRIPT_NAME` and `PATH_INFO` for us.
+    #
+    # @param env [Hash] the environment hash.
+    # @param route [Zee::Route] the route to route to.
+    # @return [Array] the rack response.
+    private def route_to_app(env, route)
+      ::Rack::URLMap.new(route.path => route.to).call(env)
     end
   end
 end

@@ -153,6 +153,30 @@ module Zee
       @store.find { _1.match?(request) }
     end
 
+    # Mount a Rack app at a specific path.
+    #
+    # The mounting path does not support dynamic segments as regular routes.
+    # That means routes like `/posts/:id` are not supported.
+    #
+    # > [!NOTE]
+    # > The Rack app won't inherit any middleware. In that case, you
+    # > can wrap the app with something like
+    # > [`Rack::Builder.app(&block)`](https://www.rubydoc.info/gems/rack/Rack/Builder)
+    # > and include the middleware you care about.
+    #
+    # @param app [#call] the Rack app to mount.
+    # @param at [String] the path to mount the Rack app.
+    # @param as [String] the name of the route.
+    # @param via [Array(Symbol)] the HTTP method(s) to match.
+    def mount(app, at:, as: nil, via: :all)
+      unless app.respond_to?(:call)
+        raise ArgumentError,
+              "A rack application must be specified; got #{app.inspect}"
+      end
+
+      match(at, via:, as:, to: app)
+    end
+
     # Define root route, like `GET /`.
     # See {#match} for more information.
     def root(to:, as: :root)

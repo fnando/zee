@@ -332,10 +332,10 @@ module Zee
     def call(env)
       if root == Dir.pwd
         # :nocov:
-        rack_app.call(env)
+        to_app.call(env)
         # :nocov:
       else
-        Dir.chdir(root) { rack_app.call(env) }
+        Dir.chdir(root) { to_app.call(env) }
       end
     end
 
@@ -362,14 +362,13 @@ module Zee
     end
 
     # @api private
-    private def rack_app
-      @rack_app ||= begin
+    private def to_app
+      @to_app ||= begin
         request_handler = RequestHandler.new(self)
         stack = middleware.to_a
 
         Rack::Builder.app do
           stack.each {|middleware, args, block| use(middleware, *args, &block) }
-
           run request_handler
         end
       end
@@ -396,7 +395,7 @@ module Zee
         @routes = nil
         @secrets = nil
         @middleware = nil
-        @rack_app = nil
+        @to_app = nil
         @helpers = nil
 
         load_files force: true

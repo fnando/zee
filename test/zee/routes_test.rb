@@ -444,4 +444,32 @@ class RoutesTest < Minitest::Test
 
     refute_nil route
   end
+
+  test "matches rack apps" do
+    app = ->(_env) { [200, {}, ["Hello, World!"]] }
+
+    routes = Zee::Routes.new do
+      mount app, at: "/hello"
+    end
+
+    refute_nil routes.find(
+      Zee::Request.new("REQUEST_METHOD" => "GET", "PATH_INFO" => "/hello")
+    )
+
+    refute_nil routes.find(
+      Zee::Request.new("REQUEST_METHOD" => "GET", "PATH_INFO" => "/hello/")
+    )
+
+    refute_nil routes.find(
+      Zee::Request.new("REQUEST_METHOD" => "GET", "PATH_INFO" => "/hello/john")
+    )
+  end
+
+  test "raises when trying to mount a non-rack app" do
+    error = assert_raises(ArgumentError) do
+      Zee::Routes.new { mount nil, at: "/hello" }
+    end
+
+    assert_equal "A rack application must be specified; got nil", error.message
+  end
 end

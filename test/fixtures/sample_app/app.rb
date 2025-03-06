@@ -32,6 +32,22 @@ SampleAppInstance.routes do
   patch "categories/new", to: "categories#create"
 
   get "login", to: "login#new", as: :login
+
+  proc_app = lambda {|_env|
+    [200, {"content-type" => "text/html"}, ["hello from rack app"]]
+  }
+  mount proc_app, at: "proc-app", as: :proc_app
+
+  class_app = Class.new do
+    def self.name
+      "MyRackApp"
+    end
+
+    def self.call(_env)
+      [200, {"content-type" => "text/html"}, ["hello from my app"]]
+    end
+  end
+  mount class_app, at: "class-app", as: :class_app
 end
 
 SampleAppInstance.middleware do

@@ -70,6 +70,16 @@ module Zee
       Bundler.require(:default)
       require "./config/environment" if File.file?("./config/environment.rb")
 
+      normalize_to = proc do |to|
+        next to if to.is_a?(String)
+        next to.name if to.respond_to?(:name)
+        next to.to_s unless to.is_a?(Proc)
+
+        path, line = to.source_location
+        path = Pathname(path).relative_path_from(Dir.pwd)
+        "#{path}:#{line}"
+      end
+
       routes = Zee.app.routes.to_a
       headings = %w[Verb Path Prefix To]
       rows = routes.map do |route|
@@ -77,7 +87,7 @@ module Zee
           route.via.map { _1.to_s.upcase }.join(", "),
           route.path,
           route.name,
-          route.to
+          normalize_to.call(route.to)
         ]
       end
 
