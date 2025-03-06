@@ -4,6 +4,7 @@ module Zee
   module ViewHelpers
     module Form
       using Core::String
+      using Core::Blank
       include HTML
 
       # Raised when the request is not set.

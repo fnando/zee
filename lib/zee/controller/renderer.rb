@@ -80,6 +80,8 @@ module Zee
           )
         end
 
+        logger = app.config.logger.tagged(:request, :render)
+
         # Find the first file that exists.
         view_path = view_paths.find {|tp| File.file?(tp[:path]) }
         layout_path = layout_paths.find {|tp| File.file?(tp[:path]) }
@@ -93,6 +95,10 @@ module Zee
                 "#{controller_name}##{template_name}: #{list}"
         end
 
+        logger.debug do
+          "view: #{view_path[:path].relative_path_from(app.root)}"
+        end
+
         locals = self.locals.merge(controller: self)
         body = app.render_template(
           view_path[:path],
@@ -102,6 +108,10 @@ module Zee
         )
 
         if layout != false && layout_path
+          logger.debug do
+            "layout: #{layout_path[:path].relative_path_from(app.root)}"
+          end
+
           body = app.render_template(
             layout_path[:path],
             locals:,

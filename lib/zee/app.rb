@@ -202,7 +202,6 @@ module Zee
     #
     # - {https://github.com/rack/rack/blob/main/lib/rack/sendfile.rb Rack::Sendfile}
     # - {https://github.com/rack/rack/blob/main/lib/rack/runtime.rb Rack::Runtime}
-    # - {https://github.com/rack/rack/blob/main/lib/rack/common_logger.rb Rack::CommonLogger}
     # - {https://github.com/sinatra/sinatra/tree/main/rack-protection Rack::Protection}
     #   (if available)
     # - {https://github.com/rack/rack-session Rack::Session::Cookie} (also see
@@ -221,7 +220,7 @@ module Zee
         middleware.use Rack::Sendfile
         middleware.use Middleware::Static if config.serve_static_files
         middleware.use Rack::Runtime
-        middleware.use Rack::CommonLogger
+        middleware.use Middleware::RequestLogger
         middleware.use Rack::Protection if defined?(Rack::Protection)
 
         if defined?(Rack::Session)

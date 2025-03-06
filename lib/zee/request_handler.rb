@@ -14,13 +14,20 @@ module Zee
       response = Response.new
       route = app.routes.find(request)
 
+      logger = app.config.logger.tagged(:request)
+
       unless route
         return [404, {"content-type" => "text/plain"}, ["404 Not Found"]]
       end
 
       # If the route is a rack app, route to it.
-      return route_to_app(env, route) if route.to.respond_to?(:call)
+      if route.to.respond_to?(:call)
+        logger.debug { "Routing to rack app: #{route.to}" }
+        return route_to_app(env, route)
+      end
 
+      logger.debug { "processing with #{route.to}" }
+      logger.debug { "parameters: #{request.params}" }
       controller_name, action_name = *route.to.split("#")
 
       expected_const =

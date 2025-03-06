@@ -3,6 +3,7 @@
 module Zee
   class FormBuilder
     using Core::String
+    using Core::Blank
     extend Forwardable
 
     def_delegators :@context,

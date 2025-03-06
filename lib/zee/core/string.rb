@@ -4,9 +4,6 @@ module Zee
   module Core
     module String
       # @api private
-      BLANK_RE = /\A[[:space:]]*\z/
-
-      # @api private
       UNDERSCORE_RE1 = /([A-Z]+)([A-Z][a-z])/
 
       # @api private
@@ -29,15 +26,6 @@ module Zee
       # @!method humanize()
       # Tweaks an attribute name for display to end users.
       # @return [String]
-
-      # @!method blank?()
-      # Returns `true` if the string is empty or contains whitespaces only.
-      # @return [Boolean]
-
-      # @!method present?()
-      # Returns `true` if the string is not empty and contains non-whitespace
-      # characters.
-      # @return [Boolean]
 
       refine ::String do
         def underscore
@@ -69,14 +57,6 @@ module Zee
           text = text.delete_prefix(UNDERSCORE)
           text = text.sub(/_id$/, EMPTY_STRING) unless keep_id_suffix
           text.tr(UNDERSCORE, SPACE).capitalize
-        end
-
-        def blank?
-          BLANK_RE.match?(self)
-        end
-
-        def present?
-          !blank?
         end
       end
     end

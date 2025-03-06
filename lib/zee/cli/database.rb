@@ -45,7 +45,7 @@ module Zee
         def logger
           return unless options[:verbose]
 
-          @logger ||= Logger.new($stdout, level: Logger::INFO)
+          @logger ||= ::Logger.new($stdout, level: ::Logger::INFO)
         end
 
         def connection_string

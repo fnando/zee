@@ -21,6 +21,8 @@ require "sequel"
 require "minitest/utils"
 require "minitest/autorun"
 
+NULL_LOGGER = Zee::Logger.new(Logger.new(StringIO.new))
+
 Dir["#{__dir__}/support/**/*.rb"].each do |file|
   require file
 end

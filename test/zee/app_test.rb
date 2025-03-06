@@ -136,7 +136,7 @@ class AppTest < Minitest::Test
     assert_equal Rack::Sendfile, stack[0]
     assert_equal Zee::Middleware::Static, stack[1]
     assert_equal Rack::Runtime, stack[2]
-    assert_equal Rack::CommonLogger, stack[3]
+    assert_equal Zee::Middleware::RequestLogger, stack[3]
     assert_equal Rack::Protection, stack[4]
     assert_equal Rack::Session::Cookie, stack[5]
     assert_equal Rack::Head, stack[6]

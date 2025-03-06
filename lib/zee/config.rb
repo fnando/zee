@@ -23,6 +23,7 @@ module Zee
     # - `config.template_handlers`: the list of template handlers that are
     #    enabled by {https://github.com/jeremyevans/tilt Tilt}.
     # - `config.enable_reloading`: whether to enable code reloading.
+    # - `config.logger`: a {Zee::Logger} instance that outputs to `$stdout`.
     #
     # @param app [Zee::App] The application instance.
     # @return [Zee::Config]
@@ -38,6 +39,13 @@ module Zee
 
     # @api private
     private def set_default_options
+      set :logger,
+          Logger.new(
+            ::Logger.new($stdout),
+            colorize: true,
+            tag_color: :magenta,
+            message_color: :cyan
+          )
       set :default_url_options, {}
       set :session_options, secret: SecureRandom.hex(64)
       set :json_serializer, JSON

@@ -61,6 +61,8 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rack-protection"
   spec.add_development_dependency "rack-session"
   spec.add_development_dependency "rack-test"
+  spec.add_development_dependency "redcarpet"
+  spec.add_development_dependency "rouge"
   spec.add_development_dependency "rubocop"
   spec.add_development_dependency "rubocop-fnando"
   spec.add_development_dependency "rubocop-yard"
@@ -68,4 +70,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "simplecov"
   spec.add_development_dependency "sqlite3"
   spec.add_development_dependency "warning"
+  spec.add_development_dependency "yard"
 end

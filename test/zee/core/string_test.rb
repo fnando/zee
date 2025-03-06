@@ -40,26 +40,4 @@ class StringTest < Minitest::Test
     assert_equal "User", "_user".humanize
     assert_equal "User id", "user_id".humanize(keep_id_suffix: true)
   end
-
-  test "#blank?" do
-    assert "".blank?
-    assert "   ".blank?
-    assert "\r\n\t   ".blank?
-    assert "\u00a0".blank?
-
-    refute "hello".blank?
-    refute "  hello ".blank?
-    refute "\r\n\t hello  ".blank?
-  end
-
-  test "#present?" do
-    refute "".present?
-    refute "   ".present?
-    refute "\r\n\t   ".present?
-    refute "\u00a0".present?
-
-    assert "hello".present?
-    assert "  hello ".present?
-    assert "\r\n\t hello  ".present?
-  end
 end

@@ -50,6 +50,10 @@ SampleAppInstance.routes do
   mount class_app, at: "class-app", as: :class_app
 end
 
+SampleAppInstance.config do
+  set :logger, NULL_LOGGER
+end
+
 SampleAppInstance.middleware do
   delete Rack::CommonLogger
   use Rack::ShowExceptions
