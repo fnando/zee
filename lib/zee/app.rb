@@ -306,27 +306,22 @@ module Zee
 
     # Set template helpers module.
     # @return [Module] The module to include.
-    def helpers_module
-      @helpers_module ||= Module.new.tap do |target|
-        helpers = Module.new do
-          attr_reader :request
-        end
-
-        ::Helpers.constants.each do |name|
-          helpers.include(::Helpers.const_get(name))
-        end
-
-        target.include(ViewHelpers::Assets)
-        target.include(ViewHelpers::Form)
-        target.include(routes.helpers)
-        target.include(helpers)
-      end
-    end
-
-    # The helpers context.
-    # @return [Object]
     def helpers
-      @helpers ||= Object.new.extend(helpers_module)
+      @helpers ||= begin
+        app = self
+
+        Module.new do
+          attr_reader :request, :controller
+
+          helper_modules =
+            ::Helpers.constants.map {|name| ::Helpers.const_get(name) }
+
+          include(ViewHelpers::Assets)
+          include(ViewHelpers::Form)
+          include(app.routes.helpers)
+          include(*helper_modules)
+        end
+      end
     end
 
     # @api private
@@ -352,7 +347,7 @@ module Zee
     # @yield The block to evaluate in the template.
     # @return [String] The rendered template.
     def render_template(file, locals: {}, context: nil, request: nil, &)
-      context ||= Object.new.extend(helpers_module)
+      context ||= Object.new.extend(helpers)
       context.instance_variable_set(:@request, request)
 
       options = {
@@ -403,7 +398,6 @@ module Zee
         @middleware = nil
         @rack_app = nil
         @helpers = nil
-        @helpers_module = nil
 
         load_files force: true
         run_init

@@ -27,7 +27,7 @@ class ControllerTest < Minitest::Test
       end
     end
 
-    controller_class.new(request:, response:).show
+    controller_class.new(request:, response:, action_name: "show").send(:call)
 
     assert_includes response.body, "Hello, World!"
   end
@@ -44,7 +44,7 @@ class ControllerTest < Minitest::Test
       end
     end
 
-    controller_class.new(request:, response:).show
+    controller_class.new(request:, response:, action_name: "show").send(:call)
 
     assert_includes response.body, "Hello, John!"
     assert_includes response.body, "Hello, Mary!"
@@ -66,7 +66,7 @@ class ControllerTest < Minitest::Test
       end
     end
 
-    controller_class.new(request:, response:).show
+    controller_class.new(request:, response:, action_name: "show").send(:call)
 
     assert_includes response.body, "Hello, John!"
     refute_includes response.body, "You're not logged in."
@@ -84,7 +84,7 @@ class ControllerTest < Minitest::Test
     end
 
     error = assert_raises Zee::Controller::UnsafeHelperError do
-      controller_class.new(request:, response:).show
+      controller_class.new(request:, response:, action_name: "show").send(:call)
     end
 
     assert_equal ":current_user must be a private method", error.message

@@ -127,6 +127,14 @@ module Zee
       response.body = EMPTY_STRING
     end
 
+    # Define an object that inherits all the helpers from the application.
+    # @return [Object]
+    private def helpers
+      @helpers ||= Object.new.extend(Zee.app.helpers).tap do |helpers|
+        helpers.instance_variable_set(:@controller, self)
+      end
+    end
+
     # @api private
     # Run the action on the controller.
     # This will also run all callbacks defined by {#Callbacks#before_action}.
