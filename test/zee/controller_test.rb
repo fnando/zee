@@ -8,7 +8,7 @@ class ControllerTest < Minitest::Test
   let(:request) { Zee::Request.new("rack.session" => {}) }
 
   setup do
-    app.config.set(:logger, NULL_LOGGER)
+    app.config.set(:logger, logger)
     Zee.app = app
   end
 

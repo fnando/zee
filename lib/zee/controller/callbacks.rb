@@ -97,7 +97,7 @@ module Zee
               send(name) unless skip_callback?(type:, name:)
             end
 
-            store << [handler, conditions]
+            store << [handler, conditions, name]
           end
 
           store << [block, conditions] if block

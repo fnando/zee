@@ -21,8 +21,6 @@ require "sequel"
 require "minitest/utils"
 require "minitest/autorun"
 
-NULL_LOGGER = Zee::Logger.new(Logger.new(StringIO.new))
-
 Dir["#{__dir__}/support/**/*.rb"].each do |file|
   require file
 end
@@ -35,13 +33,23 @@ Minitest::Utils::Reporter.filters << %r{/gems/}
 
 module Minitest
   class Test
+    let(:logger_io) { StringIO.new }
+    let(:logger) { Zee::Logger.new(Logger.new(logger_io)) }
+
+    setup do
+      Zeitwerk::Registry.loaders[1..-1]
+                        .each { Zeitwerk::Registry.unregister_loader(_1) }
+    end
+
     setup { ENV.delete("MINITEST_TEST_COMMAND") }
     setup { ENV.delete_if { _1.start_with?("ZEE") } }
     setup { FileUtils.rm_rf("tmp") }
     setup { FileUtils.mkdir("tmp") }
-    setup { Zee.app = SampleAppInstance }
+    setup { Zee.app = SampleApp.create }
     setup { I18n.backend.reload! }
     setup { I18n.available_locales = [:en] }
+    setup { RequestStore.store.clear }
+    setup { Zee.app.config.set(:logger, logger) }
 
     teardown { FileUtils.rm_rf("tmp") }
 

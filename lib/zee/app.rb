@@ -318,7 +318,7 @@ module Zee
           include(ViewHelpers::Assets)
           include(ViewHelpers::Form)
           include(app.routes.helpers)
-          include(*helper_modules)
+          include(*helper_modules) if helper_modules.any?
         end
       end
     end

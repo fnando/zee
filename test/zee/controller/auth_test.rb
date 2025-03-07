@@ -22,7 +22,7 @@ class AuthenticationTest < Zee::Test::Integration
     end
 
     app.config do
-      set :logger, NULL_LOGGER
+      set :logger, logger
       set :session_options, domain: "localhost", secure: false
     end
 

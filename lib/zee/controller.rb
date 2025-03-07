@@ -2,6 +2,13 @@
 
 module Zee
   class Controller
+    include Renderer
+    include Callbacks
+    include AuthenticityToken
+    include Locals
+
+    using Zee::Core::Blank
+
     # Raised when a template is missing.
     MissingTemplateError = Class.new(StandardError)
 
@@ -19,11 +26,6 @@ module Zee
     end
 
     self.csrf_param_name = :_authenticity_token
-
-    include Renderer
-    include Callbacks
-    include AuthenticityToken
-    include Locals
 
     # Expose helper methods to templates.
     # With this method, you can expose helper methods to all actions.
@@ -144,11 +146,13 @@ module Zee
     # @return [void]
     private def call
       # Run before action callbacks.
-      self.class.callbacks[:before].each do |(callback, conditions)|
+      self.class.callbacks[:before].each do |(callback, conditions, name)|
         instance_eval(&callback) if instance_eval(&conditions)
 
         # If the response is already set, then stop processing.
-        return true if response.status
+        if response.status
+          return instrument_before_action(name, callback, response)
+        end
       end
 
       # If the action is missing, then raise an error.
@@ -165,6 +169,23 @@ module Zee
       # If no status is set, then let's assume the action is implicitly
       # rendering the template.
       render(action_name) unless response.status
+    end
+
+    # @api private
+    private def instrument_before_action(name, callback, response)
+      return unless Zee.app.config.enable_instrumentation
+
+      source = name
+      source ||= begin
+        file, line = callback.source_location
+        [Pathname(file).relative_path_from(Dir.pwd), line].join(COLON)
+      end
+
+      props = {halted_by_before_action: name ? ":#{name}" : source}
+      location = response.headers[:location]
+      props[:redirected_to] = location unless location.blank?
+
+      instrument :request, **props
     end
   end
 end

@@ -24,6 +24,8 @@ module Zee
     #    enabled by {https://github.com/jeremyevans/tilt Tilt}.
     # - `config.enable_reloading`: whether to enable code reloading.
     # - `config.logger`: a {Zee::Logger} instance that outputs to `$stdout`.
+    # - `config.enable_instrumentation`: whether to enable request logging with
+    #   better insights.
     #
     # @param app [Zee::App] The application instance.
     # @return [Zee::Config]
@@ -52,6 +54,7 @@ module Zee
       set :template_handlers, %w[erb]
       set :serve_static_files, app&.env&.local?
       set :enable_reloading, false
+      set :enable_instrumentation, false
     end
 
     # @api private

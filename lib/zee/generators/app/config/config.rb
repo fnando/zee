@@ -1,14 +1,20 @@
 # frozen_string_literal: true
 
 Zee.app.config :development do
+  # Enable code reloading.
   set :enable_reloading, true
+
+  # Show better nicer logging for each request.
+  set :enable_instrumentation, true
 end
 
 Zee.app.config :development, :test do
+  # Set the domain that will be used for cookies.
   set :domain, "localhost"
 end
 
 Zee.app.config :production do
+  # Set the domain that will be used for cookies.
   set :domain, "example.com"
 end
 

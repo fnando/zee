@@ -8,7 +8,7 @@ class CallbacksTest < Minitest::Test
 
     {
       app:,
-      request: Zee::Request.new("rack.session" => {}, "zee.app" => app),
+      request: Zee::Request.new("rack.session" => {}),
       response: Zee::Response.new
     }
   end
@@ -735,5 +735,33 @@ class CallbacksTest < Minitest::Test
     controller.send(:call)
 
     assert_equal %i[before after], controller.calls
+  end
+
+  test "instruments halted actions" do
+    Zee.app.config.set(:enable_instrumentation, true)
+
+    controller_class = Class.new(Zee::Controller) do
+      before_action { redirect_to "/" }
+
+      def show
+        render text: "action"
+      end
+    end
+
+    build => {request:, response:}
+    controller = controller_class.new(request:, response:, action_name: "show")
+    controller.send(:call)
+
+    store = RequestStore.store[:instrumentation][:request]
+    expected_instrumentation = [
+      nil,
+      {
+        halted_by_before_action: "test/zee/controller/callbacks_test.rb:744",
+        redirected_to: "/"
+      }
+    ]
+
+    assert_equal 1, store.size
+    assert_equal expected_instrumentation, store.first
   end
 end
