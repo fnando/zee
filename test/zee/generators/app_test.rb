@@ -49,6 +49,7 @@ class AppTest < Minitest::Test
     assert app.join("Gemfile").file?
     assert app.join("Procfile.dev").file?
     assert app.join("tmp/.keep").file?
+    assert app.join("log/.keep").file?
     assert app.join("test/test_helper.rb").file?
     assert app.join("public/favicon.ico").file?
     assert app.join("public/icon.svg").file?

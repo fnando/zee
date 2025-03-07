@@ -133,17 +133,17 @@ class AppTest < Minitest::Test
     app = Zee::App.new
     stack = app.middleware.to_a.map(&:first)
 
-    assert_equal Rack::Sendfile, stack[0]
-    assert_equal Zee::Middleware::Static, stack[1]
-    assert_equal Rack::Runtime, stack[2]
-    assert_equal Zee::Middleware::RequestLogger, stack[3]
-    assert_equal Rack::Protection, stack[4]
-    assert_equal Rack::Session::Cookie, stack[5]
-    assert_equal Rack::Head, stack[6]
-    assert_equal Rack::ConditionalGet, stack[7]
-    assert_equal Rack::ETag, stack[8]
-    assert_equal Rack::TempfileReaper, stack[9]
-    assert_equal RequestStore::Middleware, stack[10]
+    assert_equal Zee::Middleware::RequestLogger, stack[0]
+    assert_equal RequestStore::Middleware, stack[1]
+    assert_equal Rack::Sendfile, stack[2]
+    assert_equal Zee::Middleware::Static, stack[3]
+    assert_equal Rack::Runtime, stack[4]
+    assert_equal Rack::Protection, stack[5]
+    assert_equal Rack::Session::Cookie, stack[6]
+    assert_equal Rack::Head, stack[7]
+    assert_equal Rack::ConditionalGet, stack[8]
+    assert_equal Rack::ETag, stack[9]
+    assert_equal Rack::TempfileReaper, stack[10]
     assert_equal 11, stack.size
   end
 end

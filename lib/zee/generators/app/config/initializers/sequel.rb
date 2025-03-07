@@ -5,8 +5,15 @@ Zee.app.init do
   Sequel.connect(config.database_url)
 
   # Enable logging.
-  Sequel::Model.db.loggers.clear
-  Sequel::Model.db.loggers << Logger.new($stdout) if env.development?
+  if env.development?
+    Sequel::Model.db.loggers.clear
+    Sequel::Model.db.loggers << Logger.new("log/#{env}.log", 1, 512 * 1024)
+  end
+
+  # Enable database instrumentation.
+  # Shows number of queries and total time spent on database calls for the
+  # request.
+  Sequel::Model.db.extension(:instrumentation) if env.development?
 
   # Enable plugin with localized validators.
   # @see https://github.com/fnando/zee/tree/main/lib/sequel/plugins/validations.rb

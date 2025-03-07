@@ -11,28 +11,81 @@ module Zee
       end
 
       def call(env)
-        request = Request.new(env)
-        started = Time.new
+        return @app.call(env) unless Zee.app.env.development?
+
+        # Process the request.
+        start = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+        status, headers, body = @app.call(env)
+        duration =
+          (Process.clock_gettime(Process::CLOCK_MONOTONIC) - start).duration
+
         logger = Zee.app.config.logger
+        request = Request.new(env)
+        store = RequestStore.store[:instrumentation]
+        props = prepare_props(store)
 
+        # The order of keys is important and determines the order of the output.
+        props = {handler: props.delete(:route)}.merge(props)
+        props[:database] = database_log(store)
+        props[:status] = "#{status} #{Rack::Utils::HTTP_STATUS_CODES[status]}"
+
+        logger.debug("")
         logger.debug do
-          "#{request.request_method} #{request.fullpath}".colored(:magenta)
+          "#{request.request_method} #{request.fullpath} (#{duration})"
+            .colored(:magenta)
         end
 
-        response = @app.call(env)
+        props.each do |key, value|
+          colored_key = key.to_s.colored(:cyan)
 
-        ended = Time.new
-        duration = (ended - started).duration
-
-        logger.debug do
-          ["status:", response[0].to_s.colored(:yellow)].join(SPACE)
+          case key
+          when :partials
+            value.each {|path| logger.debug("partial: #{path}") }
+          else
+            logger.debug("#{colored_key}: #{value}")
+          end
         end
 
-        logger.debug do
-          ["duration:", duration.colored(:yellow)].join(SPACE)
-        end
+        [status, headers, body]
+      end
 
-        response
+      def relative_path(path)
+        path.relative_path_from(Pathname.pwd)
+      end
+
+      def view_log(duration:, path:)
+        duration = " (#{duration.duration})" if duration
+
+        "#{relative_path(path)}#{duration}"
+      end
+
+      def database_log(store)
+        queries = store[:sequel].count
+        sql_time_spent = store[:sequel].sum(&:first)
+
+        return "0 queries" unless queries.positive?
+
+        "#{queries} #{queries == 1 ? 'query' : 'queries'} " \
+          "(#{sql_time_spent.duration})"
+      end
+
+      def prepare_props(store)
+        store[:request].each_with_object({}) do |(duration, kwargs), buffer|
+          if kwargs[:partial]
+            buffer[:partials] ||= []
+            buffer[:partials] << view_log(duration:, path: kwargs[:partial])
+          else
+            kwargs.each do |key, value|
+              buffer[key] =
+                case value
+                when Pathname
+                  view_log(duration:, path: value)
+                else
+                  value
+                end
+            end
+          end
+        end
       end
     end
   end

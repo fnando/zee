@@ -3,6 +3,9 @@
 module Zee
   # @api private
   class RequestHandler
+    include Instrumentation
+
+    # @return [Zee::Application] the application.
     attr_reader :app
 
     def initialize(app)
@@ -14,21 +17,17 @@ module Zee
       response = Response.new
       route = app.routes.find(request)
 
-      logger = app.config.logger.tagged(:request)
-
       unless route
-        return [404, {"content-type" => "text/plain"}, ["404 Not Found"]]
+        instrument :request, status: 404
+        return [404, {HTTP_CONTENT_TYPE => TEXT_PLAIN}, [NOT_FOUND]]
       end
 
       # If the route is a rack app, route to it.
-      if route.to.respond_to?(:call)
-        logger.debug { "Routing to rack app: #{route.to}" }
-        return route_to_app(env, route)
-      end
+      return route_to_app(env, route) if route.to.respond_to?(:call)
 
-      logger.debug { "processing with #{route.to}" }
-      logger.debug { "parameters: #{request.params}" }
-      controller_name, action_name = *route.to.split("#")
+      instrument :request, route: route.to
+
+      controller_name, action_name = *route.to.split(POUND_SIGN)
 
       expected_const =
         app
@@ -50,7 +49,7 @@ module Zee
       content_type = response.headers[:content_type]
 
       # TODO: move this to a middleware.
-      unless content_type&.include?("charset")
+      unless content_type&.include?(CHARSET)
         charset = Encoding.default_external.name
         content_type = "#{content_type}; charset=#{charset}"
         response.headers[:content_type] = content_type
@@ -68,7 +67,9 @@ module Zee
     # @param route [Zee::Route] the route to route to.
     # @return [Array] the rack response.
     private def route_to_app(env, route)
-      ::Rack::URLMap.new(route.path => route.to).call(env)
+      instrument :request, run_rack_app: route.to do
+        ::Rack::URLMap.new(route.path => route.to).call(env)
+      end
     end
   end
 end

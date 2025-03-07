@@ -69,5 +69,9 @@ module Minitest
     def store_translations(locale, translations)
       I18n.backend.store_translations(locale, translations)
     end
+
+    def strip_ansi_color(string)
+      string.gsub(/\e\[(\d+)(;\d+)*m/, "")
+    end
   end
 end

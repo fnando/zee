@@ -5,6 +5,9 @@ module Zee
   APPLICATION_JSON = "application/json"
 
   # @api private
+  CHARSET = "charset"
+
+  # @api private
   CLOSE_SQUARE_BRACKET = "]"
 
   # @api private
@@ -41,13 +44,22 @@ module Zee
   HTTP_X_CSRF_TOKEN = "HTTP_X_CSRF_TOKEN"
 
   # @api private
+  HTTP_CONTENT_TYPE = "content-type"
+
+  # @api private
   HTTP_X_REQUESTED_WITH = "HTTP_X_REQUESTED_WITH"
+
+  # @api private
+  NOT_FOUND = "404 Not Found"
 
   # @api private
   NS_SEPARATOR = "::"
 
   # @api private
   OPEN_PAREN = "("
+
+  # @api private
+  POUND_SIGN = "#"
 
   # @api private
   RACK_SESSION = "rack.session"

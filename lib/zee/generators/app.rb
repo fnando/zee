@@ -23,10 +23,6 @@ module Zee
         copy_file ".gitignore"
         copy_file "app/helpers/app.rb"
         copy_file "app/assets/styles/app.css"
-        create_file "app/assets/styles/app/.keep"
-        create_file "app/assets/scripts/app/.keep"
-        create_file "app/assets/images/.keep"
-        create_file "app/assets/fonts/.keep"
         copy_file "bin/styles"
         copy_file "bin/scripts"
         copy_file "bin/dev"
@@ -40,18 +36,21 @@ module Zee
         copy_file "config/initializers/sequel.rb"
         copy_file "config/puma.rb"
         copy_file "config/routes.rb"
-        create_file "db/migrations/.keep"
         copy_file "package.json"
         copy_file "Procfile.dev"
         copy_file "public/apple-touch-icon.png"
         copy_file "public/favicon.ico"
         copy_file "public/icon.svg"
-        create_file "storage/.keep"
         copy_file "test/test_helper.rb"
-        copy_file "tmp/.keep"
-      end
 
-      def models
+        create_file "storage/.keep"
+        create_file "db/migrations/.keep"
+        create_file "app/assets/styles/app/.keep"
+        create_file "app/assets/scripts/app/.keep"
+        create_file "app/assets/images/.keep"
+        create_file "app/assets/fonts/.keep"
+        create_file "tmp/.keep"
+        create_file "log/.keep"
         create_file "app/models/.keep"
       end
 

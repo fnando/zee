@@ -3,6 +3,8 @@
 module Zee
   class Controller
     module Renderer
+      include Instrumentation
+
       # Render a template. The default is to render a template with the same
       # name as the action. The template must be named
       # `:name.:content_type.:template_handler`, as in `home.html.erb`.
@@ -80,8 +82,6 @@ module Zee
           )
         end
 
-        logger = app.config.logger.tagged(:request, :render)
-
         # Find the first file that exists.
         view_path = view_paths.find {|tp| File.file?(tp[:path]) }
         layout_path = layout_paths.find {|tp| File.file?(tp[:path]) }
@@ -95,29 +95,25 @@ module Zee
                 "#{controller_name}##{template_name}: #{list}"
         end
 
-        logger.debug do
-          "view: #{view_path[:path].relative_path_from(app.root)}"
-        end
-
         locals = self.locals.merge(controller: self)
-        body = app.render_template(
-          view_path[:path],
-          locals:,
-          request:,
-          context: helpers
-        )
-
-        if layout != false && layout_path
-          logger.debug do
-            "layout: #{layout_path[:path].relative_path_from(app.root)}"
-          end
-
-          body = app.render_template(
-            layout_path[:path],
+        body = instrument(:request, view: view_path[:path]) do
+          app.render_template(
+            view_path[:path],
             locals:,
             request:,
             context: helpers
-          ) { SafeBuffer.new(body) }
+          )
+        end
+
+        if layout != false && layout_path
+          body = instrument(:request, layout: layout_path[:path]) do
+            app.render_template(
+              layout_path[:path],
+              locals:,
+              request:,
+              context: helpers
+            ) { SafeBuffer.new(body) }
+          end
         end
 
         response.status(status)
