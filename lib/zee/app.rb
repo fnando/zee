@@ -397,6 +397,7 @@ module Zee
         @to_app = nil
         @helpers = nil
 
+        loader.reload
         load_files force: true
         run_init
       end
