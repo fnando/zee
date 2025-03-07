@@ -143,6 +143,7 @@ class AppTest < Minitest::Test
     assert_equal Rack::ConditionalGet, stack[7]
     assert_equal Rack::ETag, stack[8]
     assert_equal Rack::TempfileReaper, stack[9]
-    assert_equal 10, stack.size
+    assert_equal RequestStore::Middleware, stack[10]
+    assert_equal 11, stack.size
   end
 end

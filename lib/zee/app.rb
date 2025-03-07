@@ -232,8 +232,8 @@ module Zee
         middleware.use Rack::ConditionalGet
         middleware.use Rack::ETag
         middleware.use Rack::TempfileReaper
-
         middleware.use Rack::ShowExceptions if env.development?
+        middleware.use RequestStore::Middleware
       end
     end
 
