@@ -86,7 +86,7 @@ module Zee
   ZEE_CSP_NONCE = "zee.csp_nonce"
 
   # @api private
-  ZEE_CSRF_TOKEN = "zee.csrf_token"
+  CSRF_SESSION_KEY = "_csrf_token"
 
   # @api private
   ZEE_KEYRING = "ZEE_KEYRING"

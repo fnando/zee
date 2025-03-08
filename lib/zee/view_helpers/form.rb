@@ -10,6 +10,9 @@ module Zee
       # Raised when the request is not set.
       RequestNotSet = Class.new(StandardError)
 
+      # Raised when the authenticity token is not set.
+      AuthenticityTokenNotSet = Class.new(StandardError)
+
       # @api private
       BUTTON_LABEL = "Button"
 
@@ -583,7 +586,12 @@ module Zee
       def form_for(object, url:, as: :form, **, &)
         raise RequestNotSet, "request is not set for some reason" unless request
 
-        authenticity_token = request.env[ZEE_CSRF_TOKEN]
+        authenticity_token = request.session[CSRF_SESSION_KEY]
+
+        unless authenticity_token
+          raise AuthenticityTokenNotSet,
+                "authenticity token is not set for some reason"
+        end
 
         form = FormBuilder.new(object:, context: self, object_name: as, **)
         form_tag(url:, authenticity_token:, **) { instance_exec(form, &) }

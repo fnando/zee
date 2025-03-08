@@ -4,8 +4,8 @@ module Zee
   class Controller
     module AuthenticityToken
       # @api private
-      def self.included(base)
-        base.before_action { renew_authenticity_token! if request.get? }
+      def self.included(controller)
+        controller.before_action { renew_authenticity_token! if request.get? }
       end
 
       # @!visibility public
@@ -18,7 +18,7 @@ module Zee
       private def verify_authenticity_token
         return if skip_authenticity_token_verification?
 
-        expected = session[ZEE_CSRF_TOKEN].to_s
+        expected = session[CSRF_SESSION_KEY].to_s
         actual = if request.xhr?
                    request.get_header(HTTP_X_CSRF_TOKEN)
                  else
@@ -67,7 +67,7 @@ module Zee
       # Renew the authenticity token.
       # This method is called before every action.
       private def renew_authenticity_token!
-        session[ZEE_CSRF_TOKEN] = SecureRandom.hex(32)
+        session[CSRF_SESSION_KEY] = SecureRandom.hex(32)
       end
 
       # @api private
@@ -92,10 +92,10 @@ module Zee
             "#{request_method.to_s.upcase}#{path}#{token}"
           )
 
-          session[ZEE_CSRF_TOKEN] = "#{token}--#{hmac}"
+          session[CSRF_SESSION_KEY] = "#{token}--#{hmac}"
         end
 
-        session[ZEE_CSRF_TOKEN]
+        session[CSRF_SESSION_KEY]
       end
     end
   end

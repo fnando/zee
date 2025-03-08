@@ -16,7 +16,7 @@ class FormBuilderTest < Zee::Test
   end
 
   let(:request) { Zee::Request.new(Rack::MockRequest.env_for("/")) }
-  setup { request.env[Zee::ZEE_CSRF_TOKEN] = "abc" }
+  setup { request.session[Zee::CSRF_SESSION_KEY] = "abc" }
   setup { I18n.available_locales = [:en] }
 
   test "builds form using hash" do
@@ -59,6 +59,21 @@ class FormBuilderTest < Zee::Test
     assert_selector html,
                     "form[action='/users'][method=post]>input#user_name" \
                     "[type=text][value='Jane'][name='user[name]']"
+  end
+
+  test "raises when building form without authenticity token" do
+    user = {}
+    request.session.delete(Zee::CSRF_SESSION_KEY)
+
+    template = <<~ERB
+      <%= form_for user, url: "/users", as: :user do |f| %>
+        <%= f.text_field :name %>
+      <% end %>
+    ERB
+
+    assert_raises(Zee::ViewHelpers::Form::AuthenticityTokenNotSet) do
+      render(template, locals: {user:}, request:)
+    end
   end
 
   test "renders text field" do
