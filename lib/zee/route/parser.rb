@@ -83,7 +83,7 @@ module Zee
         components.each do |component|
           if component.start_with?(":")
             name = component[1..-1].to_sym
-            value = to_param(params[name])
+            value = to_param(params[name]).to_s
 
             next if segments[name].optional? && value.empty?
 
