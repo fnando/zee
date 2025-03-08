@@ -25,7 +25,10 @@ module Zee
         store = RequestStore.store[:instrumentation]
         props = prepare_props(store)
 
-        props[:params] = request.params if request.params.any?
+        if request.params.any?
+          props[:params] = ParameterFilter.new(Zee.app.config.filter_parameters)
+                                          .filter(request.params)
+        end
 
         # The order of keys is important and determines the order of the output.
         props = {handler: props.delete(:route)}.merge(props)

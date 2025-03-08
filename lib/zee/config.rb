@@ -55,6 +55,7 @@ module Zee
       set :serve_static_files, app&.env&.local?
       set :enable_reloading, false
       set :enable_instrumentation, false
+      set :filter_parameters, ParameterFilter::DEFAULT_FILTERS
     end
 
     # @api private

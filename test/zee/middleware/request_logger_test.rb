@@ -33,12 +33,21 @@ class RequestLoggerTest < Minitest::Test
     instrument(:request, redirected_to: "/")
     instrument(:sequel, sql: "select 1", &block)
 
-    Dir.chdir(root) { app.call(Rack::MockRequest.env_for("/")) }
+    Dir.chdir(root) do
+      app.call(
+        Rack::MockRequest.env_for(
+          "/",
+          params: {email: "me@example.com"},
+          method: :post
+        )
+      )
+    end
     log = strip_ansi_color(logger_io.tap(&:rewind).read)
 
-    assert_match(%r{^GET / \(.*?\)$}, log)
+    assert_match(%r{^POST / \(.*?\)$}, log)
     assert_includes log, "Handler: pages#home\n"
     assert_includes log, "Redirected to: /\n"
+    assert_includes log, %[Params: {"email" => "[filtered]"}\n]
     assert_match(%r{^View: app/views/pages/home\.html\.erb \(.*?\)$}, log)
     assert_match(%r{^Partial: app/views/pages/_item\.html\.erb \(.*?\)$}, log)
     assert_match(%r{^Layout: app/views/layouts/app\.html\.erb \(.*?\)$}, log)

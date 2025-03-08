@@ -31,5 +31,11 @@ Zee.app.config do
 
   # Set the session options.
   # The session secret can be edited with `zee secrets:edit`.
-  set :session_options, domain:
+  set :session_options, domain: domain
+
+  # Configure parameters to be partially matched (e.g. passw matches password)
+  # and filtered from the log file.
+  set :filter_parameters, %w[
+    passw email secret token _key crypt salt certificate otp ssn cvv cvc
+  ]
 end
