@@ -217,6 +217,7 @@ module Zee
     # @return [Zee::MiddlewareStack]
     def default_middleware_stack
       MiddlewareStack.new(self).tap do |middleware|
+        middleware.use Rack::ShowExceptions if env.development?
         middleware.use Middleware::RequestLogger
         middleware.use RequestStore::Middleware
         middleware.use Rack::Sendfile
@@ -233,7 +234,7 @@ module Zee
         middleware.use Rack::ConditionalGet
         middleware.use Rack::ETag
         middleware.use Rack::TempfileReaper
-        middleware.use Rack::ShowExceptions if env.development?
+        middleware.use Middleware::ContentSecurityPolicy
       end
     end
 

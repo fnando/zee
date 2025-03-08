@@ -144,6 +144,7 @@ class AppTest < Minitest::Test
     assert_equal Rack::ConditionalGet, stack[8]
     assert_equal Rack::ETag, stack[9]
     assert_equal Rack::TempfileReaper, stack[10]
-    assert_equal 11, stack.size
+    assert_equal Zee::Middleware::ContentSecurityPolicy, stack[11]
+    assert_equal 12, stack.size
   end
 end
