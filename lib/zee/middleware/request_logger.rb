@@ -25,6 +25,8 @@ module Zee
         store = RequestStore.store[:instrumentation]
         props = prepare_props(store)
 
+        props[:params] = request.params if request.params.any?
+
         # The order of keys is important and determines the order of the output.
         props = {handler: props.delete(:route)}.merge(props)
         props[:database] = database_log(store)
