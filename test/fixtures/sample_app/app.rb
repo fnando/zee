@@ -32,6 +32,8 @@ class SampleApp < Zee::App
       patch "categories/new", to: "categories#create"
 
       get "login", to: "login#new", as: :login
+      get "messages", to: "messages#index", as: :messages
+      post "messages", to: "messages#create"
 
       proc_app = lambda {|_env|
         [200, {"content-type" => "text/html"}, ["hello from rack app"]]

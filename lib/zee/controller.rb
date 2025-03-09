@@ -6,6 +6,7 @@ module Zee
     include Callbacks
     include AuthenticityToken
     include Locals
+    include Flash
     using Zee::Core::Blank
 
     # Raised when a template is missing.

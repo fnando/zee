@@ -140,11 +140,12 @@ class AppTest < Minitest::Test
     assert_equal Rack::Runtime, stack[4]
     assert_equal Rack::Protection, stack[5]
     assert_equal Rack::Session::Cookie, stack[6]
-    assert_equal Rack::Head, stack[7]
-    assert_equal Rack::ConditionalGet, stack[8]
-    assert_equal Rack::ETag, stack[9]
-    assert_equal Rack::TempfileReaper, stack[10]
-    assert_equal Zee::Middleware::ContentSecurityPolicy, stack[11]
-    assert_equal 12, stack.size
+    assert_equal Zee::Middleware::Flash, stack[7]
+    assert_equal Rack::Head, stack[8]
+    assert_equal Rack::ConditionalGet, stack[9]
+    assert_equal Rack::ETag, stack[10]
+    assert_equal Rack::TempfileReaper, stack[11]
+    assert_equal Zee::Middleware::ContentSecurityPolicy, stack[12]
+    assert_equal 13, stack.size
   end
 end

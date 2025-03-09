@@ -7,7 +7,10 @@ module Zee
       using Zee::Core::String
       using Zee::Core::Blank
 
+      # @api private
       CONTROLLERS_PREFIX = "controllers/"
+
+      # @api private
       APPLICATION = "application"
 
       # Render a template. The default is to render a template with the same

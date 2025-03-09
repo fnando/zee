@@ -33,7 +33,9 @@ class CLITest < Minitest::Test
        POST       | /categories/new        |                  | categories#create
        PATCH      | /categories/new        |                  | categories#create
        GET        | /login                 | login            | login#new
-       ALL        | /proc-app              | proc_app         | app.rb:36
+       GET        | /messages              | messages         | messages#index
+       POST       | /messages              |                  | messages#create
+       ALL        | /proc-app              | proc_app         | app.rb:38
        ALL        | /class-app             | class_app        | MyRackApp
       ------------+------------------------+------------------+----------------------------
     TEXT
