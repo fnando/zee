@@ -115,4 +115,22 @@ class ControllerTest < Minitest::Test
     assert_includes response.body, "Hello, John!"
     assert_includes response.body, "Hello, Mary!"
   end
+
+  %i[notice alert info error].each do |key|
+    test "sets #{key} flash message for redirect" do
+      controller_class = Class.new(Zee::Controller) do
+        define_method :redirect do
+          redirect_to "/", key => key.to_s.upcase
+        end
+      end
+
+      controller_class.new(
+        request:,
+        response:,
+        action_name: "redirect"
+      ).send(:call)
+
+      assert_equal key.to_s.upcase, request.session[:flash][:messages][key]
+    end
+  end
 end
