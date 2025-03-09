@@ -7,6 +7,9 @@ module Zee
       using Zee::Core::String
       using Zee::Core::Blank
 
+      CONTROLLERS_PREFIX = "controllers/"
+      APPLICATION = "application"
+
       # Render a template. The default is to render a template with the same
       # name as the action. The template must be named
       # `:name.:content_type.:template_handler`, as in `home.html.erb`.
@@ -89,18 +92,27 @@ module Zee
       end
 
       # @api private
+      private def controller_name_ancestry
+        names =
+          self
+          .class
+          .ancestors
+          .filter_map do |klass|
+            klass.is_a?(Class) &&
+              klass < Zee::Controller &&
+              klass.name.present? &&
+              klass.name.underscore.delete_prefix(CONTROLLERS_PREFIX)
+          end
+
+        (names + [APPLICATION]).uniq
+      end
+
+      # @api private
       # Find possible layout names based on the controller ancestry.
       # The lookup will always stop at [Zee::Controller] and will use
       # `application` as the last fallback.
       def possible_layout_names(layout)
-        names = self.class.ancestors.filter_map do |ancestor|
-          next unless ancestor.is_a?(Class) && ancestor < Controller
-          next unless ancestor.name
-
-          ancestor.name.underscore.delete_prefix("controllers/")
-        end
-
-        [layout, *names, "application"].compact
+        [layout, *controller_name_ancestry].compact.uniq
       end
 
       # @api private
@@ -153,15 +165,17 @@ module Zee
       #                           if the template is not found.
       # @raise [MissingTemplateError]
       def find_template(name, mimes, required: true)
-        mimes.each do |mime|
-          view_paths.each do |view_path|
-            Zee.app.config.template_handlers.each do |handler|
-              view_path = view_path.join(
-                controller_name,
-                "#{name}.#{mime.extension}.#{handler}"
-              )
+        controller_name_ancestry.each do |controller_name|
+          mimes.each do |mime|
+            view_paths.each do |view_path|
+              Zee.app.config.template_handlers.each do |handler|
+                view_path = view_path.join(
+                  controller_name,
+                  "#{name}.#{mime.extension}.#{handler}"
+                )
 
-              return Template.new(path: view_path, mime:) if view_path.file?
+                return Template.new(path: view_path, mime:) if view_path.file?
+              end
             end
           end
         end

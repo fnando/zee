@@ -106,7 +106,11 @@ class ControllerTest < Minitest::Test
       end
     end
 
-    controller_class.new(request:, response:, action_name: "show").send(:call)
+    controller_class.new(
+      request:,
+      response:,
+      action_name: "show"
+    ).send(:call)
 
     assert_includes response.body, "Hello, John!"
     assert_includes response.body, "Hello, Mary!"
