@@ -23,10 +23,11 @@ module Zee
         def assert_selector(root, selector, count: 1, text: nil, html: nil, &)
           root = Nokogiri::HTML.fragment(root.to_s)
           nodes = root.css(selector)
-          formatted_root = Nokogiri::XSLT(indent_xsl)
-                                   .apply_to(Nokogiri::XML(root.to_xml))
-                                   .lines[2..-1]
-                                   .join
+          lines = Nokogiri::XSLT(indent_xsl)
+                          .apply_to(Nokogiri::XML(root.to_xml))
+                          .lines[2..-1]
+
+          formatted_root = lines ? lines.join : "".inspect
 
           assert_equal count,
                        nodes.size,

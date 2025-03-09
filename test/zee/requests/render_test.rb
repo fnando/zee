@@ -133,6 +133,15 @@ class RenderTest < Zee::Test::Request
     assert_includes last_response.content_type, "text/html"
   end
 
+  test "renders correct mime based on the available template name" do
+    get "/feed", {}, "HTTP_ACCEPT" => "*/*"
+
+    assert last_response.ok?
+    assert_includes last_response.body,
+                    %[<?xml version="1.0" encoding="UTF-8"?>]
+    assert_includes last_response.content_type, "application/xml"
+  end
+
   test "renders rack app (lambda)" do
     get "/proc-app"
 

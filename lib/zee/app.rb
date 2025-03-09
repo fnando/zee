@@ -316,6 +316,7 @@ module Zee
           helper_modules =
             ::Helpers.constants.map {|name| ::Helpers.const_get(name) }
 
+          include(ViewHelpers::Partial)
           include(ViewHelpers::Assets)
           include(ViewHelpers::Form)
           include(app.routes.helpers)

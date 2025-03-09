@@ -71,7 +71,7 @@ module Zee
 
       def database_log(store)
         queries = store[:sequel].count
-        sql_time_spent = store[:sequel].sum(&:first)
+        sql_time_spent = store[:sequel].sum { _1[:duration] }
 
         return "0 queries" unless queries.positive?
 
@@ -80,20 +80,21 @@ module Zee
       end
 
       def prepare_props(store)
-        store[:request].each_with_object({}) do |(duration, kwargs), buffer|
-          if kwargs[:partial]
+        store[:request].each_with_object({}) do |props, buffer|
+          case props[:args][:scope]
+          when :partial
             buffer[:partials] ||= []
-            buffer[:partials] << view_log(duration:, path: kwargs[:partial])
+            buffer[:partials] << view_log(
+              path: props[:args][:path],
+              duration: props[:duration]
+            )
+          when :layout, :view
+            buffer[props[:args][:scope]] = view_log(
+              path: props[:args][:path],
+              duration: props[:duration]
+            )
           else
-            kwargs.each do |key, value|
-              buffer[key] =
-                case value
-                when Pathname
-                  view_log(duration:, path: value)
-                else
-                  value
-                end
-            end
+            buffer.merge!(props[:args].except(:scope))
           end
         end
       end

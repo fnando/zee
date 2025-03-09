@@ -6,7 +6,6 @@ module Zee
     include Callbacks
     include AuthenticityToken
     include Locals
-
     using Zee::Core::Blank
 
     # Raised when a template is missing.
@@ -17,6 +16,11 @@ module Zee
 
     # Raised when trying to expose a public method as a helper.
     UnsafeHelperError = Class.new(StandardError)
+
+    # @api private
+    # The template object.
+    # @return [Struct]
+    Template = Struct.new(:path, :mime, keyword_init: true)
 
     class << self
       # The CSRF parameter name.
@@ -181,11 +185,19 @@ module Zee
         [Pathname(file).relative_path_from(Dir.pwd), line].join(COLON)
       end
 
-      props = {halted_by_before_action: name ? ":#{name}" : source}
+      props = {source: name ? ":#{name}" : source, scope: :before_action}
       location = response.headers[:location]
       props[:redirected_to] = location unless location.blank?
 
       instrument :request, **props
+    end
+
+    # @api private
+    # The list of template source directories. By default, it only includes
+    # you app's `app/views` directory.
+    # @return [Array<Pathname>]
+    def view_paths
+      @view_paths ||= [Zee.app.root.join("app/views")]
     end
   end
 end

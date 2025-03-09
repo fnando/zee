@@ -22,6 +22,8 @@ class SampleApp < Zee::App
       delete "session", to: "sessions#delete"
       get "helpers", to: "helpers#show"
 
+      get "feed", to: "feeds#show"
+
       # Routes related to CSRF protection
       get "posts/new", to: "posts#new", as: :new_post
       post "posts/new", to: "posts#create"
@@ -46,6 +48,10 @@ class SampleApp < Zee::App
         end
       end
       mount class_app, at: "class-app", as: :class_app
+    end
+
+    app.config do
+      set :session_options, domain: nil, secure: false
     end
 
     app.middleware do

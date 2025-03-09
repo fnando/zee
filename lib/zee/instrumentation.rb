@@ -18,7 +18,11 @@ module Zee
       end
 
       RequestStore.store[:instrumentation] ||= Hash.new {|h, k| h[k] = [] }
-      RequestStore.store[:instrumentation][name] << [duration, kwargs]
+      RequestStore.store[:instrumentation][name] << {
+        name:,
+        duration:,
+        args: kwargs
+      }
 
       result
     end

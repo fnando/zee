@@ -6,6 +6,21 @@ module Zee
     # @return [String]
     attr_accessor :body
 
+    # The template file that's been used to render the response.
+    # @return [Controller::Template, nil]
+    attr_accessor :view_path
+
+    # The template file that's been used as the layout file rendered for the
+    # response.
+    # @return [Controller::Template, nil]
+    attr_accessor :layout_path
+
+    def initialize(body: nil, status: nil, headers: nil)
+      @body = body
+      @status = status
+      @headers = headers
+    end
+
     # The status code of the response.
     # @return [Integer] The status code when set.
     # @return [NilClass] The status code when not set.

@@ -4,6 +4,8 @@ module Zee
   class Controller
     module Renderer
       include Instrumentation
+      using Zee::Core::String
+      using Zee::Core::Blank
 
       # Render a template. The default is to render a template with the same
       # name as the action. The template must be named
@@ -39,76 +41,27 @@ module Zee
         return render_json(status, options.delete(:json)) if options.key?(:json)
         return render_text(status, options.delete(:text)) if options.key?(:text)
 
-        accept = (request.env[HTTP_ACCEPT] || TEXT_HTML).to_s.strip
-        mimes = Rack::Utils
-                .q_values(accept)
-                .sort_by(&:last)
-                .reverse
-                .map { MiniMime.lookup_by_content_type(_1.first) }
-                .compact
+        mimes = possible_mime_types(template_name)
+        view_path = find_template(template_name, mimes)
+        layout_path = find_layout(layout, [view_path.mime]) if layout != false
 
-        if accept == HTTP_ACCEPT_ALL || accept.empty?
-          # Try to find all possible mimes based on templates that exist.
-          mimes = app.root
-                     .glob("app/views/#{controller_name}/#{template_name}.*.*")
-                     .flat_map { _1.basename.to_s.split(DOT)[1] }
-                     .map { MiniMime.lookup_by_extension(_1) }
-
-          # If no mimes are found, then default to HTML.
-          mimes = [MiniMime.lookup_by_extension(HTML)] if mimes.empty?
-        end
-
-        root = app.root
-        view_base = root.join("app/views/#{controller_name}/#{template_name}")
-        layout_bases = [
-          (root.join("app/views/layouts/#{layout}") if layout),
-          root.join("app/views/layouts/#{controller_name}"),
-          root.join("app/views/layouts/application")
-        ].compact
-
-        # Get a list of files like `app/views/pages/home.html.erb`.
-        view_paths = build_template_paths(
-          mimes,
-          app.config.template_handlers,
-          view_base
-        )
-
-        # Get a list of files like `app/views/layouts/application.html.erb`.
-        layout_paths = layout_bases.flat_map do |layout_base|
-          build_template_paths(
-            mimes,
-            app.config.template_handlers,
-            layout_base
-          )
-        end
-
-        # Find the first file that exists.
-        view_path = view_paths.find {|tp| File.file?(tp[:path]) }
-        layout_path = layout_paths.find {|tp| File.file?(tp[:path]) }
-
-        unless view_path
-          list = view_paths
-                 .map { _1[:path].relative_path_from(root) }
-                 .join(", ")
-
-          raise Controller::MissingTemplateError,
-                "#{controller_name}##{template_name}: #{list}"
-        end
+        response.view_path = view_path
+        response.layout_path = layout_path
 
         locals = self.locals.merge(controller: self)
-        body = instrument(:request, view: view_path[:path]) do
+        body = instrument(:request, scope: :view, path: view_path.path) do
           app.render_template(
-            view_path[:path],
+            view_path.path,
             locals:,
             request:,
             context: helpers
           )
         end
 
-        if layout != false && layout_path
-          body = instrument(:request, layout: layout_path[:path]) do
+        if layout_path
+          body = instrument(:request, scope: :layout, path: layout_path) do
             app.render_template(
-              layout_path[:path],
+              layout_path,
               locals:,
               request:,
               context: helpers
@@ -117,20 +70,8 @@ module Zee
         end
 
         response.status(status)
-        response.headers[:content_type] = view_path[:mime]&.content_type
+        response.headers[:content_type] = view_path.mime.content_type
         response.body = body
-      end
-
-      # @api private
-      private def build_template_paths(mimes, template_handlers, base_path)
-        mimes.flat_map do |mime|
-          template_handlers.map do |handler|
-            {
-              mime:,
-              path: Pathname("#{base_path}.#{mime.extension}.#{handler}")
-            }
-          end
-        end
       end
 
       # @api private
@@ -145,6 +86,128 @@ module Zee
         response.status(status)
         response.headers[:content_type] = APPLICATION_JSON
         response.body = Zee.app.config.json_serializer.dump(data)
+      end
+
+      # @api private
+      # Find possible layout names based on the controller ancestry.
+      # The lookup will always stop at [Zee::Controller] and will use
+      # `application` as the last fallback.
+      def possible_layout_names(layout)
+        names = self.class.ancestors.filter_map do |ancestor|
+          next unless ancestor.is_a?(Class) && ancestor < Controller
+          next unless ancestor.name
+
+          ancestor.name.underscore.delete_prefix("controllers/")
+        end
+
+        [layout, *names, "application"].compact
+      end
+
+      # @api private
+      # Find a layout template file.
+      #
+      # @param name [String] The layout name.
+      # @param mimes [Array<MiniMime::Info>] A list of possible mime types that
+      #                                      will be used to search the
+      #                                      template. Template files must
+      #                                      follow the `name.:format.:engine`
+      #                                      pattern.
+      # @return [Pathname]
+      # @raise [MissingTemplateError]
+      def find_layout(name, mimes)
+        mimes.each do |mime|
+          view_paths.each do |view_path|
+            possible_layout_names(name).each do |layout|
+              layout_path =
+                view_path.glob("layouts/#{layout}.#{mime.extension}.*").first
+
+              return layout_path if layout_path
+            end
+          end
+        end
+
+        nil
+      end
+
+      # @api private
+      # Find a partial template.
+      #
+      # @param name [String] The partial name.
+      # @raise [MissingTemplateError]
+      # @return [Pathname]
+      def find_partial(name)
+        find_template("_#{name}", [response.view_path.mime])
+      end
+
+      # @api private
+      # Find the template by name.
+      # It considers the enabled engines and the view paths.
+      #
+      # @param name [String] The template name.
+      # @param mimes [Array<MiniMime::Info>] A list of possible mime types that
+      #                                      will be used to search the
+      #                                      template. Template files must
+      #                                      follow the `name.:format.:engine`
+      #                                      pattern.
+      # @param required [Boolean] When required, raises [MissingTemplateError]
+      #                           if the template is not found.
+      # @raise [MissingTemplateError]
+      def find_template(name, mimes, required: true)
+        mimes.each do |mime|
+          view_paths.each do |view_path|
+            Zee.app.config.template_handlers.each do |handler|
+              view_path = view_path.join(
+                controller_name,
+                "#{name}.#{mime.extension}.#{handler}"
+              )
+
+              return Template.new(path: view_path, mime:) if view_path.file?
+            end
+          end
+        end
+
+        return unless required
+
+        content_types = mimes.map(&:content_type)
+
+        raise MissingTemplateError,
+              "couldn't find template for #{controller_name}/#{name} " \
+              "for #{content_types.inspect}"
+      end
+
+      # @api private
+      def possible_mime_types(template_name)
+        accept = request.env[HTTP_ACCEPT].to_s.strip
+        accept_all = accept == HTTP_ACCEPT_ALL || accept.blank?
+
+        mimes = Rack::Utils
+                .q_values(accept)
+                .sort_by(&:last)
+                .reverse
+                .map { MiniMime.lookup_by_content_type(_1.first) }
+                .compact
+
+        # When `Accept: */*` is provided, we also need to find a template that
+        # matches the extension. We're looking for files like `file.html.erb` or
+        # `file.xml.erb` (the last extension component depends on the engines
+        # that are enabled via {Zee::Config#template_handlers}).
+        if accept_all && mimes.empty?
+          view_paths.each do |view_path|
+            exts = view_path.glob("#{controller_name}/#{template_name}.*.*")
+                            .map(&:basename)
+            format = exts.to_s.split(DOT)[1]
+            mime = MiniMime.lookup_by_extension(format) if format
+
+            next unless mime
+
+            mimes << mime
+            break
+          end
+        end
+
+        mimes << MiniMime.lookup_by_extension(HTML) if mimes.empty?
+
+        mimes
       end
     end
   end

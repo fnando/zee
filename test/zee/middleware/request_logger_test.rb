@@ -24,11 +24,16 @@ class RequestLoggerTest < Minitest::Test
       # noop
     end
 
-    instrument(:request, view: views.join("pages/home.html.erb"), &block)
-    instrument(:request, partial: views.join("pages/_item.html.erb"), &block)
-    instrument(:request, partial: views.join("pages/_item.html.erb"), &block)
-    instrument(:request, partial: views.join("pages/_item.html.erb"), &block)
-    instrument(:request, layout: views.join("layouts/app.html.erb"), &block)
+    instrument(:request, scope: :view, path: views.join("pages/home.html.erb"),
+               &block)
+    instrument(:request, scope: :partial,
+                         path: views.join("pages/_item.html.erb"), &block)
+    instrument(:request, scope: :partial,
+                         path: views.join("pages/_item.html.erb"), &block)
+    instrument(:request, scope: :partial,
+                         path: views.join("pages/_item.html.erb"), &block)
+    instrument(:request, scope: :layout,
+                         path: views.join("layouts/app.html.erb"), &block)
     instrument(:request, route: "pages#home")
     instrument(:request, redirected_to: "/")
     instrument(:sequel, sql: "select 1", &block)
@@ -47,7 +52,7 @@ class RequestLoggerTest < Minitest::Test
     assert_match(%r{^POST / \(.*?\)$}, log)
     assert_includes log, "Handler: pages#home\n"
     assert_includes log, "Redirected to: /\n"
-    assert_includes log, %[Params: {"email" => "[filtered]"}\n]
+    assert_match(/Params: {"email" ?=> ?"\[filtered\]"}\n/, log)
     assert_match(%r{^View: app/views/pages/home\.html\.erb \(.*?\)$}, log)
     assert_match(%r{^Partial: app/views/pages/_item\.html\.erb \(.*?\)$}, log)
     assert_match(%r{^Layout: app/views/layouts/app\.html\.erb \(.*?\)$}, log)

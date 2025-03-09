@@ -753,13 +753,15 @@ class CallbacksTest < Minitest::Test
     controller.send(:call)
 
     store = RequestStore.store[:instrumentation][:request]
-    expected_instrumentation = [
-      nil,
-      {
-        halted_by_before_action: "test/zee/controller/callbacks_test.rb:744",
+    expected_instrumentation = {
+      name: :request,
+      duration: nil,
+      args: {
+        scope: :before_action,
+        source: "test/zee/controller/callbacks_test.rb:744",
         redirected_to: "/"
       }
-    ]
+    }
 
     assert_equal 1, store.size
     assert_equal expected_instrumentation, store.first

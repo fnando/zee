@@ -26,13 +26,14 @@ class CLITest < Minitest::Test
        GET        | /session               |                  | sessions#show
        DELETE     | /session               |                  | sessions#delete
        GET        | /helpers               |                  | helpers#show
+       GET        | /feed                  |                  | feeds#show
        GET        | /posts/new             | new_post         | posts#new
        POST       | /posts/new             |                  | posts#create
        GET        | /categories/new        | new_category     | categories#new
        POST       | /categories/new        |                  | categories#create
        PATCH      | /categories/new        |                  | categories#create
        GET        | /login                 | login            | login#new
-       ALL        | /proc-app              | proc_app         | app.rb:34
+       ALL        | /proc-app              | proc_app         | app.rb:36
        ALL        | /class-app             | class_app        | MyRackApp
       ------------+------------------------+------------------+----------------------------
     TEXT

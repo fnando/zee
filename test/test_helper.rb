@@ -43,6 +43,7 @@ module Minitest
 
     setup { ENV.delete("MINITEST_TEST_COMMAND") }
     setup { ENV.delete_if { _1.start_with?("ZEE") } }
+    setup { ENV["APP_ENV"] = "test" }
     setup { FileUtils.rm_rf("tmp") }
     setup { FileUtils.mkdir("tmp") }
     setup { Zee.app = SampleApp.create }
@@ -65,11 +66,12 @@ module Minitest
       {out:, err:, exit_code:}
     end
 
-    def render(template, request: nil, locals: {})
+    def render(template, request: nil, locals: {}, context: nil)
       request ||= Zee::Request.new(Rack::MockRequest.env_for("/"))
-      context = Struct.new(:request).new(request)
-                      .extend(Zee::ViewHelpers::Form)
-                      .extend(Zee::ViewHelpers::HTML)
+      context ||= Struct.new(:request).new(request)
+                        .extend(Zee::ViewHelpers::Form)
+                        .extend(Zee::ViewHelpers::HTML)
+                        .extend(Zee::ViewHelpers::Partial)
       File.write("tmp/template.erb", template)
       Zee.app.render_template("tmp/template.erb", request:, locals:, context:)
     end
@@ -80,6 +82,11 @@ module Minitest
 
     def strip_ansi_color(string)
       string.gsub(/\e\[(\d+)(;\d+)*m/, "")
+    end
+
+    def create_file(path, content)
+      FileUtils.mkdir_p(File.dirname(path))
+      File.write(path, content)
     end
   end
 end
