@@ -46,7 +46,9 @@ module Zee
 
           case key
           when :partials
-            value.each {|path| logger.debug("Partial: #{path}") }
+            value.each do |path|
+              logger.debug("#{'Partial'.colored(:cyan)}: #{path}")
+            end
           else
             logger.debug("#{colored_key}: #{value}")
           end
