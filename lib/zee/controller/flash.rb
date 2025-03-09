@@ -50,6 +50,17 @@ module Zee
           @discard << key if @messages.key?(key)
         end
 
+        # Keep the flash message.
+        # @param key [Symbol, nil] The key of the message to keep. If `nil`, all
+        #                          messages will be kept.
+        def keep(key = nil)
+          if key
+            @discard.delete(key)
+          else
+            @discard.clear
+          end
+        end
+
         # Discard the flash message.
         # @param key [Symbol]
         def delete(key)

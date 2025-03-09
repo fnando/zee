@@ -34,6 +34,10 @@ class SampleApp < Zee::App
       get "login", to: "login#new", as: :login
       get "messages", to: "messages#index", as: :messages
       post "messages", to: "messages#create"
+      post "messages/set-keep", to: "messages#set_keep"
+      post "messages/set-keep-all", to: "messages#set_keep_all"
+      get "messages/keep", to: "messages#keep"
+      get "messages/keep-all", to: "messages#keep_all"
 
       proc_app = lambda {|_env|
         [200, {"content-type" => "text/html"}, ["hello from rack app"]]

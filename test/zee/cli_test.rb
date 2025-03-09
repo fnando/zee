@@ -8,36 +8,40 @@ class CLITest < Minitest::Test
     out = nil
 
     expected = <<~TEXT
-      ------------+------------------------+------------------+----------------------------
-       Verb       | Path                   | Prefix           | To
-      ------------+------------------------+------------------+----------------------------
-       GET        | /                      | root             | pages#home
-       GET        | /custom-layout         |                  | pages#custom_layout
-       GET        | /no-layout             |                  | pages#no_layout
-       GET        | /controller-layout     |                  | things#show
-       GET        | /missing-template      |                  | pages#missing_template
-       GET        | /hello                 |                  | pages#hello
-       GET        | /text                  |                  | formats#text
-       GET        | /json                  |                  | formats#json
-       GET        | /redirect              |                  | pages#redirect
-       GET        | /redirect-error        |                  | pages#redirect_error
-       GET        | /redirect-open         |                  | pages#redirect_open
-       POST       | /session               |                  | sessions#create
-       GET        | /session               |                  | sessions#show
-       DELETE     | /session               |                  | sessions#delete
-       GET        | /helpers               |                  | helpers#show
-       GET        | /feed                  |                  | feeds#show
-       GET        | /posts/new             | new_post         | posts#new
-       POST       | /posts/new             |                  | posts#create
-       GET        | /categories/new        | new_category     | categories#new
-       POST       | /categories/new        |                  | categories#create
-       PATCH      | /categories/new        |                  | categories#create
-       GET        | /login                 | login            | login#new
-       GET        | /messages              | messages         | messages#index
-       POST       | /messages              |                  | messages#create
-       ALL        | /proc-app              | proc_app         | app.rb:38
-       ALL        | /class-app             | class_app        | MyRackApp
-      ------------+------------------------+------------------+----------------------------
+      ------------+----------------------------+------------------+----------------------------
+       Verb       | Path                       | Prefix           | To
+      ------------+----------------------------+------------------+----------------------------
+       GET        | /                          | root             | pages#home
+       GET        | /custom-layout             |                  | pages#custom_layout
+       GET        | /no-layout                 |                  | pages#no_layout
+       GET        | /controller-layout         |                  | things#show
+       GET        | /missing-template          |                  | pages#missing_template
+       GET        | /hello                     |                  | pages#hello
+       GET        | /text                      |                  | formats#text
+       GET        | /json                      |                  | formats#json
+       GET        | /redirect                  |                  | pages#redirect
+       GET        | /redirect-error            |                  | pages#redirect_error
+       GET        | /redirect-open             |                  | pages#redirect_open
+       POST       | /session                   |                  | sessions#create
+       GET        | /session                   |                  | sessions#show
+       DELETE     | /session                   |                  | sessions#delete
+       GET        | /helpers                   |                  | helpers#show
+       GET        | /feed                      |                  | feeds#show
+       GET        | /posts/new                 | new_post         | posts#new
+       POST       | /posts/new                 |                  | posts#create
+       GET        | /categories/new            | new_category     | categories#new
+       POST       | /categories/new            |                  | categories#create
+       PATCH      | /categories/new            |                  | categories#create
+       GET        | /login                     | login            | login#new
+       GET        | /messages                  | messages         | messages#index
+       POST       | /messages                  |                  | messages#create
+       POST       | /messages/set-keep         |                  | messages#set_keep
+       POST       | /messages/set-keep-all     |                  | messages#set_keep_all
+       GET        | /messages/keep             |                  | messages#keep
+       GET        | /messages/keep-all         |                  | messages#keep_all
+       ALL        | /proc-app                  | proc_app         | app.rb:42
+       ALL        | /class-app                 | class_app        | MyRackApp
+      ------------+----------------------------+------------------+----------------------------
     TEXT
 
     Dir.chdir("test/fixtures/sample_app") do
