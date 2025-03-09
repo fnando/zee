@@ -228,6 +228,8 @@ module Zee
         if defined?(Rack::Session)
           middleware.use Rack::Session::Cookie,
                          default_session_options.merge(config.session_options)
+
+          middleware.use Middleware::Flash
         end
 
         middleware.use Rack::Head
