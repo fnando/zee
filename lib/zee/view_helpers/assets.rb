@@ -29,6 +29,8 @@ module Zee
       end
 
       # Returns the path to the asset.
+      # @param source [String] The source of the asset.
+      # @return [String]
       def assets_path(source)
         source = source.to_s
 
@@ -38,6 +40,11 @@ module Zee
         source
       end
 
+      # Convert the given source to an asset path.
+      # @param ext [String] The extension of the asset.
+      # @param source [String, Symbol] The source of the asset.
+      # @param dir [String] The directory where the asset is located.
+      # @return [String]
       def to_assets_path(ext:, source:, dir:)
         source = source.to_s
         return source if source.start_with?(SLASH)

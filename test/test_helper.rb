@@ -68,11 +68,7 @@ module Minitest
 
     def render(template, request: nil, locals: {}, context: nil)
       request ||= Zee::Request.new(Rack::MockRequest.env_for("/"))
-      context ||= Struct.new(:request).new(request)
-                        .extend(Zee::ViewHelpers::Form)
-                        .extend(Zee::ViewHelpers::HTML)
-                        .extend(Zee::ViewHelpers::Partial)
-                        .extend(Zee::ViewHelpers::Link)
+      context ||= Struct.new(:request).new(request).extend(Zee.app.helpers)
       File.write("tmp/template.erb", template)
       Zee.app.render_template("tmp/template.erb", request:, locals:, context:)
     end

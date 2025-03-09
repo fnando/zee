@@ -322,6 +322,7 @@ module Zee
           include(ViewHelpers::Assets)
           include(ViewHelpers::Form)
           include(ViewHelpers::Link)
+          include(ViewHelpers::MetaTag)
           include(app.routes.helpers)
           include(*helper_modules) if helper_modules.any?
         end
