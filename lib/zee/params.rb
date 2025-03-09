@@ -33,7 +33,7 @@ module Zee
 
     def initialize(params)
       super()
-      params.each {|key, value| self[key] = value }
+      params.each {|key, value| self[key.to_s] = value }
     end
 
     # Access a key from the store.

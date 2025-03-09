@@ -10,6 +10,13 @@ class ParamsTest < Minitest::Test
     assert_equal "1", params["a"]
   end
 
+  test "accesses a key when input is symbol based" do
+    params = Zee::Params.new(a: "1")
+
+    assert_equal "1", params[:a]
+    assert_equal "1", params["a"]
+  end
+
   test "accesses nested keys" do
     params = Zee::Params.new({"user" => {"name" => "john"}})
 
