@@ -321,6 +321,7 @@ module Zee
           include(ViewHelpers::Partial)
           include(ViewHelpers::Assets)
           include(ViewHelpers::Form)
+          include(ViewHelpers::Link)
           include(app.routes.helpers)
           include(*helper_modules) if helper_modules.any?
         end

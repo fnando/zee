@@ -72,6 +72,7 @@ module Minitest
                         .extend(Zee::ViewHelpers::Form)
                         .extend(Zee::ViewHelpers::HTML)
                         .extend(Zee::ViewHelpers::Partial)
+                        .extend(Zee::ViewHelpers::Link)
       File.write("tmp/template.erb", template)
       Zee.app.render_template("tmp/template.erb", request:, locals:, context:)
     end
