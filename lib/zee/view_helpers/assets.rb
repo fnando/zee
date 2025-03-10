@@ -12,6 +12,9 @@ module Zee
       }.freeze
 
       # @api private
+      X = "x"
+
+      # @api private
       JS = ".js"
 
       # @api private
@@ -172,13 +175,27 @@ module Zee
       # @return [SafeBuffer]
       # @see #asset_path #asset_path for path resolution
       #
-      # @example
-      #   <%= image_tag("logo.png") %>
+      # @example Using a string
+      #   image_tag("logo.png")
+      #
+      # @example Using a path
+      #   image_tag("/some/dir/logo.png")
+      #
+      # @example Using a url
+      #   image_tag("https://example.com/logo.png")
+      #
+      # @example Specifying the image dimensions
+      #   image_tag("logo.png", size: 100)
+      #   image_tag("logo.png", size: "200x100")
+      #
+      # @example Using srcset
+      #   image_tag("logo.png", srcset: {"logo@2x.png" => "2x"})
+      #   image_tag("logo.png", srcset: [["logo@2x.png", "2x"])
       def image_tag(source, alt: nil, size: nil, srcset: nil, **options)
         path = asset_path(source, dir: IMAGES)
 
         if size
-          width, height = size.to_s.split("x")
+          width, height = size.to_s.split(X)
           options[:width] = width
           options[:height] = height || width
         end
