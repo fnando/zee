@@ -512,4 +512,52 @@ class FormTest < Minitest::Test
                     "label.label[for=name]",
                     text: "Your name"
   end
+
+  test "renders button_to form with text" do
+    html = render <<~ERB
+      <%= button_to("Log out", "/logout") %>
+    ERB
+
+    assert_selector html,
+                    "form.button-to[action='/logout'][method=post]>" \
+                    "input[name=_authenticity_token][type=hidden]+" \
+                    "button[type=submit]",
+                    text: "Log out"
+  end
+
+  test "renders button_to form with block" do
+    html = render <<~ERB
+      <%= button_to("/logout") do %>
+        <%= content_tag :span, "Log out" %>
+      <% end %>
+    ERB
+
+    assert_selector html,
+                    "form.button-to[action='/logout'][method=post]>" \
+                    "input[name=_authenticity_token][type=hidden]+" \
+                    "button[type=submit]>span",
+                    text: "Log out"
+  end
+
+  test "renders button_to form with custom options" do
+    html = render <<~ERB
+      <%= button_to("/logout", form_options: {class: "myform"}) %>
+      <%= button_to("/logout", button_options: {class: "mybutton"}) %>
+    ERB
+
+    assert_selector html, "form.myform"
+    assert_selector html, "button.mybutton"
+  end
+
+  test "renders button_to form with params" do
+    now = Time.now
+    Time.stubs(:now).returns(now)
+
+    html = render <<~ERB
+      <%= button_to("/logout", params: {time: Time.now.iso8601}) %>
+    ERB
+
+    assert_selector html,
+                    "form>input[type=hidden][name=time][value='#{now.iso8601}']"
+  end
 end

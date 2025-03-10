@@ -76,7 +76,9 @@ module Minitest
       context: nil
     )
       request ||= Zee::Request.new(
-        Rack::MockRequest.env_for("/").merge("rack.session" => {})
+        Rack::MockRequest
+          .env_for("/")
+          .merge("rack.session" => {Zee::CSRF_SESSION_KEY => "abc"})
       )
       controller ||= Zee::Controller.new(
         action_name: "show",

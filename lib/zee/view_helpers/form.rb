@@ -17,6 +17,9 @@ module Zee
       BUTTON_LABEL = "Button"
 
       # @api private
+      BUTTON_TO_CLASS = "button-to"
+
+      # @api private
       CHECKBOX = "checkbox"
 
       # @api private
@@ -231,7 +234,7 @@ module Zee
           authenticity_token ||= controller.send(
             :authenticity_token,
             request_method: method,
-            path: (url if url.start_with?(SLASH))
+            path: (url if url&.start_with?(SLASH))
           )
 
           buffer << input_field_tag(
@@ -594,6 +597,76 @@ module Zee
 
         form = FormBuilder.new(object:, context: self, object_name: as, **)
         form_tag(url:, **) { instance_exec(form, &) }
+      end
+
+      # Generates a form containing a single button that submits to the provided
+      # url.
+      #
+      # You can control the form attributes by passing `:form_options`;
+      # similarly, you can pass `:button_options` to control the button
+      # attributes.
+      #
+      # @param text [String] The text to display on the button.
+      # @param url [String] The URL to submit the form to.
+      # @param method [Symbol] The HTTP method to use.
+      # @param form_options [Hash{Symbol => Object}] The form attributes.
+      # @param button_options [Hash{Symbol => Object}] The button attributes.
+      # @param params [Hash{Symbol => Object}] Optional hidden fields to
+      #                                        include.
+      # @return [SafeBuffer] The HTML for the button.
+      # @yieldreturn [String] The text to display on the button.
+      #
+      # @example The simplest form
+      #   ```erb
+      #   <%= button_to "Log out", logout_path %>
+      #   ```
+      #
+      # @example Using a block
+      #   ```erb
+      #   <%= button_to(logout_path) do %>
+      #     Log out
+      #   <% end %>
+      #   ```
+      #
+      # @example Customizing the form attributes
+      #   ```erb
+      #   <%= button_to "Log out",
+      #                 logout_path,
+      #                 form_options: {class: "logout"} %>
+      #   ```
+      #
+      # @example Customizing the button attributes
+      #   ```erb
+      #   <%= button_to "Log out",
+      #                 logout_path,
+      #                 button_options: {class: "logout"} %>
+      #   ```
+      #
+      # @example With extra hidden inputs
+      #   ```erb
+      #   <%= button_to "Log out", logout_path, params: {ref: "header"} %>
+      #   ```
+      def button_to(
+        text = nil,
+        url = nil,
+        method: :post,
+        form_options: {},
+        button_options: {},
+        params: {},
+        &
+      )
+        url = text if block_given?
+
+        form_tag(
+          url:,
+          method:,
+          class: BUTTON_TO_CLASS,
+          **form_options
+        ) do
+          buffer = SafeBuffer.new
+          params.each {|name, value| buffer << hidden_field_tag(name, value) }
+          buffer + button_tag(text, type: :submit, **button_options, &)
+        end
       end
     end
   end
