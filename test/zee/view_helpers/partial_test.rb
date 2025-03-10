@@ -5,26 +5,6 @@ require "test_helper"
 class PartialTest < Minitest::Test
   include Zee::Test::Assertions::HTML
 
-  def create_helpers(action_name:, controller_name:, response:)
-    Class.new do
-      include Zee::Renderer
-      include Zee::ViewHelpers::Partial
-
-      define_method :controller do
-        @controller ||= Zee::Controller.new(
-          request: nil,
-          response:,
-          action_name:,
-          controller_name:
-        )
-      end
-
-      def capture(&)
-        yield
-      end
-    end.new
-  end
-
   setup { Zee.app.root = Pathname("tmp") }
   let(:env) { Rack::MockRequest.env_for("/").merge(Zee::RACK_SESSION => {}) }
   let(:request) { Zee::Request.new(env) }
