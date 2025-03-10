@@ -325,4 +325,32 @@ class PartialTest < Minitest::Test
       }, instrumentation[:request][0]
     )
   end
+
+  test "makes partial name available in the partial's context" do
+    controller_class = Class.new(Zee::Controller) do
+      def self.name
+        "Controllers::Pages"
+      end
+
+      def home
+      end
+    end
+
+    create_file "tmp/app/views/pages/home.html.erb", <<~ERB
+      <%= render "header" %>
+    ERB
+
+    create_file "tmp/app/views/pages/_header.html.erb", <<~ERB
+      <p><%= partial_name %></p>
+    ERB
+
+    controller_class.new(
+      request:,
+      response:,
+      controller_name: "pages",
+      action_name: "home"
+    ).send(:call)
+
+    assert_selector response.body, "p", text: "header"
+  end
 end
