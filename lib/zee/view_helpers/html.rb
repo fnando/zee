@@ -22,7 +22,7 @@ module Zee
       ].freeze
 
       # @api private
-      KEEP_BLANK_ATTRS = %w[value].freeze
+      KEEP_BLANK_ATTRS = %w[value alt].freeze
 
       # Returns an HTML tag with the specified content.
       #

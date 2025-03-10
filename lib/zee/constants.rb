@@ -14,6 +14,9 @@ module Zee
   COLON = ":"
 
   # @api private
+  COMMA_SPACE = ", "
+
+  # @api private
   DASH = "-"
 
   # @api private
