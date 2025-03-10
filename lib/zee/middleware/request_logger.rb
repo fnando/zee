@@ -12,7 +12,10 @@ module Zee
       end
 
       def call(env)
-        return @app.call(env) unless Zee.app.config.enable_instrumentation
+        instrumented = Zee.app.config.enable_instrumentation &&
+                       RequestStore.store[:instrumentation]
+
+        return @app.call(env) unless instrumented
 
         # Process the request.
         start = Process.clock_gettime(Process::CLOCK_MONOTONIC)
