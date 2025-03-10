@@ -110,7 +110,7 @@ module Zee
         end
 
         items.each do |item|
-          item_locals = locals.merge(as => item, partial_name: name)
+          item_locals = locals.merge(as => item)
 
           if spacer && iterator.index.positive?
             rendered =
