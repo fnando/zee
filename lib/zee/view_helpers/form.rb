@@ -227,7 +227,13 @@ module Zee
         buffer = SafeBuffer.new
         buffer << tag(:form, action: url, method:, **attrs, open: true)
 
-        if authenticity_token && method != :get
+        if method != :get
+          authenticity_token ||= controller.send(
+            :authenticity_token,
+            request_method: method,
+            path: (url if url.start_with?(SLASH))
+          )
+
           buffer << input_field_tag(
             Controller.csrf_param_name,
             authenticity_token,
@@ -586,15 +592,8 @@ module Zee
       def form_for(object, url:, as: :form, **, &)
         raise RequestNotSet, "request is not set for some reason" unless request
 
-        authenticity_token = request.session[CSRF_SESSION_KEY]
-
-        unless authenticity_token
-          raise AuthenticityTokenNotSet,
-                "authenticity token is not set for some reason"
-        end
-
         form = FormBuilder.new(object:, context: self, object_name: as, **)
-        form_tag(url:, authenticity_token:, **) { instance_exec(form, &) }
+        form_tag(url:, **) { instance_exec(form, &) }
       end
     end
   end

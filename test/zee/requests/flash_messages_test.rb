@@ -38,7 +38,6 @@ class FlashMessagesTest < Zee::Test::Request
 
   test "keeps all messages between actions" do
     post "/messages/set-keep-all"
-    puts last_response.body
 
     assert last_response.redirection?
     assert_equal "/messages/keep-all", last_response.location

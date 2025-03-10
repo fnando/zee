@@ -9,6 +9,10 @@ class FormBuilderTest < Zee::Test
     Class.new do
       include Zee::ViewHelpers::Form
 
+      def controller
+        @controller ||= Zee::Controller.new
+      end
+
       def capture(&)
         yield
       end
@@ -33,7 +37,7 @@ class FormBuilderTest < Zee::Test
     assert_selector html, "form"
     assert_selector html,
                     "form>input[type=hidden][name='_authenticity_token']" \
-                    "[value=abc]"
+                    "[value!='']"
 
     assert_selector html,
                     "form[action='/users'][method=post]>input#user_name" \
@@ -54,26 +58,11 @@ class FormBuilderTest < Zee::Test
     assert_selector html, "form"
     assert_selector html,
                     "form>input[type=hidden][name='_authenticity_token']" \
-                    "[value=abc]"
+                    "[value!='']"
 
     assert_selector html,
                     "form[action='/users'][method=post]>input#user_name" \
                     "[type=text][value='Jane'][name='user[name]']"
-  end
-
-  test "raises when building form without authenticity token" do
-    user = {}
-    request.session.delete(Zee::CSRF_SESSION_KEY)
-
-    template = <<~ERB
-      <%= form_for user, url: "/users", as: :user do |f| %>
-        <%= f.text_field :name %>
-      <% end %>
-    ERB
-
-    assert_raises(Zee::ViewHelpers::Form::AuthenticityTokenNotSet) do
-      render(template, locals: {user:}, request:)
-    end
   end
 
   test "renders text field" do

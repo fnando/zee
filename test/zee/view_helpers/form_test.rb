@@ -101,12 +101,14 @@ class FormTest < Minitest::Test
   end
 
   test "renders form tag" do
-    assert_selector helpers.form_tag(url: "/login"),
+    assert_selector helpers.form_tag(url: "/login", authenticity_token: "abc"),
                     "form[action='/login'][method=post]"
 
-    assert_selector \
-      helpers.form_tag(url: "/upload", multipart: true),
-      "form[action='/upload'][method=post][enctype='multipart/form-data']"
+    assert_selector helpers.form_tag(url: "/upload",
+                                     multipart: true,
+                                     authenticity_token: "abc"),
+                    "form[action='/upload'][method=post]" \
+                    "[enctype='multipart/form-data']"
   end
 
   test "renders form tag when using file input" do

@@ -2,6 +2,8 @@
 
 ENV["APP_ENV"] = "test"
 
+$stdout.sync = true
+
 require "simplecov"
 SimpleCov.start do
   add_filter("test/")
@@ -66,11 +68,31 @@ module Minitest
       {out:, err:, exit_code:}
     end
 
-    def render(template, request: nil, locals: {}, context: nil)
-      request ||= Zee::Request.new(Rack::MockRequest.env_for("/"))
-      context ||= Struct.new(:request).new(request).extend(Zee.app.helpers)
+    def render(
+      template,
+      controller: nil,
+      request: nil,
+      locals: {},
+      context: nil
+    )
+      request ||= Zee::Request.new(
+        Rack::MockRequest.env_for("/").merge("rack.session" => {})
+      )
+      controller ||= Zee::Controller.new(
+        action_name: "show",
+        controller_name: "example",
+        request:,
+        response: Zee::Response.new
+      )
+      context ||= Object.new.extend(Zee.app.helpers)
+      locals[:request] = request
+      context.instance_variable_set(:@controller, controller)
       File.write("tmp/template.erb", template)
-      Zee.app.render_template("tmp/template.erb", request:, locals:, context:)
+      FileUtils.mkdir_p("tmp/config")
+      FileUtils.cp_r("test/fixtures/sample_app/config/secrets", "tmp/config/")
+      Dir.chdir("tmp") do
+        Zee.app.render_template("template.erb", request:, locals:, context:)
+      end
     end
 
     def store_translations(locale, translations)

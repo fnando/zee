@@ -3,6 +3,8 @@
 module Zee
   class Controller
     module AuthenticityToken
+      SHA256 = "SHA256"
+
       # @api private
       def self.included(controller)
         controller.before_action { renew_authenticity_token! if request.get? }
@@ -40,19 +42,13 @@ module Zee
       # @return [Boolean]
       private def verified_authenticity_token?(expected, actual)
         return false if expected.empty? || actual.empty?
+        return true if OpenSSL.secure_compare(expected, actual)
 
-        unless expected.include?(DOUBLE_SLASH)
-          return OpenSSL.secure_compare(expected, actual)
-        end
-
-        expected_token, _ = *expected.split(DOUBLE_SLASH)
-        actual_token, actual_hmac = *actual.split(DOUBLE_SLASH)
         expected_hmac = create_authenticity_token_hmac(
-          "#{request.request_method}#{request.path}#{expected_token}"
+          "#{request.request_method}#{request.path}#{expected}"
         )
 
-        OpenSSL.secure_compare(expected_hmac, actual_hmac.to_s) &&
-        OpenSSL.secure_compare(expected_token, actual_token.to_s)
+        OpenSSL.secure_compare(expected_hmac, actual.to_s)
       end
 
       # @api private
@@ -73,7 +69,7 @@ module Zee
       # @api private
       private def create_authenticity_token_hmac(input)
         OpenSSL::HMAC.hexdigest(
-          OpenSSL::Digest.new("SHA256"),
+          OpenSSL::Digest.new(SHA256),
           Zee.app.secrets[:session_secret],
           input
         )
@@ -87,15 +83,12 @@ module Zee
       # @return [String]
       private def authenticity_token(request_method: nil, path: nil)
         if request_method && path
-          token = SecureRandom.hex(32)
-          hmac = create_authenticity_token_hmac(
-            "#{request_method.to_s.upcase}#{path}#{token}"
+          create_authenticity_token_hmac(
+            "#{request_method.to_s.upcase}#{path}#{session[CSRF_SESSION_KEY]}"
           )
-
-          session[CSRF_SESSION_KEY] = "#{token}--#{hmac}"
+        else
+          session[CSRF_SESSION_KEY]
         end
-
-        session[CSRF_SESSION_KEY]
       end
     end
   end
