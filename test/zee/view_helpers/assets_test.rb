@@ -49,6 +49,12 @@ class AssetsTest < Minitest::Test
                  helpers.javascript_include_tag(:app).to_s
   end
 
+  test "returns javascript tag for external scripts" do
+    assert_equal \
+      %[<script src="https://example.com/script.js"></script>],
+      helpers.javascript_include_tag("https://example.com/script.js").to_s
+  end
+
   test "returns stylesheet tag using symbol" do
     assert_equal %[<link rel="stylesheet" href="/assets/styles/app.css">],
                  helpers.stylesheet_link_tag(:app).to_s
@@ -57,6 +63,12 @@ class AssetsTest < Minitest::Test
   test "returns stylesheet tag using arbitrary path" do
     assert_equal %[<link rel="stylesheet" href="/some/style.css">],
                  helpers.stylesheet_link_tag("/some/style.css").to_s
+  end
+
+  test "returns stylesheet tag for external styles" do
+    assert_equal \
+      %[<link rel="stylesheet" href="https://example.com/style.css">],
+      helpers.stylesheet_link_tag("https://example.com/style.css").to_s
   end
 
   test "returns stylesheet tag from manifest" do
@@ -73,6 +85,11 @@ class AssetsTest < Minitest::Test
   test "returns image tag" do
     assert_equal %[<img src="/assets/images/logo.png" alt="">],
                  helpers.image_tag("logo.png").to_s
+  end
+
+  test "returns image tag for external image" do
+    assert_equal %[<img src="https://example.com/image.png" alt="">],
+                 helpers.image_tag("https://example.com/image.png").to_s
   end
 
   test "returns image tag with options" do
