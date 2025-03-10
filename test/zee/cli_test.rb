@@ -61,6 +61,7 @@ class CLITest < Minitest::Test
 
     assert_equal 0, exit_code
     assert_includes out, "bundle install"
+    assert_includes out, "npm install"
     assert app.join(".ruby-version").file?
   end
 
@@ -68,7 +69,7 @@ class CLITest < Minitest::Test
     app = Pathname("tmp/app")
     exit_code = nil
 
-    capture { Zee::CLI.start(["new", "tmp/app", "-B"]) }
+    capture { Zee::CLI.start(["new", "tmp/app", "-BN"]) }
     Dir.chdir(app) do
       capture do
         Zee::CLI.start(%w[g mailer messages hello bye])
@@ -84,7 +85,7 @@ class CLITest < Minitest::Test
   end
 
   test "skips bundle install" do
-    capture { Zee::CLI.start(["new", "tmp/app", "-B"]) } => {out:}
+    capture { Zee::CLI.start(["new", "tmp/app", "-BN"]) } => {out:}
 
     refute_includes out, "bundle install"
   end

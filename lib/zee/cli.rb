@@ -103,6 +103,10 @@ module Zee
                          default: false,
                          desc: "Skip bundle install",
                          aliases: "-B"
+    option :skip_npm, type: :boolean,
+                      default: false,
+                      desc: "Skip npm install",
+                      aliases: "-N"
     option :database, type: :string,
                       default: "sqlite",
                       desc: "Set the database",

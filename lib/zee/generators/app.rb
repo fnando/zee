@@ -102,7 +102,7 @@ module Zee
         end
       end
 
-      def install
+      def bundle_install
         return if options[:skip_bundle]
 
         in_root do
@@ -112,6 +112,14 @@ module Zee
           if RUBY_PLATFORM.start_with?("arm64")
             run "bundle lock --add-platform=aarch64-linux"
           end
+        end
+      end
+
+      def npm_install
+        return if options[:skip_npm]
+
+        in_root do
+          run "npm install"
         end
       end
 

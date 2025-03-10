@@ -10,7 +10,8 @@ class AppTest < Minitest::Test
       database: "sqlite",
       js: "typescript",
       css: "tailwind",
-      skip_bundle: true
+      skip_bundle: true,
+      skip_npm: true
     }
     generator.destination_root = app
 
@@ -76,6 +77,7 @@ class AppTest < Minitest::Test
     generator = Zee::Generators::App.new
     generator.options = {
       skip_bundle: true,
+      skip_npm: true,
       database: "sqlite",
       js: "typescript",
       css: "tailwind"
@@ -97,6 +99,7 @@ class AppTest < Minitest::Test
       database: "sqlite",
       js: "typescript",
       css: "tailwind",
+      skip_npm: true,
       skip_bundle: true
     }
     generator.destination_root = app
@@ -120,6 +123,7 @@ class AppTest < Minitest::Test
       database: "postgresql",
       js: "typescript",
       css: "tailwind",
+      skip_npm: true,
       skip_bundle: true
     }
     generator.destination_root = app
@@ -143,6 +147,7 @@ class AppTest < Minitest::Test
       database: "mysql",
       js: "typescript",
       css: "tailwind",
+      skip_npm: true,
       skip_bundle: true
     }
     generator.destination_root = app
@@ -166,6 +171,7 @@ class AppTest < Minitest::Test
       database: "mariadb",
       js: "typescript",
       css: "tailwind",
+      skip_npm: true,
       skip_bundle: true
     }
     generator.destination_root = app
@@ -189,6 +195,7 @@ class AppTest < Minitest::Test
       database: "sqlite",
       js: "js",
       css: "tailwind",
+      skip_npm: true,
       skip_bundle: true
     }
     generator.destination_root = app
