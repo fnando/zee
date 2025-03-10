@@ -313,7 +313,7 @@ module Zee
         app = self
 
         Module.new do
-          attr_reader :request, :controller
+          attr_reader :request, :controller, :current_template_path
 
           helper_modules =
             ::Helpers.constants.map {|name| ::Helpers.const_get(name) }
@@ -323,6 +323,7 @@ module Zee
           include(ViewHelpers::Form)
           include(ViewHelpers::Link)
           include(ViewHelpers::MetaTag)
+          include(ViewHelpers::Translation)
           include(app.routes.helpers)
           include(*helper_modules) if helper_modules.any?
         end
@@ -345,6 +346,10 @@ module Zee
     end
 
     # Render a template.
+    #
+    # Every template will have the current template path injected
+    # as `current_template_path`.
+    #
     # @param file [String] The path to the template file.
     # @param locals [Hash] The variables to expose to the template.
     # @param context [Object] The context to evaluate the template in.
@@ -354,6 +359,7 @@ module Zee
     def render_template(file, locals: {}, context: nil, request: nil, &)
       context ||= Object.new.extend(helpers)
       context.instance_variable_set(:@request, request)
+      context.instance_variable_set(:@current_template_path, Pathname(file))
 
       options = {
         engine_class: Erubi::CaptureBlockEngine,

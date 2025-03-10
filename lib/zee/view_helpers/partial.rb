@@ -25,7 +25,8 @@ module Zee
       # - `last?`: Returns `true` if the current item is the last item in the
       #   collection.
       # - `index`: The current item's index in the collection.
-      # - `partial_name`: The name of the partial being rendered.
+      # - `current_template_path`: A `Pathname` instance representing the
+      #   current template's path.
       #
       # @example Rendering partial
       #   ```erb
@@ -109,7 +110,7 @@ module Zee
         end
 
         items.each do |item|
-          item_locals = locals.merge(as => item, partial_name: name)
+          item_locals = locals.merge(as => item)
 
           if spacer && iterator.index.positive?
             rendered =

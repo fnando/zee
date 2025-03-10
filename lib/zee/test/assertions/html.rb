@@ -27,7 +27,7 @@ module Zee
                           .apply_to(Nokogiri::XML(root.to_xml))
                           .lines[2..-1]
 
-          formatted_root = lines ? lines.join : "".inspect
+          formatted_root = lines ? lines.join : root.to_s.inspect
 
           assert_equal count,
                        nodes.size,

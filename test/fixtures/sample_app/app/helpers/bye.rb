@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 module Helpers
-  module I18n
-    def t(key)
-      "t.#{key}"
+  module Bye
+    def bye(key)
+      "bye.#{key}"
     end
   end
 end
