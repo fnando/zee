@@ -31,6 +31,8 @@ class AppTest < Minitest::Test
     assert app.join("package.json").file?
     assert app.join("app/controllers/base.rb").file?
     assert app.join("app/assets/styles/app.css").file?
+    assert app.join("app/assets/styles/lib/reset.css").file?
+    assert app.join("app/assets/styles/lib/colors.css").file?
     assert app.join("app/assets/scripts/app.ts").file?
     assert app.join("app/assets/styles/app.css").file?
     assert app.join("app/controllers/pages.rb").file?

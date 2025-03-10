@@ -23,6 +23,8 @@ module Zee
         copy_file ".gitignore"
         copy_file "app/helpers/app.rb"
         copy_file "app/assets/styles/app.css"
+        copy_file "app/assets/styles/lib/reset.css"
+        copy_file "app/assets/styles/lib/colors.css"
         copy_file "bin/styles"
         copy_file "bin/scripts"
         copy_file "bin/dev"

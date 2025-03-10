@@ -1,0 +1,135 @@
+:root {
+  --white: #fff;
+  --red-base: 255, 59, 48;
+  --orange-base: 255, 149, 0;
+  --yellow-base: 255, 204, 0;
+  --green-base: 52, 199, 89;
+  --mint-base: 0, 199, 190;
+  --teal-base: 48, 176, 199;
+  --cyan-base: 50, 173, 199;
+  --blue-base: 0, 122, 255;
+  --indigo-base: 88, 86, 214;
+  --purple-base: 175, 82, 222;
+  --pink-base: 255, 45, 85;
+  --brown-base: 162, 132, 94;
+  --gray-base: 142, 142, 147;
+  --gray5-base: 174, 174, 178;
+  --gray4-base: 199, 199, 204;
+  --gray3-base: 209, 209, 214;
+  --gray2-base: 229, 229, 234;
+  --gray1-base: 242, 242, 247;
+
+  --red: rgb(var(--red-base));
+  --red-1: rgb(var(--red-base), 0.1);
+  --red-2: rgb(var(--red-base), 0.2);
+  --red-3: rgb(var(--red-base), 0.3);
+  --red-4: rgb(var(--red-base), 0.4);
+  --red-5: rgb(var(--red-base), 0.5);
+
+  --orange: rgb(var(--orange-base));
+  --orange-1: rgb(var(--orange-base), 0.1);
+  --orange-2: rgb(var(--orange-base), 0.2);
+  --orange-3: rgb(var(--orange-base), 0.3);
+  --orange-4: rgb(var(--orange-base), 0.4);
+  --orange-5: rgb(var(--orange-base), 0.5);
+
+  --yellow: rgb(var(--yellow-base));
+  --yellow-1: rgb(var(--yellow-base), 0.1);
+  --yellow-2: rgb(var(--yellow-base), 0.2);
+  --yellow-3: rgb(var(--yellow-base), 0.3);
+  --yellow-4: rgb(var(--yellow-base), 0.4);
+  --yellow-5: rgb(var(--yellow-base), 0.5);
+
+  --green: rgb(var(--green-base));
+  --green-1: rgb(var(--green-base), 0.1);
+  --green-2: rgb(var(--green-base), 0.2);
+  --green-3: rgb(var(--green-base), 0.3);
+  --green-4: rgb(var(--green-base), 0.4);
+  --green-5: rgb(var(--green-base), 0.5);
+
+  --mint: rgb(var(--mint-base));
+  --mint-1: rgb(var(--mint-base), 0.1);
+  --mint-2: rgb(var(--mint-base), 0.2);
+  --mint-3: rgb(var(--mint-base), 0.3);
+  --mint-4: rgb(var(--mint-base), 0.4);
+  --mint-5: rgb(var(--mint-base), 0.5);
+
+  --teal: rgb(var(--teal-base));
+  --teal-1: rgb(var(--teal-base), 0.1);
+  --teal-2: rgb(var(--teal-base), 0.2);
+  --teal-3: rgb(var(--teal-base), 0.3);
+  --teal-4: rgb(var(--teal-base), 0.4);
+  --teal-5: rgb(var(--teal-base), 0.5);
+
+  --cyan: rgb(var(--cyan-base));
+  --cyan-1: rgb(var(--cyan-base), 0.1);
+  --cyan-2: rgb(var(--cyan-base), 0.2);
+  --cyan-3: rgb(var(--cyan-base), 0.3);
+  --cyan-4: rgb(var(--cyan-base), 0.4);
+  --cyan-5: rgb(var(--cyan-base), 0.5);
+
+  --blue: rgb(var(--blue-base));
+  --blue-1: rgb(var(--blue-base), 0.1);
+  --blue-2: rgb(var(--blue-base), 0.2);
+  --blue-3: rgb(var(--blue-base), 0.3);
+  --blue-4: rgb(var(--blue-base), 0.4);
+  --blue-5: rgb(var(--blue-base), 0.5);
+
+  --indigo: rgb(var(--indigo-base));
+  --indigo-1: rgb(var(--indigo-base), 0.1);
+  --indigo-2: rgb(var(--indigo-base), 0.2);
+  --indigo-3: rgb(var(--indigo-base), 0.3);
+  --indigo-4: rgb(var(--indigo-base), 0.4);
+  --indigo-5: rgb(var(--indigo-base), 0.5);
+
+  --purple: rgb(var(--purple-base));
+  --purple-1: rgb(var(--purple-base), 0.1);
+  --purple-2: rgb(var(--purple-base), 0.2);
+  --purple-3: rgb(var(--purple-base), 0.3);
+  --purple-4: rgb(var(--purple-base), 0.4);
+  --purple-5: rgb(var(--purple-base), 0.5);
+
+  --pink: rgb(var(--pink-base));
+  --pink-1: rgb(var(--pink-base), 0.1);
+  --pink-2: rgb(var(--pink-base), 0.2);
+  --pink-3: rgb(var(--pink-base), 0.3);
+  --pink-4: rgb(var(--pink-base), 0.4);
+  --pink-5: rgb(var(--pink-base), 0.5);
+
+  --brown: rgb(var(--brown-base));
+  --brown-1: rgb(var(--brown-base), 0.1);
+  --brown-2: rgb(var(--brown-base), 0.2);
+  --brown-3: rgb(var(--brown-base), 0.3);
+  --brown-4: rgb(var(--brown-base), 0.4);
+  --brown-5: rgb(var(--brown-base), 0.5);
+
+  --gray: rgb(var(--gray-base));
+  --gray-1: rgb(var(--gray1-base));
+  --gray-2: rgb(var(--gray2-base));
+  --gray-3: rgb(var(--gray3-base));
+  --gray-4: rgb(var(--gray4-base));
+  --gray-5: rgb(var(--gray5-base));
+}
+
+@media screen and (prefers-color-scheme: dark) {
+  :root {
+    --red-base: 255, 69, 58;
+    --orange-base: 255, 159, 10;
+    --yellow-base: 255, 214, 10;
+    --green-base: 48, 209, 88;
+    --mint-base: 99, 230, 226;
+    --teal-base: 64, 200, 224;
+    --cyan-base: 100, 210, 255;
+    --blue-base: 10, 132, 255;
+    --indigo-base: 94, 92, 230;
+    --purple-base: 191, 90, 242;
+    --pink-base: 255, 55, 95;
+    --brown-base: 172, 142, 104;
+    --gray-base: 152, 152, 157;
+    --gray2-base: 99, 99, 102;
+    --gray3-base: 72, 72, 74;
+    --gray4-base: 58, 58, 54;
+    --gray5-base: 44, 44, 46;
+    --gray6-base: 28, 28, 30;
+  }
+}
