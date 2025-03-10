@@ -31,7 +31,7 @@ class PartialTest < Minitest::Test
   let(:response) { Zee::Response.new }
   let(:instrumentation) { RequestStore.store[:instrumentation] }
 
-  test "render partial" do
+  test "renders partial" do
     controller_class = Class.new(Zee::Controller) do
       def self.name
         "Controllers::Pages"
@@ -59,7 +59,7 @@ class PartialTest < Minitest::Test
     assert_selector response.body, "h1", text: /Home/
   end
 
-  test "render partial from parent controller" do
+  test "renders partial from parent controller" do
     parent_class = Class.new(Zee::Controller) do
       def self.name
         "Controllers::Parent"
@@ -93,7 +93,7 @@ class PartialTest < Minitest::Test
     assert_selector response.body, "h1", text: /Home/
   end
 
-  test "render partial with object (default name)" do
+  test "renders partial with object (default name)" do
     controller_class = Class.new(Zee::Controller) do
       def self.name
         "Controllers::Pages"
@@ -121,7 +121,7 @@ class PartialTest < Minitest::Test
     assert_selector response.body, "h1", text: /Home/
   end
 
-  test "render partial with object (custom name)" do
+  test "renders partial with object (custom name)" do
     controller_class = Class.new(Zee::Controller) do
       def self.name
         "Controllers::Pages"
@@ -149,7 +149,7 @@ class PartialTest < Minitest::Test
     assert_selector response.body, "h1", text: /Home/
   end
 
-  test "render partial with locals" do
+  test "renders partial with locals" do
     controller_class = Class.new(Zee::Controller) do
       def self.name
         "Controllers::Pages"
@@ -177,7 +177,7 @@ class PartialTest < Minitest::Test
     assert_selector response.body, "h1", text: /Home/
   end
 
-  test "render partial with collection" do
+  test "renders partial with collection" do
     controller_class = Class.new(Zee::Controller) do
       def self.name
         "Controllers::Pages"
@@ -209,7 +209,43 @@ class PartialTest < Minitest::Test
     assert_selector response.body, "p[data-index=1]", text: /Item 2/
   end
 
-  test "render partial with collection using spacer" do
+  test "renders partial with collection sets first? and last?" do
+    controller_class = Class.new(Zee::Controller) do
+      def self.name
+        "Controllers::Pages"
+      end
+
+      def home
+      end
+    end
+
+    create_file "tmp/app/views/pages/home.html.erb", <<~ERB
+      <ul>
+        <%= render "item",
+                   [{desc: "Item 1"}, {desc: "Item 2"}, {desc: "Item 3"}] %>
+      </ul>
+    ERB
+
+    create_file "tmp/app/views/pages/_item.html.erb", <<~ERB
+      <%= content_tag :p, item[:desc], class: {first: first?, last: last?} %>
+    ERB
+
+    controller_class.new(
+      request:,
+      response:,
+      controller_name: "pages",
+      action_name: "home"
+    ).send(:call)
+
+    assert_selector response.body, "p", count: 3
+    assert_selector response.body, "p.first:nth-of-type(1)", text: /Item 1/
+    assert_selector response.body,
+                    "p:nth-of-type(2):not([class])",
+                    text: /Item 2/
+    assert_selector response.body, "p.last:nth-of-type(1)", text: /Item 3/
+  end
+
+  test "renders partial with collection using spacer" do
     controller_class = Class.new(Zee::Controller) do
       def self.name
         "Controllers::Pages"
@@ -261,7 +297,7 @@ class PartialTest < Minitest::Test
     )
   end
 
-  test "render partial with collection using blank" do
+  test "renders partial with collection using blank" do
     controller_class = Class.new(Zee::Controller) do
       def self.name
         "Controllers::Pages"

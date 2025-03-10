@@ -16,6 +16,16 @@ module Zee
       # If no partial is found, Zee will raise a
       # {Controller::MissingTemplateError}.
       #
+      # ## Partial context
+      #
+      # Within the partial, you have access to some utility methods:
+      #
+      # - `first?`: Returns `true` if the current item is the first item in the
+      #   collection.
+      # - `last?`: Returns `true` if the current item is the last item in the
+      #   collection.
+      # - `index`: The current item's index in the collection.
+      #
       # @example Rendering partial
       #   ```erb
       #   <%= render "header" %>
@@ -79,9 +89,10 @@ module Zee
         blank = controller.find_partial(blank) if blank
         buffer = SafeBuffer.new
         list = object.respond_to?(:each) && !object.is_a?(Hash)
-        index = 0
         items = list ? object : [object]
-        context = controller.send(:helpers)
+        size = items.size
+        iterator = Iterator.new(size)
+        context = Context.new(iterator).extend(Zee.app.helpers)
 
         if list && blank && items.empty?
           rendered =
@@ -97,9 +108,9 @@ module Zee
         end
 
         items.each do |item|
-          item_locals = locals.merge(as => item, index:)
+          item_locals = locals.merge(as => item)
 
-          if spacer && index.positive?
+          if spacer && iterator.index.positive?
             rendered =
               Instrumentation.instrument(
                 :request,
@@ -132,10 +143,61 @@ module Zee
             end
 
           buffer << SafeBuffer.new(rendered)
-          index += 1
+          iterator.iterate!
         end
 
         buffer
+      end
+
+      # @api private
+      # The context object passed to the partial.
+      class Context
+        def initialize(iterator)
+          @_iterator = iterator
+        end
+
+        def first?
+          @_iterator.first?
+        end
+
+        def last?
+          @_iterator.last?
+        end
+
+        def index
+          @_iterator.index
+        end
+      end
+
+      class Iterator
+        # The current index.
+        # @return [Integer]
+        attr_reader :index
+
+        # The collection size.
+        # @return [Integer]
+        attr_reader :size
+
+        def initialize(size)
+          @size = size
+          @index = 0
+        end
+
+        # Increments the index.
+        # @return [void]
+        def iterate!
+          @index += 1
+        end
+
+        # Return `true` if the index is `0`.
+        def first?
+          index.zero?
+        end
+
+        # Return `true` if the index is the last index.
+        def last?
+          index == size - 1
+        end
       end
     end
   end
