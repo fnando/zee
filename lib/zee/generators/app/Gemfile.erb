@@ -52,11 +52,6 @@ group :development do
   # [https://github.com/guard/listen]
   gem "listen", require: false
 
-  # minitest provides a complete suite of testing facilities supporting TDD,
-  # BDD, mocking, and benchmarking
-  # [https://github.com/minitest/minitest]
-  gem "minitest"
-
   # Automatic Ruby code style checking tool.
   # [https://github.com/rubocop/rubocop]
   gem "rubocop"
@@ -88,6 +83,11 @@ group :development do
 end
 
 group :test do
+  # minitest provides a complete suite of testing facilities supporting TDD,
+  # BDD, mocking, and benchmarking
+  # [https://github.com/minitest/minitest]
+  gem "minitest"
+
   # Some utilities for your Minitest day-to-day usage.
   # [http://github.com/fnando/minitest-utils]
   gem "minitest-utils"
@@ -95,4 +95,18 @@ group :test do
   # Code coverage for Ruby
   # [https://github.com/simplecov-ruby/simplecov]
   gem "simplecov", require: false
+
+  # Capybara aims to simplify the process of integration testing Rack
+  # applications, such as Rails, Sinatra or Merb
+  # [https://github.com/teamcapybara/capybara]
+  gem "capybara"
+
+  # Selenium is a browser automation tool for automated testing of webapps and
+  # more
+  # [https://selenium.dev]
+  gem "selenium-webdriver"
+
+  # Simple testing API built on Rack
+  # [https://github.com/rack/rack-test]
+  gem "rack-test"
 end

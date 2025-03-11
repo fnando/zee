@@ -27,6 +27,10 @@ module Zee
       def app
         Zee.app
       end
+
+      def default_host
+        Zee.app.config.domain
+      end
     end
   end
 end

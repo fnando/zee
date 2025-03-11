@@ -10,6 +10,7 @@ class AppTest < Minitest::Test
       database: "sqlite",
       js: "typescript",
       css: "tailwind",
+      test: "minitest",
       skip_bundle: true,
       skip_npm: true
     }

@@ -3,8 +3,9 @@
 ENV["APP_ENV"] = "test"
 
 $stdout.sync = true
-
+require "English"
 require "simplecov"
+
 SimpleCov.start do
   add_filter("test/")
 end
@@ -56,7 +57,7 @@ module Minitest
 
     teardown { FileUtils.rm_rf("tmp") }
 
-    def capture(&)
+    def capture(shell: false, &)
       exit_code = 0
 
       out, err, = capture_subprocess_io do
@@ -64,6 +65,8 @@ module Minitest
       rescue SystemExit => error
         exit_code = error.status
       end
+
+      exit_code = $CHILD_STATUS.exitstatus if shell
 
       {out:, err:, exit_code:}
     end

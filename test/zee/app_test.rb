@@ -69,10 +69,7 @@ class AppTest < Minitest::Test
   end
 
   test "prevents app from being initialized twice" do
-    app = Zee::App.new
-    app.initialize!
-
-    assert_raises(Zee::App::AlreadyInitializedError) { app.initialize! }
+    assert_raises(Zee::App::AlreadyInitializedError) { Zee.app.initialize! }
   end
 
   test "prevents app from having the environment set after initialization" do

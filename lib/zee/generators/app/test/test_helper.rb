@@ -7,4 +7,3 @@ SimpleCov.start(:zee)
 
 require_relative "../config/environment"
 require "minitest/utils"
-require "minitest/autorun"

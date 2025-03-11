@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "English"
 require "test_helper"
 
 class CLITest < Minitest::Test
@@ -45,9 +46,7 @@ class CLITest < Minitest::Test
     TEXT
 
     Dir.chdir("test/fixtures/sample_app") do
-      capture do
-        Zee::CLI.start(["routes"])
-      end => {exit_code:, out:}
+      capture { Zee::CLI.start(["routes"]) } => {exit_code:, out:}
     end
 
     assert_equal 0, exit_code
@@ -70,6 +69,7 @@ class CLITest < Minitest::Test
     exit_code = nil
 
     capture { Zee::CLI.start(["new", "tmp/app", "-BN"]) }
+
     Dir.chdir(app) do
       capture do
         Zee::CLI.start(%w[g mailer messages hello bye])
@@ -94,8 +94,30 @@ class CLITest < Minitest::Test
     exit_code = nil
 
     Dir.chdir("test/fixtures/sample_app") do
-      capture do
-        Zee::CLI.start(["test"])
+      capture(shell: true) { system "../../../exe/zee test" } => {exit_code:}
+    end
+
+    assert_equal 0, exit_code
+  end
+
+  test "runs tests from dir" do
+    exit_code = nil
+
+    Dir.chdir("test/fixtures/sample_app") do
+      capture(shell: true) do
+        system("../../../exe/zee test test/lib")
+      end => {exit_code:}
+    end
+
+    assert_equal 0, exit_code
+  end
+
+  test "runs tests for specific location" do
+    exit_code = nil
+
+    Dir.chdir("test/fixtures/sample_app") do
+      capture(shell: true) do
+        system "../../../exe/zee test test/lib/hello_test.rb:6"
       end => {exit_code:}
     end
 
@@ -107,13 +129,13 @@ class CLITest < Minitest::Test
     err = nil
 
     Dir.chdir("test/fixtures/sample_app") do
-      capture do
-        Zee::CLI.start(["test", "test/invalid_test.rb"])
+      capture(shell: true) do
+        system("../../../exe/zee test test/invalid_test.rb")
       end => {exit_code:, err:}
     end
 
-    assert_equal 1, exit_code
     assert_includes err, "ERROR: No test files found."
+    assert_equal 1, exit_code
   end
 
   test "runs bin for missing command" do
@@ -121,9 +143,7 @@ class CLITest < Minitest::Test
     out = nil
 
     Dir.chdir("test/fixtures/sample_app") do
-      capture do
-        Zee::CLI.start(["hello"])
-      end => {exit_code:, out:}
+      capture { Zee::CLI.start(["hello"]) } => {exit_code:, out:}
     end
 
     assert_equal 0, exit_code
@@ -135,9 +155,7 @@ class CLITest < Minitest::Test
     err = nil
 
     Dir.chdir("test/fixtures/sample_app") do
-      capture do
-        Zee::CLI.start(["missing"])
-      end => {exit_code:, err:}
+      capture { Zee::CLI.start(["missing"]) } => {exit_code:, err:}
     end
 
     assert_equal 1, exit_code
@@ -153,9 +171,7 @@ class CLITest < Minitest::Test
       FileUtils.touch("bin/scripts")
       File.chmod(0o755, "bin/scripts")
 
-      capture do
-        Zee::CLI.start(["assets"])
-      end => {exit_code:, err:}
+      capture { Zee::CLI.start(["assets"]) } => {exit_code:, err:}
     end
 
     assert_equal 1, exit_code
@@ -171,9 +187,7 @@ class CLITest < Minitest::Test
       FileUtils.touch("bin/styles")
       File.chmod(0o755, "bin/styles")
 
-      capture do
-        Zee::CLI.start(["assets"])
-      end => {exit_code:, err:}
+      capture { Zee::CLI.start(["assets"]) } => {exit_code:, err:}
     end
 
     assert_equal 1, exit_code
@@ -188,9 +202,7 @@ class CLITest < Minitest::Test
     FileUtils.touch("tmp/bin/styles")
 
     Dir.chdir("tmp") do
-      capture do
-        Zee::CLI.start(["assets"])
-      end => {exit_code:, err:}
+      capture { Zee::CLI.start(["assets"]) } => {exit_code:, err:}
     end
 
     assert_equal 1, exit_code
@@ -207,9 +219,7 @@ class CLITest < Minitest::Test
     FileUtils.touch("tmp/bin/scripts")
 
     Dir.chdir("tmp") do
-      capture do
-        Zee::CLI.start(["assets"])
-      end => {exit_code:, err:}
+      capture { Zee::CLI.start(["assets"]) } => {exit_code:, err:}
     end
 
     assert_equal 1, exit_code
@@ -244,9 +254,7 @@ class CLITest < Minitest::Test
     FileUtils.chmod(0o755, "tmp/bin/styles")
 
     Dir.chdir("tmp") do
-      capture do
-        Zee::CLI.start(["assets"])
-      end => {exit_code:, out:}
+      capture { Zee::CLI.start(["assets"]) } => {exit_code:, out:}
     end
 
     assert_equal 0, exit_code

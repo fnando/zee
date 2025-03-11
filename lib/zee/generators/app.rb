@@ -43,7 +43,6 @@ module Zee
         copy_file "public/apple-touch-icon.png"
         copy_file "public/favicon.ico"
         copy_file "public/icon.svg"
-        copy_file "test/test_helper.rb"
 
         create_file "storage/.keep"
         create_file "db/migrations/.keep"
@@ -54,6 +53,14 @@ module Zee
         create_file "tmp/.keep"
         create_file "log/.keep"
         create_file "app/models/.keep"
+      end
+
+      def test_files
+        return unless options[:test] == "minitest"
+
+        copy_file "test/test_helper.rb"
+        copy_file "test/requests/pages_test.rb"
+        copy_file "test/integration/pages_test.rb"
       end
 
       def controllers

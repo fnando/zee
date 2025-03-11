@@ -75,6 +75,8 @@ module Zee
       end
 
       def database_log(store)
+        return unless store&.key?(:sequel)
+
         queries = store[:sequel].count
         sql_time_spent = store[:sequel].sum { _1[:duration] }
 

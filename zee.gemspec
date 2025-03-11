@@ -68,6 +68,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rubocop"
   spec.add_development_dependency "rubocop-fnando"
   spec.add_development_dependency "rubocop-yard"
+  spec.add_development_dependency "selenium-webdriver"
   spec.add_development_dependency "sequel"
   spec.add_development_dependency "simplecov"
   spec.add_development_dependency "sqlite3"

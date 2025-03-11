@@ -122,6 +122,11 @@ module Zee
            default: "typescript",
            enum: %w[js typescript],
            desc: "Use a JavaScript language"
+    option :test,
+           type: :string,
+           default: "minitest",
+           enum: %w[minitest],
+           desc: "Use a test framework"
     def new(path)
       generator = Generators::App.new
       generator.destination_root = File.expand_path(path)
@@ -179,20 +184,15 @@ module Zee
     desc "generate SUBCOMMAND", "Generate new code (alias: g)"
     subcommand "generate", Generate
 
-    desc "test [FILE...]", "Run tests"
-    option :test,
-           type: :string,
-           aliases: "-t",
-           desc: "Run tests that match this name. " \
-                 "Use a full test name (e.g. test_do_something) or a regular " \
-                 "expression (e.g /something/)."
+    desc "test [FILE|DIR...]", "Run tests"
     option :seed,
            type: :string,
            aliases: "-s",
            desc: "Set a specific seed"
+    # :nocov:
     def test(*files)
       cmd = [
-        "bin/zee test %{location} -t %{name}",
+        "bin/zee test %{location}:%{line} \e[34m# %{description}\e[0m",
         ("-s #{options[:seed]}" if options[:seed])
       ].compact.join(" ").strip
 
@@ -203,21 +203,47 @@ module Zee
       CLI.load_dotenv_files(".env.test", ".env")
       ARGV.clear
 
-      files = files.map { File.expand_path(_1) }
+      require "./test/test_helper" if File.file?("test/test_helper.rb")
+      require "minitest/utils"
+
+      pattern = []
+      test_name = nil
+
+      files = files.map do |file|
+        if File.directory?(file)
+          pattern << "#{file}/**/*_test.rb"
+          next
+        end
+
+        location, line = file.split(":")
+
+        if line
+          text = File.read(location).lines[line.to_i - 1]
+          description = text.strip[/^.*?test\s+["'](.*?)["']\s+do.*?$/, 1]
+          test_name = Minitest::Test.test_method_name(description)
+        end
+
+        File.expand_path(location)
+      end
+
       pattern = ["./test/**/*_test.rb"]
       pattern = files if files.any?
       files = Dir[*pattern]
+      has_integration_test = files.any? { _1.include?("/integration/") }
 
-      ARGV.push("--name", options[:test]) if options[:test]
+      ARGV.push("--name", test_name.to_s) if test_name
       ARGV.push("--seed", options[:seed]) if options[:seed]
 
       if files.empty?
         raise Thor::Error, set_color("ERROR: No test files found.", :red)
       end
 
-      require "./test/test_helper" if File.file?("test/test_helper.rb")
       files.each { require _1 }
+
+      setup_for_integration_tests if has_integration_test
+      Minitest.run
     end
+    # :nocov:
 
     desc "dev", "Start the dev server (requires ./bin/dev)"
     # :nocov:
@@ -284,6 +310,46 @@ module Zee
     end
 
     no_commands do
+      # :nocov:
+      def setup_for_integration_tests
+        pid = Process.spawn(
+          "bundle",
+          "exec",
+          "puma",
+          "--environment", "test",
+          "--config", "./config/puma.rb",
+          "--silent",
+          "--quiet",
+          "--bind", "tcp://127.0.0.1:11100"
+        )
+        Process.detach(pid)
+
+        shell.say "Integration test server: http://localhost:11100 [pid=#{pid}]"
+
+        require "net/http"
+        attempts = 0
+
+        loop do
+          attempts += 1
+          uri = URI("http://localhost:11100/")
+
+          begin
+            Net::HTTP.get_response(uri)
+            break
+          rescue Errno::ECONNREFUSED
+            if attempts == 10
+              raise Thor::Error,
+                    set_color("ERROR: Unable to start Puma at #{uri}", :red)
+            end
+
+            sleep 0.05
+          end
+        end
+
+        at_exit { Process.kill("INT", pid) }
+      end
+      # :nocov:
+
       def db_helpers
         @db_helpers ||= Database::Helpers.new(options:, shell:)
       end
