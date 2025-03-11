@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
 module Controllers
-  class Sessions < Zee::Controller
+  class Sessions < Base
+    skip_before_action :verify_authenticity_token
+
     def show
       render text: session[:user_id]
     end

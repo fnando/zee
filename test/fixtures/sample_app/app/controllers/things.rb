@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Controllers
-  class Things < Zee::Controller
+  class Things < Base
     def show
     end
   end

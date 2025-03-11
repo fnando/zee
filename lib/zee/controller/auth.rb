@@ -5,6 +5,10 @@ module Zee
     # The authentication module for controllers that require user
     # authentication. It supports multiple scopes, like `user` and `admin`.
     #
+    # > [!NOTE]
+    # > This is an opt-in module. To enable it, you must include this module to
+    # > your controller, like `include Zee::Controller::Auth`.
+    #
     # The `auth_scope` method is used to define the scopes and the methods that
     # will be available in the controller. With these methods, you can access
     # the current user, check if the user is logged in, require the user to

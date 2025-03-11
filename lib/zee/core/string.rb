@@ -15,6 +15,13 @@ module Zee
       # paths.
       # @return [String]
 
+      # @!method dasherize()
+      # Replaces underscores with dashes in the string.
+      # @return [String]
+      # @example
+      #   "hello_there".dasherize
+      #   #=> "hello-there"
+
       # @!method camelize(type = :upper)
       # @param type [Symbol] the type of camelization. Can be `:upper` or
       #                      `:lower`.
@@ -34,6 +41,10 @@ module Zee
             .gsub(UNDERSCORE_RE2, '\1_\2')
             .tr(DASH, UNDERSCORE)
             .downcase
+        end
+
+        def dasherize
+          underscore.tr(UNDERSCORE, DASH)
         end
 
         def camelize(first_letter = :upper)

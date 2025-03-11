@@ -24,6 +24,23 @@ module Zee
       end
 
       # @!method blank?()
+      # Returns `true` if hash is empty.
+      # @return [Boolean]
+      #
+      # @!method present?()
+      # Returns `true` if hash has items.
+      # @return [Boolean]
+      refine ::Hash do
+        def blank?
+          empty?
+        end
+
+        def present?
+          any?
+        end
+      end
+
+      # @!method blank?()
       # Returns `true` if the string is empty or contains whitespaces only.
       # @return [Boolean]
       #
@@ -38,6 +55,23 @@ module Zee
 
         def present?
           !blank?
+        end
+      end
+
+      # @!method blank?()
+      # Returns `false`.
+      # @return [Boolean]
+      #
+      # @!method present?()
+      # Returns `true`.
+      # @return [Boolean]
+      refine ::Symbol do
+        def blank?
+          false
+        end
+
+        def present?
+          true
         end
       end
 

@@ -18,9 +18,13 @@ class BlankTest < Minitest::Test
     assert [].blank?
     refute [1].blank?
 
+    assert({}.blank?)
+    refute({a: 1}.blank?)
+
     assert nil.blank?
     refute 0.blank?
     refute 1.0.blank?
+    refute :symbol.blank?
   end
 
   test "#present?" do
@@ -36,8 +40,12 @@ class BlankTest < Minitest::Test
     assert [1].present?
     refute [].present?
 
+    assert({a: 1}.present?)
+    refute({}.present?)
+
     refute nil.present?
     assert 0.present?
     assert 1.0.present?
+    assert :symbol.present?
   end
 end

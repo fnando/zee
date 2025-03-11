@@ -3,6 +3,10 @@
 require "test_helper"
 
 class RenderTest < Zee::Test::Request
+  setup do
+    store_translations :en, zee: {meta: {pages: {home: {title: "My app"}}}}
+  end
+
   test "renders root" do
     get "/"
 
@@ -164,5 +168,12 @@ class RenderTest < Zee::Test::Request
     assert last_response.ok?
     assert_includes last_response.body, "hello from my app"
     assert_includes last_response.content_type, "text/html"
+  end
+
+  test "renders meta tags" do
+    get "/"
+
+    assert last_response.ok?
+    assert_selector last_response.body, "meta[charset='UTF-8']"
   end
 end

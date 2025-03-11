@@ -1,7 +1,7 @@
+--load ./.yard/config.rb
 --template-path ./.yard/zee
 --markup markdown
 --markup-provider zee
---load ./.yard/config.rb
 --private
 --hide-api private
 --no-api private

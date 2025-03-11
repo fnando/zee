@@ -2,7 +2,7 @@
 
 module Controllers
   module Admin
-    class Posts < Zee::Controller
+    class Posts < Base
       def index
       end
     end

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Controllers
-  class Pages < Zee::Controller
+  class Pages < Base
     def home
     end
 
