@@ -23,6 +23,23 @@ module Zee
       test: :blue
     }.freeze
 
+    class_option :help,
+                 type: :boolean,
+                 aliases: "-h",
+                 desc: "Display help information"
+
+    # Override the default start method so we can show help for subcommands.
+    def self.start(given_args = ARGV, config = {})
+      help = given_args.include?("--help") || given_args.include?("-h")
+
+      if help && given_args[0] != "help"
+        command = given_args[0]
+        super(["help", command], config)
+      else
+        super
+      end
+    end
+
     def self.before_run_hooks
       @before_run_hooks ||= Hash.new {|h, k| h[k] = [] }
     end

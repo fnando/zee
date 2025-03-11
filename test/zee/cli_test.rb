@@ -309,4 +309,18 @@ class CLITest < Minitest::Test
     assert_includes out, "=> exported public/assets/app.js"
     assert_includes out, "=> exported public/assets/app.css"
   end
+
+  test "shows help for all subcommands" do
+    exit_code = nil
+    err = nil
+    out = nil
+
+    Dir.chdir("tmp") do
+      capture { Zee::CLI.start(["new", "--help"]) } => {exit_code:, err:, out:}
+    end
+
+    assert_equal 0, exit_code
+    assert_includes out, %[rake_test_loader.rb new PATH]
+    refute_includes err, %[Unknown switches "--help"]
+  end
 end
