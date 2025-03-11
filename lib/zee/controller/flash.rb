@@ -2,6 +2,54 @@
 
 module Zee
   class Controller
+    # Flash messages are used to display messages to the user. They are
+    # available to the next action and will be discarded after that.
+    #
+    # ```ruby
+    # class MyController < Zee::Controller
+    #   def index
+    #     flash[:notice] = "Hello, World!"
+    #   end
+    #
+    #   def show
+    #     flash.now[:alert] = "Goodbye, World!"
+    #   end
+    # end
+    # ```
+    #
+    # In the above example, the `index` action will display the notice message
+    # on the next request, while the `show` action will display the alert
+    # message on the current request.
+    #
+    # Alternatively, you can use the `notice`, `alert`, `info`, and `error`
+    # method as shortcuts to set the flash message.
+    #
+    # ```ruby
+    # class MyController < Zee::Controller
+    #   def index
+    #     flash.notice = "Hello, World!"
+    #   end
+    #
+    #   def show
+    #     flash.now.alert = "Goodbye, World!"
+    #   end
+    # end
+    # ```
+    #
+    # Another common pattern is to set flash messages right before redirecting
+    # users. You can also do it in a single line.
+    #
+    # ```ruby
+    # class MyController < Zee::Controller
+    #   def create
+    #     redirect_to "/users", notice: "User created successfully."
+    #   end
+    # end
+    # ```
+    #
+    # @see Zee::Controller::Flash::FlashHash
+    # @see Controller#redirect_to
+    # @see Middleware::Flash
     module Flash
       def self.included(base)
         base.before_action { expose(:flash) }
@@ -40,6 +88,11 @@ module Zee
         #
         # Entries set via `flash.now` are accessed the same way as standard
         # entries.
+        #
+        # @example
+        #   flash.now.alert = "Just now!"
+        #   flash.alert
+        #   #=> "Just now!"
         def now
           @now ||= FlashNow.new(self)
         end
