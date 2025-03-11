@@ -125,7 +125,7 @@ module Zee
     option :test,
            type: :string,
            default: "minitest",
-           enum: %w[minitest],
+           enum: %w[minitest rspec],
            desc: "Use a test framework"
     def new(path)
       generator = Generators::App.new

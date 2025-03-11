@@ -83,6 +83,7 @@ group :development do
 end
 
 group :test do
+  <%- if options[:test] == "minitest" -%>
   # minitest provides a complete suite of testing facilities supporting TDD,
   # BDD, mocking, and benchmarking
   # [https://github.com/minitest/minitest]
@@ -91,6 +92,11 @@ group :test do
   # Some utilities for your Minitest day-to-day usage.
   # [http://github.com/fnando/minitest-utils]
   gem "minitest-utils"
+  <%- else -%>
+  # Behaviour Driven Development for Ruby.
+  # [https://rspec.info]
+  gem "rspec"
+  <%- end -%>
 
   # Code coverage for Ruby
   # [https://github.com/simplecov-ruby/simplecov]

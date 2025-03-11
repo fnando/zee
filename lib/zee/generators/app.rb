@@ -63,6 +63,14 @@ module Zee
         copy_file "test/integration/pages_test.rb"
       end
 
+      def spec_files
+        return unless options[:test] == "rspec"
+
+        copy_file "spec/spec_helper.rb"
+        copy_file "spec/features/pages_spec.rb"
+        copy_file "spec/requests/pages_spec.rb"
+      end
+
       def controllers
         copy_file "app/controllers/base.rb"
         copy_file "app/controllers/pages.rb"

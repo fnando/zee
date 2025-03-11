@@ -95,6 +95,28 @@ class AppTest < Minitest::Test
     refute_includes out, "bundle install"
   end
 
+  test "uses rspec as the test framework" do
+    app = Pathname("tmp")
+    generator = Zee::Generators::App.new
+    generator.options = {
+      skip_bundle: true,
+      skip_npm: true,
+      database: "sqlite",
+      js: "typescript",
+      css: "tailwind",
+      test: "rspec"
+    }
+    generator.destination_root = app
+
+    Dir.chdir(app) do
+      capture { generator.invoke_all }
+    end
+
+    assert app.join("spec/spec_helper.rb").file?
+    assert app.join("spec/requests/pages_spec.rb").file?
+    assert app.join("spec/features/pages_spec.rb").file?
+  end
+
   test "uses sqlite" do
     app = Pathname("tmp")
     generator = Zee::Generators::App.new

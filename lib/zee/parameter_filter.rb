@@ -19,7 +19,7 @@ module Zee
   # - `cvv`
   # - `cvc`
   #
-  # > [!NOTICE]
+  # > [!NOTE]
   # > Remember that this filter performs partial matching. For example, the
   # > `email` filter will match any parameter key that contains the word
   # > `email`, like `email` and `user_email`.

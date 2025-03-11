@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Zee
-  # @!visibility private
+  # @api private
   class Command < Thor
     check_unknown_options!
 
