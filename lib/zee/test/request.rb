@@ -28,8 +28,9 @@ module Zee
         Zee.app
       end
 
+      # Set the default host that will be used by rack-test.
       def default_host
-        Zee.app.config.domain
+        "localhost"
       end
     end
   end
