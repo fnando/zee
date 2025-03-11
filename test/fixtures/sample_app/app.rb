@@ -5,6 +5,10 @@ class SampleApp < Zee::App
     app = new
     app.root = Pathname.new(__dir__)
 
+    proc_app = lambda {|_env|
+      [200, {"content-type" => "text/html"}, ["hello from rack app"]]
+    }
+
     app.routes do
       root to: "pages#home"
       get "custom-layout", to: "pages#custom_layout"
@@ -39,9 +43,9 @@ class SampleApp < Zee::App
       get "messages/keep", to: "messages#keep"
       get "messages/keep-all", to: "messages#keep_all"
 
-      proc_app = lambda {|_env|
-        [200, {"content-type" => "text/html"}, ["hello from rack app"]]
-      }
+      # Test namespaced controllers
+      get "admin/posts", to: "admin/posts#index", as: :admin_posts
+
       mount proc_app, at: "proc-app", as: :proc_app
 
       class_app = Class.new do

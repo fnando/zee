@@ -12,6 +12,14 @@ class RenderTest < Zee::Test::Request
     assert_includes last_response.content_type, "text/html"
   end
 
+  test "renders namespaced routes" do
+    get "/admin/posts"
+
+    assert last_response.ok?
+    assert_includes last_response.body, "hello from admin"
+    assert_includes last_response.content_type, "text/html"
+  end
+
   test "handles missing template" do
     get "/missing-template"
 
