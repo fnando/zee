@@ -16,9 +16,7 @@ class AppTest < Minitest::Test
     }
     generator.destination_root = app
 
-    Dir.chdir(app) do
-      capture { generator.invoke_all }
-    end
+    Dir.chdir(app) { capture { generator.invoke_all } }
 
     assert app.join(".gitignore").file?
     assert app.join(".rubocop.yml").file?
@@ -55,6 +53,8 @@ class AppTest < Minitest::Test
     assert app.join("tmp/.keep").file?
     assert app.join("log/.keep").file?
     assert app.join("test/test_helper.rb").file?
+    assert app.join("db/setup.rb").file?
+    assert app.join(".sqlpkg/.keep").file?
     assert app.join("public/favicon.ico").file?
     assert app.join("public/icon.svg").file?
     assert app.join("public/apple-touch-icon.png").file?

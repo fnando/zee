@@ -42,6 +42,15 @@ module Zee
           @connection ||= Sequel.connect(connection_string, logger:)
         end
 
+        def connect
+          # Establish connection
+          connection
+
+          # Load setup if available
+          setup_file = File.expand_path("database/setup.rb")
+          require setup if File.file?(setup_file)
+        end
+
         def logger
           return unless options[:verbose]
 
@@ -101,6 +110,8 @@ module Zee
           define_common_options.call
           define_method :"db:migrate" do
             Sequel.extension :migration, :core_extensions
+            db_helpers.connect
+
             Sequel::TimestampMigrator.apply(
               db_helpers.connection,
               File.join(Dir.pwd, "db/migrations")
@@ -122,6 +133,7 @@ module Zee
           define_common_options.call
           define_method :"db:schema:load" do
             Sequel.extension :migration, :core_extensions
+            db_helpers.connect
 
             contents = File.read(File.join(Dir.pwd, "db/schema.rb"))
             contents.gsub!(
@@ -140,6 +152,8 @@ module Zee
           define_common_options.call
           define_method :"db:undo" do
             Sequel.extension :migration, :core_extensions
+            db_helpers.connect
+
             filenames = db_helpers
                         .connection[:schema_migrations]
                         .map {|opts| opts[:filename] }

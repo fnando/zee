@@ -1,0 +1,16 @@
+# frozen_string_literal: true
+
+# The setup.rb file is used to load additional extensions for SQLite.
+# The following snippet loads all extensions in the .sqlpkg directory.
+# For more information on how to install extensions, see <https://sqlpkg.org>.
+<%- if RUBY_PLATFORM.include?("darwin") -%>
+# On macOS, you need to add homebrew's sqlite to your path. The default
+# sqlite provided by Apple does not support loading extensions.
+<%- end -%>
+Sequel::Model.db.synchronize do |connection|
+  connection.enable_load_extension(true)
+
+  Dir[".sqlpkg/**/*.{dylib,so}"].each do |extension|
+    connection.load_extension(extension)
+  end
+end

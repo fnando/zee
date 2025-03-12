@@ -4,6 +4,10 @@ Zee.app.init do
   # Connect to the database.
   Sequel.connect(config.database_url)
 
+  # Load setup file, if it exists.
+  setup_file = File.join(Dir.pwd, "db/setup.rb")
+  require_relative setup_file if File.file?(setup_file)
+
   # Enable logging.
   if env.development?
     Sequel::Model.db.loggers.clear

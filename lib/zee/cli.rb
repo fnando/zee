@@ -5,6 +5,8 @@ require "shellwords"
 require "securerandom"
 require "pathname"
 require "logger"
+require "fileutils"
+require "tmpdir"
 require_relative "ext/thor"
 require_relative "../zee"
 

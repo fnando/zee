@@ -55,6 +55,13 @@ module Zee
         create_file "app/models/.keep"
       end
 
+      def sqlite
+        return unless options[:database] == "sqlite"
+
+        template "db/sqlite_setup.rb.erb", "db/setup.rb"
+        create_file ".sqlpkg/.keep"
+      end
+
       def test_files
         return unless options[:test] == "minitest"
 
@@ -144,6 +151,8 @@ module Zee
         def add_npm_dependency(**deps)
           path = File.join(destination_root, "package.json")
           json = JSON.parse(File.read(path))
+
+          json["dependencies"] ||= {}
 
           deps.each do |name, version|
             if json["dependencies"].key?(name)

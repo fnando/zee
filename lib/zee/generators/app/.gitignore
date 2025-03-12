@@ -26,3 +26,7 @@
 
 # Ignore master key for decrypting secrets and more.
 /config/secrets/*.key
+
+# Ignore sqlite extensions
+/.sqlpkg/*
+!/sqlpkg/.keep
