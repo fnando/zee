@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
 module Zee
-  class Controller
+  module Plugins
     # The authentication module for controllers that require user
     # authentication. It supports multiple scopes, like `user` and `admin`.
     #
     # > [!NOTE]
     # > This is an opt-in module. To enable it, you must include this module to
-    # > your controller, like `include Zee::Controller::Auth`.
+    # > your controller, like `include Zee::Plugins::Auth`.
     #
     # The `auth_scope` method is used to define the scopes and the methods that
     # will be available in the controller. With these methods, you can access
@@ -27,7 +27,7 @@ module Zee
     # module Controllers
     #   class Base < Zee::Controller
     #     # Include the authentication module.
-    #     include Zee::Controller::Auth
+    #     include Zee::Plugins::Auth
     #
     #     # Define the user scope.
     #     auth_scope :user,
@@ -61,7 +61,7 @@ module Zee
     # module Controllers
     #   class Base < Zee::Controller
     #     # Include the authentication module.
-    #     include Zee::Controller::Auth
+    #     include Zee::Plugins::Auth
     #
     #     # Define the user scope.
     #     auth_scope :user,
@@ -88,18 +88,6 @@ module Zee
 
       def self.included(base)
         base.extend(ClassMethods)
-        base.include(InstanceMethods)
-      end
-
-      module InstanceMethods
-        # Whenever `before_action :required_logged_user` is triggered, the
-        # current url is persisted if you just tried a `GET` request.
-        #
-        # The `return_to` helper will give you the requested url (before the
-        # user logged in) or the default url.
-        private def return_to(url)
-          session.delete(:return_to) || url
-        end
       end
 
       module ClassMethods
@@ -216,6 +204,15 @@ module Zee
           private current, logged_in
           expose current, logged_in
         end
+      end
+
+      # Whenever `before_action :required_logged_user` is triggered, the
+      # current url is persisted if you just tried a `GET` request.
+      #
+      # The `return_to` helper will give you the requested url (before the
+      # user logged in) or the default url.
+      private def return_to(url)
+        session.delete(:return_to) || url
       end
     end
   end

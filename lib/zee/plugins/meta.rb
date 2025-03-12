@@ -1,19 +1,19 @@
 # frozen_string_literal: true
 
 module Zee
-  class Controller
+  module Plugins
     # Easily define `<meta>` and `<link>` tags. I18n support for descriptions,
     # keywords and titles.
     #
     # > [!NOTE]
     # > This is an opt-in module. To enable it, you must include this module to
-    # > your controller, like `include Zee::Controller::Meta`.
+    # > your controller, like `include Zee::Plugins::Meta`.
     #
     # ```ruby
     # module Controllers
     #   class Base < Zee::Controller
     #     # Include the meta module.
-    #     include Zee::Controller::Meta
+    #     include Zee::Plugins::Meta
     #   end
     # end
     # ```
@@ -224,7 +224,7 @@ module Zee
       end
 
       private def meta
-        @_meta ||= Meta::Base.new(controller_name:, action_name:, helpers:)
+        @meta ||= Meta::Base.new(controller_name:, action_name:, helpers:)
       end
     end
   end

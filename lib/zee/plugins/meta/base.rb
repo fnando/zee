@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Zee
-  class Controller
+  module Plugins
     module Meta
       class Base
         using Core::Blank

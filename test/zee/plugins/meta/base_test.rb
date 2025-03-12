@@ -7,7 +7,7 @@ module Meta
     include Zee::Test::Assertions::HTML
 
     let(:meta) do
-      Zee::Controller::Meta::Base.new(
+      Zee::Plugins::Meta::Base.new(
         controller_name: "pages",
         action_name: "show",
         helpers: Object.new.extend(Zee.app.helpers)

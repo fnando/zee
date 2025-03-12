@@ -2,7 +2,7 @@
 
 module Controllers
   class AuthBase < Zee::Controller
-    include Zee::Controller::Auth
+    include Zee::Plugins::Auth
     auth_scope :user,
                when_logged_in: proc { redirect_to dashboard_path },
                when_logged_out: proc { redirect_to login_path }

@@ -17,7 +17,7 @@ module Meta
         }
       )
 
-      translator = Zee::Controller::Meta::Translator.new(
+      translator = Zee::Plugins::Meta::Translator.new(
         scope: :title,
         controller_name: "things",
         action_name: "show"
@@ -29,7 +29,7 @@ module Meta
 
     test "without base translation" do
       store_translations :en, {zee: {meta: {things: {show: {title: "TITLE"}}}}}
-      translator = Zee::Controller::Meta::Translator.new(
+      translator = Zee::Plugins::Meta::Translator.new(
         scope: :title,
         controller_name: "things",
         action_name: "show"
@@ -49,7 +49,7 @@ module Meta
         }
       )
 
-      translator = Zee::Controller::Meta::Translator.new(
+      translator = Zee::Plugins::Meta::Translator.new(
         scope: :title,
         controller_name: "admin/things",
         action_name: "show"
@@ -68,7 +68,7 @@ module Meta
         }
       )
 
-      translator = Zee::Controller::Meta::Translator.new(
+      translator = Zee::Plugins::Meta::Translator.new(
         scope: :title,
         controller_name: "things",
         action_name: "show",
@@ -91,7 +91,7 @@ module Meta
         }
       )
 
-      translator = Zee::Controller::Meta::Translator.new(
+      translator = Zee::Plugins::Meta::Translator.new(
         scope: :title,
         controller_name: "things",
         action_name: "show",
@@ -103,7 +103,7 @@ module Meta
     end
 
     test "missing translation" do
-      translator = Zee::Controller::Meta::Translator.new(
+      translator = Zee::Plugins::Meta::Translator.new(
         scope: :title,
         controller_name: "things",
         action_name: "show",
@@ -132,7 +132,7 @@ module Meta
       )
 
       options = {site_name: "SOME SITE"}
-      translator = Zee::Controller::Meta::Translator.new(
+      translator = Zee::Plugins::Meta::Translator.new(
         scope: :title,
         controller_name: "things",
         action_name: "show",
@@ -160,7 +160,7 @@ module Meta
         }
       )
       options = {site_name: "SOME SITE"}
-      translator = Zee::Controller::Meta::Translator.new(
+      translator = Zee::Plugins::Meta::Translator.new(
         scope: :title,
         controller_name: "things",
         action_name: "show",
@@ -187,7 +187,7 @@ module Meta
         }
       )
 
-      translator = Zee::Controller::Meta::Translator.new(
+      translator = Zee::Plugins::Meta::Translator.new(
         scope: :description,
         controller_name: "things",
         action_name: "show",
@@ -214,7 +214,7 @@ module Meta
         }
       )
 
-      translator = Zee::Controller::Meta::Translator.new(
+      translator = Zee::Plugins::Meta::Translator.new(
         scope: :description,
         controller_name: "things",
         action_name: "show",
