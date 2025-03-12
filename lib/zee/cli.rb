@@ -146,6 +146,10 @@ module Zee
            default: "minitest",
            enum: %w[minitest rspec],
            desc: "Use a test framework"
+    option :template,
+           type: :string,
+           desc: "Path to some application template (can be a filesystem " \
+                 "path or URL)"
     def new(path)
       generator = Generators::App.new
       generator.destination_root = File.expand_path(path)

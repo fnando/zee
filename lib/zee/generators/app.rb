@@ -147,6 +147,23 @@ module Zee
         end
       end
 
+      def apply_template
+        return unless options[:template]
+
+        template = options[:template]
+        is_url = template.match?(/^https?:/)
+
+        unless is_url
+          template = File.expand_path(template)
+          source_paths << File.dirname(template)
+          template = File.basename(template)
+        end
+
+        in_root do
+          apply(template, verbose: options[:verbose])
+        end
+      end
+
       no_commands do
         def add_npm_dependency(**deps)
           path = File.join(destination_root, "package.json")

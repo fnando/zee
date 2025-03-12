@@ -75,6 +75,30 @@ class AppTest < Minitest::Test
                        JSON.parse(app.join("config/secrets/test.key").read)
   end
 
+  test "applies template" do
+    create_file "tmp/template.rb", <<~RUBY
+      File.write("root.txt", Dir.pwd)
+    RUBY
+
+    app = Pathname("tmp/app")
+    generator = Zee::Generators::App.new
+    generator.options = {
+      database: "sqlite",
+      js: "typescript",
+      css: "tailwind",
+      test: "minitest",
+      template: "tmp/template.rb",
+      skip_bundle: true,
+      skip_npm: true
+    }
+    generator.destination_root = app
+
+    capture { generator.invoke_all }
+
+    assert app.join("root.txt").file?
+    assert_equal app.expand_path.to_s, app.join("root.txt").read
+  end
+
   test "skips bundle install" do
     app = Pathname("tmp")
     generator = Zee::Generators::App.new
