@@ -40,6 +40,9 @@ Zee.app.init do
     Sequel::Model.plugin :sql_comments
   end
 
+  # Enable encrypted attributes.
+  Sequel::Model.plugin :encrypted_attributes
+
   # Set default values for columns.
   # @example
   #   class User < Sequel::Model
