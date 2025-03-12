@@ -13,4 +13,6 @@ Sequel::Model.db.synchronize do |connection|
   Dir[".sqlpkg/**/*.{dylib,so}"].each do |extension|
     connection.load_extension(extension)
   end
+
+  connection.enable_load_extension(false)
 end
