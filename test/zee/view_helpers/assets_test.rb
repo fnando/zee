@@ -33,6 +33,11 @@ class AssetsTest < Minitest::Test
                  helpers.javascript_include_tag(:app).to_s
   end
 
+  test "returns javascript tag using attributes" do
+    assert_equal %[<script defer src="/assets/scripts/app.js"></script>],
+                 helpers.javascript_include_tag(:app, defer: true).to_s
+  end
+
   test "returns javascript tag using arbitrary path" do
     assert_equal %[<script src="/some/script.js"></script>],
                  helpers.javascript_include_tag("/some/script.js").to_s
@@ -58,6 +63,12 @@ class AssetsTest < Minitest::Test
   test "returns stylesheet tag using symbol" do
     assert_equal %[<link rel="stylesheet" href="/assets/styles/app.css">],
                  helpers.stylesheet_link_tag(:app).to_s
+  end
+
+  test "returns stylesheet tag using attributes" do
+    assert_equal \
+      %[<link rel="stylesheet" media="print" href="/assets/styles/print.css">],
+      helpers.stylesheet_link_tag(:print, media: "print").to_s
   end
 
   test "returns stylesheet tag using arbitrary path" do

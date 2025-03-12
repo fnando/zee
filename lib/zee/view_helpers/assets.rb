@@ -12,6 +12,9 @@ module Zee
       }.freeze
 
       # @api private
+      STYLESHEET = "stylesheet"
+
+      # @api private
       X = "x"
 
       # @api private
@@ -116,14 +119,17 @@ module Zee
       #
       # @example Using a url
       #   javascript_include_tag "https://example.com/script.js"
-      def javascript_include_tag(*sources)
+      #
+      # @example Passing attributes
+      #   javascript_include_tag :app, defer: true
+      def javascript_include_tag(*sources, **)
         SafeBuffer.new.tap do |buffer|
           sources.each do |source|
             source = source.to_s
             source = "#{source}#{JS}" unless source.include?(JS)
 
             path = asset_path(source, dir: SCRIPTS)
-            buffer << SafeBuffer.new(%[<script src="#{path}"></script>])
+            buffer << content_tag(:script, **, src: path)
           end
         end
       end
@@ -146,14 +152,14 @@ module Zee
       #
       # @example Using a url
       #   stylesheet_link_tag "https://example.com/style.css"
-      def stylesheet_link_tag(*sources)
+      def stylesheet_link_tag(*sources, **)
         SafeBuffer.new.tap do |buffer|
           sources.each do |source|
             source = source.to_s
             source = "#{source}#{CSS}" unless source.include?(CSS)
 
             path = asset_path(source, dir: STYLES)
-            buffer << SafeBuffer.new(%[<link rel="stylesheet" href="#{path}">])
+            buffer << content_tag(:link, rel: STYLESHEET, **, href: path)
           end
         end
       end
