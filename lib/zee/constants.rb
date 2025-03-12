@@ -99,7 +99,7 @@ module Zee
 
   # @api private
   # The name of the output buffer variable used by erubi templates.
-  BUFVAR = "@output_buffer"
+  BUFVAR = "@_output_buffer"
 
   # @api private
   # The initial output buffer value used by erubi templates.

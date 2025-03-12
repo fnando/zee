@@ -18,6 +18,10 @@ module Zee
     # and call the `auth_scope` method. The `auth_scope` method receives the
     # scopes that you want to define and two procs: one that will be called
     # when the user is logged in and another when the user is logged out.
+    # Alternatively, you can pass a third block that will be called when the
+    # user is not authorized to access the action by setting
+    # `when_unauthorized`; it defaults to the same proc defined as
+    # `when_logged_out`.
     #
     # ```ruby
     # module Controllers

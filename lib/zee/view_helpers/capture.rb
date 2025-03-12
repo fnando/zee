@@ -15,7 +15,7 @@ module Zee
       #     buffer = SafeBuffer.new.concat("<h1>")
       #     buffer << title
       #     buffer << SafeBuffer.new("</h1>")
-      #     @output_buffer << buffer
+      #     output_buffer << buffer
       #   end
       #   ```
       #
@@ -29,7 +29,7 @@ module Zee
       #   > Notice where not using `<%=`. This is because the helper is
       #   > appending the content to the output buffer directly.
       def output_buffer
-        @output_buffer
+        @_output_buffer
       end
 
       # Capture the output of the block.

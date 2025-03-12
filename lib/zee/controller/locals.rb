@@ -10,7 +10,7 @@ module Zee
       # @example
       #   locals[:name] = user.name
       private def locals
-        @locals ||= {}
+        @_locals ||= {}
       end
 
       # Expose variables and methods to the template.
@@ -35,7 +35,7 @@ module Zee
           ref = method(name)
           file, line = ref.source_location
 
-          helpers.instance_eval <<~RUBY, file, line # rubocop:disable Style/EvalWithLocation
+          helpers.instance_eval <<~RUBY, file, line + 1 # rubocop:disable Style/EvalWithLocation
             def #{name}(*, **)                   # def hello(*, **)
               controller.send(:"#{name}", *, **) #  controller.send(:hello, *, **)
             end                                  # end

@@ -54,12 +54,12 @@ module Zee
         response.view_path = view_path
         response.layout_path = layout_path
 
-        locals = self.locals.merge(controller: self)
         body = instrument(:request, scope: :view, path: view_path.path) do
           app.render_template(
             view_path.path,
             locals:,
             request:,
+            controller: self,
             context: helpers
           )
         end
@@ -70,6 +70,7 @@ module Zee
               layout_path,
               locals:,
               request:,
+              controller: self,
               context: helpers
             ) { SafeBuffer.new(body) }
           end

@@ -9,6 +9,7 @@ module Zee
     include Flash
     include Translation
     using Zee::Core::Blank
+    using Zee::Core::Module
 
     # Raised when a template is missing.
     MissingTemplateError = Class.new(StandardError)
@@ -68,31 +69,30 @@ module Zee
 
     # The current action name.
     # @return [String]
-    attr_reader :action_name
+    internal_attr_reader :action_name
 
     # The current controller name.
     # @return [String]
-    attr_reader :controller_name
+    internal_attr_reader :controller_name
 
     # The current request.
     # @return [Zee::Request]
-    attr_reader :request
+    internal_attr_reader :request
 
     # The current response.
     # @return [Zee::Response]
-    attr_reader :response
-
-    def initialize(request:, response:, action_name: nil, controller_name: nil)
-      @request = request
-      @response = response
-      @action_name = action_name.to_s
-      @controller_name = controller_name.to_s
-    end
+    internal_attr_reader :response
 
     # The parameters from the request.
     # @return [Params]
-    private def params
-      @params ||= Params.new(request.params)
+    internal_attr_reader :params
+
+    def initialize(request:, response:, action_name: nil, controller_name: nil)
+      @_request = request
+      @_response = response
+      @_action_name = action_name.to_s
+      @_controller_name = controller_name.to_s
+      @_params = Params.new(request.params)
     end
 
     # The session hash.
@@ -157,9 +157,7 @@ module Zee
     # Define an object that inherits all the helpers from the application.
     # @return [Object]
     private def helpers
-      @helpers ||= Object.new.extend(Zee.app.helpers).tap do |helpers|
-        helpers.instance_variable_set(:@controller, self)
-      end
+      @_helpers ||= Object.new.extend(Zee.app.helpers)
     end
 
     # @api private
@@ -218,7 +216,7 @@ module Zee
     # you app's `app/views` directory.
     # @return [Array<Pathname>]
     def view_paths
-      @view_paths ||= [Zee.app.root.join("app/views")]
+      @_view_paths ||= [Zee.app.root.join("app/views")]
     end
   end
 end

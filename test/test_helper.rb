@@ -75,8 +75,8 @@ module Minitest
       template,
       controller: nil,
       request: nil,
-      locals: {},
-      context: nil
+      context: nil,
+      locals: {}
     )
       request ||= Zee::Request.new(
         Rack::MockRequest
@@ -90,13 +90,17 @@ module Minitest
         response: Zee::Response.new
       )
       context ||= Object.new.extend(Zee.app.helpers)
-      locals[:request] = request
-      context.instance_variable_set(:@controller, controller)
       File.write("tmp/template.erb", template)
       FileUtils.mkdir_p("tmp/config")
       FileUtils.cp_r("test/fixtures/sample_app/config/secrets", "tmp/config/")
       Dir.chdir("tmp") do
-        Zee.app.render_template("template.erb", request:, locals:, context:)
+        Zee.app.render_template(
+          "template.erb",
+          request:,
+          locals:,
+          context:,
+          controller:
+        )
       end
     end
 

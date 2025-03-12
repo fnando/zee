@@ -45,3 +45,9 @@ Minitest/NoTestCases:
 Minitest/EmptyLineBeforeAssertionMethods:
   Exclude:
     - lib/**/*.rb
+
+Naming/MemoizedInstanceVariableName:
+  Exclude:
+    - lib/zee/controller.rb
+    - lib/zee/controller/**/*.rb
+    - lib/zee/view_helpers/**/*.rb

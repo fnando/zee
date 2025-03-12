@@ -306,6 +306,12 @@ module Zee
     end
     # :nocov:
 
+    # @api internal
+    module BaseHelper
+      using Core::Module
+      internal_attr_reader :request, :controller, :current_template_path
+    end
+
     # Set template helpers module.
     # @return [Module] The module to include.
     def helpers
@@ -313,11 +319,10 @@ module Zee
         app = self
 
         Module.new do
-          attr_reader :request, :controller, :current_template_path
-
           helper_modules =
             ::Helpers.constants.map {|name| ::Helpers.const_get(name) }
 
+          include(BaseHelper)
           include(ViewHelpers::Partial)
           include(ViewHelpers::Assets)
           include(ViewHelpers::Form)
@@ -354,12 +359,22 @@ module Zee
     # @param locals [Hash] The variables to expose to the template.
     # @param context [Object] The context to evaluate the template in.
     # @param request [Zee::Request] The current request.
+    # @param controller [Object, nil] The controller instance. Some helpers need
+    #                                 it.
     # @yield The block to evaluate in the template.
     # @return [String] The rendered template.
-    def render_template(file, locals: {}, context: nil, request: nil, &)
+    def render_template(
+      file,
+      locals: {},
+      context: nil,
+      controller: nil,
+      request: nil,
+      &
+    )
       context ||= Object.new.extend(helpers)
-      context.instance_variable_set(:@request, request)
-      context.instance_variable_set(:@current_template_path, Pathname(file))
+      context.instance_variable_set(:@_controller, controller)
+      context.instance_variable_set(:@_request, request)
+      context.instance_variable_set(:@_current_template_path, Pathname(file))
 
       options = {
         engine_class: Erubi::CaptureBlockEngine,

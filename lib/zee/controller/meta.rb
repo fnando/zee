@@ -224,7 +224,7 @@ module Zee
       end
 
       private def meta
-        @meta ||= Meta::Base.new(controller_name:, action_name:, helpers:)
+        @_meta ||= Meta::Base.new(controller_name:, action_name:, helpers:)
       end
     end
   end

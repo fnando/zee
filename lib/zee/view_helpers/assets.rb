@@ -38,7 +38,7 @@ module Zee
       # Return the path to the manifest file.
       # @return [Pathname]
       def manifest_path
-        @manifest_path ||= Zee.app.root.join(MANIFEST_PATH)
+        @_manifest_path ||= Zee.app.root.join(MANIFEST_PATH)
       end
 
       # Returns the manifest file as a hash.
@@ -63,7 +63,7 @@ module Zee
       # @return [Hash]
       def manifest
         if manifest_path.file?
-          @manifest ||= JSON.load_file(manifest_path)
+          @_manifest ||= JSON.load_file(manifest_path)
         else
           {}
         end
