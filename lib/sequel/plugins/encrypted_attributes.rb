@@ -32,14 +32,14 @@ module Sequel
     #
     #   class User < Sequel::Model
     #     keyring ENV["KEYRING"], digest_salt: ENV["KEYRING_DIGEST_SALT"]
-    #     encrypted :email
+    #     encrypt :email
     #   end
     #
     # @example JSON encode attributes
-    #   encrypted :meta, encoder: JSON
+    #   encrypt :meta, encoder: JSON
     #
     # @example JSON encode attributes (with symbolized keys)
-    #   encrypted :meta,
+    #   encrypt :meta,
     #             encoder: Zee::Encoders::JSONEncoder
     #
     # @example Manually rotate encrypted attributes to the latest key
@@ -122,20 +122,20 @@ module Sequel
         # @example Define encrypted attributes
         #   class User < Sequel::Model
         #     keyring ENV["KEYRING"], digest_salt: ENV["KEYRING_DIGEST_SALT"]
-        #     encrypted :email
+        #     encrypt :email
         #   end
         #
         # @example Define encrypted attributes with a JSON encoder
         #   class User < Sequel::Model
         #     keyring ENV["KEYRING"], digest_salt: ENV["KEYRING_DIGEST_SALT"]
-        #     encrypted :email, encoder: JSON
+        #     encrypt :email, encoder: JSON
         #   end
         #
         # @example Define encrypted attributes with a JSON encoder (symbolized
         # keys).
         #   class User < Sequel::Model
         #     keyring ENV["KEYRING"], digest_salt: ENV["KEYRING_DIGEST_SALT"]
-        #     encrypted :email, encoder: Zee::Encoders::JSONEncoder
+        #     encrypt :email, encoder: Zee::Encoders::JSONEncoder
         #   end
         def encrypt(*attributes, encoder: nil)
           self.encrypted_attributes ||= {}
