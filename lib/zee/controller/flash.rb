@@ -47,8 +47,8 @@ module Zee
     # end
     # ```
     #
-    # @see Zee::Controller::Flash::FlashHash
-    # @see Controller#redirect_to
+    # @see Controller::Flash::FlashHash
+    # @see Controller::Redirect#redirect_to
     # @see Middleware::Flash
     module Flash
       def self.included(base)

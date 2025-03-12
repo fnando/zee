@@ -3,6 +3,8 @@
 module Zee
   class Controller
     module Callbacks
+      using Core::Blank
+
       def self.included(base)
         base.extend(Callbacks::ClassMethods)
       end
@@ -109,6 +111,23 @@ module Zee
         self.class.skipped_callbacks[type].any? do |names, condition|
           names.include?(name) && instance_eval(&condition)
         end
+      end
+
+      # @api private
+      private def instrument_before_action(name, callback, response)
+        return unless Zee.app.config.enable_instrumentation
+
+        source = name
+        source ||= begin
+          file, line = callback.source_location
+          [Pathname(file).relative_path_from(Dir.pwd), line].join(COLON)
+        end
+
+        props = {source: name ? ":#{name}" : source, scope: :before_action}
+        location = response.headers[:location]
+        props[:redirected_to] = location unless location.blank?
+
+        instrument :request, **props
       end
     end
   end

@@ -3,12 +3,12 @@
 module Zee
   class Controller
     include Renderer
+    include Redirect
     include Callbacks
     include AuthenticityToken
     include Locals
     include Flash
     include Translation
-    using Zee::Core::Blank
     using Zee::Core::Module
 
     # Raised when a template is missing.
@@ -33,28 +33,6 @@ module Zee
     end
 
     self.csrf_param_name = :_authenticity_token
-
-    # Expose helper methods to templates.
-    # With this method, you can expose helper methods to all actions.
-    #
-    # @see Locals#expose
-    #
-    # @example Expose a helper method to all actions.
-    #   class ApplicationController < Zee::Controller
-    #     expose :current_user, :user_logged_in?
-    #
-    #     private def current_user
-    #       @current_user ||=
-    #         Models::User.find(session[:user_id]) if session[:user_id]
-    #     end
-    #
-    #     private def user_logged_in?
-    #       current_user != nil
-    #     end
-    #   end
-    def self.expose(*, **)
-      before_action { expose(*, **) }
-    end
 
     # @api private
     def self.inherited(subclass)
@@ -105,55 +83,6 @@ module Zee
       session.clear
     end
 
-    # Redirect to a different location.
-    # @param location [String] The location to redirect to.
-    # @param status [Integer, Symbol] The status code of the response.
-    # @param allow_other_host [Boolean] Allow redirects to other hosts.
-    # @param options [Hash] Other options to set.
-    # @option options [String] :notice Set a notice flash message.
-    # @option options [String] :alert Set a alert flash message.
-    # @option options [String] :info Set a info flash message.
-    # @option options [String] :error Set a error flash message.
-    # @raise [ArgumentError] If the location is empty.
-    # @raise [UnsafeRedirectError] If the redirect is unsafe (i.e. trying to
-    #                              redirect a different host without
-    #                              setting `allow_other_host`).
-    #
-    # @example Redirect to the home page.
-    #   redirect_to "/"
-    #
-    # @example Redirect to the home page with a 301 status.
-    #   redirect_to "/", status: :moved_permanently
-    #
-    # @example Redirect to a different host.
-    #   redirect_to "https://example.com", allow_other_host: true
-    #
-    # @example Redirect and set a flash message.
-    #   redirect_to "/", notice: "Welcome back!"
-    #   redirect_to "/", alert: "You need to activate your account."
-    #   redirect_to "/", error: "Your account it's disabled."
-    #   redirect_to "/", info: "Check your inbox."
-    private def redirect_to(location, status: :found, allow_other_host: false,
-                            **options)
-      raise ArgumentError, "location cannot be empty" if location.to_s.empty?
-
-      uri = URI(location)
-
-      if uri.host && uri.host != request.host && !allow_other_host
-        raise UnsafeRedirectError,
-              "Unsafe redirect; " \
-              "pass `allow_other_host: true` to redirect anyway."
-      end
-
-      # Set flash messages for redirect.
-      flash_keys = %i[notice info alert error] & options.keys
-      flash_keys.each {|key| flash[key] = options[key] }
-
-      response.status(status)
-      response.headers[:location] = location
-      response.body = EMPTY_STRING
-    end
-
     # Define an object that inherits all the helpers from the application.
     # @return [Object]
     private def helpers
@@ -192,23 +121,6 @@ module Zee
       # If no status is set, then let's assume the action is implicitly
       # rendering the template.
       render(action_name) unless response.status
-    end
-
-    # @api private
-    private def instrument_before_action(name, callback, response)
-      return unless Zee.app.config.enable_instrumentation
-
-      source = name
-      source ||= begin
-        file, line = callback.source_location
-        [Pathname(file).relative_path_from(Dir.pwd), line].join(COLON)
-      end
-
-      props = {source: name ? ":#{name}" : source, scope: :before_action}
-      location = response.headers[:location]
-      props[:redirected_to] = location unless location.blank?
-
-      instrument :request, **props
     end
 
     # @api private

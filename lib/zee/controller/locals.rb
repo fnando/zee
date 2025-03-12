@@ -3,6 +3,34 @@
 module Zee
   class Controller
     module Locals
+      def self.included(controller)
+        controller.extend(ClassMethods)
+      end
+
+      module ClassMethods
+        # Expose helper methods to templates.
+        # With this method, you can expose helper methods to all actions.
+        #
+        # @see Locals#expose
+        #
+        # @example Expose a helper method to all actions.
+        #   class ApplicationController < Zee::Controller
+        #     expose :current_user, :user_logged_in?
+        #
+        #     private def current_user
+        #       @current_user ||=
+        #         Models::User.find(session[:user_id]) if session[:user_id]
+        #     end
+        #
+        #     private def user_logged_in?
+        #       current_user != nil
+        #     end
+        #   end
+        def expose(*, **)
+          before_action { expose(*, **) }
+        end
+      end
+
       # The variables that will be exposed to templates.
       #
       # @return [Hash]
