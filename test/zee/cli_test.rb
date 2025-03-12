@@ -40,7 +40,8 @@ class CLITest < Minitest::Test
        POST       | /messages/set-keep-all     |                  | messages#set_keep_all
        GET        | /messages/keep             |                  | messages#keep
        GET        | /messages/keep-all         |                  | messages#keep_all
-       ALL        | /proc-app                  | proc_app         | app.rb:42
+       GET        | /admin/posts               | admin_posts      | admin/posts#index
+       ALL        | /proc-app                  | proc_app         | app.rb:8
        ALL        | /class-app                 | class_app        | MyRackApp
       ------------+----------------------------+------------------+----------------------------
     TEXT

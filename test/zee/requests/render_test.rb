@@ -3,12 +3,24 @@
 require "test_helper"
 
 class RenderTest < Zee::Test::Request
+  setup do
+    store_translations :en, zee: {meta: {pages: {home: {title: "My app"}}}}
+  end
+
   test "renders root" do
     get "/"
 
     assert last_response.ok?
     assert_includes last_response.body,
                     "sample_app:app/views/pages/home.html.erb"
+    assert_includes last_response.content_type, "text/html"
+  end
+
+  test "renders namespaced routes" do
+    get "/admin/posts"
+
+    assert last_response.ok?
+    assert_includes last_response.body, "hello from admin"
     assert_includes last_response.content_type, "text/html"
   end
 
@@ -156,5 +168,12 @@ class RenderTest < Zee::Test::Request
     assert last_response.ok?
     assert_includes last_response.body, "hello from my app"
     assert_includes last_response.content_type, "text/html"
+  end
+
+  test "renders meta tags" do
+    get "/"
+
+    assert last_response.ok?
+    assert_selector last_response.body, "meta[charset='UTF-8']"
   end
 end

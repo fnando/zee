@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
 module Controllers
-  class Messages < Zee::Controller
+  class Messages < Base
+    skip_before_action :verify_authenticity_token
+
     def index
     end
 

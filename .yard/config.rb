@@ -85,5 +85,19 @@ end
 
 YARD::CONFIG_DIR = __dir__
 YARD::Templates::Helpers::MarkupHelper::MARKUP_PROVIDERS[:markdown] = [
-  {lib: :zee, const: "ZeeMarkdown"}
+  {lib: :zee, const: "ZeeMarkdown", format: :html}
 ]
+
+module YARD
+  module Templates
+    module Helpers
+      module HtmlHelper
+        # This is messing up the rendering of the code blocks.
+        # Given that we're already returning valid HTML, we don't need this.
+        def parse_codeblocks(html)
+          html
+        end
+      end
+    end
+  end
+end

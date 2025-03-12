@@ -18,6 +18,11 @@ class StringTest < Minitest::Test
     assert_equal "module/html_encoder", "Module::HTMLEncoder".underscore
   end
 
+  test "#dasherize" do
+    assert_equal "user", "User".dasherize
+    assert_equal "user-tag", "user_tag".dasherize
+  end
+
   test "#camelcase" do
     assert_equal "User", "user".camelize
     assert_equal "UserTag", "user_tag".camelize

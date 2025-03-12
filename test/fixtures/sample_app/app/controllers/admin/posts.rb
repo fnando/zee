@@ -1,8 +1,10 @@
 # frozen_string_literal: true
 
 module Controllers
-  class Things < Base
-    def show
+  module Admin
+    class Posts < Base
+      def index
+      end
     end
   end
 end
