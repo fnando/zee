@@ -74,6 +74,7 @@ class AppTest < Minitest::Test
 
   test "prevents app from having the environment set after initialization" do
     app = Zee::App.new
+    app.root = Pathname("tmp")
     app.initialize!
 
     assert_raises(Zee::App::AlreadyInitializedError) { app.env = :test }
@@ -81,6 +82,7 @@ class AppTest < Minitest::Test
 
   test "runs init blocks" do
     app = Zee::App.new
+    app.root = Pathname("tmp")
     called = []
     this = nil
 

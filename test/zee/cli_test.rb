@@ -4,6 +4,13 @@ require "English"
 require "test_helper"
 
 class CLITest < Minitest::Test
+  PATH = ENV.fetch("PATH")
+
+  setup do
+    ENV["PATH"] = "#{File.expand_path('test/fixtures/binstubs')}:#{PATH}"
+  end
+  teardown { ENV["PATH"] = PATH }
+
   test "lists routes" do
     exit_code = nil
     out = nil
