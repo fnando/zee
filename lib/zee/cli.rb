@@ -80,6 +80,13 @@ module Zee
       exit 1
     end
 
+    map %w[--version] => :version
+
+    desc "version, --version", "Print the version"
+    def version
+      puts "zee #{VERSION}"
+    end
+
     desc "routes", "List all routes"
     def routes
       require "bundler/setup"

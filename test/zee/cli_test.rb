@@ -331,4 +331,16 @@ class CLITest < Minitest::Test
     assert_includes out, %[rake_test_loader.rb new PATH]
     refute_includes err, %[Unknown switches "--help"]
   end
+
+  test "shows version" do
+    capture { Zee::CLI.start(["--version"]) } => {exit_code:, out:}
+
+    assert_equal 0, exit_code
+    assert_includes out, "zee #{Zee::VERSION}"
+
+    capture { Zee::CLI.start(["version"]) } => {exit_code:, out:}
+
+    assert_equal 0, exit_code
+    assert_includes out, "zee #{Zee::VERSION}"
+  end
 end
