@@ -58,6 +58,7 @@ module Zee
       set :enable_reloading, false
       set :enable_template_caching, false
       set :enable_instrumentation, false
+      set :handle_errors, false
       set :filter_parameters, ParameterFilter::DEFAULT_FILTERS
     end
 

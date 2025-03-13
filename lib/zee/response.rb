@@ -38,10 +38,25 @@ module Zee
       @status
     end
 
+    # Set the status code of the response.
+    # @param status [Integer, Symbol, nil] the status code. When nil, the status
+    #                                      code will be unset.
+    def status=(status)
+      status(status)
+      @status = nil unless status
+    end
+
     # The headers of the response.
     # @return [Zee::Headers]
     def headers
       @headers ||= Headers.new
+    end
+
+    # Reset the response.
+    def reset
+      @body = nil
+      @status = nil
+      headers.clear
     end
   end
 end

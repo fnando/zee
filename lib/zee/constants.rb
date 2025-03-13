@@ -104,4 +104,7 @@ module Zee
   # @api private
   # The initial output buffer value used by erubi templates.
   BUFVAL = "::Zee::SafeBuffer::Erubi.new(root: true)"
+
+  # @api private
+  INTERNAL_SERVER_ERROR_MESSAGE = "500 Internal Server Error"
 end

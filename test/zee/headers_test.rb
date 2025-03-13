@@ -10,4 +10,12 @@ class HeadersTest < Minitest::Test
     assert_equal "text/html", headers[:content_type]
     assert_equal %w[content-type], headers.to_h.keys
   end
+
+  test "clears headers" do
+    headers = Zee::Headers.new
+    headers[:content_type] = "text/html"
+    headers.clear
+
+    assert_empty headers.to_h
+  end
 end

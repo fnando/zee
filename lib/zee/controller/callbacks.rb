@@ -11,6 +11,17 @@ module Zee
 
       module ClassMethods
         # @api private
+        def inherited(subclass)
+          super
+
+          callbacks
+            .each {|type, list| subclass.callbacks[type] = list.dup }
+
+          skipped_callbacks
+            .each {|type, list| subclass.skipped_callbacks[type] = list.dup }
+        end
+
+        # @api private
         def callbacks
           @callbacks ||= {before: [], after: []}
         end

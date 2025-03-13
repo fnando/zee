@@ -6,6 +6,11 @@ module Zee
       @store = {}
     end
 
+    # Clear all headers.
+    def clear
+      @store.clear
+    end
+
     # Get the value of a header.
     # @param name [String] the name of the header.
     # @return [String] the value of the header.

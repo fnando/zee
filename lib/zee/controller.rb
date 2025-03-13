@@ -9,6 +9,7 @@ module Zee
     include Locals
     include Flash
     include Translation
+    include ErrorHandling
     using Zee::Core::Module
 
     # Raised when a template is missing.
@@ -35,15 +36,6 @@ module Zee
     self.csrf_param_name = :_authenticity_token
 
     # @api private
-    def self.inherited(subclass)
-      super
-
-      callbacks
-        .each {|type, list| subclass.callbacks[type] = list.dup }
-
-      skipped_callbacks
-        .each {|type, list| subclass.skipped_callbacks[type] = list.dup }
-    end
 
     # The current action name.
     # @return [String]
@@ -111,7 +103,11 @@ module Zee
       raise ArgumentError, ":action_name is not set" if action_name.empty?
 
       # Execute the action on the controller.
-      public_send(action_name)
+      begin
+        public_send(action_name)
+      rescue Exception => error # rubocop:disable Lint/RescueException
+        handle_action_error(error)
+      end
 
       # Run after action callbacks.
       self.class.callbacks[:after].each do |(callback, conditions)|
@@ -129,6 +125,23 @@ module Zee
     # @return [Array<Pathname>]
     def view_paths
       @_view_paths ||= [Zee.app.root.join("app/views")]
+    end
+
+    # @api private
+    def handle_action_error(error)
+      response.reset
+
+      self.class.rescue_handlers.reverse_each do |handler|
+        matched = handler[:exceptions].any? { _1 === error } # rubocop:disable Style/CaseEquality
+        instance_exec(error, &handler[:with]) if matched
+      end
+
+      return if response.status
+      raise error unless Zee.app.config.handle_errors
+
+      response.status(500)
+      response.body = INTERNAL_SERVER_ERROR_MESSAGE
+      response.headers[HTTP_CONTENT_TYPE] = TEXT_PLAIN
     end
   end
 end
