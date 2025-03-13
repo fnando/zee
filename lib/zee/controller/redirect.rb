@@ -34,6 +34,7 @@ module Zee
       private def redirect_to(location, status: :found, allow_other_host: false,
                               **options)
         raise ArgumentError, "location cannot be empty" if location.to_s.empty?
+        raise DoubleRenderError if response.performed?
 
         uri = URI(location)
 

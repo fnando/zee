@@ -116,6 +116,82 @@ class ControllerTest < Minitest::Test
     assert_includes response.body, "Hello, Mary!"
   end
 
+  test "raises error when rendering twice" do
+    controller_class = Class.new(Zee::Controller) do
+      def show
+        render :show
+        render :show
+      end
+    end
+
+    error = assert_raises(Zee::Controller::DoubleRenderError) do
+      controller_class.new(
+        request:,
+        response:,
+        controller_name: "application",
+        action_name: "show"
+      ).send(:call)
+    end
+    assert_includes error.message, "Render/redirect called multiple times"
+  end
+
+  test "raises error when redirecting twice" do
+    controller_class = Class.new(Zee::Controller) do
+      def show
+        redirect_to "/"
+        redirect_to "/"
+      end
+    end
+
+    error = assert_raises(Zee::Controller::DoubleRenderError) do
+      controller_class.new(
+        request:,
+        response:,
+        controller_name: "application",
+        action_name: "show"
+      ).send(:call)
+    end
+    assert_includes error.message, "Render/redirect called multiple times"
+  end
+
+  test "raises error when redirecting after rendering" do
+    controller_class = Class.new(Zee::Controller) do
+      def show
+        render :show
+        redirect_to "/"
+      end
+    end
+
+    error = assert_raises(Zee::Controller::DoubleRenderError) do
+      controller_class.new(
+        request:,
+        response:,
+        controller_name: "application",
+        action_name: "show"
+      ).send(:call)
+    end
+    assert_includes error.message, "Render/redirect called multiple times"
+  end
+
+  test "raises error when rendering after redirecting" do
+    controller_class = Class.new(Zee::Controller) do
+      def show
+        redirect_to "/"
+        render :show
+      end
+    end
+
+    error = assert_raises(Zee::Controller::DoubleRenderError) do
+      controller_class.new(
+        request:,
+        response:,
+        controller_name: "application",
+        action_name: "show"
+      ).send(:call)
+    end
+    assert_includes error.message, "Render/redirect called multiple times"
+  end
+
   %i[notice alert info error].each do |key|
     test "sets #{key} flash message for redirect" do
       controller_class = Class.new(Zee::Controller) do

@@ -44,6 +44,8 @@ module Zee
                  **options)
         app = Zee.app
 
+        raise DoubleRenderError if response.performed?
+
         return render_json(status, options.delete(:json)) if options.key?(:json)
         return render_text(status, options.delete(:text)) if options.key?(:text)
 

@@ -541,38 +541,6 @@ class CallbacksTest < Minitest::Test
     assert_equal "cannot pass both method names and a block", error.message
   end
 
-  test "rendering from after action prevents action from being executed" do
-    controller_class = Class.new(Zee::Controller) do
-      after_action { render text: "after_action" }
-
-      def show
-        render text: "action"
-      end
-    end
-
-    build => {request:, response:}
-    controller = controller_class.new(request:, response:, action_name: "show")
-    controller.send(:call)
-
-    assert_equal "after_action", response.body
-  end
-
-  test "redirecting from after action prevents action from being executed" do
-    controller_class = Class.new(Zee::Controller) do
-      after_action { redirect_to "/" }
-
-      def show
-        render text: "action"
-      end
-    end
-
-    build => {request:, response:}
-    controller = controller_class.new(request:, response:, action_name: "show")
-    controller.send(:call)
-
-    assert_equal 302, response.status
-  end
-
   test "inherits callbacks" do
     base_class = Class.new(Zee::Controller) do
       before_action { calls << 1 }
@@ -758,7 +726,7 @@ class CallbacksTest < Minitest::Test
       duration: nil,
       args: {
         scope: :before_action,
-        source: "test/zee/controller/callbacks_test.rb:744",
+        source: "test/zee/controller/callbacks_test.rb:712",
         redirected_to: "/"
       }
     }

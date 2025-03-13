@@ -43,4 +43,18 @@ class ResponseTest < Minitest::Test
     assert_nil response.body
     assert_empty response.headers.to_h
   end
+
+  test "sets as performed when assign body" do
+    response = Zee::Response.new
+    response.body = "hello"
+
+    assert response.performed?
+  end
+
+  test "sets as performed when assign status" do
+    response = Zee::Response.new
+    response.status = :ok
+
+    assert response.performed?
+  end
 end

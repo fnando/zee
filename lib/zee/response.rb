@@ -4,7 +4,7 @@ module Zee
   class Response
     # The body of the response.
     # @return [String]
-    attr_accessor :body
+    attr_reader :body
 
     # The template file that's been used to render the response.
     # @return [Controller::Template, nil]
@@ -19,6 +19,14 @@ module Zee
       @body = body
       @status = status
       @headers = headers
+      @performed = false
+    end
+
+    # Set the body of the response.
+    # @param body [String] the body of the response.
+    def body=(body)
+      @body = body
+      @performed = true
     end
 
     # The status code of the response.
@@ -34,7 +42,11 @@ module Zee
     # @example Get the status code.
     #   response.status
     def status(status = nil)
-      @status = Rack::Utils.status_code(status) if status
+      if status
+        @status = Rack::Utils.status_code(status)
+        @performed = true
+      end
+
       @status
     end
 
@@ -56,7 +68,15 @@ module Zee
     def reset
       @body = nil
       @status = nil
+      @perfomed = false
       headers.clear
+    end
+
+    # @api private
+    # If status or body is set, mark the response as performed.
+    # @return [Boolean]
+    def performed?
+      @performed
     end
   end
 end

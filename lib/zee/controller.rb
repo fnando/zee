@@ -12,6 +12,18 @@ module Zee
     include ErrorHandling
     using Zee::Core::Module
 
+    # Raised when an trying to re-render an action, doing a redirect after
+    # rendering, or even doing multiple redirection attempts.
+    class DoubleRenderError < StandardError
+      DEFAULT_MESSAGE =
+        "Render/redirect called multiple times. You may only " \
+        "render OR redirect once per action. Use `return` to exit early."
+
+      def initialize(message = DEFAULT_MESSAGE)
+        super
+      end
+    end
+
     # Raised when a template is missing.
     MissingTemplateError = Class.new(StandardError)
 
@@ -94,7 +106,7 @@ module Zee
         instance_eval(&callback) if instance_eval(&conditions)
 
         # If the response is already set, then stop processing.
-        if response.status
+        if response.performed?
           return instrument_before_action(name, callback, response)
         end
       end
@@ -116,7 +128,7 @@ module Zee
 
       # If no status is set, then let's assume the action is implicitly
       # rendering the template.
-      render(action_name) unless response.status
+      render(action_name) unless response.performed?
     end
 
     # @api private
