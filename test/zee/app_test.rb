@@ -147,4 +147,50 @@ class AppTest < Minitest::Test
     assert_equal Zee::Middleware::ContentSecurityPolicy, stack[12]
     assert_equal 13, stack.size
   end
+
+  test "enables template caching" do
+    template_name = "tmp/template.erb"
+
+    create_file template_name, <<~ERB
+      <%= name %>
+    ERB
+
+    template = Tilt.new(
+      template_name,
+      engine_class: Erubi::CaptureBlockEngine,
+      freeze_template_literals: false,
+      escape: true,
+      bufval: Zee::BUFVAL,
+      bufvar: Zee::BUFVAR
+    )
+
+    Tilt.expects(:new).once.with(template_name, anything).returns(template)
+
+    Zee.app.config.set(:enable_template_caching, true)
+    Zee.app.render_template(template_name, locals: {name: "John"})
+    Zee.app.render_template(template_name, locals: {name: "John"})
+  end
+
+  test "instantes a new template when template caching is disabled" do
+    template_name = "tmp/template.erb"
+
+    create_file template_name, <<~ERB
+      <%= name %>
+    ERB
+
+    template = Tilt.new(
+      template_name,
+      engine_class: Erubi::CaptureBlockEngine,
+      freeze_template_literals: false,
+      escape: true,
+      bufval: Zee::BUFVAL,
+      bufvar: Zee::BUFVAR
+    )
+
+    Tilt.expects(:new).twice.with(template_name, anything).returns(template)
+
+    Zee.app.config.set(:enable_template_caching, false)
+    Zee.app.render_template(template_name, locals: {name: "John"})
+    Zee.app.render_template(template_name, locals: {name: "John"})
+  end
 end

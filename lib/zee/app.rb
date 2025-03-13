@@ -376,15 +376,28 @@ module Zee
       context.instance_variable_set(:@_request, request)
       context.instance_variable_set(:@_current_template_path, Pathname(file))
 
-      options = {
-        engine_class: Erubi::CaptureBlockEngine,
-        freeze_template_literals: false,
-        escape: true,
-        bufval: BUFVAL,
-        bufvar: BUFVAR
-      }
+      key = file.to_s
+      template = template_cache[key]
 
-      Tilt.new(file, options).render(context, locals, &)
+      unless template
+        options = {
+          engine_class: Erubi::CaptureBlockEngine,
+          freeze_template_literals: false,
+          escape: true,
+          bufval: BUFVAL,
+          bufvar: BUFVAR
+        }
+
+        template = Tilt.new(file, options)
+        template_cache[key] = template if config.enable_template_caching
+      end
+
+      template.render(context, locals, &)
+    end
+
+    # Keep compiled templates in memory.
+    def template_cache
+      @template_cache ||= {}
     end
 
     # @api private

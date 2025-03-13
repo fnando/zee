@@ -16,6 +16,9 @@ end
 Zee.app.config :production do
   # Set the domain that will be used for cookies.
   set :domain, "example.com"
+
+  # Set enable template caching.
+  set :enable_template_caching, true
 end
 
 Zee.app.config do

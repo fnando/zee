@@ -26,6 +26,7 @@ module Zee
     # - `config.logger`: a {Zee::Logger} instance that outputs to `$stdout`.
     # - `config.enable_instrumentation`: whether to enable request logging with
     #   better insights.
+    # - `config.enable_template_caching`: whether to enable template caching.
     #
     # @param app [Zee::App] The application instance.
     # @return [Zee::Config]
@@ -55,6 +56,7 @@ module Zee
       set :template_handlers, %w[erb]
       set :serve_static_files, app&.env&.local?
       set :enable_reloading, false
+      set :enable_template_caching, false
       set :enable_instrumentation, false
       set :filter_parameters, ParameterFilter::DEFAULT_FILTERS
     end
