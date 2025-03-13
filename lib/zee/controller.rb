@@ -101,6 +101,10 @@ module Zee
     # @raise [MissingTemplateError] If the template is missing.
     # @return [void]
     private def call
+      Zee.error.context[:controller_class] = self.class.name
+      Zee.error.context[:controller_name] = controller_name
+      Zee.error.context[:action_name] = action_name
+
       # Run before action callbacks.
       self.class.callbacks[:before].each do |(callback, conditions, name)|
         instance_eval(&callback) if instance_eval(&conditions)
@@ -115,20 +119,18 @@ module Zee
       raise ArgumentError, ":action_name is not set" if action_name.empty?
 
       # Execute the action on the controller.
-      begin
-        public_send(action_name)
-      rescue Exception => error # rubocop:disable Lint/RescueException
-        handle_action_error(error)
-      end
+      public_send(action_name)
+
+      # If no status is set, then let's assume the action is implicitly
+      # rendering the template.
+      render(action_name) unless response.performed?
 
       # Run after action callbacks.
       self.class.callbacks[:after].each do |(callback, conditions)|
         instance_eval(&callback) if instance_eval(&conditions)
       end
-
-      # If no status is set, then let's assume the action is implicitly
-      # rendering the template.
-      render(action_name) unless response.performed?
+    rescue Exception => error # rubocop:disable Lint/RescueException
+      handle_action_error(error)
     end
 
     # @api private
@@ -141,17 +143,21 @@ module Zee
 
     # @api private
     def handle_action_error(error)
-      response.reset
+      Zee.error.report(error)
+      previously_performed = response.performed?
 
       self.class.rescue_handlers.reverse_each do |handler|
         matched = handler[:exceptions].any? { _1 === error } # rubocop:disable Style/CaseEquality
         instance_exec(error, &handler[:with]) if matched
+      rescue Exception => error # rubocop:disable Lint/RescueException
+        Zee.error.report(error)
       end
 
-      return if response.status
+      return if !previously_performed && response.performed?
       raise error unless Zee.app.config.handle_errors
 
-      response.status(500)
+      response.reset
+      response.status(:internal_server_error)
       response.body = INTERNAL_SERVER_ERROR_MESSAGE
       response.headers[HTTP_CONTENT_TYPE] = TEXT_PLAIN
     end

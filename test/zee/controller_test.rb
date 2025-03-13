@@ -192,6 +192,29 @@ class ControllerTest < Minitest::Test
     assert_includes error.message, "Render/redirect called multiple times"
   end
 
+  test "raises error when double rendering from rescue from" do
+    controller_class = Class.new(Zee::Controller) do
+      rescue_from RuntimeError do
+        redirect_to "/somewhere-else"
+      end
+
+      def show
+        redirect_to "/"
+        raise "nope"
+      end
+    end
+
+    error = assert_raises(Zee::Controller::DoubleRenderError) do
+      controller_class.new(
+        request:,
+        response:,
+        controller_name: "application",
+        action_name: "show"
+      ).send(:call)
+    end
+    assert_includes error.message, "Render/redirect called multiple times"
+  end
+
   %i[notice alert info error].each do |key|
     test "sets #{key} flash message for redirect" do
       controller_class = Class.new(Zee::Controller) do
@@ -208,5 +231,140 @@ class ControllerTest < Minitest::Test
 
       assert_equal key.to_s.upcase, request.session[:flash][:messages][key]
     end
+  end
+
+  test "reports errors from actions" do
+    Zee.app.config.set(:handle_errors, true)
+    handler = ErrorHandler.new
+    Zee.error << handler
+
+    controller_class = Class.new(Zee::Controller) do
+      def self.name
+        "Controllers::MyController"
+      end
+
+      def show
+        raise "nope"
+      end
+    end
+
+    controller_class.new(
+      request:,
+      response:,
+      controller_name: "application",
+      action_name: "show"
+    ).send(:call)
+
+    assert_instance_of RuntimeError, handler.errors.first.error
+    assert_equal "nope", handler.errors.first.error.message
+    assert_equal "show", handler.errors.first.context[:action_name]
+    assert_equal "application", handler.errors.first.context[:controller_name]
+    assert_equal "Controllers::MyController",
+                 handler.errors.first.context[:controller_class]
+  end
+
+  test "reports errors from before actions" do
+    Zee.app.config.set(:handle_errors, true)
+    handler = ErrorHandler.new
+    Zee.error << handler
+
+    controller_class = Class.new(Zee::Controller) do
+      before_action { raise "nope" }
+
+      def show
+      end
+    end
+
+    controller_class.new(
+      request:,
+      response:,
+      controller_name: "application",
+      action_name: "show"
+    ).send(:call)
+
+    assert_instance_of RuntimeError, handler.errors.first.error
+    assert_equal "nope", handler.errors.first.error.message
+  end
+
+  test "reports errors from after actions" do
+    Zee.app.config.set(:handle_errors, true)
+    handler = ErrorHandler.new
+    Zee.error << handler
+
+    controller_class = Class.new(Zee::Controller) do
+      after_action { raise "nope" }
+
+      def show
+      end
+    end
+
+    controller_class.new(
+      request:,
+      response:,
+      controller_name: "application",
+      action_name: "show"
+    ).send(:call)
+
+    assert_instance_of RuntimeError, handler.errors.first.error
+    assert_equal "nope", handler.errors.first.error.message
+  end
+
+  test "reports errors from rescue from" do
+    Zee.app.config.set(:handle_errors, true)
+    handler = ErrorHandler.new
+    Zee.error << handler
+
+    controller_class = Class.new(Zee::Controller) do
+      rescue_from(Exception) { raise "nope" }
+
+      def show
+        raise "not here"
+      end
+    end
+
+    controller_class.new(
+      request:,
+      response:,
+      controller_name: "application",
+      action_name: "show"
+    ).send(:call)
+
+    assert_instance_of RuntimeError, handler.errors[0].error
+    assert_equal "not here", handler.errors[0].error.message
+    assert_instance_of RuntimeError, handler.errors[1].error
+    assert_equal "nope", handler.errors[1].error.message
+  end
+
+  test "reports all errors from rescue from" do
+    Zee.app.config.set(:handle_errors, true)
+    h1 = ErrorHandler.new
+    h2 = ErrorHandler.new
+    Zee.error << h1
+    Zee.error << h2
+
+    controller_class = Class.new(Zee::Controller) do
+      rescue_from(Exception) { raise "nope" }
+      rescue_from(Exception) { raise "nope again" }
+
+      def show
+        raise "not here"
+      end
+    end
+
+    controller_class.new(
+      request:,
+      response:,
+      controller_name: "application",
+      action_name: "show"
+    ).send(:call)
+
+    assert_instance_of RuntimeError, h1.errors[0].error
+    assert_equal "not here", h1.errors[0].error.message
+
+    assert_instance_of RuntimeError, h1.errors[1].error
+    assert_equal "nope again", h1.errors[1].error.message
+
+    assert_instance_of RuntimeError, h1.errors[2].error
+    assert_equal "nope", h1.errors[2].error.message
   end
 end

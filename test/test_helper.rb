@@ -54,6 +54,7 @@ module Minitest
     setup { I18n.available_locales = [:en] }
     setup { RequestStore.store.clear }
     setup { Zee.app.config.set(:logger, logger) }
+    setup { Zee.error = Zee::ErrorReporter.new }
 
     teardown { FileUtils.rm_rf("tmp") }
 

@@ -19,6 +19,18 @@ module Zee
     end
   end
 
+  # The error reporter.
+  # @return [Zee::ErrorReporter]
+  def self.error
+    @error ||= ErrorReporter.new
+  end
+
+  # Set the error reporter.
+  # @param error [Zee::ErrorReporter]
+  def self.error=(error)
+    @error = error
+  end
+
   class App
     # This error is raised whenever the app is initialized more than once.
     AlreadyInitializedError = Class.new(StandardError)
