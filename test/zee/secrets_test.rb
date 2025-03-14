@@ -9,7 +9,7 @@ class SecretsTest < Minitest::Test
 
   test "reads secrets from encrypted file" do
     secrets = Zee::Secrets.new(
-      keyring: Zee::MainKeyring.parse(File.read(key)),
+      keyring: Zee::Keyring.parse(File.read(key)),
       secrets_file:
     )
 
@@ -20,7 +20,7 @@ class SecretsTest < Minitest::Test
 
   test "overrides to_s" do
     secrets = Zee::Secrets.new(
-      keyring: Zee::MainKeyring.parse(File.read(key)),
+      keyring: Zee::Keyring.parse(File.read(key)),
       secrets_file:
     )
 
@@ -30,7 +30,7 @@ class SecretsTest < Minitest::Test
 
   test "implements respond_to?" do
     secrets = Zee::Secrets.new(
-      keyring: Zee::MainKeyring.parse(File.read(key)),
+      keyring: Zee::Keyring.parse(File.read(key)),
       secrets_file:
     )
 

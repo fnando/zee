@@ -168,6 +168,9 @@ module Zee
     # Raised when the digest salt is missing.
     MissingDigestSalt = Class.new(StandardError)
 
+    # Raised when couldn't load keyring.
+    MissingKeyError = Class.new(StandardError)
+
     # The encryptor that will be used on this keyring.
     # Defaults to {Encryptor::AES::AES256CBC}.
     attr_reader :encryptor
@@ -175,6 +178,36 @@ module Zee
     # The digest salt used to generate digests.
     # @return [String]
     attr_reader :digest_salt
+
+    # Load a keyring from file or use a defined `ZEE_KEYRING` environment
+    # variable.
+    #
+    # @param path [String, Pathname, nil] The key file that will be read.
+    # @return [Keyring]
+    # @raise [MissingKeyError]
+    def self.load(path = nil)
+      unless path || ENV[ZEE_KEYRING]
+        raise ArgumentError,
+              "either path or #{ZEE_KEYRING} env var must be defined"
+      end
+
+      raw = ENV[ZEE_KEYRING]
+
+      return parse(raw) if raw
+      return parse(File.read(path)) if File.file?(path)
+
+      raise MissingKeyError, "Set ZEE_KEYRING or create #{path}"
+    end
+
+    # Parse a JSON string into a {Keyring} instance.
+    # @param key [String] The JSON string that will be parsed.
+    # @return [Keyring]
+    def self.parse(key)
+      data = JSON.parse(key)
+      digest_salt = data.delete("digest_salt")
+
+      Keyring.new(data, digest_salt:)
+    end
 
     # Initialize a new keyring.
     # @param keyring [Hash{Integer => String}, Keyring] the keyring.

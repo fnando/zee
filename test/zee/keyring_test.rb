@@ -3,6 +3,8 @@
 require "test_helper"
 
 class KeyringTest < Minitest::Test
+  teardown { ENV.delete("ZEE_KEYRING") }
+
   test "accepts a keyring instance as a keyring" do
     keys = {
       "0" => "0dab9f80f8e1ebad17a080ee6b7616d773ea3f95bef9a88784c01c1ed4e28520"
@@ -236,5 +238,45 @@ class KeyringTest < Minitest::Test
     *, digest = keyring.encrypt("42")
 
     assert_equal "92cfceb39d57d914ed8b14d0e37643de0797ae56", digest
+  end
+
+  test "retrieves key from env vars" do
+    ENV["ZEE_KEYRING"] = JSON.dump(
+      "0" => SecureRandom.hex(32),
+      "digest_salt" => SecureRandom.hex(32)
+    )
+
+    keyring = Zee::Keyring.load
+
+    assert_instance_of Zee::Keyring, keyring
+    assert_equal Zee::Keyring::Encryptor::AES::AES256GCM, keyring.encryptor
+  end
+
+  test "retrieves key from file" do
+    keyring = Zee::Keyring.load(
+      "./test/fixtures/sample_app/config/secrets/development.key"
+    )
+
+    assert_instance_of Zee::Keyring, keyring
+  end
+
+  test "fails when key is missing" do
+    error = assert_raises(Zee::Keyring::MissingKeyError) do
+      Zee::Keyring.load("config/secrets/production.key")
+    end
+
+    assert_equal(
+      "Set ZEE_KEYRING or create config/secrets/production.key",
+      error.message
+    )
+  end
+
+  test "fails when key/env var is not defined" do
+    error = assert_raises(ArgumentError) do
+      Zee::Keyring.load
+    end
+
+    assert_equal "either path or ZEE_KEYRING env var must be defined",
+                 error.message
   end
 end

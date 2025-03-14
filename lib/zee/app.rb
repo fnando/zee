@@ -147,7 +147,7 @@ module Zee
     # @see Zee::Secrets
     # @return [Zee::Keyring]
     def keyring
-      @keyring ||= MainKeyring.read(env)
+      @keyring ||= Keyring.load(root.join("config/secrets/#{env}.key"))
     end
 
     # Define the app's secrets. See {Zee::Secrets}.
@@ -194,7 +194,7 @@ module Zee
     def default_session_options
       secret = begin
         secrets[:session_secret]
-      rescue MainKeyring::MissingKeyError
+      rescue Keyring::MissingKeyError
         SecureRandom.hex(32)
       end
 
