@@ -159,7 +159,7 @@ module Zee
       def exist?(key)
         store.key?(key.to_s)
       rescue StandardError
-        false
+        nil
       end
 
       # Clears the storage.

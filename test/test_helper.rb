@@ -24,6 +24,8 @@ require "nokogiri"
 require "sequel"
 require "minitest/utils"
 require "minitest/autorun"
+require "connection_pool"
+require "redis"
 
 Dir["#{__dir__}/support/**/*.rb"].each do |file|
   require file

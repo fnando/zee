@@ -225,7 +225,9 @@ module Zee
       # @param key [String, Symbol] the cache key.
       # @param options [Hash{Symbol => Object}] Options are passed to the
       #                                         underlying cache implementation.
-      # @return [Boolean]
+      # @return [Boolean, nil] Returns `true` if the cache contains the key,
+      #                        `false` if it doesn't, and `nil` if there was an
+      #                        error.
       def exist?(key, **options)
         # :nocov:
         raise NotImplementedError
@@ -246,7 +248,15 @@ module Zee
       end
 
       private def load(data)
-        data = keyring.decrypt(*JSON.parse(data)) if encrypt?
+        return data unless data
+
+        if encrypt?
+          data = JSON.parse(data)
+          return data unless data.is_a?(Array) && data.size == 2
+
+          data = keyring.decrypt(*data)
+        end
+
         coder.load(data)
       end
 

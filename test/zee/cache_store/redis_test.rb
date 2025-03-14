@@ -3,20 +3,20 @@
 require "test_helper"
 
 module CacheStore
-  class MemoryTest < Zee::Test::CacheStore
-    fake_store = Object.new
-    def fake_store.method_missing(*, **) # rubocop:disable Style/MissingRespondToMissing
-      raise StandardError
-    end
-
+  class RedisTest < Zee::Test::CacheStore
     keyring = Zee::Keyring.load(
       "test/fixtures/sample_app/config/secrets/test.key"
     )
 
+    fake_pool = Object.new
+    def fake_pool.method_missing(*, **) # rubocop:disable Style/MissingRespondToMissing
+      raise Redis::BaseError
+    end
+
     test "uses different coder" do
-      hash = {}
-      store = Zee::CacheStore::Memory.new(
-        store: hash,
+      pool = ConnectionPool.new { ::Redis.new }
+      store = Zee::CacheStore::Redis.new(
+        pool:,
         encrypt: false,
         keyring:,
         coder: Marshal
@@ -24,12 +24,15 @@ module CacheStore
 
       store.write(:data, {a: 1})
 
+      data = pool.with {|r| r.get(:data) }
+
       assert_equal({a: 1}, store.read(:data))
-      assert_equal({a: 1}, Marshal.load(hash["data"])) # rubocop:disable Security/MarshalLoad
+      assert_equal({a: 1}, Marshal.load(data)) # rubocop:disable Security/MarshalLoad
     end
 
     test_group "without encryption" do
-      store = Zee::CacheStore::Memory.new(encrypt: false, keyring:)
+      pool = ConnectionPool.new { ::Redis.new }
+      store = Zee::CacheStore::Redis.new(pool:, encrypt: false, keyring:)
 
       assert_successful_write(store)
       assert_successful_read(store)
@@ -43,8 +46,8 @@ module CacheStore
       assert_successful_delete_multi(store)
       assert_successful_fetch_multi(store)
 
-      store = Zee::CacheStore::Memory.new(
-        store: fake_store,
+      store = Zee::CacheStore::Redis.new(
+        pool: fake_pool,
         encrypt: false,
         keyring:
       )
@@ -63,7 +66,8 @@ module CacheStore
     end
 
     test_group "with encryption" do
-      store = Zee::CacheStore::Memory.new(encrypt: true, keyring:)
+      pool = ConnectionPool.new { ::Redis.new }
+      store = Zee::CacheStore::Redis.new(pool:, encrypt: true, keyring:)
 
       assert_successful_write(store)
       assert_successful_read(store)
@@ -77,8 +81,8 @@ module CacheStore
       assert_successful_delete_multi(store)
       assert_successful_fetch_multi(store)
 
-      store = Zee::CacheStore::Memory.new(
-        store: fake_store,
+      store = Zee::CacheStore::Redis.new(
+        pool: fake_pool,
         encrypt: true,
         keyring:
       )
