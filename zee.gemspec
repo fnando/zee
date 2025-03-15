@@ -73,6 +73,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "selenium-webdriver"
   spec.add_development_dependency "sequel"
   spec.add_development_dependency "simplecov"
+  spec.add_development_dependency "simplecov-tailwindcss"
   spec.add_development_dependency "sqlite3"
   spec.add_development_dependency "warning"
   spec.add_development_dependency "yard"

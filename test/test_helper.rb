@@ -5,10 +5,20 @@ ENV["APP_ENV"] = "test"
 $stdout.sync = true
 require "English"
 require "simplecov"
+require "simplecov-tailwindcss"
+
+SimpleCov.formatter = SimpleCov::Formatter::TailwindFormatter
 
 SimpleCov.start do
   add_filter("test/")
   add_filter("cache_store/null")
+  add_group("Controller", "controller")
+  add_group("Core Extensions", "core")
+  add_group("Generators", "generators")
+  add_group("Middleware", "middleware")
+  add_group("Plugins", "plugins")
+  add_group("Sequel", "sequel")
+  add_group("View Helpers", "view_helpers")
 end
 
 require "bundler/setup"
