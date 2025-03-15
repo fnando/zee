@@ -73,6 +73,7 @@ class AppTest < Minitest::Test
   end
 
   test "prevents app from having the environment set after initialization" do
+    slow_test
     app = Zee::App.new
     app.root = Pathname("tmp")
     app.initialize!
@@ -81,6 +82,7 @@ class AppTest < Minitest::Test
   end
 
   test "runs init blocks" do
+    slow_test
     app = Zee::App.new
     app.root = Pathname("tmp")
     called = []

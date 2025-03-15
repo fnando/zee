@@ -99,6 +99,7 @@ class CLITest < Minitest::Test
   end
 
   test "runs tests" do
+    slow_test
     exit_code = nil
 
     Dir.chdir("test/fixtures/sample_app") do
@@ -109,6 +110,7 @@ class CLITest < Minitest::Test
   end
 
   test "runs tests from dir" do
+    slow_test
     exit_code = nil
 
     Dir.chdir("test/fixtures/sample_app") do
@@ -121,6 +123,7 @@ class CLITest < Minitest::Test
   end
 
   test "runs tests for specific location" do
+    slow_test
     exit_code = nil
 
     Dir.chdir("test/fixtures/sample_app") do
@@ -133,6 +136,7 @@ class CLITest < Minitest::Test
   end
 
   test "warns when there are no test files" do
+    slow_test
     exit_code = nil
     err = nil
 
@@ -218,6 +222,7 @@ class CLITest < Minitest::Test
   end
 
   test "fails when no bin/scripts is not executable" do
+    slow_test
     exit_code = nil
     err = nil
 
@@ -235,6 +240,7 @@ class CLITest < Minitest::Test
   end
 
   test "builds assets with digest" do
+    slow_test
     exit_code = nil
     out = nil
 
@@ -279,6 +285,7 @@ class CLITest < Minitest::Test
   end
 
   test "builds assets with no digest" do
+    slow_test
     exit_code = nil
     out = nil
 
@@ -328,7 +335,7 @@ class CLITest < Minitest::Test
     end
 
     assert_equal 0, exit_code
-    assert_includes out, %[rake_test_loader.rb new PATH]
+    assert_includes out, %[new PATH]
     refute_includes err, %[Unknown switches "--help"]
   end
 

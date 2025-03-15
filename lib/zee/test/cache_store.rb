@@ -32,6 +32,20 @@ module Zee
         end
       end
 
+      def self.assert_successful_expiring_write(store)
+        store_name = build_store_name(store)
+
+        test "[#{store_name}] asserts successful expiring write" do
+          slow_test
+          key = random_key
+
+          assert store.write(key, "value", expires_in: 1)
+          assert store.exist?(key.to_sym)
+          sleep 2
+          refute store.exist?(key.to_sym)
+        end
+      end
+
       def self.assert_failed_write(store)
         store_name = build_store_name(store)
 

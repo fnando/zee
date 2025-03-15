@@ -23,9 +23,10 @@ require "rack/protection"
 require "nokogiri"
 require "sequel"
 require "minitest/utils"
-require "minitest/autorun"
 require "connection_pool"
 require "redis"
+
+SimpleCov.external_at_exit = true
 
 Dir["#{__dir__}/support/**/*.rb"].each do |file|
   require file

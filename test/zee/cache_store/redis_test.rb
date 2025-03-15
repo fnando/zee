@@ -35,6 +35,7 @@ module CacheStore
       store = Zee::CacheStore::Redis.new(pool:, encrypt: false, keyring:)
 
       assert_successful_write(store)
+      assert_successful_expiring_write(store)
       assert_successful_read(store)
       assert_successful_delete(store)
       assert_successful_fetch(store)

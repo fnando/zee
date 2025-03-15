@@ -11,8 +11,16 @@ module Zee
         @options = options
       end
 
-      def write(key, value, **)
-        @pool.with {|r| r.set(key, dump(value)) } == OK
+      # @param key [String, Symbol] The key to write to.
+      # @param value [Object] The value to write.
+      # @param expires_in [Integer] The number of seconds to expire the key in.
+      # @return [Boolean] Whether the write was successful.
+      def write(key, value, expires_in: nil, **)
+        result = @pool.with do |r|
+          r.set(key, dump(value), ex: expires_in)
+        end
+
+        result == OK
       rescue StandardError
         false
       end

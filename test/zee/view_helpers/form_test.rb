@@ -440,8 +440,6 @@ class FormTest < Minitest::Test
   end
 
   test "renders text area" do
-    sleep 0.5
-
     assert_selector helpers.textarea_tag("bio"), "textarea#bio"
 
     html = helpers.textarea_tag("bio", "hello <3")
