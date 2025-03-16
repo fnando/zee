@@ -25,8 +25,9 @@ module Zee
       # - `last?`: Returns `true` if the current item is the last item in the
       #   collection.
       # - `index`: The current item's index in the collection.
-      # - `current_template_path`: A `Pathname` instance representing the
-      #   current template's path.
+      # - `current_template`: A {Template} instance representing the
+      #   current template. You can use this to access the template's path or
+      #   cache key.
       #
       # @example Rendering partial
       #   ```erb

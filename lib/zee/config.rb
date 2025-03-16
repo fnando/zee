@@ -61,7 +61,7 @@ module Zee
       set :enable_instrumentation, false
       set :handle_errors, false
       set :filter_parameters, ParameterFilter::DEFAULT_FILTERS
-      set :cache, CacheStore::Null.new
+      set :cache, CacheStore::Null.new(encrypt: false)
     end
 
     # @api private

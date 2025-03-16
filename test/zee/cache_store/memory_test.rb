@@ -13,6 +13,14 @@ module CacheStore
       "test/fixtures/sample_app/config/secrets/test.key"
     )
 
+    test "fails when encrypting without a keyring" do
+      error = assert_raises(Zee::CacheStore::MissingKeyringError) do
+        Zee::CacheStore::Memory.new(encrypt: true, keyring: nil)
+      end
+
+      assert_equal "keyring must be set when using encryption", error.message
+    end
+
     test "uses different coder" do
       hash = {}
       store = Zee::CacheStore::Memory.new(

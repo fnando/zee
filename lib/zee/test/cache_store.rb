@@ -204,13 +204,19 @@ module Zee
           block = proc do |*args|
             args += [{}]
             yield_key, yield_self = *args
-            "value"
+            SecureRandom.random_number(100)
           end
 
-          assert_equal "value", store.fetch(key, &block)
+          first_call = store.fetch(key, &block)
+
+          assert_instance_of Integer, first_call
           assert_equal key, yield_key
           assert_same store, yield_self
           assert store.exist?(key)
+
+          second_call = store.fetch(key, &block)
+
+          assert_equal first_call, second_call
         end
       end
 
@@ -240,7 +246,7 @@ module Zee
         store_name = build_store_name(store)
 
         test "[#{store_name}] asserts failed fetch" do
-          value = store.fetch(random_key) do # rubocop:disable Style/RedundantFetchBlock
+          value = store.fetch(random_key) do
             "value"
           end
 

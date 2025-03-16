@@ -130,7 +130,7 @@ module Zee
       # @param key [Symbol, String] the cache key.
       # @return [Object]
       def fetch(key, **, &)
-        return read(key, **) if exist?(key, **)
+        return read(key, **) if exist?(key)
 
         value = yield(key, self)
         write(key, value, **)

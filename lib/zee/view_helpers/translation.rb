@@ -86,7 +86,7 @@ module Zee
         Translation.new(
           key:,
           options:,
-          template_path: current_template_path
+          template_path: current_template&.path
         ).translate
       end
       alias t translate

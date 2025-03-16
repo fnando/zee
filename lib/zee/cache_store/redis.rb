@@ -58,7 +58,6 @@ module Zee
       # @param expires_in [Integer] The number of seconds to expire the key in.
       # @return [Object] The resolved value.
       def fetch(key, expires_in: nil, &)
-        key = normalize_key(key)
         value = read(key)
 
         unless value

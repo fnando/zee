@@ -321,7 +321,7 @@ module Zee
     # @api internal
     module BaseHelper
       using Core::Module
-      internal_attr_reader :request, :controller, :current_template_path
+      internal_attr_reader :request, :controller, :current_template
     end
 
     # Set template helpers module.
@@ -341,6 +341,7 @@ module Zee
           include(ViewHelpers::Link)
           include(ViewHelpers::MetaTag)
           include(ViewHelpers::Translation)
+          include(ViewHelpers::Caching)
           include(app.routes.helpers)
           include(*helper_modules) if helper_modules.any?
         end
@@ -362,54 +363,29 @@ module Zee
       end
     end
 
+    # @!method render_template(file, **options, &block)
     # Render a template.
     #
-    # Every template will have the current template path injected
-    # as `current_template_path`.
+    # Every template will have the current template injected
+    # as `current_template`.
     #
     # @param file [String] The path to the template file.
-    # @param locals [Hash] The variables to expose to the template.
-    # @param context [Object] The context to evaluate the template in.
-    # @param request [Zee::Request] The current request.
-    # @param controller [Object, nil] The controller instance. Some helpers need
-    #                                 it.
+    # @param options [Hash] The rendering options.
+    # @option options [Hash] locals The variables to expose to the template.
+    # @option options [Object] context The context to evaluate the template in.
+    # @option options [Zee::Request] request The current request.
+    # @option options [Object, nil] controller The controller instance. Some
+    #                                          helpers need it.
     # @yield The block to evaluate in the template.
     # @return [String] The rendered template.
-    def render_template(
-      file,
-      locals: {},
-      context: nil,
-      controller: nil,
-      request: nil,
-      &
-    )
-      context ||= Object.new.extend(helpers)
-      context.instance_variable_set(:@_controller, controller)
-      context.instance_variable_set(:@_request, request)
-      context.instance_variable_set(:@_current_template_path, Pathname(file))
-
-      key = file.to_s
-      template = template_cache[key]
-
-      unless template
-        options = {
-          engine_class: Erubi::CaptureBlockEngine,
-          freeze_template_literals: false,
-          escape: true,
-          bufval: BUFVAL,
-          bufvar: BUFVAR
-        }
-
-        template = Tilt.new(file, options)
-        template_cache[key] = template if config.enable_template_caching
-      end
-
-      template.render(context, locals, &)
-    end
-
-    # Keep compiled templates in memory.
-    def template_cache
-      @template_cache ||= {}
+    def render_template(file, **options, &) # rubocop:disable Style/ArgumentsForwarding
+      Template.render(
+        file,
+        helpers:,
+        cache: config.enable_template_caching,
+        **options, # rubocop:disable Style/ArgumentsForwarding
+        &
+      )
     end
 
     # @api private

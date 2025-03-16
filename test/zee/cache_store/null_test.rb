@@ -3,7 +3,7 @@
 require "test_helper"
 
 class NullTest < Minitest::Test
-  let(:store) { Zee::CacheStore::Null.new }
+  let(:store) { Zee::CacheStore::Null.new(encrypt: false) }
 
   test "fails to clear" do
     refute store.clear

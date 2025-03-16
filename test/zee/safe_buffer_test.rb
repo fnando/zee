@@ -106,18 +106,6 @@ class SafeBufferTest < Minitest::Test
                     html: /Click me &lt;3/
   end
 
-  test "returns escaped strings when converting to json" do
-    actual = {"message" => "</script><script>alert('PWNED')</script>"}
-    string << JSON.dump(actual)
-
-    expected = <<~JSON.strip
-      {"message":"\\u003c/script\\u003e\\u003cscript\\u003ealert('PWNED')\\u003c/script\\u003e"}
-    JSON
-
-    assert_equal expected, string.to_json
-    assert_equal actual, JSON.parse(string.to_json)
-  end
-
   test "escapes html from strings and buffers" do
     string << "<script>"
 
@@ -133,8 +121,6 @@ class SafeBufferTest < Minitest::Test
       {"message":"\\u003c/script\\u003e\\u003cscript\\u003ealert('PWNED')\\u003c/script\\u003e"}
     JSON
 
-    assert_equal expected, Zee::SafeBuffer.escape_json(string.raw)
-    assert_equal expected, Zee::SafeBuffer.escape_json(string.raw.to_s)
-    assert_equal expected, Zee::SafeBuffer.escape_json(string)
+    assert_equal expected, Zee::SafeBuffer.escape_json(actual)
   end
 end

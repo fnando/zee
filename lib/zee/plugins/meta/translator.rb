@@ -52,7 +52,7 @@ module Zee
           controller_name.tr(SLASH, I18n.default_separator)
         end
 
-        def current_template_path
+        def current_template
           nil
         end
       end

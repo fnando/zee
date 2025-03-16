@@ -21,6 +21,9 @@ module Zee
     # Raised when a method is not implemented by an adapter.
     NotImplementedError = Class.new(StandardError)
 
+    # Raised when the keyring is missing and encryption is enabled.
+    MissingKeyringError = Class.new(StandardError)
+
     # Base class for cache stores.
     # @abstract
     class Base
@@ -44,13 +47,18 @@ module Zee
       def initialize(
         coder: ::JSON,
         encrypt: true,
-        keyring: Zee.app.keyring,
+        keyring: nil,
         namespace: nil
       )
         @encrypt = encrypt
         @keyring = keyring
         @coder = coder
         @namespace = namespace
+
+        return unless encrypt?
+        return if keyring
+
+        raise MissingKeyringError, "keyring must be set when using encryption"
       end
 
       # @abstract
@@ -223,12 +231,10 @@ module Zee
       # Returns `true` if the cache contains an entry for the given key.
       #
       # @param key [String, Symbol] the cache key.
-      # @param options [Hash{Symbol => Object}] Options are passed to the
-      #                                         underlying cache implementation.
       # @return [Boolean, nil] Returns `true` if the cache contains the key,
       #                        `false` if it doesn't, and `nil` if there was an
       #                        error.
-      def exist?(key, **options)
+      def exist?(key)
         # :nocov:
         raise NotImplementedError
         # :nocov:
@@ -264,7 +270,9 @@ module Zee
       # @api private
       private def dump(data)
         data = coder.dump(data)
+
         data = JSON.dump(keyring.encrypt(data).take(2)) if encrypt?
+
         data
       end
 

@@ -34,11 +34,7 @@ module Zee
     # @param input [Object] the input to escape.
     # @return [String]
     def self.escape_json(input)
-      if safe_buffer_instance?(input)
-        input.to_json
-      else
-        new.concat(input).to_json
-      end
+      input.to_json.gsub(JSON_ESCAPE_REGEXP, JSON_ESCAPE)
     end
 
     # Create a new Zee::SafeBuffer instance.
@@ -94,12 +90,6 @@ module Zee
     # @return [Zee::SafeBuffer]
     def raw
       self.class.new(@buffer.join)
-    end
-
-    # Convert the buffer to JSON.
-    # @return [String]
-    def to_json(*)
-      raw.to_s.gsub(JSON_ESCAPE_REGEXP, JSON_ESCAPE)
     end
 
     # @api private

@@ -68,6 +68,7 @@ module Minitest
     setup { RequestStore.store.clear }
     setup { Zee.app.config.set(:logger, logger) }
     setup { Zee.error = Zee::ErrorReporter.new }
+    setup { Zee::Template.cache.clear }
 
     teardown { FileUtils.rm_rf("tmp") }
 

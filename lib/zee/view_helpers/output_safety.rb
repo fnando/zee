@@ -19,14 +19,14 @@ module Zee
       end
 
       # Escape the JSON string.
-      # @param string [Object] the input to escape.
+      # @param input [Object] the input to escape.
       # @return [String]
       # @example
       #   ```erb
       #   <%= escape_json("<script>alert(1)</script>".to_json) %>
       #   ```
-      def escape_json(string)
-        Zee::SafeBuffer.new(string).to_json
+      def escape_json(input)
+        Zee::SafeBuffer.escape_json(input)
       end
 
       # Escape the HTML string.
