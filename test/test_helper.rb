@@ -11,7 +11,6 @@ SimpleCov.formatter = SimpleCov::Formatter::TailwindFormatter
 
 SimpleCov.start do
   add_filter("test/")
-  add_filter("cache_store/null")
   add_group("Controller", "controller")
   add_group("Core Extensions", "core")
   add_group("Generators", "generators")

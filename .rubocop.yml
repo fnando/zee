@@ -51,3 +51,6 @@ Naming/MemoizedInstanceVariableName:
     - lib/zee/controller.rb
     - lib/zee/controller/**/*.rb
     - lib/zee/view_helpers/**/*.rb
+
+Style/RedundantFetchBlock:
+  Enabled: false

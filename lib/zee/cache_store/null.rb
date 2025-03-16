@@ -3,34 +3,29 @@
 module Zee
   module CacheStore
     class Null < Base
-      def initialize(*, **) #  rubocop:disable Lint/MissingSuper
-        @store = {}
+      def initialize(*, **)
+        super
       end
 
-      def increment(key, **)
-        @store[key] ||= 0
-        @store += 1
+      def increment(_key, **)
       end
 
-      def decrement(key, **)
-        @store[key] ||= 0
-        @store -= 1
+      def decrement(_key, **)
       end
 
       def read(*)
       end
 
-      def delete(key, **)
-        @store.delete(key)
+      def delete(_key, **)
         false
       end
 
-      def delete_multi(*keys, **)
-        keys.each_with_object({}) {|key, hash| hash[key] = nil }
+      def delete_multi(*, **)
+        0
       end
 
       def fetch_multi(*keys)
-        keys.each_with_object({}) {|key, hash| hash[key] = nil }
+        keys.each_with_object({}) {|key, hash| hash[key] = yield(key, self) }
       end
 
       def write(*, **)
@@ -42,7 +37,7 @@ module Zee
       end
 
       def fetch(*, **, &)
-        yield(*, **)
+        yield(*, self)
       end
 
       def exist?(*)
@@ -50,7 +45,6 @@ module Zee
       end
 
       def clear(**)
-        @store.clear
         false
       end
     end

@@ -63,7 +63,7 @@ module Zee
       #                         to 1.
       # @param options [Hash{Symbol => Object}] Options are passed to the
       #                                         underlying cache implementation.
-      # @return [Integer] the new value.
+      # @return [Integer, nil] the new value or `nil` if there was an error.
       # @raise [NotImplementedError] if the method is not implemented.
       def increment(key, amount = 1, **options)
         # :nocov:
