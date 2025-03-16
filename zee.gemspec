@@ -56,6 +56,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "capybara"
   spec.add_development_dependency "connection_pool"
   spec.add_development_dependency "irb"
+  spec.add_development_dependency "listen"
   spec.add_development_dependency "mail"
   spec.add_development_dependency "minitest"
   spec.add_development_dependency "minitest-utils"
@@ -75,6 +76,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "simplecov"
   spec.add_development_dependency "simplecov-tailwindcss"
   spec.add_development_dependency "sqlite3"
+  spec.add_development_dependency "test_notifier"
   spec.add_development_dependency "warning"
   spec.add_development_dependency "yard"
 end

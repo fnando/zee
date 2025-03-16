@@ -35,7 +35,6 @@ module CacheStore
       store = Zee::CacheStore::Redis.new(pool:, encrypt: false, keyring:)
 
       assert_successful_write(store)
-      assert_successful_expiring_write(store)
       assert_successful_read(store)
       assert_successful_delete(store)
       assert_successful_fetch(store)
@@ -46,6 +45,12 @@ module CacheStore
       assert_successful_read_multi(store)
       assert_successful_delete_multi(store)
       assert_successful_fetch_multi(store)
+      assert_successful_expiring_write(store)
+      assert_successful_expiring_write_multi(store)
+      assert_successful_expiring_fetch(store)
+      assert_successful_expiring_fetch_multi(store)
+      assert_successful_expiring_increment(store)
+      assert_successful_expiring_decrement(store)
 
       store = Zee::CacheStore::Redis.new(
         pool: fake_pool,

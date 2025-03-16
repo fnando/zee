@@ -132,7 +132,7 @@ module Zee
       def fetch(key, **, &)
         return read(key, **) if exist?(key, **)
 
-        value = yield(key, **)
+        value = yield(key, self)
         write(key, value, **)
         value
       end

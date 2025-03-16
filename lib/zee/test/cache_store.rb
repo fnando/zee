@@ -41,7 +41,7 @@ module Zee
 
           assert store.write(key, "value", expires_in: 1)
           assert store.exist?(key.to_sym)
-          sleep 2
+          sleep 1.0001
           refute store.exist?(key.to_sym)
         end
       end
@@ -70,6 +70,24 @@ module Zee
           assert_equal 1, store.read(key1).to_i
           assert store.exist?(key2)
           assert_equal 2, store.read(key2).to_i
+        end
+      end
+
+      def self.assert_successful_expiring_write_multi(store)
+        store_name = build_store_name(store)
+
+        test "[#{store_name}] asserts expiring write multi" do
+          slow_test
+
+          key1 = random_key
+          key2 = random_key
+
+          assert store.write_multi({key1 => 1, key2 => 2}, expires_in: 1)
+          assert store.exist?(key1)
+          assert store.exist?(key2)
+          sleep 1.0001
+          refute store.exist?(key1)
+          refute store.exist?(key2)
         end
       end
 
@@ -181,17 +199,39 @@ module Zee
         test "[#{store_name}] asserts successful fetch" do
           key = random_key
           yield_key = nil
-          yield_options = nil
+          yield_self = nil
 
           block = proc do |*args|
             args += [{}]
-            yield_key, yield_options = *args
+            yield_key, yield_self = *args
             "value"
           end
 
           assert_equal "value", store.fetch(key, &block)
           assert_equal key, yield_key
-          assert_empty yield_options
+          assert_same store, yield_self
+          assert store.exist?(key)
+        end
+      end
+
+      def self.assert_successful_expiring_fetch(store)
+        store_name = build_store_name(store)
+
+        test "[#{store_name}] asserts successful expiring fetch" do
+          slow_test
+
+          key = random_key
+          count = 0
+
+          block = proc do
+            count += 1
+            count
+          end
+
+          assert_equal 1, store.fetch(key, expires_in: 1, &block)
+          assert store.exist?(key)
+          sleep 1.0001
+          assert_equal 2, store.fetch(key, expires_in: 1, &block)
           assert store.exist?(key)
         end
       end
@@ -234,6 +274,34 @@ module Zee
             {key1 => "stored value", key2 => "value for #{key2}"},
             store.fetch_multi(key1, key2, &block)
           )
+        end
+      end
+
+      def self.assert_successful_expiring_fetch_multi(store)
+        store_name = build_store_name(store)
+
+        test "[#{store_name}] asserts successful expiring fetch multi" do
+          slow_test
+
+          key1 = random_key
+          key2 = random_key
+          count = 0
+          block = proc { count += 1 }
+
+          assert_equal(
+            {key1 => 1, key2 => 2},
+            store.fetch_multi(key1, key2, expires_in: 1, &block)
+          )
+          assert store.exist?(key1)
+          assert store.exist?(key2)
+          sleep 1.0001
+
+          assert_equal(
+            {key1 => 3, key2 => 4},
+            store.fetch_multi(key1, key2, expires_in: 1, &block)
+          )
+          assert store.exist?(key1)
+          assert store.exist?(key2)
         end
       end
 
@@ -286,6 +354,19 @@ module Zee
         end
       end
 
+      def self.assert_successful_expiring_increment(store)
+        store_name = build_store_name(store)
+
+        test "[#{store_name}] asserts successful expiring increment" do
+          key = random_key
+
+          assert_equal 1, store.increment(key, expires_in: 1)
+          assert_equal 1, store.read(key).to_i
+          sleep 1.0001
+          refute store.exist?(key)
+        end
+      end
+
       def self.assert_failed_increment(store)
         store_name = build_store_name(store)
 
@@ -303,6 +384,19 @@ module Zee
           assert_equal(-1, store.decrement(key))
           assert_equal(-3, store.decrement(key, 2))
           assert_equal(-3, store.read(key).to_i)
+        end
+      end
+
+      def self.assert_successful_expiring_decrement(store)
+        store_name = build_store_name(store)
+
+        test "[#{store_name}] asserts successful expiring decrement" do
+          key = random_key
+
+          assert_equal(-1, store.decrement(key, expires_in: 1))
+          assert_equal(-1, store.read(key).to_i)
+          sleep 1.0001
+          refute store.exist?(key)
         end
       end
 
