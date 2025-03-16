@@ -27,6 +27,7 @@ module Zee
     # - `config.enable_instrumentation`: whether to enable request logging with
     #   better insights.
     # - `config.enable_template_caching`: whether to enable template caching.
+    # - `config.cache`: the cache store.
     #
     # @param app [Zee::App] The application instance.
     # @return [Zee::Config]
@@ -60,6 +61,7 @@ module Zee
       set :enable_instrumentation, false
       set :handle_errors, false
       set :filter_parameters, ParameterFilter::DEFAULT_FILTERS
+      set :cache, CacheStore::Null.new
     end
 
     # @api private
