@@ -45,12 +45,20 @@ module CacheStore
       assert_successful_read_multi(store)
       assert_successful_delete_multi(store)
       assert_successful_fetch_multi(store)
-      assert_successful_expiring_write(store)
-      assert_successful_expiring_write_multi(store)
-      assert_successful_expiring_fetch(store)
-      assert_successful_expiring_fetch_multi(store)
-      assert_successful_expiring_increment(store)
-      assert_successful_expiring_decrement(store)
+      assert_expiring_write(store)
+      assert_expiring_write_multi(store)
+      assert_expiring_fetch(store)
+      assert_expiring_fetch_multi(store)
+      assert_expiring_increment(store)
+      assert_expiring_decrement(store)
+      assert_namespacing(
+        Zee::CacheStore::Redis.new(
+          pool:,
+          namespace: "myapp",
+          keyring:,
+          encrypt: false
+        )
+      )
 
       store = Zee::CacheStore::Redis.new(
         pool: fake_pool,

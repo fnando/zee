@@ -3,12 +3,17 @@
 module Zee
   module CacheStore
     class Redis < Base
+      # @api private
+      # The OK response from Redis.
+      # @return [String]
       OK = "OK"
 
-      def initialize(pool:, **options)
-        super(**options)
+      # @return [ConnectionPool] the connection pool to the Redis server.
+      attr_reader :pool
+
+      def initialize(pool:, **)
+        super(**)
         @pool = pool
-        @options = options
       end
 
       # @param key [String, Symbol] The key to write to.
@@ -17,7 +22,7 @@ module Zee
       # @return [Boolean] Whether the write was successful.
       def write(key, value, expires_in: nil)
         result = @pool.with do |r|
-          r.set(key, dump(value), ex: expires_in)
+          r.set(normalize_key(key), dump(value), ex: expires_in)
         end
 
         result == OK
@@ -28,7 +33,7 @@ module Zee
       # @param key [String, Symbol] The key to check to.
       # @return [Boolean] Whether the write was successful.
       def exist?(key)
-        @pool.with {|r| r.exists(key) }.positive?
+        @pool.with {|r| r.exists(normalize_key(key)) }.positive?
       rescue StandardError
         nil
       end
@@ -36,7 +41,7 @@ module Zee
       # @param key [String, Symbol] The key to read from.
       # @return [Boolean] Whether the write was successful.
       def read(key)
-        @pool.with {|r| load(r.get(key)) }
+        @pool.with {|r| load(r.get(normalize_key(key))) }
       rescue StandardError
         nil
       end
@@ -44,16 +49,16 @@ module Zee
       # @param key [String, Symbol] The key to delete.
       # @return [Boolean] Whether the write was successful.
       def delete(key)
-        @pool.with {|r| r.del(key) }.positive?
+        @pool.with {|r| r.del(normalize_key(key)) }.positive?
       rescue StandardError
         false
       end
 
       # @param key [String, Symbol] The key to read/write from/to.
-      # @param value [Object] The default value to return.
       # @param expires_in [Integer] The number of seconds to expire the key in.
       # @return [Object] The resolved value.
       def fetch(key, expires_in: nil, &)
+        key = normalize_key(key)
         value = read(key)
 
         unless value
@@ -69,6 +74,7 @@ module Zee
       # @param expires_in [Integer] The number of seconds to expire the key in.
       # @return [Integer] the new value.
       def increment(key, amount = 1, expires_in: nil)
+        key = normalize_key(key)
         future = nil
 
         @pool.with do |r|
@@ -88,6 +94,7 @@ module Zee
       # @param expires_in [Integer] The number of seconds to expire the key in.
       # @return [Integer] the new value.
       def decrement(key, amount = 1, expires_in: nil)
+        key = normalize_key(key)
         future = nil
 
         @pool.with do |r|
@@ -110,11 +117,10 @@ module Zee
       end
 
       # @param keys [Array<String, Symbol>] The keys to read from.
-      # @param options [Hash{Symbol => Object}] Other options.
       # @return [Hash{String => Object}] The resolved values.
       def read_multi(*keys)
         result = @pool.with do |r|
-          r.multi {|t| keys.each {|key| t.get(key) } }
+          r.multi {|t| keys.each {|key| t.get(normalize_key(key)) } }
         end
 
         result.map! {|value| load(value) }
@@ -128,7 +134,7 @@ module Zee
       # @return [Integer] The number of keys deleted.
       def delete_multi(*keys)
         result = @pool.with do |r|
-          r.multi {|t| keys.each {|key| t.del(key) } }
+          r.multi {|t| keys.each {|key| t.del(normalize_key(key)) } }
         end
 
         result.sum
@@ -138,13 +144,12 @@ module Zee
 
       # @param keys [Array<String, Symbol>] The keys to read/write from/to.
       # @param expires_in [Integer] The number of seconds to expire the key in.
-      # @param block [Proc] The block to call if the key does not exist.
       # @return [Hash{String => Object}] The resolved values.
       # @yieldparam key [Array<String, Hash>] The key that was not found, plus
       #                                       the options.
       def fetch_multi(*keys, expires_in: nil, &)
         result = @pool.with do |r|
-          r.multi {|t| keys.each {|key| t.get(key) } }
+          r.multi {|t| keys.each {|key| t.get(normalize_key(key)) } }
         end
 
         result = keys.zip(result).to_h
@@ -158,14 +163,16 @@ module Zee
 
         @pool.with do |r|
           r.multi do |t|
-            result.each {|key, value| t.set(key, dump(value), ex: expires_in) }
+            result.each do |key, value|
+              t.set(normalize_key(key), dump(value), ex: expires_in)
+            end
           end
         end
 
         result
       rescue StandardError
         (result || keys.zip(Array.new(keys)).to_h)
-          .transform_values {|key| yield(key, options) }
+          .transform_values {|key| yield(key, self) }
       end
 
       # Clears the storage.

@@ -24,12 +24,12 @@ module Zee
     # Base class for cache stores.
     # @abstract
     class Base
+      # @return [String] the namespace used to prefix keys.
+      attr_reader :namespace
+
       # @return [Boolean] whether the cache store will encrypt the data.
       attr_reader :encrypt
       alias encrypt? encrypt
-
-      # @return [Hash] the options passed to the cache store.
-      attr_reader :options
 
       # @return [Zee::Keyring] the keyring used to encrypt and decrypt data.
       attr_reader :keyring
@@ -45,12 +45,12 @@ module Zee
         coder: ::JSON,
         encrypt: true,
         keyring: Zee.app.keyring,
-        **options
+        namespace: nil
       )
         @encrypt = encrypt
-        @options = options
         @keyring = keyring
         @coder = coder
+        @namespace = namespace
       end
 
       # @abstract
@@ -247,6 +247,7 @@ module Zee
         # :nocov:
       end
 
+      # @api private
       private def load(data)
         return data unless data
 
@@ -260,10 +261,16 @@ module Zee
         coder.load(data)
       end
 
+      # @api private
       private def dump(data)
         data = coder.dump(data)
         data = JSON.dump(keyring.encrypt(data).take(2)) if encrypt?
         data
+      end
+
+      # @api private
+      private def normalize_key(key)
+        [namespace, key].compact.join(COLON)
       end
     end
   end

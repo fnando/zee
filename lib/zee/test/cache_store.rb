@@ -32,7 +32,7 @@ module Zee
         end
       end
 
-      def self.assert_successful_expiring_write(store)
+      def self.assert_expiring_write(store)
         store_name = build_store_name(store)
 
         test "[#{store_name}] asserts successful expiring write" do
@@ -73,7 +73,7 @@ module Zee
         end
       end
 
-      def self.assert_successful_expiring_write_multi(store)
+      def self.assert_expiring_write_multi(store)
         store_name = build_store_name(store)
 
         test "[#{store_name}] asserts expiring write multi" do
@@ -214,7 +214,7 @@ module Zee
         end
       end
 
-      def self.assert_successful_expiring_fetch(store)
+      def self.assert_expiring_fetch(store)
         store_name = build_store_name(store)
 
         test "[#{store_name}] asserts successful expiring fetch" do
@@ -277,7 +277,7 @@ module Zee
         end
       end
 
-      def self.assert_successful_expiring_fetch_multi(store)
+      def self.assert_expiring_fetch_multi(store)
         store_name = build_store_name(store)
 
         test "[#{store_name}] asserts successful expiring fetch multi" do
@@ -354,7 +354,7 @@ module Zee
         end
       end
 
-      def self.assert_successful_expiring_increment(store)
+      def self.assert_expiring_increment(store)
         store_name = build_store_name(store)
 
         test "[#{store_name}] asserts successful expiring increment" do
@@ -387,7 +387,7 @@ module Zee
         end
       end
 
-      def self.assert_successful_expiring_decrement(store)
+      def self.assert_expiring_decrement(store)
         store_name = build_store_name(store)
 
         test "[#{store_name}] asserts successful expiring decrement" do
@@ -405,6 +405,22 @@ module Zee
 
         test "[#{store_name}] asserts failed decrement" do
           refute store.decrement(random_key)
+        end
+      end
+
+      def self.assert_namespacing(store)
+        store_name = build_store_name(store)
+
+        test "[#{store_name}] asserts namespacing" do
+          key = random_key
+
+          assert store.write(key, "value")
+          assert_equal(%["value"],
+                       store.pool.with {|r| r.get("myapp:#{key}") })
+          assert store.exist?(key)
+          assert store.delete(key)
+          refute store.exist?(key)
+          assert_equal 0, (store.pool.with {|r| r.exists("myapp:#{key}") })
         end
       end
     end
