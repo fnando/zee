@@ -8,6 +8,12 @@ module Zee
         using Zee::Core::Blank
         include ViewHelpers::Translation
 
+        # @api private
+        ZEE = "zee"
+
+        # @api private
+        META = "meta"
+
         attr_reader :scope, :controller_name, :action_name, :options, :html
 
         def initialize(scope:, controller_name:, action_name:, html: false,
@@ -20,17 +26,21 @@ module Zee
         end
 
         def to_s
-          return "" if text.to_s.blank?
+          return EMPTY_STRING if text.to_s.blank?
+
+          base_scope = "#{scope}_base"
 
           translation = t(
             [
-              "zee.meta.#{controller_name_scope}.#{action_name}.#{scope}_base",
-              "zee.meta.#{controller_name_scope}.#{scope}_base",
-              "zee.meta.#{scope}_base"
+              default_join([
+                ZEE, META, controller_name, action_name, base_scope
+              ]),
+              default_join([ZEE, META, controller_name, base_scope]),
+              default_join([ZEE, META, base_scope])
             ],
             **options,
             title: text,
-            default: ""
+            default: EMPTY_STRING
           ).find(&:present?)
 
           (translation || text).to_s
@@ -44,8 +54,9 @@ module Zee
         end
 
         def base_scope
-          @base_scope ||= ["zee", "meta", controller_name_scope, action_name]
-                          .join(I18n.default_separator)
+          @base_scope ||= default_join([
+            ZEE, META, controller_name_scope, action_name
+          ])
         end
 
         def controller_name_scope
@@ -54,6 +65,10 @@ module Zee
 
         def current_template
           nil
+        end
+
+        def default_join(args)
+          args.join(I18n.default_separator)
         end
       end
     end
