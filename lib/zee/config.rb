@@ -28,6 +28,7 @@ module Zee
     #   better insights.
     # - `config.enable_template_caching`: whether to enable template caching.
     # - `config.cache`: the cache store.
+    # - `config.inflector`: The app's inflector instance.
     #
     # @param app [Zee::App] The application instance.
     # @return [Zee::Config]
@@ -62,6 +63,7 @@ module Zee
       set :handle_errors, false
       set :filter_parameters, ParameterFilter::DEFAULT_FILTERS
       set :cache, CacheStore::Null.new(encrypt: false)
+      set :inflector, Dry::Inflector.new
     end
 
     # @api private

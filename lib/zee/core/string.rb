@@ -35,39 +35,33 @@ module Zee
       # @return [String]
 
       refine ::String do
+        def inflector
+          Zee.app.config.inflector
+        end
+
         def underscore
-          gsub(NS_SEPARATOR, SLASH)
-            .gsub(UNDERSCORE_RE1, '\1_\2')
-            .gsub(UNDERSCORE_RE2, '\1_\2')
-            .tr(DASH, UNDERSCORE)
-            .downcase
+          inflector.underscore(self)
         end
 
         def dasherize
-          underscore.tr(UNDERSCORE, DASH)
+          inflector.dasherize(underscore)
         end
 
         def camelize(first_letter = :upper)
-          text =
-            split(SLASH)
-            .map {|part| part.split(UNDERSCORE).map(&:capitalize).join }
-            .join(NS_SEPARATOR)
-
           case first_letter
           when :upper
-            text
+            inflector.camelize_upper(self)
           when :lower
-            text[0].downcase + text[1..-1]
+            inflector.camelize_lower(self)
           else
             raise ArgumentError, "invalid option: #{first_letter.inspect}"
           end
         end
 
         def humanize(keep_id_suffix: false)
-          text = underscore
-          text = text.delete_prefix(UNDERSCORE)
-          text = text.sub(/_id$/, EMPTY_STRING) unless keep_id_suffix
-          text.tr(UNDERSCORE, SPACE).capitalize
+          str = inflector.humanize(self)
+          str = "#{str} id" if end_with?("_id") && keep_id_suffix
+          str
         end
       end
     end

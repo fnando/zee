@@ -10,7 +10,8 @@ module Zee
       end
 
       def self.build_store_name(store)
-        store_name = store.class.name.underscore.split("/").last
+        store_name =
+          Dry::Inflector.new.underscore(store.class.name).split("/").last
         "#{store_name} #{@group_name}"
       end
 

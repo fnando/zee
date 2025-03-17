@@ -51,16 +51,12 @@ module Sequel
     #           unique: "this email is already in use"
     # ```
     #
+    # Using this plugin also includes {Naming}.
+    #
     # @see https://sequel.jeremyevans.net/rdoc-plugins/classes/Sequel/Plugins/ValidationHelpers.html
     module Validations
       module InstanceMethods
-        using Zee::Core::String
         using Zee::Core::Array
-        PREFIX = "models/"
-
-        def model_name
-          @model_name ||= model.name.underscore.delete_prefix(PREFIX)
-        end
 
         private def validates_exact_length(exact, attrs, opts = OPTS)
           Array(attrs).each do |attr|
@@ -248,13 +244,14 @@ module Sequel
           I18n.t(
             type,
             **,
-            scope: [:sequel, :errors, model_name, attr],
+            scope: [:sequel, :errors, self.class.naming.singular, attr],
             default: I18n.t(type, **, scope: %i[sequel errors])
           )
         end
       end
 
       def self.apply(model)
+        model.plugin :naming
         model.plugin :validation_helpers
         model.include(InstanceMethods)
 

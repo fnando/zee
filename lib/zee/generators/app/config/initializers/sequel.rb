@@ -20,17 +20,21 @@ Zee.app.init do
   Sequel::Model.db.extension(:instrumentation) if env.development?
 
   # Enable plugin with localized validators.
+  #
   # @see https://github.com/fnando/zee/tree/main/lib/sequel/plugins/validations.rb
   # @see https://sequel.jeremyevans.net/rdoc-plugins/classes/Sequel/Plugins/ValidationHelpers.html
   Sequel::Model.plugin :validations
 
-  # Enable plugin that sets timestamp columns.
-  Sequel::Model.plugin :timestamps, update_on_create: true
-
   # Enable plugin that sets dirty columns.
   Sequel::Model.plugin :dirty
 
+  # Enable plugin that adds a `{#cache_key}` method to models.
+  #
+  # @see https://github.com/fnando/zee/tree/main/lib/sequel/plugins/cache_key.rb
+  Sequel::Model.plugin :cache_key
+
   # Enable plugin that sets json serializer.
+  #
   # @example
   #   User.first.to_json
   Sequel::Model.plugin :json_serializer
@@ -48,6 +52,7 @@ Zee.app.init do
   Sequel::Model.plugin :encrypted_attributes
 
   # Set default values for columns.
+  #
   # @example
   #   class User < Sequel::Model
   #     default_values name: "Anonymous"
