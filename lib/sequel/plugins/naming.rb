@@ -24,7 +24,7 @@ module Sequel
         #
         # @return [Zee::Naming]
         def naming
-          @naming ||= Zee::Naming.new(name, prefix: PREFIX)
+          @naming ||= Zee::Naming::Name.new(name, prefix: PREFIX)
         end
       end
     end
