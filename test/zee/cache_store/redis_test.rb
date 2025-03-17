@@ -34,6 +34,8 @@ module CacheStore
       pool = ConnectionPool.new { ::Redis.new }
       store = Zee::CacheStore::Redis.new(pool:, encrypt: false, keyring:)
 
+      setup { pool.with(&:flushdb) }
+
       assert_successful_write(store)
       assert_successful_read(store)
       assert_successful_delete(store)

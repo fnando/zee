@@ -42,7 +42,7 @@ module Zee
 
           assert store.write(key, "value", expires_in: 1)
           assert store.exist?(key.to_sym)
-          sleep 1.0001
+          sleep 1.1
           refute store.exist?(key.to_sym)
         end
       end
@@ -86,7 +86,7 @@ module Zee
           assert store.write_multi({key1 => 1, key2 => 2}, expires_in: 1)
           assert store.exist?(key1)
           assert store.exist?(key2)
-          sleep 1.0001
+          sleep 1.1
           refute store.exist?(key1)
           refute store.exist?(key2)
         end
@@ -237,7 +237,7 @@ module Zee
 
           assert_equal 1, store.fetch(key, expires_in: 1, &block)
           assert store.exist?(key)
-          sleep 1.0001
+          sleep 1.1
           assert_equal 2, store.fetch(key, expires_in: 1, &block)
           assert store.exist?(key)
         end
@@ -301,7 +301,7 @@ module Zee
           )
           assert store.exist?(key1)
           assert store.exist?(key2)
-          sleep 1.0001
+          sleep 1.1
 
           assert_equal(
             {key1 => 3, key2 => 4},
@@ -369,7 +369,7 @@ module Zee
 
           assert_equal 1, store.increment(key, expires_in: 1)
           assert_equal 1, store.read(key).to_i
-          sleep 1.0001
+          sleep 1.1
           refute store.exist?(key)
         end
       end
@@ -402,7 +402,7 @@ module Zee
 
           assert_equal(-1, store.decrement(key, expires_in: 1))
           assert_equal(-1, store.read(key).to_i)
-          sleep 1.0001
+          sleep 1.1
           refute store.exist?(key)
         end
       end
