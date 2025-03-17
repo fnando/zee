@@ -36,8 +36,9 @@ module Zee
       #   - If the object responds to `#cache_key`, it will be used to generate
       #     the cache key.
       #   - If the object responds to `#id`, the object's id will be used.
-      #   - Otherwise, the object will be used as-is, which is fine for
-      #     primitive values, but probably not what you want for objects.
+      #   - If the object is a string, symbol, or integer, the value will be
+      #     used as it is.
+      #   - Otherwise, an `ArgumentError` exception will be raised.
       #
       #   If you're using Sequel, Zee ships with a plugin to automatically
       #   define `#cache_key` on your models. Enable it
@@ -78,12 +79,15 @@ module Zee
           [current_template.cache_key, key]
           .flatten
           .map do |entry|
-            if entry.respond_to?(:cache_key)
+            if [Symbol, String, Integer].any? { entry.is_a?(_1) }
+              entry
+            elsif entry.respond_to?(:cache_key)
               entry.cache_key
             elsif entry.respond_to?(:id)
               entry.id
             else
-              entry
+              raise ArgumentError,
+                    "Invalid cache key type: #{entry.inspect} (#{entry.class})"
             end
           end
 
