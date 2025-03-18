@@ -284,6 +284,8 @@ module Zee
       push_dir.call "app/models", ::Models
       push_dir.call "app/views", ::Views
 
+      init { set_i18n_load_path }
+
       load_files
       run_init
       enable_reloading
@@ -408,6 +410,18 @@ module Zee
       env.empty? ? "development" : env
     end
 
+    # @api private
+    def set_i18n_load_path
+      paths = I18n.load_path
+      paths += root.join("config/locales").glob("**/*.{yml,rb}")
+      paths = paths.filter_map do |path|
+        path = Pathname(path).expand_path
+        path.to_s if path.file?
+      end
+
+      I18n.load_path = paths.uniq
+    end
+
     # :nocov:
     # @api private
     private def enable_reloading
@@ -428,6 +442,8 @@ module Zee
         loader.reload
         load_files force: true
         run_init
+
+        I18n.backend.reload!
       end
 
       listener.start
