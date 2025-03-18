@@ -1,0 +1,24 @@
+---
+en:
+  zee:
+    # Form builders support I18n out of the box. All you need to do is defining
+    # the translations and Zee will take care of the rest.
+    #
+    # Each form is identified by the name you use as the `:as` option of the
+    # `form_tag`. If you're using Sequel, that can be taken care for you by
+    # using the Sequel::Plugins::Naming, so your model name can be matched.
+    # Otherwise, specify it manually like `form_tag(object, as: :user, &)`.
+    #
+    # Each attribute can have the following properties:
+    #
+    # - label — the value that will be used as your label text.
+    # - hint — the value that will be used as the auxiliary text.
+    # - placeholder — the value that will be used as the field's placeholder
+    #   text.
+    #
+    # forms:
+    #   user:
+    #     email:
+    #       label: Your e-mail
+    #       hint: This will be used as your log-in method.
+    #       placeholder: E.g. me@example.com

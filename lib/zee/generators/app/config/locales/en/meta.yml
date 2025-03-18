@@ -1,0 +1,23 @@
+---
+en:
+  zee:
+    # If you're using the Zee::Plugins::Meta plugin, you can define page
+    # titles and other <meta> values by using I18n.
+    #
+    # Each action can have all the information defined here, while dynamic
+    # values can be set from your action.
+    #
+    # The following values can be set:
+    #
+    # - title — the page's title
+    # - description — the description meta tag
+    # - keywords — the keywords meta tag
+    #
+    # meta:
+    #   title_base: "%{title} — Your Site"
+    #
+    #   pages:
+    #     home:
+    #       title: Home
+    #       description: Your Site is the place where you can do amazing things!
+    #       keywords:

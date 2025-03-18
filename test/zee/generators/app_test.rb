@@ -48,6 +48,8 @@ class AppTest < Minitest::Test
     assert app.join("config/secrets/development.key").file?
     assert app.join("config/secrets/test.key").file?
     assert app.join("config/puma.rb").file?
+    assert app.join("config/locales/en/forms.yml").file?
+    assert app.join("config/locales/en/meta.yml").file?
     assert app.join("Gemfile").file?
     assert app.join("Procfile.dev").file?
     assert app.join("tmp/.keep").file?

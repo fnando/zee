@@ -37,6 +37,8 @@ module Zee
         copy_file "config/initializers/middleware.rb"
         copy_file "config/initializers/sequel.rb"
         copy_file "config/puma.rb"
+        copy_file "config/locales/en/forms.yml"
+        copy_file "config/locales/en/meta.yml"
         copy_file "config/routes.rb"
         copy_file "package.json"
         copy_file "Procfile.dev"
