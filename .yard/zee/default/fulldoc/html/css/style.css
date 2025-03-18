@@ -10,7 +10,7 @@ body {
 
   width: 100%;
   margin: 0;
-  padding: 0;
+  padding: 2rem;
   display: flex;
   display: -webkit-flex;
   display: -ms-flexbox;
