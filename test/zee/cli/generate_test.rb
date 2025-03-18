@@ -20,6 +20,49 @@ class GenerateTest < Minitest::Test
     assert_includes out, "db/migrations/#{timestamp}_create_users.rb"
   end
 
+  test "generates new controller" do
+    app = Pathname("tmp")
+
+    Dir.chdir(app) do
+      capture do
+        Zee::CLI.start(%w[generate controller users])
+      end
+    end
+
+    assert_path_exists app.join("app/controllers/users.rb")
+    assert_path_exists app.join("test/requests/users_test.rb")
+  end
+
+  test "generates new controller with actions" do
+    app = Pathname("tmp")
+
+    Dir.chdir(app) do
+      capture do
+        Zee::CLI.start(%w[generate controller users index show edit remove])
+      end
+    end
+
+    assert_path_exists app.join("app/controllers/users.rb")
+
+    assert_path_exists app.join("app/views/users/index.html.erb")
+    assert_includes app.join("app/views/users/index.html.erb").read,
+                    "Edit this template at app/views/users/index.html.erb"
+
+    assert_path_exists app.join("app/views/users/show.html.erb")
+    assert_includes app.join("app/views/users/show.html.erb").read,
+                    "Edit this template at app/views/users/show.html.erb"
+
+    assert_path_exists app.join("app/views/users/edit.html.erb")
+    assert_includes app.join("app/views/users/edit.html.erb").read,
+                    "Edit this template at app/views/users/edit.html.erb"
+
+    assert_path_exists app.join("app/views/users/remove.html.erb")
+    assert_includes app.join("app/views/users/remove.html.erb").read,
+                    "Edit this template at app/views/users/remove.html.erb"
+
+    assert_path_exists app.join("test/requests/users_test.rb")
+  end
+
   test "generates new model" do
     app = Pathname("tmp")
     timestamp = Time.now.to_i

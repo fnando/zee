@@ -1,0 +1,11 @@
+# frozen_string_literal: true
+
+module Controllers
+  class <%= controller_class_name %> < Base
+    <%- options[:actions].each_with_index do |action, index| -%>
+<%= "\n" if index.positive? -%>
+    def <%= action %>
+    end
+    <%- end -%>
+  end
+end

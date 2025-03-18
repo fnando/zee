@@ -14,6 +14,17 @@ module Zee
         generator.invoke_all
       end
 
+      desc "controller NAME [ACTIONS...]", "Generate new controller"
+      def controller(name, *actions)
+        options[:name] = name
+        options[:actions] = actions
+
+        generator = Generators::Controller.new
+        generator.destination_root = File.expand_path(Dir.pwd)
+        generator.options = options
+        generator.invoke_all
+      end
+
       desc "migration NAME [FIELDS...]", "Generate new migration"
       def migration(name, *fields)
         options[:name] = name
@@ -30,7 +41,24 @@ module Zee
         name = name.tr("-", "_").gsub(/s$/, "")
         model_name = name.split("_").map(&:capitalize).join
 
-        fields << "id:primary_key" unless fields.any? { _1.start_with?("id:") }
+        unless fields.any? { _1.start_with?("id:") }
+          fields.unshift("id:primary_key")
+        end
+
+        add_timestamps =
+          fields.any? { _1 == "timestamps" } ||
+          fields.none? { _1.start_with?("timestamps:false") }
+
+        if add_timestamps
+          fields += %w[
+            created_at:datetime:null(false)
+            updated_at:datetime:null(false)
+          ]
+        end
+
+        fields = fields
+                 .reject { _1.start_with?("timestamps") }
+                 .map { _1.include?(":null") ? _1 : "#{_1}:null(false)" }
 
         begin
           mod = Module.new
