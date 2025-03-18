@@ -46,6 +46,7 @@ module Zee
         copy_file "public/favicon.ico"
         copy_file "public/icon.svg"
 
+        create_file "public/assets/.keep"
         create_file "storage/.keep"
         create_file "db/migrations/.keep"
         create_file "app/assets/styles/app/.keep"

@@ -6,6 +6,10 @@
 # Ignore all environment files.
 /.env*
 
+# Ignore assets.
+/public/assets
+!/public/assets/.keep
+
 # Ignore all logfiles and tempfiles.
 /log/*
 /tmp/*
