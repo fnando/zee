@@ -571,10 +571,16 @@ module Zee
       end
 
       # Render a form for a given object.
+      #
       # @param object [Object] The object to render the form for.
       # @param url [String] The action attribute of the form.
-      # @param as [String] The name of the object.
+      # @param as [String] The name of the object. If the object's class respond
+      #                    to `naming`, it will be used instead. See
+      #                    {Sequel::Plugins::Naming} if you're using Sequel. If
+      #                    not provided, it'll default to `form`.
       # @return [SafeBuffer] The HTML for the form.
+      #
+      # @see Sequel::Plugins::Naming
       #
       # @example
       #   ```erb
@@ -594,6 +600,8 @@ module Zee
       #   ```
       def form_for(object, url:, as: :form, **, &)
         raise RequestNotSet, "request is not set for some reason" unless request
+
+        as = object.class.naming.singular if object.class.respond_to?(:naming)
 
         form = FormBuilder.new(object:, context: self, object_name: as, **)
         form_tag(url:, **) { instance_exec(form, &) }

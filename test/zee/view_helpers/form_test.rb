@@ -558,4 +558,24 @@ class FormTest < Minitest::Test
     assert_selector html,
                     "form>input[type=hidden][name=time][value='#{now.iso8601}']"
   end
+
+  test "renders a form using naming" do
+    object_class = Class.new do
+      def self.naming
+        Zee::Naming::Name.new("User")
+      end
+    end
+
+    object = object_class.new
+
+    template = <<~ERB
+      <%= form_for(object, url: "/signup") do |f| %>
+        <%= f.field :name %>
+      <% end %>
+    ERB
+
+    html = render(template, locals: {object:})
+
+    assert_selector html, "form input[type=text][name='user[name]']"
+  end
 end
