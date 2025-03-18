@@ -108,4 +108,11 @@ class MigrationModifierParserTest < Minitest::Test
     assert_equal "String", field.sequel_type
     assert field.options[:index][:unique]
   end
+
+  test "parses foreign_key" do
+    field = Zee::MigrationModifierParser.call("user:foreign_key")
+
+    assert_equal "user_id", field.name
+    assert_equal "foreign_key", field.sequel_type
+  end
 end

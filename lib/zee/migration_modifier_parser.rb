@@ -10,6 +10,7 @@ module Zee
 
     FIELD_MAPPING = {
       primary_key: ["primary_key"],
+      foreign_key: ["foreign_key"],
       integer: ["Integer", {}],
       string: ["String", {}],
       text: ["String", {text: true}],
@@ -20,7 +21,8 @@ module Zee
       float: ["Float", {}],
       date: ["Date", {}],
       datetime: ["Time", {}],
-      numeric: ["Numeric", {}]
+      numeric: ["Numeric", {}],
+      timestamps: ["Time", {}]
     }.freeze
 
     # The raw modifier definition.
@@ -45,11 +47,22 @@ module Zee
       sequel_type, default_options = *expand_type(type)
       default_options ||= {}
 
+      name = expand_name(name, type)
+
       Modifier.new(
         name:,
         sequel_type:,
         options: default_options.merge(parse_options(raw_options))
       )
+    end
+
+    private def expand_name(name, type)
+      case type
+      when "foreign_key"
+        "#{name.delete_suffix('_id')}_id"
+      else
+        name
+      end
     end
 
     private def expand_type(type)
