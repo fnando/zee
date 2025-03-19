@@ -1,0 +1,30 @@
+:root {
+  --bgcolor: #fff;
+  --fgcolor: #222;
+  --link-fgcolor: var(--blue);
+  --input-bgcolor: inherit;
+  --input-fgcolor: inherit;
+}
+
+@media screen and (prefers-color-scheme: dark) {
+  :root {
+    --bgcolor: #282828;
+    --fgcolor: #e1e2e3;
+    --input-bgcolor: inherit;
+    --input-fgcolor: inherit;
+  }
+}
+
+body {
+  background: var(--bgcolor);
+  color: var(--fgcolor);
+}
+
+input {
+  background: var(--input-bgcolor);
+  color: var(--input-fgcolor);
+}
+
+a {
+  color: var(--link-fgcolor);
+}

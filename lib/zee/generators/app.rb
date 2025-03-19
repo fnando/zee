@@ -26,6 +26,8 @@ module Zee
         copy_file "app/assets/styles/lib/reset.css"
         copy_file "app/assets/styles/lib/colors.css"
         copy_file "app/assets/styles/lib/form.css"
+        copy_file "app/assets/styles/lib/theme.css"
+        copy_file "app/assets/images/warning.svg"
         copy_file "bin/styles"
         copy_file "bin/scripts"
         copy_file "bin/dev"

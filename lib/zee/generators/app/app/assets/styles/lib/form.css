@@ -1,3 +1,7 @@
+form {
+  margin-top: 3rem;
+}
+
 form .field {
   display: flex;
   gap: 2rem;
@@ -8,11 +12,11 @@ form .field + .field {
 }
 
 form .field-info {
-  width: 25%;
+  width: 12rem;
 }
 
 form .field-controls {
-  width: 75%;
+  width: calc(100% - 12rem);
 }
 
 form .label {
@@ -23,6 +27,24 @@ form .hint {
   display: block;
   color: var(--gray);
   font-size: 0.875rem;
+}
+
+form .error {
+  color: var(--orange);
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding-top: 0.5rem;
+}
+
+form .error:before {
+  content: "";
+  display: inline-block;
+  background: url(/assets/images/warning.svg) no-repeat;
+  background-size: contain;
+  width: 1.2rem;
+  height: 1.2rem;
 }
 
 form .field-controls {
