@@ -32,6 +32,7 @@ class AppTest < Minitest::Test
     assert app.join("app/assets/styles/app.css").file?
     assert app.join("app/assets/styles/lib/reset.css").file?
     assert app.join("app/assets/styles/lib/colors.css").file?
+    assert app.join("app/assets/styles/lib/form.css").file?
     assert app.join("app/assets/scripts/app.ts").file?
     assert app.join("app/assets/styles/app.css").file?
     assert app.join("app/controllers/pages.rb").file?
@@ -39,6 +40,7 @@ class AppTest < Minitest::Test
     assert app.join("app/helpers/app.rb").file?
     assert app.join("app/views/pages/home.html.erb").file?
     assert app.join("config.ru").file?
+    assert app.join("tailwind.config.js").file?
     assert app.join("config/app.rb").file?
     assert app.join("config/boot.rb").file?
     assert app.join("config/config.rb").file?

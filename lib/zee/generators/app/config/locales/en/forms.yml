@@ -15,10 +15,9 @@ en:
     # - hint — the value that will be used as the auxiliary text.
     # - placeholder — the value that will be used as the field's placeholder
     #   text.
-    #
-    # forms:
-    #   user:
-    #     email:
-    #       label: Your e-mail
-    #       hint: This will be used as your log-in method.
-    #       placeholder: E.g. me@example.com
+    forms:
+      user:
+        email:
+          label: Your e-mail
+          hint: This will be used as your log-in method.
+          placeholder: E.g. me@example.com

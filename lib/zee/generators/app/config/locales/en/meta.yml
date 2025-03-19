@@ -13,11 +13,13 @@ en:
     # - description — the description meta tag
     # - keywords — the keywords meta tag
     #
-    # meta:
-    #   title_base: "%{title} — Your Site"
-    #
-    #   pages:
-    #     home:
-    #       title: Home
-    #       description: Your Site is the place where you can do amazing things!
-    #       keywords:
+    meta:
+      title_base: "%{title}"
+
+      # The following example defines the title, description and keywords for
+      # `pages#home`.
+      # pages:
+      #   home:
+      #     title: Home
+      #     description: Your Site is the place where you can do amazing things!
+      #     keywords: site, amazing, things

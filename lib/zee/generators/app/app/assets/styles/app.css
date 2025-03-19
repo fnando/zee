@@ -4,6 +4,7 @@ You can have multiple entrypoints by adding files to `app/styles/`.
 */
 @import "./lib/reset.css";
 @import "./lib/colors.css";
+@import "./lib/form.css";
 
 body {
   padding: 2rem;

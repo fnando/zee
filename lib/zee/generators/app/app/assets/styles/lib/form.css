@@ -1,0 +1,56 @@
+form .field {
+  display: flex;
+  gap: 2rem;
+}
+
+form .field + .field {
+  margin-top: 2rem;
+}
+
+form .field-info {
+  width: 25%;
+}
+
+form .field-controls {
+  width: 75%;
+}
+
+form .label {
+  font-weight: bold;
+}
+
+form .hint {
+  display: block;
+  color: var(--gray);
+  font-size: 0.875rem;
+}
+
+form .field-controls {
+  input[type="text"],
+  input[type="email"],
+  input[type="password"] {
+    font-family: inherit;
+    font-size: inherit;
+    padding: 0.5rem;
+    border: 0.0625rem solid var(--gray);
+    border-radius: 0.3125rem;
+    width: 100%;
+  }
+}
+
+form > :last-child {
+  border-top: 0.0625rem solid var(--gray);
+  margin-top: 2rem;
+  padding-top: 2rem;
+}
+
+form input[type="submit"],
+form button[type="submit"] {
+  background-color: var(--blue);
+  color: white;
+  font-weight: bold;
+  padding: 0.5rem 1rem;
+  border: 0;
+  border-radius: 0.3125rem;
+  cursor: pointer;
+}
