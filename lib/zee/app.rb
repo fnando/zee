@@ -429,7 +429,11 @@ module Zee
 
       require "listen"
       loader.enable_reloading
-      only = Regexp.union(/\.(rb|yml\.enc)|Gemfile.lock$/, %r{public/assets})
+      only = Regexp.union(
+        /\.(rb|enc|ya?ml)$/,
+        %r{public/assets},
+        /Gemfile\.lock$/
+      )
 
       listener = Listen.to(root, only:) do
         @config = nil
@@ -443,7 +447,8 @@ module Zee
         load_files force: true
         run_init
 
-        I18n.backend.reload!
+        I18n.reload!
+        I18n.t("reload", default: "reload")
       end
 
       listener.start
