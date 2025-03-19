@@ -6,14 +6,14 @@ module Zee
       using Zee::Core::Numeric
       using Zee::Core::String::Colored
       using Zee::Core::String
+      using Zee::Core::Blank
 
       def initialize(app)
         @app = app
       end
 
       def call(env)
-        instrumented = Zee.app.config.enable_instrumentation &&
-                       RequestStore.store[:instrumentation]
+        instrumented = Zee.app.config.enable_instrumentation
 
         return @app.call(env) unless instrumented
 
@@ -25,7 +25,7 @@ module Zee
 
         logger = Zee.app.config.logger
         request = Request.new(env)
-        store = RequestStore.store[:instrumentation]
+        store = Instrumentation.instrumentations
         props = prepare_props(store)
 
         if request.params.any?
@@ -45,6 +45,8 @@ module Zee
         end
 
         props.each do |key, value|
+          next unless value&.present?
+
           colored_key = key.to_s.humanize.colored(:cyan)
 
           case key
