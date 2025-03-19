@@ -600,10 +600,10 @@ module Zee
     # call `object.attr`.
     # @return [Object]
     private def value_for(attr)
-      if object.respond_to?(:[])
-        object[attr]
-      elsif object.respond_to?(attr)
+      if object.respond_to?(attr)
         object.public_send(attr)
+      elsif object.respond_to?(:[])
+        object[attr]
       end
     end
 
