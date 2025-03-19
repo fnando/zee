@@ -249,7 +249,7 @@ class ValidationsTest < Minitest::Test
 
     record = model.new
 
-    assert_includes record.tap(&:valid?).errors[:a], "is not present"
+    assert_includes record.tap(&:valid?).errors[:a], "is required"
     assert_includes record.tap(&:valid?).errors[:b], "should be set"
 
     record = model.new(a: "a" * 5, b: "a" * 10)
@@ -390,7 +390,7 @@ class ValidationsTest < Minitest::Test
 
     record = model.new
 
-    assert_includes record.tap(&:valid?).errors[:a], "is not present"
+    assert_includes record.tap(&:valid?).errors[:a], "is required"
     assert_includes record.tap(&:valid?).errors[:b], "should be set"
   end
 
@@ -419,7 +419,7 @@ class ValidationsTest < Minitest::Test
 
     record = model.new
 
-    assert_includes record.tap(&:valid?).errors[:a], "is not present"
+    assert_includes record.tap(&:valid?).errors[:a], "is required"
     assert_includes record.tap(&:valid?).errors[:b], "should be set"
   end
 
