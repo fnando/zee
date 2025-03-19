@@ -53,4 +53,14 @@ class ConfigTest < Minitest::Test
       end
     end
   end
+
+  test "loads silent config even when mandatory vars aren't defined" do
+    ENV["ZEE_SILENT_CONFIG"] = "1"
+
+    config = Zee::Config.new(env: {}) do
+      mandatory :missing_env_var, string
+    end
+
+    assert_instance_of Zee::Config, config
+  end
 end

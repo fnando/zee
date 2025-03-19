@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 Zee.app.init do
+  next unless config.database_url
+
   # Connect to the database.
   Sequel.connect(config.database_url)
 

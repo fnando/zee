@@ -5,7 +5,20 @@ require "test_helper"
 class PartialTest < Minitest::Test
   include Zee::Test::Assertions::HTML
 
-  setup { Zee.app.root = Pathname("tmp") }
+  setup do
+    Zee.app.root = Pathname("tmp")
+    FileUtils.mkdir_p Zee.app.root.join("app/app/helpers")
+    Zee.app
+       .root
+       .join("app/app/helpers/app.rb")
+       .write <<~RUBY
+         module Helpers
+           module App
+           end
+         end
+       RUBY
+  end
+
   let(:env) { Rack::MockRequest.env_for("/").merge(Zee::RACK_SESSION => {}) }
   let(:request) { Zee::Request.new(env) }
   let(:response) { Zee::Response.new }

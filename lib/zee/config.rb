@@ -31,14 +31,25 @@ module Zee
     # - `config.inflector`: The app's inflector instance.
     #
     # @param app [Zee::App] The application instance.
+    # @param options [Hash{Symbol => Object}]
     # @return [Zee::Config]
     #
     # @example
     #   config = Zee::Config.new(app)
-    def initialize(app = nil, **)
+    # @param [Boolean] silent
+    def initialize(
+      app = nil,
+      silent: !ENV.delete("ZEE_SILENT_CONFIG").nil?,
+      **options
+    )
+      if silent
+        options[:raise_exception] = false
+        options[:stderr] = StringIO.new
+      end
+
       @app = app
       block = proc { true }
-      super(**, &block)
+      super(**options, &block)
       set_default_options
     end
 

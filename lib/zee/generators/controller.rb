@@ -27,7 +27,7 @@ module Zee
 
       no_commands do
         def controller_class_name
-          Dry::Inflector.new.camelize(options[:name])
+          options[:name].camelize
         end
       end
     end

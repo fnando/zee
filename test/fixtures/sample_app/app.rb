@@ -69,7 +69,7 @@ class SampleApp < Zee::App
       use Rack::ShowExceptions
     end
 
-    app.initialize!
+    Dir.chdir(app.root) { app.initialize! }
 
     app
   end

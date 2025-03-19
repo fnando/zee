@@ -8,6 +8,8 @@ module Zee
         options[:name] = name
         options[:methods] = methods
 
+        load_environment(env_vars: false)
+
         generator = Generators::Mailer.new
         generator.destination_root = File.expand_path(Dir.pwd)
         generator.options = options
@@ -18,6 +20,8 @@ module Zee
       def controller(name, *actions)
         options[:name] = name
         options[:actions] = actions
+
+        load_environment(env_vars: false)
 
         generator = Generators::Controller.new
         generator.destination_root = File.expand_path(Dir.pwd)
