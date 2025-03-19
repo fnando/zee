@@ -22,7 +22,7 @@ module Zee
                    "app/views/#{options[:name]}/#{action}.html.erb"
         end
 
-        say_status "done", "You need define routes at config/routes.rb"
+        say_status "done", "You need to define routes at config/routes.rb"
       end
 
       no_commands do
