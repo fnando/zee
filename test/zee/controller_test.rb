@@ -116,6 +116,21 @@ class ControllerTest < Minitest::Test
     assert_includes response.body, "Hello, Mary!"
   end
 
+  test "raises error when action is missing" do
+    controller_class = Class.new(Zee::Controller) do
+    end
+
+    error = assert_raises(Zee::Controller::MissingActionError) do
+      controller_class.new(
+        request:,
+        response:,
+        controller_name: "application",
+        action_name: "show"
+      ).send(:call)
+    end
+    assert_equal "action application#show is not defined.", error.message
+  end
+
   test "raises error when rendering twice" do
     controller_class = Class.new(Zee::Controller) do
       def show

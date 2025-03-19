@@ -24,6 +24,9 @@ module Zee
       end
     end
 
+    # Raised when a controller action is missing.
+    MissingActionError = Class.new(StandardError)
+
     # Raised when a template is missing.
     MissingTemplateError = Class.new(StandardError)
 
@@ -117,6 +120,12 @@ module Zee
 
       # If the action is missing, then raise an error.
       raise ArgumentError, ":action_name is not set" if action_name.empty?
+
+      # If the action is not defined, raise an error.
+      unless respond_to?(action_name)
+        raise MissingActionError,
+              "action #{controller_name}##{action_name} is not defined."
+      end
 
       # Execute the action on the controller.
       public_send(action_name)
