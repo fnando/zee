@@ -191,6 +191,37 @@ class MailerTest < Zee::Test::Mailer
                     "text layout: rendered text"
   end
 
+  test "instruments rendering" do
+    views = Pathname("tmp/app/views")
+    layouts = views.join("layouts")
+    messages = views.join("messages")
+
+    [layouts, messages].map(&:mkpath)
+
+    layouts.join("mailer.html.erb").write("html layout: <%= yield %>")
+    layouts.join("mailer.text.erb").write("text layout: <%= yield %>")
+    messages.join("hello.html.erb").write("rendered html")
+    messages.join("hello.text.erb").write("rendered text")
+
+    mailer_class = Class.new(Zee::Mailer) do
+      def self.name
+        "Mailers::Messages"
+      end
+
+      def hello
+        mail to: "TO", from: "FROM", subject: "SUBJECT"
+      end
+
+      def view_paths
+        [Pathname("tmp/app/views").expand_path]
+      end
+    end
+
+    mailer_class.hello.deliver
+
+    assert_equal 4, Zee::Instrumentation.instrumentations[:mailer].size
+  end
+
   test "fails when no body has been set" do
     mailer_class = Class.new(Zee::Mailer) do
       def self.name

@@ -9,6 +9,7 @@ module Zee
     using Core::Blank
     include Controller::HelperMethods
     include Controller::Renderer
+    include Instrumentation
 
     # Raised when a template is missing.
     MissingTemplateError = Class.new(StandardError)
@@ -136,10 +137,15 @@ module Zee
       return unless template
 
       layout = find_layout(nil, mimes)
-      content = Zee.app.render_template(template.path, locals:)
+      content = instrument(:mailer, scope: :view, path: template.path) do
+        Zee.app.render_template(template.path, locals:)
+      end
 
       if layout
-        content = Zee.app.render_template(layout.path, locals:) { content }
+        content =
+          instrument(:mailer, scope: :layout, path: layout.path) do
+            Zee.app.render_template(layout.path, locals:) { content }
+          end
       end
 
       content

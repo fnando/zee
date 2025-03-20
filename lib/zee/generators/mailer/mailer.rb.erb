@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Mailers
-  # To expose a variable to the email template, use the instance variables.
+  # To expose a variable to the email template, use instance variables.
   class <%= mailer_class_name %> < Zee::Mailer
   <%- options[:methods].each_with_index do |method, index| -%>
 
