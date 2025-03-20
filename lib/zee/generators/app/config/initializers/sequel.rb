@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 Zee.app.init do
+  # Only set up the database if a database URL is set.
   next unless config.database_url
 
   # Connect to the database.
