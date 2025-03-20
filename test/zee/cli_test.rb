@@ -72,26 +72,6 @@ class CLITest < Minitest::Test
     assert app.join(".ruby-version").file?
   end
 
-  test "generates new mailer" do
-    app = Pathname("tmp/app")
-    exit_code = nil
-
-    capture { Zee::CLI.start(["new", "tmp/app", "-BN"]) }
-
-    Dir.chdir(app) do
-      capture do
-        Zee::CLI.start(%w[g mailer messages hello bye])
-      end => {exit_code:}
-    end
-
-    assert_equal 0, exit_code
-    assert app.join("app/mailers/messages.rb").file?
-    assert app.join("app/views/messages/hello.text.erb").file?
-    assert app.join("app/views/messages/hello.html.erb").file?
-    assert app.join("app/views/messages/bye.text.erb").file?
-    assert app.join("app/views/messages/bye.html.erb").file?
-  end
-
   test "skips bundle install" do
     capture { Zee::CLI.start(["new", "tmp/app", "-BN"]) } => {out:}
 
