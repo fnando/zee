@@ -165,7 +165,7 @@ class MailerTest < Zee::Test::Mailer
 
     layouts.join("mailer.html.erb").write("html layout: <%= yield %>")
     layouts.join("mailer.text.erb").write("text layout: <%= yield %>")
-    messages.join("hello.html.erb").write("rendered html")
+    messages.join("hello.html.erb").write("<strong>rendered html</strong>")
     messages.join("hello.text.erb").write("rendered text")
 
     mailer_class = Class.new(Zee::Mailer) do
@@ -186,7 +186,7 @@ class MailerTest < Zee::Test::Mailer
 
     assert_mail_delivered
     assert_includes mail_deliveries.first.html_part.to_s,
-                    "html layout: rendered html"
+                    "html layout: <strong>rendered html</strong>"
     assert_includes mail_deliveries.first.text_part.to_s,
                     "text layout: rendered text"
   end

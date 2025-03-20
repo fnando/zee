@@ -144,7 +144,9 @@ module Zee
       if layout
         content =
           instrument(:mailer, scope: :layout, path: layout.path) do
-            Zee.app.render_template(layout.path, locals:) { content }
+            Zee.app.render_template(layout.path, locals:) do
+              SafeBuffer.new(content)
+            end
           end
       end
 
