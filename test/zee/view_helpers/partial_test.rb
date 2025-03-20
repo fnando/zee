@@ -8,15 +8,6 @@ class PartialTest < Minitest::Test
   setup do
     Zee.app.root = Pathname("tmp")
     FileUtils.mkdir_p Zee.app.root.join("app/app/helpers")
-    Zee.app
-       .root
-       .join("app/app/helpers/app.rb")
-       .write <<~RUBY
-         module Helpers
-           module App
-           end
-         end
-       RUBY
   end
 
   let(:env) { Rack::MockRequest.env_for("/").merge(Zee::RACK_SESSION => {}) }

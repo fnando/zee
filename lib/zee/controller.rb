@@ -143,11 +143,11 @@ module Zee
     end
 
     # @api private
-    # The list of template source directories. By default, it only includes
-    # you app's `app/views` directory.
+    # The list of template source directories. By default, it returns
+    # {App#view_paths}.
     # @return [Array<Pathname>]
     def view_paths
-      @_view_paths ||= [Zee.app.root.join("app/views")]
+      Zee.app.view_paths
     end
 
     # @api private

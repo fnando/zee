@@ -355,6 +355,14 @@ module Zee
       @loader ||= Zeitwerk::Loader.new
     end
 
+    # @api private
+    # The list of template source directories. By default, it only includes
+    # you app's `app/views` directory.
+    # @return [Array<Pathname>]
+    def view_paths
+      @view_paths ||= [root.join("app/views")]
+    end
+
     def call(env)
       if root == Dir.pwd
         # :nocov:

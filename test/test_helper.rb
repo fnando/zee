@@ -104,6 +104,16 @@ module Minitest
         request:,
         response: Zee::Response.new
       )
+
+      path = Pathname.pwd.join("tmp/app/app/helpers/app.rb")
+      FileUtils.mkdir_p(path.dirname)
+      path.write <<~RUBY
+        module Helpers
+          module App
+          end
+        end
+      RUBY
+
       context ||= Object.new.extend(Zee.app.helpers)
       File.write("tmp/template.erb", template)
       FileUtils.mkdir_p("tmp/config")
