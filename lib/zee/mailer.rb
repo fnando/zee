@@ -61,7 +61,9 @@ module Zee
 
     # @api private
     def assign_headers(headers)
-      headers.each {|key, value| message.header[key.to_s.tr("_", "-")] = value }
+      headers.each do |key, value|
+        message.header[key.to_s.tr(UNDERSCORE, DASH)] = value
+      end
     end
 
     # @api private
