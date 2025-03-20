@@ -40,8 +40,12 @@ module Zee
       #   render :home, layout: false
       # @example Render with a custom layout.
       #   render :home, layout: :custom
-      def render(template_name = action_name, status: :ok, layout: nil,
-                 **options)
+      def render(
+        template_name = action_name,
+        status: :ok,
+        layout: nil,
+        **options
+      )
         app = Zee.app
 
         raise DoubleRenderError if response.performed?
@@ -55,6 +59,7 @@ module Zee
 
         response.view_path = view_path
         response.layout_path = layout_path
+        locals = collect_locals
 
         body = instrument(:request, scope: :view, path: view_path.path) do
           app.render_template(
@@ -193,6 +198,13 @@ module Zee
         raise MissingTemplateError,
               "couldn't find template for #{controller_name}/#{name} " \
               "for #{content_types.inspect}"
+      end
+
+      # @api private
+      def collect_locals
+        instance_variables.each_with_object({}) do |name, buffer|
+          buffer[name] = instance_variable_get(name)
+        end
       end
 
       # @api private

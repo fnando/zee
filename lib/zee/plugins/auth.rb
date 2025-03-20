@@ -202,7 +202,7 @@ module Zee
           # Mark methods that will be exposed to the views as private.
           # Only the necessary methods will be exposed.
           private current, logged_in
-          expose current, logged_in
+          helper_method(current, logged_in)
         end
       end
 

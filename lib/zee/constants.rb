@@ -2,6 +2,9 @@
 
 module Zee
   # @api private
+  AT_SIGN = "@"
+
+  # @api private
   APPLICATION_JSON = "application/json"
 
   # @api private

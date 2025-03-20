@@ -31,7 +31,7 @@ class RenderTest < Zee::Test::Request
     assert_includes last_response.body, "Zee::Controller::MissingTemplateError"
   end
 
-  test "renders template with locals" do
+  test "renders template with instance variables" do
     get "/hello"
 
     assert last_response.ok?

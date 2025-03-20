@@ -381,7 +381,9 @@ module Zee
     #
     # @param file [String] The path to the template file.
     # @param options [Hash] The rendering options.
-    # @option options [Hash] locals The variables to expose to the template.
+    # @option options [Hash] locals The variables to expose to the template. If
+    #                               they're prefixed with `@`, they will be
+    #                               defined as instance variables.
     # @option options [Object] context The context to evaluate the template in.
     # @option options [Zee::Request] request The current request.
     # @option options [Object, nil] controller The controller instance. Some

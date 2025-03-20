@@ -51,8 +51,8 @@ module Zee
     # @see Controller::Redirect#redirect_to
     # @see Middleware::Flash
     module Flash
-      def self.included(base)
-        base.before_action { expose(:flash) }
+      def self.included(target)
+        target.helper_method(:flash)
       end
 
       # Define the flash object.

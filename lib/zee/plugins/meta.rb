@@ -220,7 +220,7 @@ module Zee
     # `meta.description.html` instead.
     module Meta
       def self.included(controller)
-        controller.expose :meta
+        controller.helper_method(:meta)
       end
 
       private def meta

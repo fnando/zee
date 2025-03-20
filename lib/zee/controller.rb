@@ -6,7 +6,7 @@ module Zee
     include Redirect
     include Callbacks
     include AuthenticityToken
-    include Locals
+    include HelperMethods
     include Flash
     include Translation
     include ErrorHandling
@@ -127,6 +127,9 @@ module Zee
               "action #{controller_name}##{action_name} is not defined."
       end
 
+      # Define helper methods.
+      define_helper_methods
+
       # Execute the action on the controller.
       public_send(action_name)
 
@@ -140,6 +143,25 @@ module Zee
       end
     rescue Exception => error # rubocop:disable Lint/RescueException
       handle_action_error(error)
+    end
+
+    # @api private
+    def define_helper_methods
+      self.class.helper_method.each do |name|
+        if self.class.public_method_defined?(name)
+          raise UnsafeHelperError,
+                "#{name.inspect} must be a private method"
+        end
+
+        ref = method(name)
+        file, line = ref.source_location
+
+        helpers.instance_eval <<~RUBY, file, line + 1 # rubocop:disable Style/EvalWithLocation
+          def #{name}(*, **)                   # def hello(*, **)
+            controller.send(:"#{name}", *, **) #  controller.send(:hello, *, **)
+          end                                  # end
+        RUBY
+      end
     end
 
     # @api private

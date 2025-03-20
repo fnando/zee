@@ -24,6 +24,14 @@ module Zee
       key = template_path.to_s
       template = self.cache[key]
 
+      vars = locals.each_with_object({}) do |(key, value), buffer|
+        if key.start_with?(AT_SIGN)
+          context.instance_variable_set(key, value)
+        else
+          buffer[key] = value
+        end
+      end
+
       unless template
         options = {
           engine_class: Erubi::CaptureBlockEngine,
@@ -42,7 +50,7 @@ module Zee
         Template.new(template_path, template)
       )
 
-      template.render(context, locals, &)
+      template.render(context, vars, &)
     end
 
     # Return the current template path.

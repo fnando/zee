@@ -10,7 +10,7 @@ module Controllers
     end
 
     def hello
-      expose message: "Hello, World!"
+      @message = "Hello, World!"
     end
 
     def redirect

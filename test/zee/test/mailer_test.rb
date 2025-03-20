@@ -80,7 +80,7 @@ class MailerTest < Zee::Test::Mailer
   test "renders text email" do
     root = "tmp/app/views/messages"
     FileUtils.mkdir_p(root)
-    File.write("#{root}/hello.text.erb", "Hello, <%= name %>")
+    File.write("#{root}/hello.text.erb", "Hello, <%= @name %>")
 
     mailer_class = Class.new(Zee::Mailer) do
       def self.name
@@ -88,7 +88,7 @@ class MailerTest < Zee::Test::Mailer
       end
 
       def hello
-        expose name: "John"
+        @name = "John"
         mail to: "TO", from: "FROM", subject: "SUBJECT"
       end
     end
@@ -102,7 +102,7 @@ class MailerTest < Zee::Test::Mailer
   test "renders html email" do
     root = "tmp/app/views/messages"
     FileUtils.mkdir_p(root)
-    File.write("#{root}/hello.html.erb", "Hello, <%= name %>")
+    File.write("#{root}/hello.html.erb", "Hello, <%= @name %>")
 
     mailer_class = Class.new(Zee::Mailer) do
       def self.name
@@ -110,7 +110,7 @@ class MailerTest < Zee::Test::Mailer
       end
 
       def hello
-        expose name: "John"
+        @name = "John"
         mail to: "TO", from: "FROM", subject: "SUBJECT"
       end
     end

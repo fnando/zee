@@ -21,7 +21,7 @@ class ControllerTest < Minitest::Test
   test "exposes variable" do
     controller_class = Class.new(Zee::Controller) do
       def show
-        expose message: "Hello, World!"
+        @message = "Hello, World!"
         render :locals
       end
 
@@ -37,8 +37,9 @@ class ControllerTest < Minitest::Test
 
   test "exposes helper method" do
     controller_class = Class.new(Zee::Controller) do
+      helper_method :say_hello
+
       def show
-        expose :say_hello
         render :helper
       end
 
@@ -55,8 +56,9 @@ class ControllerTest < Minitest::Test
 
   test "exposes helper method with instance variable" do
     controller_class = Class.new(Zee::Controller) do
+      helper_method :current_user, :user_logged_in?
+
       def show
-        expose :current_user, :user_logged_in?
         render :helper_with_ivar
       end
 
@@ -77,8 +79,9 @@ class ControllerTest < Minitest::Test
 
   test "prevents exposting public helper methods" do
     controller_class = Class.new(Zee::Controller) do
+      helper_method :current_user
+
       def show
-        expose :current_user
       end
 
       def current_user
@@ -95,7 +98,7 @@ class ControllerTest < Minitest::Test
 
   test "exposes helper method for all controller methods" do
     controller_class = Class.new(Zee::Controller) do
-      expose :say_hello
+      helper_method :say_hello
 
       def show
         render :helper

@@ -6,7 +6,7 @@ require "mail"
 module Zee
   class Mailer
     using Core::String
-    include Controller::Locals
+    include Controller::HelperMethods
 
     # @api private
     def self.method_missing(name, *, **)
@@ -83,6 +83,13 @@ module Zee
     end
 
     # @api private
+    def collect_locals
+      instance_variables.each_with_object({}) do |name, buffer|
+        buffer[name] = instance_variable_get(name)
+      end
+    end
+
+    # @api private
     def assign_body_from_template(name)
       return unless self.class.name
 
@@ -91,7 +98,7 @@ module Zee
 
       templates.each do |template|
         format = File.basename(template)[/^.*?\.(.*?)\..*?$/, 1]
-        content = Zee.app.render_template(template, locals:)
+        content = Zee.app.render_template(template, locals: collect_locals)
 
         case format
         when "text"

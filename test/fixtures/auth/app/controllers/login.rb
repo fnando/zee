@@ -5,7 +5,7 @@ module Controllers
     before_action :redirect_logged_user
 
     def new
-      expose user: {}
+      @user = {}
     end
 
     def create
