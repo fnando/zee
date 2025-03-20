@@ -6,7 +6,21 @@ require "mail"
 module Zee
   class Mailer
     using Core::String
+    using Core::Blank
     include Controller::HelperMethods
+    include Controller::Renderer
+
+    # Raised when a template is missing.
+    MissingTemplateError = Class.new(StandardError)
+
+    # @api private
+    MAILER = "mailer"
+
+    # @api private
+    MAILERS_PREFIX = "mailers/"
+
+    # @api private
+    MAILERS_CLASS_PREFIX = "Mailers"
 
     # @api private
     def self.method_missing(name, *, **)
@@ -20,6 +34,10 @@ module Zee
     # @api private
     def self.respond_to_missing?(name, _all = true)
       instance_methods.include?(name)
+    end
+
+    def self.naming
+      @naming ||= Naming::Name.new(name, prefix: MAILERS_CLASS_PREFIX)
     end
 
     # @api private
@@ -92,23 +110,65 @@ module Zee
     end
 
     # @api private
+    private def name_ancestry
+      names =
+        self
+        .class
+        .ancestors
+        .filter_map do |klass|
+          klass.is_a?(Class) &&
+            klass < Zee::Mailer &&
+            klass.name.present? &&
+            klass.name.underscore.delete_prefix(MAILERS_PREFIX)
+        end
+
+      (names + [MAILER]).uniq
+    end
+
+    # @api private
+    def view_paths
+      Zee.app.view_paths
+    end
+
+    # @api private
+    def render(name, mimes:, locals:)
+      template = find_template(name, mimes, required: false)
+      return unless template
+
+      layout = find_layout(nil, mimes)
+      content = Zee.app.render_template(template.path, locals:)
+
+      if layout
+        content = Zee.app.render_template(layout.path, locals:) { content }
+      end
+
+      content
+    end
+
+    # @api private
     def assign_body_from_template(name)
       return unless self.class.name
 
-      class_name = self.class.name.underscore.delete_prefix("mailers/")
-      templates = Dir["app/views/#{class_name}/#{name}.*"]
+      locals = collect_locals
 
-      templates.each do |template|
-        format = File.basename(template)[/^.*?\.(.*?)\..*?$/, 1]
-        content = Zee.app.render_template(template, locals: collect_locals)
+      text_part = render(
+        name,
+        mimes: [MiniMime.lookup_by_content_type(TEXT_PLAIN)],
+        locals:
+      )
+      html_part = render(
+        name,
+        mimes: [MiniMime.lookup_by_content_type(TEXT_HTML)],
+        locals:
+      )
 
-        case format
-        when "text"
-          message.text_part = content
-        when "html"
-          message.html_part = content
-        end
-      end
+      message.text_part = text_part if text_part
+      message.html_part = html_part if html_part
+
+      return if text_part || html_part
+
+      raise MissingTemplateError,
+            "couldn't find template for #{self.class.naming.underscore}##{name}"
     end
   end
 end

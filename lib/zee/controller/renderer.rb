@@ -8,6 +8,14 @@ module Zee
       using Zee::Core::Blank
 
       # @api private
+      #
+      # Define alias for mime extension, so we can have file.text.erb instead
+      # of file.txt.erb.
+      MIME_EXTENSION_ALIAS = {
+        "txt" => "text"
+      }.freeze
+
+      # @api private
       CONTROLLERS_PREFIX = "controllers/"
 
       # @api private
@@ -54,16 +62,16 @@ module Zee
         return render_text(status, options.delete(:text)) if options.key?(:text)
 
         mimes = possible_mime_types(template_name)
-        view_path = find_template(template_name, mimes)
-        layout_path = find_layout(layout, [view_path.mime]) if layout != false
+        found_view = find_template(template_name, mimes)
+        found_layout = find_layout(layout, [found_view.mime]) if layout != false
 
-        response.view_path = view_path
-        response.layout_path = layout_path
+        response.view = found_view
+        response.layout = found_layout
         locals = collect_locals
 
-        body = instrument(:request, scope: :view, path: view_path.path) do
+        body = instrument(:request, scope: :view, path: found_view.path) do
           app.render_template(
-            view_path.path,
+            found_view.path,
             locals:,
             request:,
             controller: self,
@@ -71,20 +79,21 @@ module Zee
           )
         end
 
-        if layout_path
-          body = instrument(:request, scope: :layout, path: layout_path) do
-            app.render_template(
-              layout_path,
-              locals:,
-              request:,
-              controller: self,
-              context: helpers
-            ) { SafeBuffer.new(body) }
-          end
+        if found_layout
+          body =
+            instrument(:request, scope: :layout, path: found_layout.path) do
+              app.render_template(
+                found_layout.path,
+                locals:,
+                request:,
+                controller: self,
+                context: helpers
+              ) { SafeBuffer.new(body) }
+            end
         end
 
         response.status(status)
-        response.headers[:content_type] = view_path.mime.content_type
+        response.headers[:content_type] = found_view.mime.content_type
         response.body = body
       end
 
@@ -103,7 +112,7 @@ module Zee
       end
 
       # @api private
-      private def controller_name_ancestry
+      private def name_ancestry
         names =
           self
           .class
@@ -123,7 +132,7 @@ module Zee
       # The lookup will always stop at [Zee::Controller] and will use
       # `application` as the last fallback.
       def possible_layout_names(layout)
-        [layout, *controller_name_ancestry].compact.uniq
+        [layout, *name_ancestry].compact.uniq
       end
 
       # @api private
@@ -135,16 +144,20 @@ module Zee
       #                                      template. Template files must
       #                                      follow the `name.:format.:engine`
       #                                      pattern.
-      # @return [Pathname]
+      # @return [Template, nil]
       # @raise [MissingTemplateError]
       def find_layout(name, mimes)
         mimes.each do |mime|
           view_paths.each do |view_path|
             possible_layout_names(name).each do |layout|
-              layout_path =
-                view_path.glob("layouts/#{layout}.#{mime.extension}.*").first
+              ext = [mime.extension, MIME_EXTENSION_ALIAS[mime.extension]]
+                    .compact
+                    .join(COMMA)
 
-              return layout_path if layout_path
+              layout_path =
+                view_path.glob("layouts/#{layout}.{#{ext}}.*").first
+
+              return Template.new(path: layout_path, mime:) if layout_path
             end
           end
         end
@@ -159,7 +172,7 @@ module Zee
       # @raise [MissingTemplateError]
       # @return [Pathname]
       def find_partial(name)
-        find_template("_#{name}", [response.view_path.mime])
+        find_template("_#{name}", [response.view.mime])
       end
 
       # @api private
@@ -174,18 +187,23 @@ module Zee
       #                                      pattern.
       # @param required [Boolean] When required, raises [MissingTemplateError]
       #                           if the template is not found.
+      # @return [Template, nil]
       # @raise [MissingTemplateError]
       def find_template(name, mimes, required: true)
-        controller_name_ancestry.each do |controller_name|
+        name_ancestry.each do |controller_name|
           mimes.each do |mime|
-            view_paths.each do |view_path|
+            view_paths.each do |search_path|
               Zee.app.config.template_handlers.each do |handler|
-                view_path = view_path.join(
-                  controller_name,
-                  "#{name}.#{mime.extension}.#{handler}"
-                )
+                ext = [mime.extension, MIME_EXTENSION_ALIAS[mime.extension]]
+                      .compact
+                      .join(COMMA)
 
-                return Template.new(path: view_path, mime:) if view_path.file?
+                view_path = search_path
+                            .join(controller_name)
+                            .glob("#{name}.{#{ext}}.#{handler}")
+                            .first
+
+                return Template.new(path: view_path, mime:) if view_path&.file?
               end
             end
           end

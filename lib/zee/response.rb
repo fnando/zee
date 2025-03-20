@@ -8,12 +8,12 @@ module Zee
 
     # The template file that's been used to render the response.
     # @return [Controller::Template, nil]
-    attr_accessor :view_path
+    attr_accessor :view
 
     # The template file that's been used as the layout file rendered for the
     # response.
     # @return [Controller::Template, nil]
-    attr_accessor :layout_path
+    attr_accessor :layout
 
     def initialize(body: nil, status: nil, headers: nil)
       @body = body

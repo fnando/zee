@@ -51,6 +51,7 @@ module Zee
       #
       #  User.naming.singular #=> "user"
       #  User.naming.plural #=> "users"
+      #  User.naming.underscore_name #=> "user"
       def naming
         @naming ||= Name.new(name)
       end
@@ -82,9 +83,28 @@ module Zee
       def singular
         @singular ||= begin
           str = @inflector.underscore(name)
+
           if @prefix
             str = str.delete_prefix("#{@inflector.underscore(@prefix)}/")
           end
+
+          @inflector.singularize(str)
+        end
+      end
+
+      # Return the singular form of the name.
+      # @return [String]
+      # @example
+      #   Zee::Naming.new("User").underscore # => "user"
+      #   Zee::Naming.new("Admin::User").underscore # => "admin/user"
+      def underscore
+        @underscore ||= begin
+          str = @inflector.underscore(name)
+
+          if @prefix
+            str = str.delete_prefix("#{@inflector.underscore(@prefix)}/")
+          end
+
           str
         end
       end

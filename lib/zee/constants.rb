@@ -17,6 +17,9 @@ module Zee
   COLON = ":"
 
   # @api private
+  COMMA = ","
+
+  # @api private
   COMMA_SPACE = ", "
 
   # @api private

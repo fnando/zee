@@ -91,9 +91,13 @@ class MailerTest < Zee::Test::Mailer
         @name = "John"
         mail to: "TO", from: "FROM", subject: "SUBJECT"
       end
+
+      def view_paths
+        [Pathname("tmp/app/views").expand_path]
+      end
     end
 
-    Dir.chdir("tmp") { mailer_class.hello.deliver }
+    mailer_class.hello.deliver
 
     assert_mail_delivered
     assert_includes mail_deliveries.first.text_part.to_s, "Hello, John"
@@ -113,9 +117,13 @@ class MailerTest < Zee::Test::Mailer
         @name = "John"
         mail to: "TO", from: "FROM", subject: "SUBJECT"
       end
+
+      def view_paths
+        [Pathname("tmp/app/views").expand_path]
+      end
     end
 
-    Dir.chdir("tmp") { mailer_class.hello.deliver }
+    mailer_class.hello.deliver
 
     assert_mail_delivered
     assert_includes mail_deliveries.first.html_part.to_s, "Hello, John"
@@ -135,13 +143,74 @@ class MailerTest < Zee::Test::Mailer
       def hello
         mail to: "TO", from: "FROM", subject: "SUBJECT"
       end
+
+      def view_paths
+        [Pathname("tmp/app/views").expand_path]
+      end
     end
 
-    Dir.chdir("tmp") { mailer_class.hello.deliver }
+    mailer_class.hello.deliver
 
     assert_mail_delivered
     assert_includes mail_deliveries.first.html_part.to_s, "rendered html"
     assert_includes mail_deliveries.first.text_part.to_s, "rendered text"
+  end
+
+  test "renders layout file" do
+    views = Pathname("tmp/app/views")
+    layouts = views.join("layouts")
+    messages = views.join("messages")
+
+    [layouts, messages].map(&:mkpath)
+
+    layouts.join("mailer.html.erb").write("html layout: <%= yield %>")
+    layouts.join("mailer.text.erb").write("text layout: <%= yield %>")
+    messages.join("hello.html.erb").write("rendered html")
+    messages.join("hello.text.erb").write("rendered text")
+
+    mailer_class = Class.new(Zee::Mailer) do
+      def self.name
+        "Mailers::Messages"
+      end
+
+      def hello
+        mail to: "TO", from: "FROM", subject: "SUBJECT"
+      end
+
+      def view_paths
+        [Pathname("tmp/app/views").expand_path]
+      end
+    end
+
+    mailer_class.hello.deliver
+
+    assert_mail_delivered
+    assert_includes mail_deliveries.first.html_part.to_s,
+                    "html layout: rendered html"
+    assert_includes mail_deliveries.first.text_part.to_s,
+                    "text layout: rendered text"
+  end
+
+  test "fails when no body has been set" do
+    mailer_class = Class.new(Zee::Mailer) do
+      def self.name
+        "Mailers::Messages"
+      end
+
+      def hello
+        mail to: "TO", from: "FROM", subject: "SUBJECT"
+      end
+
+      def view_paths
+        [Pathname("tmp/app/views").expand_path]
+      end
+    end
+
+    error = assert_raises(Zee::Mailer::MissingTemplateError) do
+      mailer_class.hello.deliver
+    end
+
+    assert_equal "couldn't find template for messages#hello", error.message
   end
 
   test "makes route helpers available" do
