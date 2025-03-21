@@ -392,6 +392,7 @@ module Zee
         disabled_options: [],
         **attrs
       )
+        options ||= []
         name = name.to_s
         attrs[:id] ||= normalize_id(name) unless name.blank?
 

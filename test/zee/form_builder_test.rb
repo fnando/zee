@@ -274,7 +274,7 @@ class FormBuilderTest < Zee::Test
                           "[name='search[query]'][value='ruby']"
   end
 
-  test "renders select field" do
+  test "renders select tag" do
     user = {country: "BR"}
     options = [
       %w[CA Canada],
@@ -639,6 +639,32 @@ class FormBuilderTest < Zee::Test
     heading = assert_selector group,
                               ":root>input#page_tags_rust[type=checkbox]+span"
     assert_selector heading, ":root.field-group-heading>label", text: /Rust/
+  end
+
+  test "renders select field" do
+    page = {tags: ["ruby"]}
+    statuses = [%w[draft Draft], %w[published Published]]
+
+    template = <<~ERB
+      <%= form_for page, url: "/pages/1", as: :page do |f| %>
+        <%= f.field :status, statuses, type: :select %>
+      <% end %>
+    ERB
+
+    html = render(template, locals: {page:, statuses:}, request:)
+
+    assert_selector html, "form>.field"
+    assert_selector html, ".field>.field-info+.field-controls"
+    assert_selector html, ".field-info>label[for=page_status]", text: /Status/
+    assert_selector html, ".field-controls>select[name='page[status]']"
+    assert_selector html, "select>option", count: 3
+    assert_selector html, "select>option:nth-child(1)[value='']", text: ""
+    assert_selector html,
+                    "select>option:nth-child(2)[value='draft']",
+                    text: "Draft"
+    assert_selector html,
+                    "select>option:nth-child(3)[value='published']",
+                    text: "Published"
   end
 
   test "renders error message" do

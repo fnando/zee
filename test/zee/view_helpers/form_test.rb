@@ -269,6 +269,15 @@ class FormTest < Minitest::Test
     assert_selector html, "select>option[value=2]", text: "rust"
   end
 
+  test "renders select when options is not provided" do
+    html = helpers.select_tag :languages, nil
+
+    assert_selector html, "select#languages"
+    assert_selector html, "select>option", count: 1
+    assert_selector html, "select>option[selected]", count: 0
+    assert_selector html, "select>option[value='']", text: ""
+  end
+
   test "renders select with string" do
     html = helpers.select_tag :languages, "<option value='ruby'>ruby</option>"
 

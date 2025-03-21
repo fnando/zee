@@ -434,6 +434,9 @@ module Zee
     # @return [SafeBuffer]
     def field(attr, values = nil, type: :text)
       case type
+      when :select
+        label = label(attr)
+        input = select(attr, values)
       when :radio_group
         label = tag(:span, label_text(attr), class: :label)
         input = radio_group(attr, values)
