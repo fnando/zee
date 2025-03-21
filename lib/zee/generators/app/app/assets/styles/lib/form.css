@@ -1,4 +1,4 @@
-form {
+form:not(.button-to) {
   margin-top: 3rem;
 }
 
@@ -77,13 +77,13 @@ form .field-controls {
   }
 }
 
-form > :last-child {
+form:not(.button-to) > :last-child {
   border-top: 0.0625rem solid var(--gray);
   margin-top: 2rem;
   padding-top: 2rem;
 }
 
-form :is([type="submit"]) {
+form :is([type="submit"]):not(.link) {
   background-color: var(--blue);
   color: white;
   font-weight: bold;
