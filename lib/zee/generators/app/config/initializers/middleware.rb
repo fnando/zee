@@ -22,7 +22,10 @@ Zee.app.middleware do
 
   # Protects against XSS attacks.
   # [https://github.com/sinatra/sinatra/blob/main/rack-protection/lib/rack/protection/content_security_policy.rb]
-  use Rack::Protection::ContentSecurityPolicy
+  use Rack::Protection::ContentSecurityPolicy, {
+    default_src: "'self'",
+    img_src: "'self' data:"
+  }
 
   # Protects against cookie tossing.
   # [https://github.com/sinatra/sinatra/blob/main/rack-protection/lib/rack/protection/cookie_tossing.rb]
