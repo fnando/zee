@@ -34,8 +34,8 @@ class AppTest < Minitest::Test
     assert app.join("app/assets/styles/lib/colors.css").file?
     assert app.join("app/assets/styles/lib/form.css").file?
     assert app.join("app/assets/styles/lib/theme.css").file?
+    assert app.join("app/assets/styles/lib/flash.css").file?
     assert app.join("app/assets/scripts/app.ts").file?
-    assert app.join("app/assets/images/warning.svg").file?
     assert app.join("app/controllers/pages.rb").file?
     assert app.join("app/views/layouts/application.html.erb").file?
     assert app.join("app/helpers/app.rb").file?
