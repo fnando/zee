@@ -229,12 +229,12 @@ module Zee
     # @return [Zee::MiddlewareStack]
     def default_middleware_stack
       MiddlewareStack.new(self).tap do |middleware|
-        middleware.use Rack::ShowExceptions if env.development?
-        middleware.use Middleware::RequestLogger
-        middleware.use RequestStore::Middleware
-        middleware.use Rack::Sendfile
-        middleware.use Middleware::Static if config.serve_static_files
         middleware.use Rack::Runtime
+        middleware.use RequestStore::Middleware
+        middleware.use Rack::ShowExceptions if env.development?
+        middleware.use Middleware::Static if config.serve_static_files
+        middleware.use Middleware::RequestLogger
+        middleware.use Rack::Sendfile
         middleware.use Rack::Protection if defined?(Rack::Protection)
 
         if defined?(Rack::Session)
