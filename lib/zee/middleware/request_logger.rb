@@ -127,7 +127,7 @@ module Zee
           ParameterFilter
           .new(Zee.app.config.filter_parameters)
           .filter(Rack::Utils.parse_nested_query(uri.query), mask: "filtered")
-        uri.query = Rack::Utils.build_nested_query(query)
+        uri.query = Rack::Utils.build_nested_query(query) unless query.blank?
 
         uri.to_s
       end
