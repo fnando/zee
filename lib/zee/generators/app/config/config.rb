@@ -52,5 +52,6 @@ Zee.app.config do
   # and filtered from the log file.
   set :filter_parameters, %w[
     passw email secret token _key crypt salt certificate otp ssn cvv cvc
+    signature
   ]
 end
