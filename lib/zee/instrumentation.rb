@@ -21,7 +21,7 @@ module Zee
         duration = Process.clock_gettime(Process::CLOCK_MONOTONIC) - start
       end
 
-      instrumentations[name] << {name:, duration:, args: kwargs}
+      instrumentations[name] << {name:, duration:, time: Time.now, args: kwargs}
 
       result
     end

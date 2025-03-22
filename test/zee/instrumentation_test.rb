@@ -8,6 +8,8 @@ class InstrumentTest < Minitest::Test
   setup { RequestStore.store.clear }
 
   test "instruments by group" do
+    now = Time.now
+    Time.stubs(:now).returns(now)
     instrument :render, scope: :partial, path: "some_view.erb"
     instrument :render, scope: :partial, path: "some_partial.erb"
 
@@ -16,6 +18,7 @@ class InstrumentTest < Minitest::Test
     assert_equal 2, store.size
     assert_equal(
       {
+        time: now,
         name: :render,
         duration: nil,
         args: {path: "some_view.erb", scope: :partial}
@@ -23,6 +26,7 @@ class InstrumentTest < Minitest::Test
     )
     assert_equal(
       {
+        time: now,
         name: :render,
         duration: nil,
         args: {path: "some_partial.erb", scope: :partial}
@@ -31,6 +35,9 @@ class InstrumentTest < Minitest::Test
   end
 
   test "tracks duration when block is provided" do
+    now = Time.now
+    Time.stubs(:now).returns(now)
+
     instrument :render, scope: :view, path: "some_view.erb" do
       # noop
     end
@@ -39,7 +46,9 @@ class InstrumentTest < Minitest::Test
 
     assert_equal 1, store.size
     assert_instance_of Float, store.first.delete(:duration)
-    assert_equal({name: :render, args: {scope: :view, path: "some_view.erb"}},
-                 store.first)
+    assert_equal(
+      {time: now, name: :render, args: {scope: :view, path: "some_view.erb"}},
+      store.first
+    )
   end
 end

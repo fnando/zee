@@ -277,7 +277,7 @@ class PartialTest < Minitest::Test
           scope: :partial,
           path: Pathname("tmp/app/views/pages/_spacer.html.erb")
         }
-      }, instrumentation[:request][1]
+      }, instrumentation[:request][1].except(:time)
     )
   end
 
@@ -326,7 +326,7 @@ class PartialTest < Minitest::Test
           scope: :partial,
           path: Pathname("tmp/app/views/pages/_blank.html.erb")
         }
-      }, instrumentation[:request][0]
+      }, instrumentation[:request][0].except(:time)
     )
   end
 end

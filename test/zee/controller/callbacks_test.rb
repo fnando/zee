@@ -732,6 +732,6 @@ class CallbacksTest < Minitest::Test
     }
 
     assert_equal 1, store.size
-    assert_equal expected_instrumentation, store.first
+    assert_equal expected_instrumentation, store.first.except(:time)
   end
 end
