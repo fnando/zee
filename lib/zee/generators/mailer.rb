@@ -17,6 +17,7 @@ module Zee
         template "test.rb.erb", "test/mailers/#{basename}_test.rb"
 
         {
+          "base.rb" => "app/mailers/base.rb",
           "layout.text.erb" => "app/views/layouts/mailer.text.erb",
           "layout.html.erb" => "app/views/layouts/mailer.html.erb"
         }.each do |from, to|

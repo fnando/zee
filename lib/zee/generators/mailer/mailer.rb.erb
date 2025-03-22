@@ -2,7 +2,7 @@
 
 module Mailers
   # To expose a variable to the email template, use instance variables.
-  class <%= mailer_class_name %> < Zee::Mailer
+  class <%= mailer_class_name %> < Base
   <%- options[:methods].each_with_index do |method, index| -%>
 
     def <%= method %>

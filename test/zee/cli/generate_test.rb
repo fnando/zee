@@ -100,6 +100,7 @@ class GenerateTest < Minitest::Test
 
     assert_equal 0, exit_code
     assert app.join("app/mailers/messages.rb").file?
+    assert app.join("app/mailers/base.rb").file?
     assert app.join("app/views/messages/hello.text.erb").file?
     assert app.join("app/views/messages/hello.html.erb").file?
     assert app.join("app/views/messages/bye.text.erb").file?
