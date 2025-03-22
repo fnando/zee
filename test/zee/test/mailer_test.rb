@@ -218,8 +218,51 @@ class MailerTest < Zee::Test::Mailer
     end
 
     mailer_class.hello.deliver
+    instruments = Zee::Instrumentation.instrumentations[:mailer]
 
-    assert_equal 4, Zee::Instrumentation.instrumentations[:mailer].size
+    assert_equal 5, instruments.size
+
+    assert_equal(
+      {
+        scope: :view,
+        mailer: "messages#hello",
+        path: Pathname("tmp/app/views/messages/hello.text.erb").expand_path
+      },
+      instruments[0][:args]
+    )
+
+    assert_equal(
+      {
+        scope: :layout,
+        mailer: "messages#hello",
+        path: Pathname("tmp/app/views/layouts/mailer.text.erb").expand_path
+      },
+      instruments[1][:args]
+    )
+
+    assert_equal(
+      {
+        scope: :view,
+        mailer: "messages#hello",
+        path: Pathname("tmp/app/views/messages/hello.html.erb").expand_path
+      },
+      instruments[2][:args]
+    )
+
+    assert_equal(
+      {
+        scope: :layout,
+        mailer: "messages#hello",
+        path: Pathname("tmp/app/views/layouts/mailer.html.erb").expand_path
+      },
+      instruments[3][:args]
+    )
+
+    assert_equal(
+      {scope: :delivery, mailer: "messages#hello"},
+      instruments[4][:args]
+    )
+    assert_instance_of(Float, instruments[4][:duration])
   end
 
   test "fails when no body has been set" do

@@ -44,12 +44,32 @@ module Zee
     # @api private
     # The message object.
     def message
-      @message ||= ::Mail.new
+      @message ||= build_new_message
+    end
+
+    # @api private
+    def build_new_message
+      Message.new("#{controller_name}##{action_name}")
+    end
+
+    # @api private
+    def controller_name
+      self.class.naming.underscore
+    end
+
+    # @api private
+    def action_name
+      @_action_name
+    end
+
+    # @api private
+    def mailer_name
+      "#{controller_name}##{action_name}"
     end
 
     # The main method that creates the message and renders the email templates.
     def mail(**options)
-      @message = ::Mail.new if options.any?
+      @message = build_new_message if options.any?
 
       assign_headers(options.delete(:headers) || {})
       assign_attachments(options.delete(:attachments) || {})
@@ -94,6 +114,7 @@ module Zee
 
     # @api private
     def process_email(name, *, **)
+      @_action_name = name
       send(name, *, **)
 
       if message.parts.reject(&:attachment?).empty?
@@ -138,17 +159,26 @@ module Zee
 
       use_safe_buffer = mimes.any? {|mime| mime.content_type == TEXT_HTML }
       layout = find_layout(nil, mimes)
-      content = instrument(:mailer, scope: :view, path: template.path) do
+      content = instrument(
+        :mailer,
+        scope: :view,
+        path: template.path,
+        mailer: mailer_name
+      ) do
         Zee.app.render_template(template.path, locals:, use_safe_buffer:)
       end
 
       if layout
-        content =
-          instrument(:mailer, scope: :layout, path: layout.path) do
-            Zee.app.render_template(layout.path, locals:) do
-              SafeBuffer.new(content)
-            end
+        content = instrument(
+          :mailer,
+          scope: :layout,
+          path: layout.path,
+          mailer: mailer_name
+        ) do
+          Zee.app.render_template(layout.path, locals:) do
+            SafeBuffer.new(content)
           end
+        end
       end
 
       content
