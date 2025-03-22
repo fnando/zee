@@ -30,6 +30,7 @@ module Zee
     # @api private
     DEFAULT_FILTERS = %w[
       passw email secret token _key crypt salt certificate otp ssn cvv cvc
+      signature
     ].freeze
 
     def initialize(filters = DEFAULT_FILTERS)

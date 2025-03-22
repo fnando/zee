@@ -50,7 +50,7 @@ class RequestLoggerTest < Minitest::Test
     Dir.chdir(root) do
       app.call(
         Rack::MockRequest.env_for(
-          "/",
+          "/?email=me@example.com",
           params: {email: "me@example.com"},
           method: :post
         )
@@ -58,7 +58,7 @@ class RequestLoggerTest < Minitest::Test
     end
     log = strip_ansi_color(logger_io.tap(&:rewind).read)
 
-    assert_match(%r{^POST / \(.*?\)$}, log)
+    assert_match(%r{^POST /\?email=filtered \(.*?\)$}, log)
     assert_includes log, "Handler: pages#home\n"
     assert_includes log, "Halted by: :some_before_action\n"
     assert_match(/Params: {"email" ?=> ?"\[filtered\]"}\n/, log)

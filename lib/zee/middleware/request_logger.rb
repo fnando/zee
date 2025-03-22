@@ -94,7 +94,8 @@ module Zee
       def log_request_path(request, duration)
         logger.debug("")
         logger.debug do
-          "#{request.request_method} #{request.fullpath} (#{duration.duration})"
+          "#{request.request_method} #{filter_query(request.fullpath)} " \
+          "(#{duration.duration})"
             .colored(:magenta)
         end
       end
@@ -118,6 +119,17 @@ module Zee
           "#{queries} #{queries == 1 ? 'query' : 'queries'}",
           sql_time_spent
         )
+      end
+
+      def filter_query(path)
+        uri = URI.parse(path)
+        query =
+          ParameterFilter
+          .new(Zee.app.config.filter_parameters)
+          .filter(Rack::Utils.parse_nested_query(uri.query), mask: "filtered")
+        uri.query = Rack::Utils.build_nested_query(query)
+
+        uri.to_s
       end
     end
   end

@@ -75,4 +75,13 @@ class ParameterFilterTest < Minitest::Test
     assert_equal "[filtered]", users[1][:user][1][:password_confirmation]
     assert_equal "2@example.com", users[1][:user][2][:email]
   end
+
+  test "filters using custom mask" do
+    params = {"password" => "secret", "password_confirmation" => "secret"}
+    params = Zee::ParameterFilter.new(["passw"])
+                                 .filter(params, mask: "[secret]")
+
+    assert_equal "[secret]", params["password"]
+    assert_equal "[secret]", params["password_confirmation"]
+  end
 end
