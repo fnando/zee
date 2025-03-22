@@ -12,6 +12,10 @@ module Zee
         @app = app
       end
 
+      def logger
+        Zee.app.config.logger
+      end
+
       def call(env)
         instrumented = Zee.app.config.enable_instrumentation
 
@@ -20,44 +24,14 @@ module Zee
         # Process the request.
         start = Process.clock_gettime(Process::CLOCK_MONOTONIC)
         status, headers, body = @app.call(env)
-        duration =
-          (Process.clock_gettime(Process::CLOCK_MONOTONIC) - start).duration
-
-        logger = Zee.app.config.logger
+        duration = (Process.clock_gettime(Process::CLOCK_MONOTONIC) - start)
         request = Request.new(env)
-        store = Instrumentation.instrumentations
-        props = prepare_props(store)
 
-        if request.params.any?
-          props[:params] = ParameterFilter.new(Zee.app.config.filter_parameters)
-                                          .filter(request.params)
-        end
-
-        # The order of keys is important and determines the order of the output.
-        props = {handler: props.delete(:route)}.merge(props)
-        props[:database] = database_log(store)
-        props[:status] = "#{status} #{Rack::Utils::HTTP_STATUS_CODES[status]}"
-
-        logger.debug("")
-        logger.debug do
-          "#{request.request_method} #{request.fullpath} (#{duration})"
-            .colored(:magenta)
-        end
-
-        props.each do |key, value|
-          next unless value&.present?
-
-          colored_key = key.to_s.humanize.colored(:cyan)
-
-          case key
-          when :partials
-            value.each do |path|
-              logger.debug("#{'Partial'.colored(:cyan)}: #{path}")
-            end
-          else
-            logger.debug("#{colored_key}: #{value}")
-          end
-        end
+        log_request_path(request, duration)
+        log_status(status, headers)
+        log_request(request)
+        log_mail
+        log_sequel
 
         [status, headers, body]
       end
@@ -70,42 +44,80 @@ module Zee
         # :nocov:
       end
 
-      def view_log(duration:, path:)
-        duration = " (#{duration.duration})" if duration
+      def log_entry(key, value, duration = nil)
+        duration = "(#{duration.duration})" if duration
+        key = "#{key.to_s.humanize}:".colored(:cyan)
+        value = relative_path(value) if value.is_a?(Pathname)
 
-        "#{relative_path(path)}#{duration}"
+        logger.debug [key, value, duration].compact.join(" ")
       end
 
-      def database_log(store)
-        return unless store&.key?(:sequel)
+      def log_mail
+        Instrumentation.instrumentations[:mailer].each do |props|
+          props => {args:, duration:}
+          args => {scope:}
 
-        queries = store[:sequel].count
-        sql_time_spent = store[:sequel].sum { _1[:duration] }
-
-        return "0 queries" unless queries.positive?
-
-        "#{queries} #{queries == 1 ? 'query' : 'queries'} " \
-          "(#{sql_time_spent.duration})"
-      end
-
-      def prepare_props(store)
-        store[:request].each_with_object({}) do |props, buffer|
-          case props[:args][:scope]
-          when :partial
-            buffer[:partials] ||= []
-            buffer[:partials] << view_log(
-              path: props[:args][:path],
-              duration: props[:duration]
-            )
-          when :layout, :view
-            buffer[props[:args][:scope]] = view_log(
-              path: props[:args][:path],
-              duration: props[:duration]
-            )
+          case scope
+          when :delivery
+            log_entry(:mail_delivery, args[:mailer], duration)
           else
-            buffer.merge!(props[:args].except(:scope))
+            log_entry("mail_#{scope}", args[:path], duration)
           end
         end
+      end
+
+      def log_request(request)
+        Instrumentation.instrumentations[:request].each do |props|
+          props => {args:, duration:}
+          args => {scope:}
+
+          case scope
+          when :route
+            log_entry(:handler, args[:name])
+          when :before_action
+            log_entry(:halted_by, args[:source])
+          else
+            log_entry(scope, args[:path], duration)
+          end
+        end
+
+        return unless request.params.any?
+
+        log_entry(
+          :params,
+          ParameterFilter
+            .new(Zee.app.config.filter_parameters)
+            .filter(request.params)
+        )
+      end
+
+      def log_request_path(request, duration)
+        logger.debug("")
+        logger.debug do
+          "#{request.request_method} #{request.fullpath} (#{duration.duration})"
+            .colored(:magenta)
+        end
+      end
+
+      def log_status(status, headers)
+        log_entry(
+          :status,
+          "#{status} #{Rack::Utils::HTTP_STATUS_CODES[status]}"
+        )
+
+        log_entry(:redirected_to, headers["location"]) if headers["location"]
+      end
+
+      def log_sequel
+        sequel = Instrumentation.instrumentations[:sequel]
+        queries = sequel.count
+        sql_time_spent = sequel.sum { _1[:duration] }
+
+        log_entry(
+          :database,
+          "#{queries} #{queries == 1 ? 'query' : 'queries'}",
+          sql_time_spent
+        )
       end
     end
   end

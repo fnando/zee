@@ -25,7 +25,7 @@ module Zee
       # If the route is a rack app, route to it.
       return route_to_app(env, route) if route.to.respond_to?(:call)
 
-      instrument :request, route: route.to
+      instrument :request, scope: :route, name: route.to
 
       controller_name, action_name = *route.to.split(POUND_SIGN)
 
