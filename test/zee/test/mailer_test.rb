@@ -244,11 +244,34 @@ class MailerTest < Zee::Test::Mailer
     assert_equal "couldn't find template for messages#hello", error.message
   end
 
-  test "makes route helpers available" do
-    Zee.app.routes.default_url_options = {
+  test "makes helpers available to mailer class" do
+    Zee.app.routes.config.default_url_options.merge!(
       host: "example.com",
       protocol: "http"
-    }
+    )
+
+    mailer_class = Class.new(Zee::Mailer) do
+      def self.name
+        "Mailers::Messages"
+      end
+
+      def hello
+        mail to: "TO", from: "FROM", subject: "SUBJECT", body: root_url
+      end
+    end
+
+    mailer_class.hello.deliver
+
+    assert_mail_delivered
+    assert_includes mail_deliveries.first.text_part.to_s,
+                    "http://example.com/"
+  end
+
+  test "makes route helpers available to views" do
+    Zee.app.routes.config.default_url_options.merge!(
+      host: "example.com",
+      protocol: "http"
+    )
 
     Dir.chdir("test/fixtures/sample_app") do
       Mailers::Mailer.login("to@example.com").deliver
@@ -257,5 +280,13 @@ class MailerTest < Zee::Test::Mailer
     assert_mail_delivered
     assert_includes mail_deliveries.first.text_part.to_s,
                     "http://example.com/login"
+  end
+
+  test "keeps failing for missing methods" do
+    error = assert_raises(NoMethodError) do
+      Zee::Mailer.new.hello
+    end
+
+    assert_match(/undefined method/, error.message)
   end
 end

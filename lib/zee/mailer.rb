@@ -178,5 +178,17 @@ module Zee
       raise MissingTemplateError,
             "couldn't find template for #{self.class.naming.underscore}##{name}"
     end
+
+    # @api private
+    def routes
+      @routes ||= Object.extend(Zee.app.routes.helpers)
+    end
+
+    # @api private
+    def method_missing(name, *, **, &)
+      return routes.public_send(name, *, **) if routes.respond_to?(name)
+
+      super
+    end
   end
 end

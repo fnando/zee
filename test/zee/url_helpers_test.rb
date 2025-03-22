@@ -41,7 +41,8 @@ class URLHelpersTest < Minitest::Test
     assert_equal "https://example.com/?a=1",
                  helpers.root_path(a: 1, host: "example.com", protocol: :https)
     assert_equal "https://example.com/?a=1#top",
-                 helpers.root_path(a: 1, host: "example.com",
+                 helpers.root_path(a: 1,
+                                   host: "example.com",
                                    protocol: :https,
                                    anchor: "top")
 
@@ -62,9 +63,13 @@ class URLHelpersTest < Minitest::Test
   end
 
   test "uses default_url_options" do
-    routes = Zee::Routes.new(host: "example.com", protocol: "https") do
+    config = Zee::Config.new
+    config.set :default_url_options, {host: "example.com", protocol: "https"}
+
+    routes = Zee::Routes.new(config) do
       root to: "pages#home"
     end
+
     helpers = Object.new.extend(routes.helpers)
 
     assert_equal "https://example.com/", helpers.root_url

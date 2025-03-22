@@ -2,12 +2,12 @@
 
 module Zee
   class Routes
-    # The default URL options for the routes.
-    # @return [Hash]
-    attr_accessor :default_url_options
+    # The app config.
+    # @return [Config]
+    attr_reader :config
 
-    def initialize(default_url_options = {}, &)
-      @default_url_options = default_url_options
+    def initialize(config = nil, &)
+      @config = config
       @store = []
       @defaults = []
       @constraints = []
@@ -71,7 +71,7 @@ module Zee
           end
 
           def default_url_options
-            routes.default_url_options
+            routes.config&.default_url_options || {}
           end
 
           store.each do |route|
@@ -89,26 +89,26 @@ module Zee
               names << segment.name
             end
 
-            args_path = [*args, "**"].join(", ")
-            args_url = [*args, "host: nil, protocol: nil, **"].join(", ")
-            names = names.join(", ")
-            call = [route.name.inspect, names, "**"].reject(&:empty?).join(", ")
+            args = [*args, DOUBLE_STAR_OPTIONS].join(COMMA_SPACE)
+            names = names.join(COMMA_SPACE)
+            call = [route.name.inspect, names, DOUBLE_STAR_OPTIONS]
+                   .reject(&:empty?)
+                   .join(COMMA_SPACE)
 
             class_eval <<~RUBY, __FILE__, __LINE__ + 1
-              def #{route.name}_path(#{args_path})
+              def #{route.name}_path(#{args})
                 url_for(#{call})
               end
 
-              def #{route.name}_url(#{args_url})
-                host = host || default_url_options[:host]
-                protocol = protocol || default_url_options[:protocol]
+              def #{route.name}_url(#{args})
+                options = default_url_options.merge(options)
 
-                unless host
+                unless options[:host]
                   raise ArgumentError, "Please provide the :host parameter, " \
                                        "set default_url_options[:host]"
                 end
 
-                url_for(#{call}, protocol:, host:, **)
+                url_for(#{call}, **options)
               end
             RUBY
           end
@@ -119,12 +119,14 @@ module Zee
           # @param protocol [String] The protocol to use.
           # @param anchor [String] The anchor to use.
           # @param kwargs [Hash] The query parameters.
-          # @param [Object] name
-          # @param [Array<Object>] args
+          # @param port [Integer, nil]
+          # @param args [Array<Object>]
+          # @param name [Symbol]
           def url_for(
             name,
             *args,
             host: nil,
+            port: nil,
             protocol: nil,
             anchor: nil,
             **kwargs
@@ -133,13 +135,15 @@ module Zee
             path = route.parser.build_path(*args)
             query = Rack::Utils.build_nested_query(kwargs) if kwargs.any?
 
-            suffix = query ? "#{path}?#{query}" : path
-            protocol = "#{protocol}:" if protocol
-            url = "#{protocol}//#{host}" if host
-            url = "#{url}#{suffix}"
-            url = "#{url}##{anchor}" if anchor
+            uri = URI.parse(SLASH)
+            uri.scheme = protocol.to_s if protocol
+            uri.host = host if host
+            uri.port = port if port
+            uri.path = path
+            uri.query = query if query
+            uri.fragment = anchor if anchor
 
-            url
+            uri.to_s
           end
         end
       end

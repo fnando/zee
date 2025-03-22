@@ -23,6 +23,12 @@ module Zee
   COMMA_SPACE = ", "
 
   # @api private
+  DOUBLE_STAR_OPTIONS = "**options"
+
+  # @api private
+  DOUBLE_STAR = "**"
+
+  # @api private
   DASH = "-"
 
   # @api private
