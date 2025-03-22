@@ -14,6 +14,7 @@ module Zee
       request: nil,
       helpers: Module.new,
       cache: false,
+      use_safe_buffer: true,
       &
     )
       template_path = Pathname(file)
@@ -33,10 +34,18 @@ module Zee
       end
 
       unless template
+        engine_class = if use_safe_buffer
+                         # This is zee's SafeBuffer class
+                         Erubi::CaptureBlockEngine
+                       else
+                         # This is erubi's CaptureBlockEngine class
+                         ::Erubi::CaptureBlockEngine
+                       end
+
         options = {
-          engine_class: Erubi::CaptureBlockEngine,
+          engine_class:,
           freeze_template_literals: false,
-          escape: true,
+          escape: use_safe_buffer,
           bufval: BUFVAL,
           bufvar: BUFVAR
         }

@@ -136,9 +136,10 @@ module Zee
       template = find_template(name, mimes, required: false)
       return unless template
 
+      use_safe_buffer = mimes.any? {|mime| mime.content_type == TEXT_HTML }
       layout = find_layout(nil, mimes)
       content = instrument(:mailer, scope: :view, path: template.path) do
-        Zee.app.render_template(template.path, locals:)
+        Zee.app.render_template(template.path, locals:, use_safe_buffer:)
       end
 
       if layout

@@ -80,7 +80,7 @@ class MailerTest < Zee::Test::Mailer
   test "renders text email" do
     root = "tmp/app/views/messages"
     FileUtils.mkdir_p(root)
-    File.write("#{root}/hello.text.erb", "Hello, <%= @name %>")
+    File.write("#{root}/hello.text.erb", "Hello, <%= @name %>! <%= '<3' %>")
 
     mailer_class = Class.new(Zee::Mailer) do
       def self.name
@@ -100,7 +100,7 @@ class MailerTest < Zee::Test::Mailer
     mailer_class.hello.deliver
 
     assert_mail_delivered
-    assert_includes mail_deliveries.first.text_part.to_s, "Hello, John"
+    assert_includes mail_deliveries.first.text_part.to_s, "Hello, John! <3"
   end
 
   test "renders html email" do
