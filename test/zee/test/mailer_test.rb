@@ -332,4 +332,10 @@ class MailerTest < Zee::Test::Mailer
 
     assert_match(/undefined method/, error.message)
   end
+
+  test "responds to url helper methods" do
+    mailer = Zee::Mailer.new
+
+    assert_respond_to mailer, :root_path
+  end
 end

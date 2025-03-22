@@ -121,6 +121,7 @@ class ControllerTest < Minitest::Test
 
   test "raises error when action is missing" do
     controller_class = Class.new(Zee::Controller) do
+      # noop
     end
 
     error = assert_raises(Zee::Controller::MissingActionError) do

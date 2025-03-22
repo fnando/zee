@@ -22,8 +22,8 @@ module Zee
       context.instance_variable_set(:@_controller, controller)
       context.instance_variable_set(:@_request, request)
 
-      key = template_path.to_s
-      template = self.cache[key]
+      cache_key = template_path.to_s
+      template = self.cache[cache_key]
 
       vars = locals.each_with_object({}) do |(key, value), buffer|
         if key.start_with?(AT_SIGN)
@@ -51,7 +51,7 @@ module Zee
         }
 
         template = Tilt.new(file, options)
-        self.cache[key] = template if cache
+        self.cache[cache_key] = template if cache
       end
 
       context.instance_variable_set(

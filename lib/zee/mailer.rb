@@ -221,5 +221,10 @@ module Zee
 
       super
     end
+
+    # @api private
+    def respond_to_missing?(name, *)
+      routes.respond_to?(name) || super
+    end
   end
 end
