@@ -3,7 +3,7 @@
 require "test_helper"
 
 module Models
-  class <%= options[:model_name] %>Test < Minitest::Test
+  class <%= options[:model_name] %>Test < Zee::Test
     test "returns model class name" do
       assert_equal "Models::<%= options[:model_name] %>", Models::<%= options[:model_name] %>.name
     end

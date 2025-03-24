@@ -6,10 +6,7 @@ module Zee
       module HTML
         Minitest::Utils::Reporter.filters << %r{zee/test/assertions/html\.rb}
 
-        # @api private
-        def indent_xsl
-          @indent_xsl ||= File.read(File.join(__dir__, "indent.xsl"))
-        end
+        include HTMLHelpers
 
         # Asserts that the given HTML contains a tag with the given selector.
         #
@@ -36,12 +33,7 @@ module Zee
         )
           root = Nokogiri::HTML.fragment(root.to_s)
           nodes = root.css(selector)
-          lines = Nokogiri::XSLT(indent_xsl)
-                          .apply_to(Nokogiri::XML(root.to_xml))
-                          .lines[2..-1]
-
-          formatted_root = lines ? lines.join : root.to_s.inspect
-
+          formatted_root = format_html(root)
           none = (count || minimum || maximum || between).nil?
 
           minimum = 1 if none

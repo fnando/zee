@@ -41,7 +41,7 @@ class MailerTest < Zee::Test::Mailer
                           subject: "SUBJECT",
                           headers: {"x-custom" => "CUSTOM"},
                           attachments: {"hello.txt" => "hello"}
-    assert_includes mail_deliveries.first.text_part.to_s, "BODY"
+    assert_includes self.class.deliveries.first.text_part.to_s, "BODY"
   end
 
   test "builds email with html part" do
@@ -57,7 +57,7 @@ class MailerTest < Zee::Test::Mailer
 
     mailer_class.hello.deliver
 
-    assert_includes mail_deliveries.first.html_part.to_s, "BODY"
+    assert_includes self.class.deliveries.first.html_part.to_s, "BODY"
   end
 
   test "builds email with text part" do
@@ -73,7 +73,7 @@ class MailerTest < Zee::Test::Mailer
 
     mailer_class.hello.deliver
 
-    assert_includes mail_deliveries.first.text_part.to_s,
+    assert_includes self.class.deliveries.first.text_part.to_s,
                     "BODY"
   end
 
@@ -100,7 +100,8 @@ class MailerTest < Zee::Test::Mailer
     mailer_class.hello.deliver
 
     assert_mail_delivered
-    assert_includes mail_deliveries.first.text_part.to_s, "Hello, John! <3"
+    assert_includes self.class.deliveries.first.text_part.to_s,
+                    "Hello, John! <3"
   end
 
   test "renders html email" do
@@ -126,7 +127,7 @@ class MailerTest < Zee::Test::Mailer
     mailer_class.hello.deliver
 
     assert_mail_delivered
-    assert_includes mail_deliveries.first.html_part.to_s, "Hello, John"
+    assert_includes self.class.deliveries.first.html_part.to_s, "Hello, John"
   end
 
   test "renders multipart email" do
@@ -152,8 +153,8 @@ class MailerTest < Zee::Test::Mailer
     mailer_class.hello.deliver
 
     assert_mail_delivered
-    assert_includes mail_deliveries.first.html_part.to_s, "rendered html"
-    assert_includes mail_deliveries.first.text_part.to_s, "rendered text"
+    assert_includes self.class.deliveries.first.html_part.to_s, "rendered html"
+    assert_includes self.class.deliveries.first.text_part.to_s, "rendered text"
   end
 
   test "renders layout file" do
@@ -185,9 +186,9 @@ class MailerTest < Zee::Test::Mailer
     mailer_class.hello.deliver
 
     assert_mail_delivered
-    assert_includes mail_deliveries.first.html_part.to_s,
+    assert_includes self.class.deliveries.first.html_part.to_s,
                     "html layout: <strong>rendered html</strong>"
-    assert_includes mail_deliveries.first.text_part.to_s,
+    assert_includes self.class.deliveries.first.text_part.to_s,
                     "text layout: rendered text"
   end
 
@@ -306,7 +307,7 @@ class MailerTest < Zee::Test::Mailer
     mailer_class.hello.deliver
 
     assert_mail_delivered
-    assert_includes mail_deliveries.first.text_part.to_s,
+    assert_includes self.class.deliveries.first.text_part.to_s,
                     "http://example.com/"
   end
 
@@ -321,7 +322,7 @@ class MailerTest < Zee::Test::Mailer
     end
 
     assert_mail_delivered
-    assert_includes mail_deliveries.first.text_part.to_s,
+    assert_includes self.class.deliveries.first.text_part.to_s,
                     "http://example.com/login"
   end
 

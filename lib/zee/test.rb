@@ -18,5 +18,7 @@ module Zee
   #     end
   #   end
   class Test < Minitest::Test
+    # Sets up email delivery as test.
+    setup { ::Mail.defaults { delivery_method :test } }
   end
 end

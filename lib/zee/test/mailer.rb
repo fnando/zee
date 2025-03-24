@@ -4,6 +4,13 @@ gem "mail"
 require "mail"
 
 module Zee
+  class Mailer
+    # Returns all the emails that have been delivered in test mode.
+    def self.deliveries
+      ::Mail::TestMailer.deliveries
+    end
+  end
+
   class Test < Minitest::Test
     # This test class allows you to test mailer classes. It sets delivery mode
     # to `:test` and clears deliveries as a setup step.
@@ -23,14 +30,15 @@ module Zee
     #   end
     class Mailer < Test
       include Test::Assertions::HTML
+      include Zee.app.routes.helpers
 
-      setup { Mail.defaults { delivery_method :test } }
-      setup { mail_deliveries.clear }
-
-      # Return deliveries for testing.
-      def mail_deliveries
+      # Returns all the emails that have been delivered in test mode.
+      def self.deliveries
         ::Mail::TestMailer.deliveries
       end
+
+      setup { Mail.defaults { delivery_method :test } }
+      setup { ::Mail::TestMailer.deliveries.clear }
 
       # Assert that email has been delivered.
       # By default, it expects that exactly 1 email has been delivery. You can
@@ -60,7 +68,7 @@ module Zee
       def assert_mail_delivered(count: 1, **options)
         raise ArgumentError, "unsupported option: body" if options.key?(:body)
 
-        mails = mail_deliveries.select do |mail|
+        mails = self.class.deliveries.select do |mail|
           options.empty? || match_mail_options?(mail, **options)
         end
 

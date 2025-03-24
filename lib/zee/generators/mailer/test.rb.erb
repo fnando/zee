@@ -2,19 +2,21 @@
 
 require "test_helper"
 
-class <%= mailer_class_name %>Test < Zee::Test::Mailer
-  <%- options[:methods].each do |method| -%>
+module Mailers
+  class <%= mailer_class_name %>Test < Zee::Test::Mailer
+    <%- options[:methods].each do |method| -%>
 
-  test "renders <%= method %> email" do
-    mail = Mailers::<%= mailer_class_name %>.<%= method %>
+    test "renders <%= method %> email" do
+      mail = Mailers::<%= mailer_class_name %>.<%= method %>
 
-    assert_equal "<%= method.tr("_", " ").capitalize %>", mail.subject
-    assert_includes mail.from, "from@example.com"
-    assert_includes mail.to, "to@example.com"
-    assert_includes mail.html_part.to_s,
-                    "<p>Find me at app/views/<%= basename %>/<%= method %>.html.erb</p>"
-    assert_includes mail.text_part.to_s,
-                    "Find me at app/views/<%= basename %>/<%= method %>.text.erb"
+      assert_equal "<%= method.tr("_", " ").capitalize %>", mail.subject
+      assert_includes mail.from, "from@example.com"
+      assert_includes mail.to, "to@example.com"
+      assert_includes mail.html_part.to_s,
+                      "<p>Find me at app/views/<%= basename %>/<%= method %>.html.erb</p>"
+      assert_includes mail.text_part.to_s,
+                      "Find me at app/views/<%= basename %>/<%= method %>.text.erb"
+    end
+    <%- end -%>
   end
-  <%- end -%>
 end
