@@ -229,7 +229,7 @@ module Zee
 
       $LOAD_PATH << File.join(Dir.pwd, "test")
 
-      ENV["MINITEST_TEST_COMMAND"] = cmd
+      ENV["MT_TEST_COMMAND"] = cmd
       ENV["ZEE_ENV"] = "test"
       CLI.load_dotenv_files(".env.test", ".env")
       ARGV.clear
@@ -329,7 +329,9 @@ module Zee
       end
 
       # Copy other assets
-      Dir["./app/assets/{fonts,images}"].each do |dir|
+      Dir["./app/assets/*"].each do |dir|
+        next if dir.end_with?("styles", "scripts")
+
         FileUtils.cp_r(dir, "public/assets/")
       end
 
