@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-gem "minitest"
-require "minitest"
-
 module Zee
   class Test < Minitest::Test
     # This test class includes [rack-test](https://github.com/rack/rack-test)

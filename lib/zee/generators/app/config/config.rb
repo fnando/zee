@@ -7,9 +7,6 @@ Zee.app.config :development do
   # Show better nicer logging for each request.
   set :enable_instrumentation, true
 
-  # Set the default url options.
-  set :default_url_options, host: "localhost", port: 3000, protocol: :http
-
   # Set the mailer delivery method.
   Mail.defaults { delivery_method :logger }
 end
@@ -17,6 +14,9 @@ end
 Zee.app.config :development, :test do
   # Set the domain that will be used for cookies.
   set :domain, "localhost"
+
+  # Set the default url options.
+  set :default_url_options, host: "localhost", port: 3000, protocol: :http
 end
 
 Zee.app.config :production do
