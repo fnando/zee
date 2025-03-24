@@ -3,7 +3,7 @@
 require "test_helper"
 
 module Controllers
-  class <%= controller_class_name %>Test < Zee::Test::Request
+  class <%= controller_class_name %>Test < Zee::Test::Integration
     <%- options[:actions].each do |action| -%>
 
     test "renders :<%= action %>" do

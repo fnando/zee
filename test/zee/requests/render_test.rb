@@ -2,7 +2,7 @@
 
 require "test_helper"
 
-class RenderTest < Zee::Test::Request
+class RenderTest < Zee::Test::Integration
   setup do
     store_translations :en, zee: {meta: {pages: {home: {title: "My app"}}}}
   end

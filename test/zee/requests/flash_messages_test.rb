@@ -2,7 +2,7 @@
 
 require "test_helper"
 
-class FlashMessagesTest < Zee::Test::Request
+class FlashMessagesTest < Zee::Test::Integration
   test "sets message" do
     post "/messages"
     follow_redirect!

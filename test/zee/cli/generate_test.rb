@@ -30,7 +30,7 @@ class GenerateTest < Minitest::Test
     end
 
     assert_path_exists app.join("app/controllers/users.rb")
-    assert_path_exists app.join("test/requests/users_test.rb")
+    assert_path_exists app.join("test/integration/users_test.rb")
   end
 
   test "generates new controller with actions" do
@@ -60,7 +60,7 @@ class GenerateTest < Minitest::Test
     assert_includes app.join("app/views/users/remove.html.erb").read,
                     "Edit this template at app/views/users/remove.html.erb"
 
-    assert_path_exists app.join("test/requests/users_test.rb")
+    assert_path_exists app.join("test/integration/users_test.rb")
   end
 
   test "generates new model" do
@@ -107,6 +107,24 @@ class GenerateTest < Minitest::Test
     assert app.join("app/views/messages/bye.html.erb").file?
     assert app.join("app/views/layouts/mailer.text.erb").file?
     assert app.join("app/views/layouts/mailer.html.erb").file?
+  end
+
+  test "generates system test" do
+    app = Pathname("tmp/app")
+    exit_code = nil
+
+    capture { Zee::CLI.start(["new", "tmp/app", "-BN"]) }
+
+    Dir.chdir(app) do
+      capture do
+        Zee::CLI.start(%w[g system_test signup])
+      end => {exit_code:}
+    end
+
+    assert_equal 0, exit_code
+    assert app.join("test/system/signup_test.rb").file?
+    assert_includes app.join("test/system/signup_test.rb").read,
+                    "class SignupTest < Zee::Test::System"
   end
 
   test "fails when trying to generate model with invalid name" do

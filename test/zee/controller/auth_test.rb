@@ -2,9 +2,7 @@
 
 require "test_helper"
 
-class AuthenticationTest < Zee::Test::Integration
-  include Capybara::DSL
-
+class AuthenticationTest < Zee::Test::System
   setup do
     app_class = Class.new(Zee::App)
     app = app_class.new
@@ -29,6 +27,7 @@ class AuthenticationTest < Zee::Test::Integration
     app.initialize!
   end
 
+  setup { Capybara.current_driver = :rack_test }
   setup { Capybara.default_host = "http://localhost" }
   teardown { Zee.app.loader.unregister }
 

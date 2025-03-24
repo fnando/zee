@@ -1,0 +1,11 @@
+# frozen_string_literal: true
+
+require "test_helper"
+
+module System
+  class <%= controller_class_name %>Test < Zee::Test::System
+    test "does something" do
+      visit "/"
+    end
+  end
+end

@@ -263,26 +263,39 @@ module Zee
       require "zeitwerk"
       Bundler.require(env.to_sym)
 
-      Object.const_set(:Actions, Module.new) unless defined?(::Actions)
-      Object.const_set(:Controllers, Module.new) unless defined?(::Controllers)
-      Object.const_set(:Helpers, Module.new) unless defined?(::Helpers)
-      Object.const_set(:Jobs, Module.new) unless defined?(::Jobs)
-      Object.const_set(:Mailers, Module.new) unless defined?(::Mailers)
-      Object.const_set(:Models, Module.new) unless defined?(::Models)
-      Object.const_set(:Views, Module.new) unless defined?(::Views)
-
-      push_dir = lambda do |dir, namespace|
+      push_dir = lambda do |dir|
+        namespace = config.inflector.camelize(File.basename(dir)).to_sym
         dir = root.join(dir)
-        loader.push_dir(dir.to_s, namespace:) if dir.directory?
+        next unless dir.directory?
+
+        namespace = if Object.const_defined?(namespace)
+                      Object.const_get(namespace)
+                    else
+                      Object.const_set(namespace, Module.new)
+                    end
+
+        loader.push_dir(dir.to_s, namespace:)
       end
 
-      push_dir.call "app/actions", ::Actions
-      push_dir.call "app/controllers", ::Controllers
-      push_dir.call "app/helpers", ::Helpers
-      push_dir.call "app/jobs", ::Jobs
-      push_dir.call "app/mailers", ::Mailers
-      push_dir.call "app/models", ::Models
-      push_dir.call "app/views", ::Views
+      push_dir.call "app/actions"
+      push_dir.call "app/components"
+      push_dir.call "app/contracts"
+      push_dir.call "app/controllers"
+      push_dir.call "app/decorators"
+      push_dir.call "app/forms"
+      push_dir.call "app/helpers"
+      push_dir.call "app/jobs"
+      push_dir.call "app/mailers"
+      push_dir.call "app/models"
+      push_dir.call "app/operations"
+      push_dir.call "app/policies"
+      push_dir.call "app/presenters"
+      push_dir.call "app/queries"
+      push_dir.call "app/serializers"
+      push_dir.call "app/services"
+      push_dir.call "app/views"
+      push_dir.call "app/workers"
+      push_dir.call "app/workflows"
 
       init { set_i18n_load_path }
 

@@ -12,7 +12,7 @@ Zee.app.init do
   require_relative setup_file if File.file?(setup_file)
 
   # Enable logging.
-  if env.development?
+  if env.local?
     Sequel::Model.db.loggers.clear
     Sequel::Model.db.loggers << Logger.new("log/#{env}.log", 1, 512 * 1024)
   end

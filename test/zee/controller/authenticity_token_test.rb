@@ -2,7 +2,7 @@
 
 require "test_helper"
 
-class AuthenticityTokenTest < Zee::Test::Request
+class AuthenticityTokenTest < Zee::Test::Integration
   test "rejects missing token" do
     post "/posts/new", {}
 

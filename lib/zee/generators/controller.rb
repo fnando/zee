@@ -14,7 +14,7 @@ module Zee
 
       def templates
         template "controller.rb.erb", "app/controllers/#{options[:name]}.rb"
-        template "test.rb.erb", "test/requests/#{options[:name]}_test.rb"
+        template "test.rb.erb", "test/integration/#{options[:name]}_test.rb"
 
         options[:actions].each do |action|
           options[:current_action] = action

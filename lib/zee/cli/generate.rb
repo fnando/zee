@@ -3,6 +3,14 @@
 module Zee
   class CLI < Command
     class Generate < Command
+      desc "system_test NAME", "Generate a new system test"
+      def system_test(name)
+        generator = Generators::SystemTest.new
+        generator.destination_root = File.expand_path(Dir.pwd)
+        generator.options = {name:}
+        generator.invoke_all
+      end
+
       desc "mailer NAME [METHODS...]", "Generate new mailer"
       def mailer(name, *methods)
         options[:name] = name

@@ -220,6 +220,11 @@ module Zee
            type: :string,
            aliases: "-s",
            desc: "Set a specific seed"
+    option :backtrace,
+           type: :boolean,
+           default: false,
+           aliases: "-b",
+           desc: "Show full backtrace"
     # :nocov:
     def test(*files)
       cmd = [
@@ -232,7 +237,6 @@ module Zee
       ENV["MT_TEST_COMMAND"] = cmd
       ENV["ZEE_ENV"] = "test"
       CLI.load_dotenv_files(".env.test", ".env")
-      ARGV.clear
 
       require "./test/test_helper" if File.file?("test/test_helper.rb")
       require "minitest/utils"
@@ -260,10 +264,12 @@ module Zee
       pattern = ["./test/**/*_test.rb"]
       pattern = files if files.any?
       files = Dir[*pattern]
-      has_integration_test = files.any? { _1.include?("/integration/") }
+      has_system_test = files.any? { _1.include?("/system/") }
 
-      ARGV.push("--name", test_name.to_s) if test_name
-      ARGV.push("--seed", options[:seed]) if options[:seed]
+      args = []
+      args.push("--name", test_name.to_s) if test_name
+      args.push("--seed", options[:seed]) if options[:seed]
+      args.push("--backtrace") if options[:backtrace]
 
       if files.empty?
         raise Thor::Error, set_color("ERROR: No test files found.", :red)
@@ -271,8 +277,8 @@ module Zee
 
       files.each { require _1 }
 
-      setup_for_integration_tests if has_integration_test
-      Minitest.run
+      setup_for_system_tests if has_system_test
+      Minitest.run(args)
     end
     # :nocov:
 
@@ -344,7 +350,7 @@ module Zee
 
     no_commands do
       # :nocov:
-      def setup_for_integration_tests
+      def setup_for_system_tests
         pid = Process.spawn(
           "bundle",
           "exec",

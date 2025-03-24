@@ -2,7 +2,7 @@
 
 require "test_helper"
 
-class HelpersTest < Zee::Test::Request
+class HelpersTest < Zee::Test::Integration
   test "includes defined helper modules" do
     assert_includes app.helpers.included_modules, Helpers::Hello
     assert_includes app.helpers.included_modules, Helpers::Bye

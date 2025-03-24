@@ -98,13 +98,13 @@ module Zee
                    type: :string,
                    desc: "Set the connection string",
                    aliases: "-c"
-          end
 
-          class_option :verbose,
-                       type: :boolean,
-                       default: false,
-                       desc: "Show more information",
-                       aliases: "-v"
+            option :verbose,
+                   type: :boolean,
+                   default: false,
+                   desc: "Show more information",
+                   aliases: "-v"
+          end
 
           desc "db", "Open the database console"
           long_desc <<~TEXT

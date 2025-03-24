@@ -55,16 +55,6 @@ module Zee
       def app
         Zee.app
       end
-
-      def default_host
-        Zee.app.config.domain
-      end
-    end
-
-    module Feature
-      def default_host
-        "localhost"
-      end
     end
   end
 end
@@ -162,8 +152,8 @@ RSpec.configure do |config|
                               else
                                 Capybara.default_driver
                               end
-    Capybara.default_host = "http://#{default_host}:11100"
-    Capybara.app_host = "http://#{default_host}:11100"
-    Zee.app.config.set(:session_options, domain: default_host, secure: false)
+    Capybara.default_host = "http://localhost:11100"
+    Capybara.app_host = "http://localhost:11100"
+    Zee.app.config.set(:session_options, domain: "localhost", secure: false)
   end
 end

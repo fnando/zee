@@ -2,7 +2,7 @@
 
 require "test_helper"
 
-class SessionTest < Zee::Test::Request
+class SessionTest < Zee::Test::Integration
   test "sets and reads session" do
     post "/session"
     get "/session"
