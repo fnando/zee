@@ -25,8 +25,8 @@ class HTMLTest < Minitest::Test
     end
 
     assert_includes error.message,
-                    "Expected to find 2 tag(s) with selector \"div\", but " \
-                    "found 1\n\n<div>Hello, World!</div>"
+                    "Expected to find exactly 2 tag(s) with selector " \
+                    "\"div\", but found 1\n\n<div>Hello, World!</div>\n"
   end
 
   test "fails when text doesn't match string" do
@@ -37,7 +37,9 @@ class HTMLTest < Minitest::Test
     end
 
     assert_includes error.message,
-                    "Expected: \"hello\"\n  Actual: \"Hello, World!\""
+                    "Expected to find at least 1 tag(s) with selector " \
+                    "\"div\" with text matching \"hello\", but found 0\n\n" \
+                    "<div>Hello, World!</div>\n"
   end
 
   test "fails when text doesn't match regexp" do
@@ -48,6 +50,8 @@ class HTMLTest < Minitest::Test
     end
 
     assert_includes error.message,
-                    "Expected /hello/ to match \"Hello, World!\"."
+                    "Expected to find at least 1 tag(s) with selector " \
+                    "\"div\" with text matching /hello/, but found 0\n\n" \
+                    "<div>Hello, World!</div>\n"
   end
 end

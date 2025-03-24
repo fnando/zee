@@ -16,11 +16,24 @@ module Zee
         # @param root [Nokogiri::HTML::DocumentFragment] the HTML to be checked.
         # @param selector [String] the tag selector.
         # @param count [Integer] the number of tags to be found.
+        # @param minimum [Integer] the minimum number of tags to be found.
+        # @param maximum [Integer] the maximum number of tags to be found.
+        # @param between [Range] the range number of tags to be found.
         # @param text [String, Regexp, nil] when provided, the tag text must
         #                                   match the given value.
         # @param html [String, Regexp, nil] when provided, the tag's inner html
         #                                   must match the given value.
-        def assert_selector(root, selector, count: 1, text: nil, html: nil, &)
+        def assert_selector(
+          root,
+          selector,
+          count: nil,
+          minimum: nil,
+          maximum: nil,
+          between: nil,
+          text: nil,
+          html: nil,
+          &
+        )
           root = Nokogiri::HTML.fragment(root.to_s)
           nodes = root.css(selector)
           lines = Nokogiri::XSLT(indent_xsl)
@@ -29,38 +42,70 @@ module Zee
 
           formatted_root = lines ? lines.join : root.to_s.inspect
 
-          assert_equal count,
-                       nodes.size,
-                       "Expected to find #{count} tag(s) with selector " \
-                       "#{selector.inspect}, but found #{nodes.size}\n\n" \
-                       "#{formatted_root}"
+          none = (count || minimum || maximum || between).nil?
 
-          nodes.each { assert_selector_text(_1, text) } if text
-          nodes.each { assert_selector_html(_1, html) } if html
+          minimum = 1 if none
+
+          matched = nodes.count
+          matched = 0 if text || html
+          matched += nodes.count { match_selector_text(_1, text) } if text
+          matched += nodes.count { match_selector_html(_1, html) } if html
+
+          check = if text
+                    " with text matching #{text.inspect}"
+                  elsif html
+                    " with html matching #{html.inspect}"
+                  end
+
+          if count && count != matched
+            raise Minitest::Assertion,
+                  "Expected to find exactly #{count} tag(s) with selector " \
+                  "#{selector.inspect}#{check}, but found #{matched}\n\n" \
+                  "#{formatted_root}"
+          end
+
+          if minimum && matched < minimum
+            raise Minitest::Assertion,
+                  "Expected to find at least #{minimum} tag(s) with selector " \
+                  "#{selector.inspect}#{check}, but found #{matched}\n\n" \
+                  "#{formatted_root}"
+          end
+
+          if maximum && matched > maximum
+            raise Minitest::Assertion,
+                  "Expected to find at most #{maximum} tag(s) with selector " \
+                  "#{selector.inspect}#{check}, but found #{matched}\n\n" \
+                  "#{formatted_root}"
+          end
+
+          if between && !between.cover?(matched)
+            raise Minitest::Assertion,
+                  "Expected to find at between #{between} tag(s) with " \
+                  "selector #{selector.inspect}#{check}, but found " \
+                  "#{matched}\n\n#{formatted_root}"
+          end
 
           yield nodes if block_given?
           nodes
         end
 
         # @api private
-        def assert_selector_text(node, text)
+        def match_selector_text(node, text)
           case text
           when Regexp
-
-            assert_match text, node.text
+            node.text.match?(text)
           else
-            assert_equal text, node.text
+            node.text == text
           end
         end
 
         # @api private
-        def assert_selector_html(node, html)
+        def match_selector_html(node, html)
           case html
           when Regexp
-
-            assert_match html, node.inner_html.to_s
+            node.inner_html.to_s.match?(html)
           else
-            assert_equal html, node.inner_html.to_s
+            node.inner_html.to_s == html
           end
         end
       end
