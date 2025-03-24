@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "test_helper"
+
 module Integration
   class PagesTest < Zee::Test::Integration
     # Uncomment this line to use JavaScript in the test.

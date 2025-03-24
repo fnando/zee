@@ -3,9 +3,10 @@
 require "test_helper"
 
 module Controllers
-  class <%= controller_class_name %>Test < Minitest::Test::Request
+  class <%= controller_class_name %>Test < Zee::Test::Request
     <%- options[:actions].each do |action| -%>
-    test "renders :#{action}" do
+
+    test "renders :<%= action %>" do
       # write your test here...
     end
     <%- end -%>
