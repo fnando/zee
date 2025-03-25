@@ -17,12 +17,5 @@ module Zee
   #     end
   #   end
   class Test < Minitest::Test
-    # Sets up email delivery as test.
-    setup do
-      ::Mail.defaults { delivery_method :test }
-      ::Mail::TestMailer.deliveries.clear
-    rescue LoadError
-      # no `mail` gem available
-    end
   end
 end
