@@ -361,6 +361,7 @@ module Zee
           "--quiet",
           "--bind", "tcp://127.0.0.1:11100"
         )
+        at_exit { Process.kill("INT", pid) }
         Process.detach(pid)
 
         shell.say "Integration test server: http://localhost:11100 [pid=#{pid}]"
@@ -384,8 +385,6 @@ module Zee
             sleep 0.05
           end
         end
-
-        at_exit { Process.kill("INT", pid) }
       end
       # :nocov:
 
