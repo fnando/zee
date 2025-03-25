@@ -15,6 +15,7 @@ module Zee
       def templates
         template "mailer.rb.erb", "app/mailers/#{basename}.rb"
         template "test.rb.erb", "test/mailers/#{basename}_test.rb"
+        copy_file "initializer.rb", "config/initializers/mailer.rb"
 
         {
           "base.rb" => "app/mailers/base.rb",
