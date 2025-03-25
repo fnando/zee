@@ -91,7 +91,7 @@ module Zee
         if failures.any?
           path = Zee.app.root.join("tmp/screenshots/#{name}.png")
           path.dirname.mkpath
-          save_screenshot(path)
+          save_screenshot(path) # rubocop:disable Lint/Debugger
         end
       end
 
@@ -136,7 +136,7 @@ module Zee
         end
 
         html = Nokogiri::HTML(mail.html_part.body.raw_source)
-        link = html.css("a[href]").find {|link| link.text.strip.match?(text) }
+        link = html.css("a[href]").find { _1.text.strip.match?(text) }
 
         unless link
           raise Minitest::Assertion,
