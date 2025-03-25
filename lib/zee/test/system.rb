@@ -80,6 +80,13 @@ module Zee
         routes.default_url_options[:port] = 11_100
       end
 
+      setup do
+        if defined?(::Mail)
+          ::Mail.defaults { delivery_method :test }
+          ::Mail::TestMailer.deliveries.clear
+        end
+      end
+
       teardown do
         if failures.any?
           path = Zee.app.root.join("tmp/screenshots/#{name}.png")

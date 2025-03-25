@@ -29,6 +29,11 @@ module Zee
       include Test::Assertions::HTML
       include Helpers
 
+      setup do
+        ::Mail.defaults { delivery_method :test }
+        ::Mail::TestMailer.deliveries.clear
+      end
+
       # Returns all the emails that have been delivered in test mode.
       def self.deliveries
         ::Mail::TestMailer.deliveries

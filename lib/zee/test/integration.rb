@@ -24,6 +24,13 @@ module Zee
         routes.default_url_options[:port] = nil
       end
 
+      setup do
+        if defined?(::Mail)
+          ::Mail.defaults { delivery_method :test }
+          ::Mail::TestMailer.deliveries.clear
+        end
+      end
+
       # @api private
       # This is required by rack-test. The default host is `example.org`.
       def default_host
