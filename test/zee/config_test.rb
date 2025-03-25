@@ -9,6 +9,7 @@ class ConfigTest < Minitest::Test
     assert_equal %i[secret], config.session_options.keys
     assert_equal ::JSON, config.json_serializer
     assert_equal %w[erb], config.template_handlers
+    assert_equal ["localhost"], config.allowed_hosts
   end
 
   test "raises exception for missing mandatory var" do

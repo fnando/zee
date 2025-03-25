@@ -62,7 +62,7 @@ module Zee
             tag_color: :magenta,
             message_color: :cyan
           )
-      set :domain, "localhost"
+      set :allowed_hosts, ["localhost"]
       set :default_url_options, {}
       set :session_options, secret: SecureRandom.hex(64)
       set :json_serializer, JSON

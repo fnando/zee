@@ -12,8 +12,8 @@ Zee.app.config :development do
 end
 
 Zee.app.config :development, :test do
-  # Set the domain that will be used for cookies.
-  set :domain, "localhost"
+  # Set the allowed hosts that can be used to access the app.
+  set :allowed_hosts, ["localhost"]
 
   # Set the default url options.
   set :default_url_options, host: "localhost", port: 3000, protocol: :http
@@ -21,7 +21,7 @@ end
 
 Zee.app.config :production do
   # Set the domain that will be used for cookies.
-  set :domain, "example.com"
+  set :allowed_hosts, ["example.com"]
 
   # Enable template caching.
   set :enable_template_caching, true
@@ -30,7 +30,7 @@ Zee.app.config :production do
   set :handle_errors, true
 
   # Set the default url options.
-  set :default_url_options, host: "example.com", protocol: :https
+  set :default_url_options, host: allowed_hosts.first, protocol: :https
 end
 
 Zee.app.config do
@@ -46,7 +46,9 @@ Zee.app.config do
 
   # Set the session options.
   # The session secret can be edited with `zee secrets:edit`.
-  set :session_options, domain: domain
+  set :session_options,
+      domain: (allowed_hosts.first if allowed_hosts.one?),
+      secure: app.env.production?
 
   # Configure parameters to be partially matched (e.g. passw matches password)
   # and filtered from the log file.
