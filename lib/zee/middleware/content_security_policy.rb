@@ -13,15 +13,22 @@ module Zee
       # @api private
       HEADER = "content-security-policy"
 
+      # @api private
+      REPORT_HEADER = "content-security-policy-report-only"
+
+      # @api private
+      SEMICOLON = ";"
+
       def call(env)
+        header_name = options[:report_only] ? REPORT_HEADER : HEADER
         env[ZEE_CSP_NONCE] = SecureRandom.hex(16)
 
         status, headers, body = super
 
-        csp = headers[HEADER].split(SEMICOLON).map do |part|
+        csp = headers.fetch(header_name, "").split(SEMICOLON).map do |part|
           "#{part} 'nonce-#{env[ZEE_CSP_NONCE]}'"
         end
-        headers[HEADER] = csp.join(SEMICOLON)
+        headers[header_name] = csp.join(SEMICOLON)
 
         [status, headers, body]
       end
