@@ -339,4 +339,33 @@ class MailerTest < Zee::Test::Mailer
 
     assert_respond_to mailer, :root_path
   end
+
+  test "sets subject using i18n" do
+    store_translations(
+      :en,
+      zee: {
+        mailers: {
+          mailer: {
+            hello: {
+              subject: "SUBJECT"
+            }
+          }
+        }
+      }
+    )
+
+    mailer_class = Class.new(Zee::Mailer) do
+      def self.name
+        "Mailers::Mailer"
+      end
+
+      def hello
+        mail to: "TO", from: "FROM", body: "BODY"
+      end
+    end
+
+    mailer_class.hello.deliver
+
+    assert_mail_delivered to: "TO", from: "FROM", subject: "SUBJECT"
+  end
 end

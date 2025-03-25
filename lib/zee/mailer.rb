@@ -67,9 +67,20 @@ module Zee
       "#{controller_name}##{action_name}"
     end
 
+    # @api private
+    def translation_for(scope)
+      I18n.t(
+        scope,
+        scope: [:zee, :mailers, controller_name, action_name],
+        default: nil
+      )
+    end
+
     # The main method that creates the message and renders the email templates.
     def mail(**options)
       @message = build_new_message if options.any?
+
+      options[:subject] ||= translation_for(:subject)
 
       assign_headers(options.delete(:headers) || {})
       assign_attachments(options.delete(:attachments) || {})
