@@ -80,6 +80,14 @@ module Zee
         routes.default_url_options[:port] = 11_100
       end
 
+      teardown do
+        if failures.any?
+          path = Zee.app.root.join("tmp/screenshots/#{name}.png")
+          path.dirname.mkpath
+          save_screenshot(path)
+        end
+      end
+
       # The app routes so you can use the helper methods.
       #
       # @example
