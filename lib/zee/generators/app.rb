@@ -72,7 +72,6 @@ module Zee
         return unless options[:test] == "minitest"
 
         copy_file "test/test_helper.rb"
-        copy_file "test/requests/pages_test.rb"
         copy_file "test/integration/pages_test.rb"
       end
 
