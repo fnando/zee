@@ -14,8 +14,10 @@ class AssetsTest < Minitest::Test
     Object.new.extend(mod)
   end
 
-  let(:app) { stub(root: Pathname.new("tmp")) }
-  setup { Zee.app = app }
+  setup do
+    Zee.app = Zee::App.new
+    Zee.app.root = Pathname.new("tmp")
+  end
 
   test "returns manifest when file exists" do
     FileUtils.mkdir_p("tmp/public/assets")
@@ -152,5 +154,50 @@ class AssetsTest < Minitest::Test
 
     assert_equal %[<img src="/assets/images/logo-hash.png" alt="">],
                  helpers.image_tag("logo.png").to_s
+  end
+
+  test "returns tags using asset host" do
+    Zee.app.config.set(:asset_host, "example.com")
+    helpers.stubs(:request)
+           .returns(Rack::Request.new("rack.url_scheme" => "https"))
+
+    FileUtils.mkdir_p("tmp/public/assets")
+    File.write(
+      "tmp/public/assets/.manifest.json",
+      JSON.dump("styles/app.css" => "/assets/styles/app-hash.css")
+    )
+
+    assert_equal \
+      %[<img src="https://example.com/assets/images/logo.png" alt="">],
+      helpers.image_tag("logo.png").to_s
+    assert_equal \
+      %[<img src="https://example.com/some/image.png" alt="">],
+      helpers.image_tag("/some/image.png").to_s
+    assert_equal \
+      %[<link rel="stylesheet" href="https://example.com/assets/styles/app-hash.css">],
+      helpers.stylesheet_link_tag(:app).to_s
+    assert_equal \
+      %[<script src="https://example.com/assets/scripts/app.js"></script>],
+      helpers.javascript_include_tag(:app).to_s
+  end
+
+  test "returns tags using asset host respecting its scheme" do
+    Zee.app.config.set(:asset_host, "https://example.com")
+    helpers.stubs(:request)
+           .returns(Rack::Request.new("rack.url_scheme" => "http"))
+
+    assert_equal \
+      %[<img src="https://example.com/assets/images/logo.png" alt="">],
+      helpers.image_tag("logo.png").to_s
+  end
+
+  test "returns tags using asset host that's callable" do
+    Zee.app.config.set(:asset_host, -> { "https://example.com" })
+    helpers.stubs(:request)
+           .returns(Rack::Request.new("rack.url_scheme" => "http"))
+
+    assert_equal \
+      %[<img src="https://example.com/assets/images/logo.png" alt="">],
+      helpers.image_tag("logo.png").to_s
   end
 end

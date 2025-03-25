@@ -82,20 +82,47 @@ module Zee
       # - If the source is not found in the manifest, then the path will be
       #   prefixed with `/assets`.
       #
+      # For all cases where no `http` or `https` is detected, the asset host
+      # will be prepended to the path when available. The asset host can be
+      # set as `Zee.app.config.set(:asset_host, host)`.
+      #
+      # You only need to set the host (e.g `example.com`), as the scheme is
+      # defined automatically based on the request. You can force it by passing
+      # `https://example.com` as the asset host.
+      #
       # @param source [String] The source of the asset.
       # @return [String]
       # @param dir [String, nil]
       def asset_path(source, dir: nil)
         source = source.to_s
 
-        return source if source.start_with?(SLASH)
+        return with_asset_host(source) if source.start_with?(SLASH)
         return source if source.match?(/^https?:/)
 
         source = [dir, source].compact.join(SLASH)
 
-        return manifest[source] if manifest[source]
+        return with_asset_host(manifest[source]) if manifest[source]
 
-        "/assets/#{source}"
+        with_asset_host("/assets/#{source}")
+      end
+
+      # @api private
+      def with_asset_host(path)
+        asset_host = Zee.app.config.asset_host
+        asset_host = asset_host.call if asset_host.respond_to?(:call)
+
+        if asset_host
+          asset_host = asset_host.delete_suffix(SLASH)
+          path = path.delete_prefix(SLASH)
+
+          unless asset_host.match?(/^https?:/)
+            scheme = "#{request.env[RACK_URL_SCHEME]}://"
+          end
+
+          "#{scheme}#{asset_host}/#{path}"
+        else
+          path
+        end
       end
 
       # Build a script tag for the given source.

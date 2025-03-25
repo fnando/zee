@@ -80,6 +80,9 @@ module Zee
   RACK_SESSION = "rack.session"
 
   # @api private
+  RACK_URL_SCHEME = "rack.url_scheme"
+
+  # @api private
   SLASH = "/"
 
   # @api private

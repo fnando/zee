@@ -29,6 +29,8 @@ module Zee
     # - `config.enable_template_caching`: whether to enable template caching.
     # - `config.cache`: the cache store.
     # - `config.inflector`: The app's inflector instance.
+    # - `config.asset_host`: The app's asset host. Will be used when generating
+    #   asset URLs.
     #
     # @param app [Zee::App] The application instance.
     # @param options [Hash{Symbol => Object}]
@@ -73,6 +75,7 @@ module Zee
       set :enable_instrumentation, false
       set :handle_errors, false
       set :filter_parameters, ParameterFilter::DEFAULT_FILTERS
+      set :asset_host, nil
       set :cache, CacheStore::Null.new(encrypt: false)
       set :inflector, Dry::Inflector.new
     end

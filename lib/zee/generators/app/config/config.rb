@@ -31,6 +31,9 @@ Zee.app.config :production do
 
   # Set the default url options.
   set :default_url_options, host: allowed_hosts.first, protocol: :https
+
+  # Set the asset host.
+  # set :asset_host, "https://cdn.example.com"
 end
 
 Zee.app.config do
