@@ -18,8 +18,10 @@ module Zee
 
         status, headers, body = super
 
-        csp = headers[HEADER]
-        headers[HEADER] = "#{csp} 'nonce-#{env[ZEE_CSP_NONCE]}'"
+        csp = headers[HEADER].split(SEMICOLON).map do |part|
+          "#{part} 'nonce-#{env[ZEE_CSP_NONCE]}'"
+        end
+        headers[HEADER] = csp.join(SEMICOLON)
 
         [status, headers, body]
       end

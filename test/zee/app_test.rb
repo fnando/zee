@@ -146,8 +146,7 @@ class AppTest < Minitest::Test
     assert_equal Rack::ConditionalGet, stack[9]
     assert_equal Rack::ETag, stack[10]
     assert_equal Rack::TempfileReaper, stack[11]
-    assert_equal Zee::Middleware::ContentSecurityPolicy, stack[12]
-    assert_equal 13, stack.size
+    assert_equal 12, stack.size
   end
 
   test "enables template caching" do

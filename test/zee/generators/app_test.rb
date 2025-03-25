@@ -63,13 +63,14 @@ class AppTest < Minitest::Test
     assert app.join("public/favicon.ico").file?
     assert app.join("public/icon.svg").file?
     assert app.join("public/apple-touch-icon.png").file?
+    assert app.join("test/integration/pages_test.rb").file?
     assert_equal RUBY_VERSION, app.join(".ruby-version").read.chomp
     assert app.join("bin/dev").executable?
     assert app.join("bin/zee").executable?
     assert app.join("bin/scripts").executable?
     assert app.join("bin/styles").executable?
-    refute app.join("config/secrets/development.key").world_readable?
     refute app.join("config/secrets/test.key").world_readable?
+    refute app.join("config/secrets/development.key").world_readable?
 
     # Expect valid json files
     assert_instance_of Hash,

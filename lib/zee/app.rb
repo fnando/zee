@@ -248,7 +248,6 @@ module Zee
         middleware.use Rack::ConditionalGet
         middleware.use Rack::ETag
         middleware.use Rack::TempfileReaper
-        middleware.use Middleware::ContentSecurityPolicy
       end
     end
 

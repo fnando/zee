@@ -13,7 +13,7 @@ Zee.app.middleware do
   # Protects against DNS rebinding and other Host header attacks.
   # [https://github.com/sinatra/sinatra/blob/main/rack-protection/lib/rack/protection/host_authorization.rb]
   use Rack::Protection::HostAuthorization,
-      permitted_hosts: [app.config.domain],
+      permitted_hosts: app.config.allowed_hosts,
       logging: false
 
   # Protects against protocol downgrade attacks and cookie hijacking.
@@ -21,8 +21,7 @@ Zee.app.middleware do
   use Rack::Protection::StrictTransport if app.env.production?
 
   # Protects against XSS attacks.
-  # [https://github.com/sinatra/sinatra/blob/main/rack-protection/lib/rack/protection/content_security_policy.rb]
-  use Rack::Protection::ContentSecurityPolicy, {
+  use Zee::Middleware::ContentSecurityPolicy, {
     default_src: "'self'",
     img_src: "'self' data:"
   }

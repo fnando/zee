@@ -85,6 +85,9 @@ module Zee
   # @api private
   SPACE = " "
 
+  # @api PRIVATE
+  SEMICOLON = ";"
+
   # @api private
   SQUARE_BRACKETS = "[]"
 
