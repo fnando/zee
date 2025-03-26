@@ -14,10 +14,6 @@ AllCops:
     - test/fixtures/app/**/*
     - test/fixtures/sample_app/**/*
 
-Naming/FileName:
-  Exclude:
-    - API_DESIGN.rb
-
 Lint/EmptyClass:
   Enabled: false
 
