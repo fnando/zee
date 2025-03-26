@@ -169,7 +169,11 @@ module Zee
       return unless template
 
       response.view = template
-      locals = locals.merge(:@_response => response, :@_controller => self)
+      locals = locals.merge(
+        :@_response => response,
+        :@_controller => self,
+        :@_always_include_host => true
+      )
 
       use_safe_buffer = mimes.any? {|mime| mime.content_type == TEXT_HTML }
       layout = find_layout(nil, mimes)

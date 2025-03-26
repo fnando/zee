@@ -9,6 +9,10 @@ class AssetsTest < Minitest::Test
 
       include Zee::ViewHelpers::HTML
       include Zee::ViewHelpers::Assets
+
+      def default_url_options
+        {}
+      end
     end
 
     Object.new.extend(mod)

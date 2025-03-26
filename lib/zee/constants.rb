@@ -47,6 +47,9 @@ module Zee
   HTML = "html"
 
   # @api private
+  HTTPS = "https"
+
+  # @api private
   HTTP_ACCEPT = "HTTP_ACCEPT"
 
   # @api private

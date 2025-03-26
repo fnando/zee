@@ -188,6 +188,66 @@ class MailerTest < Zee::Test::Mailer
                     "text: text partial <3"
   end
 
+  test "renders image with default url options" do
+    Zee.app.config.default_url_options[:host] = "example.com"
+    Zee.app.config.default_url_options[:protocol] = "https"
+    Zee.app.config.default_url_options[:fragment] = "anchor"
+
+    root = "tmp/app/views/messages"
+    FileUtils.mkdir_p(root)
+    File.write("#{root}/hello.html.erb", "html: <%= image_tag 'logo.svg' %>")
+
+    mailer_class = Class.new(Zee::Mailer) do
+      def self.name
+        "Mailers::Messages"
+      end
+
+      def hello
+        mail to: "TO", from: "FROM", subject: "SUBJECT"
+      end
+
+      def view_paths
+        [Pathname("tmp/app/views").expand_path]
+      end
+    end
+
+    mailer_class.hello.deliver
+
+    assert_mail_delivered
+    assert_includes \
+      self.class.deliveries.first.html_part.to_s,
+      %[<img src="https://example.com/assets/images/logo.svg#anchor" alt="">]
+  end
+
+  test "fails when rendering image without default url options" do
+    root = "tmp/app/views/messages"
+    FileUtils.mkdir_p(root)
+    File.write("#{root}/hello.html.erb", "html: <%= image_tag 'logo.svg' %>")
+
+    mailer_class = Class.new(Zee::Mailer) do
+      def self.name
+        "Mailers::Messages"
+      end
+
+      def hello
+        mail to: "TO", from: "FROM", subject: "SUBJECT"
+      end
+
+      def view_paths
+        [Pathname("tmp/app/views").expand_path]
+      end
+    end
+
+    error = assert_raises(ArgumentError) do
+      mailer_class.hello.deliver
+    end
+
+    assert_equal "Please provide the :host parameter, set " \
+                 "default_url_options[:host], or define asset_host in " \
+                 "the configuration.",
+                 error.message
+  end
+
   test "renders layout file" do
     views = Pathname("tmp/app/views")
     layouts = views.join("layouts")

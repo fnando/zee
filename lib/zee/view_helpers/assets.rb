@@ -107,22 +107,51 @@ module Zee
       end
 
       # @api private
+      # This is used to set the asset host when generating asset paths from
+      # mailers. Calling `<%= image_tag("logo.png") %>` should always render
+      # the full url.
+      # @return [Boolean]
+      def always_include_host?
+        @_always_include_host
+      end
+
+      # @api private
       def with_asset_host(path)
         asset_host = Zee.app.config.asset_host
         asset_host = asset_host.call if asset_host.respond_to?(:call)
 
-        if asset_host
-          asset_host = asset_host.delete_suffix(SLASH)
-          path = path.delete_prefix(SLASH)
-
-          unless asset_host.match?(/^https?:/)
-            scheme = "#{request.env[RACK_URL_SCHEME]}://"
-          end
-
-          "#{scheme}#{asset_host}/#{path}"
-        else
-          path
+        if always_include_host? && !asset_host && !default_url_options[:host]
+          raise ArgumentError, "Please provide the :host parameter, " \
+                               "set default_url_options[:host], or define " \
+                               "asset_host in the configuration."
         end
+
+        scheme = request&.env&.[](RACK_URL_SCHEME) ||
+                 default_url_options[:protocol] ||
+                 HTTPS
+
+        if asset_host
+          uri = URI.parse(asset_host) if asset_host.match?(/^https?:/)
+          uri ||= URI.parse(SLASH).tap { _1.host = asset_host }
+        elsif always_include_host?
+          uri = URI.parse(SLASH)
+          uri.host = default_url_options[:host]
+        end
+
+        # If no uri is set, then we have no host to prepend.
+        return path unless uri
+
+        uri.path = path
+        uri.scheme = scheme unless uri.scheme
+        uri.path = path
+        uri.port = default_url_options[:port] if default_url_options[:port]
+        uri.port = nil if uri.port == uri.default_port
+
+        if default_url_options[:fragment]
+          uri.fragment = default_url_options[:fragment]
+        end
+
+        uri.to_s
       end
 
       # Build a script tag for the given source.
