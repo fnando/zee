@@ -157,6 +157,37 @@ class MailerTest < Zee::Test::Mailer
     assert_includes self.class.deliveries.first.text_part.to_s, "rendered text"
   end
 
+  test "renders partial" do
+    root = "tmp/app/views/messages"
+    FileUtils.mkdir_p(root)
+    File.write("#{root}/_message.html.erb", "<strong>html partial</strong>")
+    File.write("#{root}/_message.text.erb", "text partial <3")
+    File.write("#{root}/hello.html.erb", "html: <%= render 'message' %>")
+    File.write("#{root}/hello.text.erb", "text: <%= render 'message' %>")
+
+    mailer_class = Class.new(Zee::Mailer) do
+      def self.name
+        "Mailers::Messages"
+      end
+
+      def hello
+        mail to: "TO", from: "FROM", subject: "SUBJECT"
+      end
+
+      def view_paths
+        [Pathname("tmp/app/views").expand_path]
+      end
+    end
+
+    mailer_class.hello.deliver
+
+    assert_mail_delivered
+    assert_includes self.class.deliveries.first.html_part.to_s,
+                    "html: <strong>html partial</strong>"
+    assert_includes self.class.deliveries.first.text_part.to_s,
+                    "text: text partial <3"
+  end
+
   test "renders layout file" do
     views = Pathname("tmp/app/views")
     layouts = views.join("layouts")

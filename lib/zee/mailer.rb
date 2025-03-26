@@ -168,6 +168,9 @@ module Zee
       template = find_template(name, mimes, required: false)
       return unless template
 
+      response.view = template
+      locals = locals.merge(:@_response => response, :@_controller => self)
+
       use_safe_buffer = mimes.any? {|mime| mime.content_type == TEXT_HTML }
       layout = find_layout(nil, mimes)
       content = instrument(
@@ -193,6 +196,11 @@ module Zee
       end
 
       content
+    end
+
+    # @api private
+    def response
+      @response ||= Response.new
     end
 
     # @api private
