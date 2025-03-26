@@ -3,15 +3,15 @@
 module Zee
   module ViewHelpers
     module Translation
-      # @api internal
+      # @api private
       class Translation
-        # @api internal
+        # @api private
         UNDERSCORE_HTML = "_html"
 
-        # @api internal
+        # @api private
         DOT_HTML = ".html"
 
-        # @api internal
+        # @api private
         HTML = "html"
 
         attr_reader :key, :options, :template_path

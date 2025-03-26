@@ -332,7 +332,7 @@ module Zee
     end
     # :nocov:
 
-    # @api internal
+    # @api private
     module BaseHelper
       using Core::Module
       internal_attr_reader :request, :controller, :current_template

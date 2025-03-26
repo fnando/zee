@@ -88,7 +88,7 @@ module Zee
   # @api private
   SPACE = " "
 
-  # @api PRIVATE
+  # @api private
   SEMICOLON = ";"
 
   # @api private
