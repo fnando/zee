@@ -2,6 +2,16 @@
 
 module Zee
   module Middleware
+    # The RequestLogger middleware logs the request and response details.
+    # It logs the request path, status, headers, params, and database queries.
+    #
+    # @example
+    #   # Output
+    #   GET / (30ms)
+    #   Status: 200 OK
+    #   Params: {"controller"=>"home", "action"=>"index"}
+    #   Database: 1 query (10ns)
+    #
     class RequestLogger
       using Zee::Core::Numeric
       using Zee::Core::String::Colored
@@ -49,7 +59,7 @@ module Zee
         key = "#{key.to_s.humanize}:".colored(:cyan)
         value = relative_path(value) if value.is_a?(Pathname)
 
-        logger.debug [key, value, duration].compact.join(" ")
+        logger.debug [key, value, duration].compact.join(SPACE)
       end
 
       def log_mail
@@ -68,8 +78,11 @@ module Zee
 
       def log_request(request)
         Instrumentation.instrumentations[:request].each do |props|
-          props => {args:, duration:}
-          args => {scope:}
+          # Can't use pattern matching here, because YARD fails.
+          # https://github.com/lsegal/yard/issues/1521
+          args = props[:args]
+          duration = props[:duration]
+          scope = args[:scope]
 
           case scope
           when :route
