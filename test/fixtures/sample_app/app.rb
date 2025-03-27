@@ -17,6 +17,7 @@ class SampleApp < Zee::App
       get "missing-template", to: "pages#missing_template"
       get "hello", to: "pages#hello"
       get "text", to: "formats#text"
+      get "html", to: "formats#html"
       get "json", to: "formats#json"
       get "redirect", to: "pages#redirect"
       get "redirect-error", to: "pages#redirect_error"

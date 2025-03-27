@@ -47,6 +47,14 @@ class RenderTest < Zee::Test::Integration
     assert_includes last_response.content_type, "text/plain"
   end
 
+  test "renders html" do
+    get "/html"
+
+    assert last_response.ok?
+    assert_includes last_response.body, "Hello, World!"
+    assert_includes last_response.content_type, "text/html"
+  end
+
   test "renders text" do
     get "/text"
 

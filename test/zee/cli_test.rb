@@ -59,6 +59,7 @@ class CLITest < Minitest::Test
        GET        | /missing-template          |                  | pages#missing_template
        GET        | /hello                     |                  | pages#hello
        GET        | /text                      |                  | formats#text
+       GET        | /html                      |                  | formats#html
        GET        | /json                      |                  | formats#json
        GET        | /redirect                  |                  | pages#redirect
        GET        | /redirect-error            |                  | pages#redirect_error
@@ -83,7 +84,7 @@ class CLITest < Minitest::Test
        GET        | /admin/posts               | admin_posts      | admin/posts#index
        ALL        | /old                       |                  | #<Zee::Redirect status=301 to="/">
        ALL        | /found                     |                  | #<Zee::Redirect status=302 to="/">
-       ALL        | /redirect-rack-app         |                  | app.rb:52
+       ALL        | /redirect-rack-app         |                  | app.rb:53
        ALL        | /proc-app                  | proc_app         | app.rb:8
        ALL        | /class-app                 | class_app        | MyRackApp
       ------------+----------------------------+------------------+----------------------------------------

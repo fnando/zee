@@ -37,6 +37,7 @@ module Zee
       # @param options [Hash] Additional options.
       # @option options [Object] :json Render object as `application/json`.
       # @option options [Object] :text Render string as `text/plain`.
+      # @option options [Object] :html Render string as `text/html`.
       #
       # @example Implicit render uses the action name as the template name.
       #   render
@@ -48,6 +49,10 @@ module Zee
       #   render :home, layout: false
       # @example Render with a custom layout.
       #   render :home, layout: :custom
+      # @example Render a format.
+      #   render text: "Hello"
+      #   render html: "<h1>Hello</h1>"
+      #   render json: {message: "Hello"}
       def render(
         template_name = action_name,
         status: :ok,
@@ -59,6 +64,7 @@ module Zee
         raise DoubleRenderError if response.performed?
 
         return render_json(status, options.delete(:json)) if options.key?(:json)
+        return render_html(status, options.delete(:html)) if options.key?(:html)
         return render_text(status, options.delete(:text)) if options.key?(:text)
 
         mimes = possible_mime_types(template_name)
@@ -95,6 +101,13 @@ module Zee
         response.status(status)
         response.headers[:content_type] = found_view.mime.content_type
         response.body = body
+      end
+
+      # @api private
+      private def render_html(status, text)
+        response.status(status)
+        response.headers[:content_type] = TEXT_HTML
+        response.body = text.to_s
       end
 
       # @api private

@@ -2,6 +2,10 @@
 
 module Controllers
   class Formats < Base
+    def html
+      render html: "Hello, World!"
+    end
+
     def text
       render text: "Hello, World!"
     end
