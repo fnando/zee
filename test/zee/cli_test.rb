@@ -11,6 +11,11 @@ class CLITest < Minitest::Test
   end
   teardown { ENV["PATH"] = PATH }
 
+  test "detects imports" do
+    assert Zee::CLI.available?("minitest")
+    refute Zee::CLI.available?("missing")
+  end
+
   test "lists routes" do
     exit_code = nil
     out = nil

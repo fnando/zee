@@ -34,6 +34,13 @@ module Zee
       @before_run_hooks ||= Hash.new {|h, k| h[k] = [] }
     end
 
+    def self.available?(import)
+      require import
+      true
+    rescue LoadError
+      false
+    end
+
     def self.load_dotenv_files(*files)
       require "dotenv"
       Dotenv.load(*files)

@@ -20,7 +20,7 @@ module Zee
         end
       end
 
-      include Database
+      include Database if CLI.available?("sequel")
       include Secrets
 
       def self.handle_no_command_error(command, *)
@@ -36,7 +36,6 @@ module Zee
       end
 
       map %w[--version] => :version
-
       desc "version, --version", "Print the version"
       def version
         puts "zee #{VERSION}"
@@ -172,72 +171,74 @@ module Zee
       desc "generate SUBCOMMAND", "Generate new code (alias: g)"
       subcommand "generate", Generate
 
-      desc "test [FILE|DIR...]", "Run tests"
-      option :seed,
-             type: :string,
-             aliases: "-s",
-             desc: "Set a specific seed"
-      option :backtrace,
-             type: :boolean,
-             default: false,
-             aliases: "-b",
-             desc: "Show full backtrace"
-      # :nocov:
-      def test(*files)
-        cmd = [
-          "bin/zee test %{location}:%{line} \e[34m# %{description}\e[0m",
-          ("-s #{options[:seed]}" if options[:seed])
-        ].compact.join(" ").strip
+      if CLI.available?("minitest")
+        desc "test [FILE|DIR...]", "Run tests"
+        option :seed,
+               type: :string,
+               aliases: "-s",
+               desc: "Set a specific seed"
+        option :backtrace,
+               type: :boolean,
+               default: false,
+               aliases: "-b",
+               desc: "Show full backtrace"
+        # :nocov:
+        def test(*files)
+          cmd = [
+            "bin/zee test %{location}:%{line} \e[34m# %{description}\e[0m",
+            ("-s #{options[:seed]}" if options[:seed])
+          ].compact.join(" ").strip
 
-        $LOAD_PATH << File.join(Dir.pwd, "test")
+          $LOAD_PATH << File.join(Dir.pwd, "test")
 
-        ENV["MT_TEST_COMMAND"] = cmd
-        ENV["ZEE_ENV"] = "test"
-        CLI.load_dotenv_files(".env.test", ".env")
+          ENV["MT_TEST_COMMAND"] = cmd
+          ENV["ZEE_ENV"] = "test"
+          CLI.load_dotenv_files(".env.test", ".env")
 
-        require "./test/test_helper" if File.file?("test/test_helper.rb")
-        require "minitest/utils"
+          require "./test/test_helper" if File.file?("test/test_helper.rb")
+          require "minitest/utils"
 
-        pattern = []
-        test_name = nil
+          pattern = []
+          test_name = nil
 
-        files = files.map do |file|
-          if File.directory?(file)
-            pattern << "#{file}/**/*_test.rb"
-            next
+          files = files.map do |file|
+            if File.directory?(file)
+              pattern << "#{file}/**/*_test.rb"
+              next
+            end
+
+            location, line = file.split(":")
+
+            if line
+              text = File.read(location).lines[line.to_i - 1]
+              description = text.strip[/^.*?test\s+["'](.*?)["']\s+do.*?$/, 1]
+              test_name = Minitest::Test.test_method_name(description)
+            end
+
+            File.expand_path(location)
           end
 
-          location, line = file.split(":")
+          pattern = ["./test/**/*_test.rb"]
+          pattern = files if files.any?
+          files = Dir[*pattern]
+          has_system_test = files.any? { _1.include?("/system/") }
 
-          if line
-            text = File.read(location).lines[line.to_i - 1]
-            description = text.strip[/^.*?test\s+["'](.*?)["']\s+do.*?$/, 1]
-            test_name = Minitest::Test.test_method_name(description)
+          args = []
+          args.push("--name", test_name.to_s) if test_name
+          args.push("--seed", options[:seed]) if options[:seed]
+          args.push("--backtrace") if options[:backtrace]
+
+          if files.empty?
+            raise Thor::Error, set_color("ERROR: No test files found.", :red)
           end
 
-          File.expand_path(location)
+          files.each { require _1 }
+
+          setup_for_system_tests if has_system_test
+          Minitest.run(args)
         end
-
-        pattern = ["./test/**/*_test.rb"]
-        pattern = files if files.any?
-        files = Dir[*pattern]
-        has_system_test = files.any? { _1.include?("/system/") }
-
-        args = []
-        args.push("--name", test_name.to_s) if test_name
-        args.push("--seed", options[:seed]) if options[:seed]
-        args.push("--backtrace") if options[:backtrace]
-
-        if files.empty?
-          raise Thor::Error, set_color("ERROR: No test files found.", :red)
-        end
-
-        files.each { require _1 }
-
-        setup_for_system_tests if has_system_test
-        Minitest.run(args)
+        # :nocov:
       end
-      # :nocov:
 
       desc "dev", "Start the dev server (requires ./bin/dev)"
       # :nocov:
