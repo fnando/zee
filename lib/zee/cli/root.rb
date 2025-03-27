@@ -25,7 +25,6 @@ module Zee
       require_relative "console"
       require_relative "assets"
       require_relative "test" if CLI.available?("minitest")
-      include Secrets
 
       def self.handle_no_command_error(command, *)
         bin = "./bin/#{command}" unless command == "zee"
@@ -49,17 +48,12 @@ module Zee
       desc "generate SUBCOMMAND", "Generate new code (alias: g)"
       subcommand "generate", Generate
 
+      desc "secrets SUBCOMMAND", "Manage secrets"
+      subcommand "secrets", Secrets
+
       if CLI.available?("sequel")
         desc "db SUBCOMMAND", "Database commands"
         subcommand "db", Database
-      end
-
-      no_commands do
-        # :nocov:
-        def secrets_helpers
-          @secrets_helpers ||= Secrets::Helpers.new(options:, shell:)
-        end
-        # :nocov:
       end
     end
   end
