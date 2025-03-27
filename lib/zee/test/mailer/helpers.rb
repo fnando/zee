@@ -66,7 +66,7 @@ module Zee
                   buffer[attachment.filename] = attachment.read
                 end
 
-              value.all? {|key, value| actual_attachments[key] == value }
+              value.all? {|k, v| actual_attachments[k] == v }
             else
               mail[name].to_s == value
             end
