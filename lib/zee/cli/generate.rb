@@ -6,6 +6,8 @@ module Zee
       if available?("minitest")
         desc "system_test NAME", "Generate a new system test"
         def system_test(name)
+          load_environment(env_vars: false)
+
           generator = Generators::SystemTest.new
           generator.destination_root = File.expand_path(Dir.pwd)
           generator.options = {name:}
@@ -44,6 +46,8 @@ module Zee
         options[:name] = name
         options[:fields] = fields
 
+        load_environment(env_vars: false)
+
         generator = Generators::Migration.new
         generator.destination_root = File.expand_path(Dir.pwd)
         generator.options = options
@@ -52,6 +56,8 @@ module Zee
 
       desc "model NAME [FIELDS...]", "Generate new model"
       def model(name, *fields)
+        load_environment(env_vars: false)
+
         name = name.tr("-", "_").gsub(/s$/, "")
         model_name = name.split("_").map(&:capitalize).join
 
@@ -92,10 +98,6 @@ module Zee
         model.destination_root = File.expand_path(Dir.pwd)
         model.options = {file_name: name, model_name:}
         model.invoke_all
-      end
-
-      no_commands do
-        # helpers
       end
     end
   end
