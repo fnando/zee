@@ -3,7 +3,7 @@
 
 require_relative "../lib/zee/cli"
 
-if ARGV[0].include?(":")
+if ARGV[0]&.include?(":")
   parts = ARGV.shift.split(":")
   ARGV.unshift(*parts)
 end
