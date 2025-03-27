@@ -176,4 +176,28 @@ class RenderTest < Zee::Test::Integration
     assert last_response.ok?
     assert_selector last_response.body, "meta[charset='UTF-8']"
   end
+
+  test "redirects (301)" do
+    get "/old"
+
+    assert last_response.redirect?
+    assert_equal "/", last_response.location
+    assert_equal 301, last_response.status
+  end
+
+  test "redirects (302)" do
+    get "/found"
+
+    assert last_response.redirect?
+    assert_equal "/", last_response.location
+    assert_equal 302, last_response.status
+  end
+
+  test "redirects (rack app)" do
+    get "/redirect-rack-app"
+
+    assert last_response.redirect?
+    assert_equal "/", last_response.location
+    assert_equal 302, last_response.status
+  end
 end

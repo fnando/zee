@@ -49,9 +49,9 @@ class CLITest < Minitest::Test
     out = nil
 
     expected = <<~TEXT
-      ------------+----------------------------+------------------+----------------------------
+      ------------+----------------------------+------------------+----------------------------------------
        Verb       | Path                       | Prefix           | To
-      ------------+----------------------------+------------------+----------------------------
+      ------------+----------------------------+------------------+----------------------------------------
        GET        | /                          | root             | pages#home
        GET        | /custom-layout             |                  | pages#custom_layout
        GET        | /no-layout                 |                  | pages#no_layout
@@ -81,9 +81,12 @@ class CLITest < Minitest::Test
        GET        | /messages/keep             |                  | messages#keep
        GET        | /messages/keep-all         |                  | messages#keep_all
        GET        | /admin/posts               | admin_posts      | admin/posts#index
+       ALL        | /old                       |                  | #<Zee::Redirect status=301 to="/">
+       ALL        | /found                     |                  | #<Zee::Redirect status=302 to="/">
+       ALL        | /redirect-rack-app         |                  | app.rb:52
        ALL        | /proc-app                  | proc_app         | app.rb:8
        ALL        | /class-app                 | class_app        | MyRackApp
-      ------------+----------------------------+------------------+----------------------------
+      ------------+----------------------------+------------------+----------------------------------------
     TEXT
 
     Dir.chdir("test/fixtures/sample_app") do

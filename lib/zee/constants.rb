@@ -68,6 +68,9 @@ module Zee
   HTTP_X_REQUESTED_WITH = "HTTP_X_REQUESTED_WITH"
 
   # @api private
+  HTTP_LOCATION = "location"
+
+  # @api private
   NOT_FOUND = "404 Not Found"
 
   # @api private

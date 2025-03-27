@@ -46,6 +46,11 @@ class SampleApp < Zee::App
       # Test namespaced controllers
       get "admin/posts", to: "admin/posts#index", as: :admin_posts
 
+      # redirections
+      redirect "old", to: "/"
+      redirect "found", to: "/", status: :found
+      redirect "redirect-rack-app", to: ->(_env) { [302, {"location" => "/"}] }
+
       mount proc_app, at: "proc-app", as: :proc_app
 
       class_app = Class.new do

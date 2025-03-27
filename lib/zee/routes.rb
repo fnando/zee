@@ -181,6 +181,29 @@ module Zee
       match(at, via:, as:, to: app)
     end
 
+    # Redirect a path to another path.
+    # This method is useful to redirect old paths to new paths.
+    #
+    # @param path [String] the path to match.
+    # @param to [String] the path to redirect to.
+    # @param status [Integer, Symbol] the HTTP status code to use. Defaults
+    #                                 to `301 Moved Permanently`.
+    #
+    # @example
+    #   redirect "old", to: "/"
+    #   redirect "found", to: "/", status: :found
+    #   redirect "found", to: "/", status: 302
+    #   redirect "found", to: ->(env){[302, {"location"=>"/"}, []]}
+    def redirect(path, to:, status: 301)
+      app = if to.respond_to?(:call)
+              to
+            else
+              Redirect.new(to.to_s, Rack::Utils.status_code(status))
+            end
+
+      match(path, via: :all, to: app)
+    end
+
     # Define root route, like `GET /`.
     # See {#match} for more information.
     def root(to:, as: :root)

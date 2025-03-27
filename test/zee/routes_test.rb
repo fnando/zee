@@ -465,6 +465,16 @@ class RoutesTest < Minitest::Test
     )
   end
 
+  test "redirects requests" do
+    routes = Zee::Routes.new do
+      redirect "old", to: "/new"
+    end
+
+    refute_nil routes.find(
+      Zee::Request.new("REQUEST_METHOD" => "GET", "PATH_INFO" => "/old")
+    )
+  end
+
   test "raises when trying to mount a non-rack app" do
     error = assert_raises(ArgumentError) do
       Zee::Routes.new { mount nil, at: "/hello" }
