@@ -51,7 +51,7 @@ module Zee
       #
       #  User.naming.singular #=> "user"
       #  User.naming.plural #=> "users"
-      #  User.naming.underscore_name #=> "user"
+      #  User.naming.underscore #=> "user"
       def naming
         @naming ||= Name.new(name)
       end
