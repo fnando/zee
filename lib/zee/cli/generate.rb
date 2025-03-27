@@ -1,14 +1,16 @@
 # frozen_string_literal: true
 
 module Zee
-  class CLI < Command
+  module CLI
     class Generate < Command
-      desc "system_test NAME", "Generate a new system test"
-      def system_test(name)
-        generator = Generators::SystemTest.new
-        generator.destination_root = File.expand_path(Dir.pwd)
-        generator.options = {name:}
-        generator.invoke_all
+      if available?("minitest")
+        desc "system_test NAME", "Generate a new system test"
+        def system_test(name)
+          generator = Generators::SystemTest.new
+          generator.destination_root = File.expand_path(Dir.pwd)
+          generator.options = {name:}
+          generator.invoke_all
+        end
       end
 
       desc "mailer NAME [METHODS...]", "Generate new mailer"

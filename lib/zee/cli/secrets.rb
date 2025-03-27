@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Zee
-  class CLI < Command
+  module CLI
     module Secrets
       class Helpers < CLI::Helpers
         # :nocov:

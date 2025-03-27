@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Zee
-  class CLI < Command
+  module CLI
     module Database
       class Helpers < CLI::Helpers
         def migrations_dir
@@ -82,7 +82,7 @@ module Zee
       end
 
       def self.included(base)
-        base.before_run_hooks[:db] << lambda do
+        CLI.before_run_hooks[:db] << lambda do
           require "sequel"
         end
 
