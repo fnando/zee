@@ -10,7 +10,7 @@ require "simplecov"
 
 SimpleCov.profiles.define :zee do
   track_files "app/**/*.rb"
-  add_filter ["config/", "test/", "spec/"]
+  add_filter ["config/", "test/", "spec/", "db/"]
 
   {
     "Actions" => "app/actions",
