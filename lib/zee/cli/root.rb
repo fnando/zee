@@ -23,6 +23,7 @@ module Zee
       require_relative "new"
       require_relative "routes"
       require_relative "console"
+      require_relative "assets"
       require_relative "test" if CLI.available?("minitest")
       include Database if CLI.available?("sequel")
       include Secrets
@@ -47,52 +48,6 @@ module Zee
 
       desc "generate SUBCOMMAND", "Generate new code (alias: g)"
       subcommand "generate", Generate
-
-      desc "assets", "Build assets"
-      option :digest,
-             type: :boolean,
-             default: true,
-             desc: "Enable asset digesting"
-      option :prefix,
-             type: :string,
-             default: "/assets",
-             desc: "The request path prefix"
-      def assets
-        bins = %w[bin/styles bin/scripts]
-
-        FileUtils.rm_rf("public/assets")
-        FileUtils.mkdir_p("public/assets")
-
-        bins.each do |bin|
-          bin = Pathname(bin)
-
-          unless bin.file?
-            raise Thor::Error,
-                  set_color("ERROR: #{bin} not found", :red)
-          end
-
-          unless bin.executable?
-            raise Thor::Error,
-                  set_color("ERROR: #{bin} is not executable", :red)
-          end
-
-          # Export styles and scripts
-          system(bin.to_s)
-        end
-
-        # Copy other assets
-        Dir["./app/assets/*"].each do |dir|
-          next if dir.end_with?("styles", "scripts")
-
-          FileUtils.cp_r(dir, "public/assets/")
-        end
-
-        AssetsManifest.new(
-          source: Pathname(Dir.pwd).join("public/assets"),
-          digest: options[:digest],
-          prefix: options[:prefix]
-        ).call
-      end
 
       no_commands do
         def db_helpers
