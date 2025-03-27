@@ -29,6 +29,7 @@ class AuthenticationTest < Zee::Test::System
 
   setup { Capybara.current_driver = :rack_test }
   setup { Capybara.default_host = "http://localhost" }
+  setup { Capybara.app_host = "http://localhost" }
   teardown { Zee.app.loader.unregister }
 
   test "logs in a user" do

@@ -69,15 +69,16 @@ module Zee
       Capybara.javascript_driver = :chrome_headless
 
       setup do
+        port = ENV["CAPYBARA_SERVER_PORT"].to_i
         Capybara.current_driver = Capybara.javascript_driver
         Capybara.reset_sessions!
-        Capybara.default_host = "http://localhost:11100"
-        Capybara.app_host = "http://localhost:11100"
+        Capybara.default_host = "http://127.0.0.1:#{port}"
+        Capybara.app_host = "http://127.0.0.1:#{port}"
         Zee.app
            .config
            .set(:session_options, domain: "localhost", secure: false)
-        routes.default_url_options[:host] = "localhost"
-        routes.default_url_options[:port] = 11_100
+        routes.default_url_options[:host] = "127.0.0.1"
+        routes.default_url_options[:port] = port
       end
 
       setup do

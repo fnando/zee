@@ -13,6 +13,10 @@ module Zee
              default: false,
              aliases: "-b",
              desc: "Show full backtrace"
+      option :wait,
+             type: :numeric,
+             desc: "Set a custom wait time for the integration server to start",
+             default: 5.0
       # :nocov:
       def test(*files)
         cmd = [
@@ -72,7 +76,20 @@ module Zee
 
       no_commands do
         # :nocov:
+        def find_available_port
+          server = TCPServer.new("127.0.0.1", 0)
+          port = server.addr[1]
+          server.close
+          port
+        end
+
         def setup_for_system_tests
+          port = ENV.fetch("CAPYBARA_SERVER_PORT", find_available_port)
+          ENV["CAPYBARA_SERVER_PORT"] = port.to_s
+
+          $stdout.sync = true
+          $stderr.sync = true
+
           pid = Process.spawn(
             "bundle",
             "exec",
@@ -81,32 +98,33 @@ module Zee
             "--config", "./config/puma.rb",
             "--silent",
             "--quiet",
-            "--bind", "tcp://127.0.0.1:11100"
+            "--bind", "tcp://127.0.0.1:#{port}"
           )
           at_exit { Process.kill("INT", pid) }
           Process.detach(pid)
 
           shell.say(
-            "Integration test server: http://localhost:11100 [pid=#{pid}]"
+            "Integration test server: http://127.0.0.1:#{port} [pid=#{pid}]"
           )
 
           require "net/http"
-          attempts = 0
+          waited_time = 0
+          step = 0.05
 
           loop do
-            attempts += 1
-            uri = URI("http://localhost:11100/")
+            waited_time += step
+            uri = URI("http://127.0.0.1:#{port}/")
 
             begin
               Net::HTTP.get_response(uri)
               break
             rescue Errno::ECONNREFUSED
-              if attempts == 10
+              if waited_time > options[:wait]
                 raise Thor::Error,
                       set_color("ERROR: Unable to start Puma at #{uri}", :red)
               end
 
-              sleep 0.05
+              sleep(step)
             end
           end
         end
