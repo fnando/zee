@@ -301,4 +301,92 @@ class AppTest < Minitest::Test
 
     assert_equal "Unsupported JS option: \"foo\"", error.message
   end
+
+  test "generates CI configuration for sqlite" do
+    app = Pathname("tmp")
+    generator = Zee::Generators::App.new
+    generator.destination_root = app
+    generator.options = {
+      database: "sqlite",
+      js: "typescript",
+      css: "tailwind",
+      test: "minitest",
+      skip_bundle: true,
+      skip_npm: true
+    }
+
+    capture { generator.invoke_all }
+    ci_file = app.join(".github/workflows/ci.yml")
+    config = YAML.load_file(ci_file, symbolize_names: true)
+
+    assert_equal "sqlite://storage/test.db", config.dig(:env, :DATABASE_URL)
+    assert_nil config.dig(:jobs, :test, :services)
+  end
+
+  test "generates CI configuration for postgresql" do
+    app = Pathname("tmp")
+    generator = Zee::Generators::App.new
+    generator.destination_root = app
+    generator.options = {
+      database: "postgresql",
+      js: "typescript",
+      css: "tailwind",
+      test: "minitest",
+      skip_bundle: true,
+      skip_npm: true
+    }
+
+    capture { generator.invoke_all }
+    ci_file = app.join(".github/workflows/ci.yml")
+    config = YAML.load_file(ci_file, symbolize_names: true)
+
+    assert_equal "postgres://postgres:postgres@localhost:5432/test",
+                 config.dig(:env, :DATABASE_URL)
+    assert config.dig(:jobs, :test, :services, :postgres)
+  end
+
+  test "generates CI configuration for mysql" do
+    app = Pathname("tmp")
+    generator = Zee::Generators::App.new
+    generator.destination_root = app
+    generator.options = {
+      database: "mysql",
+      js: "typescript",
+      css: "tailwind",
+      test: "minitest",
+      skip_bundle: true,
+      skip_npm: true
+    }
+
+    capture { generator.invoke_all }
+    ci_file = app.join(".github/workflows/ci.yml")
+    config = YAML.load_file(ci_file, symbolize_names: true)
+
+    assert_equal "mysql2://mysql:mysql@127.0.0.1:3306/test?encoding=utf8mb4",
+                 config.dig(:env, :DATABASE_URL)
+    assert config.dig(:jobs, :test, :services, :mysql)
+  end
+
+  test "generates CI configuration for mariadb" do
+    app = Pathname("tmp")
+    generator = Zee::Generators::App.new
+    generator.destination_root = app
+    generator.options = {
+      database: "mariadb",
+      js: "typescript",
+      css: "tailwind",
+      test: "minitest",
+      skip_bundle: true,
+      skip_npm: true
+    }
+
+    capture { generator.invoke_all }
+    ci_file = app.join(".github/workflows/ci.yml")
+    config = YAML.load_file(ci_file, symbolize_names: true)
+
+    assert_equal \
+      "mysql2://mariadb:mariadb@127.0.0.1:3306/test?encoding=utf8mb4",
+      config.dig(:env, :DATABASE_URL)
+    assert config.dig(:jobs, :test, :services, :mariadb)
+  end
 end

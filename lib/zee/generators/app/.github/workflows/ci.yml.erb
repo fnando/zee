@@ -1,0 +1,121 @@
+---
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+env:
+  DATABASE_URL: <%= database_url_for_ci %>
+  ZEE_ENV: test
+  ZEE_KEYRING: "${{ secrets.ZEE_KEYRING }}"
+
+jobs:
+  ruby_audit:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: .ruby-version
+          bundler-cache: true
+
+      - name: Run bundle audit
+        run: bundle exec bundle-audit check --update
+
+  js_audit:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run npm audit
+        run: npm audit
+
+  lint_ruby:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: .ruby-version
+          bundler-cache: true
+
+      - name: Lint Ruby code
+        run: bundle exec rubocop
+
+  test:
+    runs-on: ubuntu-latest
+    <%- if options[:database] == "postgresql" -%>
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+          POSTGRES_DB: test
+        ports: [5432:5432]
+        options:
+          --health-cmd pg_isready --health-interval 10s --health-timeout 5s
+          --health-retries 5
+    <%- elsif options[:database] == "mysql" -%>
+    services:
+      mysql:
+        image: mysql
+        env:
+          MYSQL_DATABASE: test
+          MYSQL_USER: mysql
+          MYSQL_PASSWORD: mysql
+          MYSQL_ROOT_PASSWORD: mysql
+        ports: [3306:3306]
+        options:
+          --health-cmd="mysqladmin ping" --health-interval=10s
+          --health-timeout=5s --health-retries=3
+    <%- elsif options[:database] == "mariadb" -%>
+    services:
+      mariadb:
+        image: mariadb
+        env:
+          MARIADB_DATABASE: test
+          MARIADB_USER: mariadb
+          MARIADB_PASSWORD: mariadb
+          MARIADB_ROOT_PASSWORD: mariadb
+        ports: [3306:3306]
+        options:
+          --health-cmd="mariadb-admin ping" --health-interval=10s
+          --health-timeout=5s --health-retries=3
+    <%- end -%>
+    steps:
+      - name: Install packages
+        run: >
+          sudo apt-get update && sudo apt-get install --no-install-recommends -y
+          build-essential git libyaml-dev pkg-config google-chrome-stable
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: .ruby-version
+          bundler-cache: true
+
+      - name: Run tests
+        run: bin/zee db migrate && bin/zee test
+
+      - name: Save system test screenshots
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: screenshots
+          path: ${{ github.workspace }}/tmp/screenshots
+          if-no-files-found: ignore

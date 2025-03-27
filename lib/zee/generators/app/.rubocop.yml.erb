@@ -1,6 +1,8 @@
 ---
 require:
   - standard
+
+plugins:
   - standard-custom
   - standard-performance
   - rubocop-performance
@@ -18,3 +20,6 @@ AllCops:
   Exclude:
     - vendor/**/*
     - gemfiles/**/*
+
+Minitest/MultipleAssertions:
+  Enabled: false

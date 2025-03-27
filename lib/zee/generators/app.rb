@@ -15,6 +15,8 @@ module Zee
         template ".env.development.erb", ".env.development"
         template ".env.test.erb", ".env.test"
         template ".rubocop.yml.erb", ".rubocop.yml"
+        template ".github/workflows/ci.yml.erb", ".github/workflows/ci.yml"
+        copy_file ".github/dependabot.yml"
         template ".ruby-version.erb", ".ruby-version"
         template "Gemfile.erb", "Gemfile"
       end
@@ -238,6 +240,19 @@ module Zee
 
         def app_name
           File.basename(destination_root).tr("-", "_").downcase
+        end
+
+        def database_url_for_ci
+          case options[:database]
+          when "sqlite"
+            "sqlite://storage/test.db"
+          when "postgresql"
+            "postgres://postgres:postgres@localhost:5432/test"
+          when "mysql"
+            "mysql2://mysql:mysql@127.0.0.1:3306/test?encoding=utf8mb4"
+          when "mariadb"
+            "mysql2://mariadb:mariadb@127.0.0.1:3306/test?encoding=utf8mb4"
+          end
         end
 
         def database_url(env)
