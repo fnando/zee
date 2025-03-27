@@ -20,6 +20,8 @@ class AppTest < Minitest::Test
 
     assert app.join(".gitignore").file?
     assert app.join(".rubocop.yml").file?
+    assert app.join(".github/dependabot.yml").file?
+    assert app.join(".github/workflows/ci.yml").file?
     assert app.join(".ruby-version").file?
     assert app.join(".env.development").file?
     assert app.join(".env.test").file?
