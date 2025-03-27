@@ -66,7 +66,7 @@ module Zee
         files.each { require _1 }
 
         setup_for_system_tests if has_system_test
-        Minitest.run(args)
+        exit(Minitest.run(args) ? 0 : 1)
       end
       # :nocov:
 

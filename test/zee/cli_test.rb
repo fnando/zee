@@ -152,6 +152,31 @@ class CLITest < Minitest::Test
     assert_equal 0, exit_code
   end
 
+  test "runs failed test" do
+    slow_test
+    exit_code = nil
+    out = nil
+
+    create_file "tmp/test/failed_test.rb", <<~RUBY
+      require "minitest/utils"
+
+      class FailedTest < Zee::Test
+        test "it fails" do
+          assert false
+        end
+      end
+    RUBY
+
+    Dir.chdir("tmp") do
+      capture(shell: true) do
+        system "../exe/zee test"
+      end => {exit_code:, out:}
+    end
+
+    assert_equal 1, exit_code
+    assert_includes out, "1) it fails"
+  end
+
   test "warns when there are no test files" do
     slow_test
     exit_code = nil
