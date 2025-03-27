@@ -89,7 +89,13 @@ module Zee
 
       teardown do
         if failures.any?
-          path = Zee.app.root.join("tmp/screenshots/#{name}.png")
+          test_case_name = Zee.app.config.inflector.underscore(self.class.name)
+
+          path = Zee.app
+                    .root
+                    .join("tmp/screenshots")
+                    .join(test_case_name.delete_prefix("system/"))
+                    .join("#{name}.png")
           path.dirname.mkpath
           save_screenshot(path) # rubocop:disable Lint/Debugger
         end
