@@ -20,12 +20,6 @@ module Zee
         end
       end
 
-      require_relative "new"
-      require_relative "routes"
-      require_relative "console"
-      require_relative "assets"
-      require_relative "test" if CLI.available?("minitest")
-
       def self.handle_no_command_error(command, *)
         bin = "./bin/#{command}" unless command == "zee"
 
@@ -37,6 +31,13 @@ module Zee
 
         exit 1
       end
+
+      require_relative "new"
+      require_relative "routes"
+      require_relative "console"
+      require_relative "assets"
+      require_relative "middleware"
+      require_relative "test" if CLI.available?("minitest")
 
       map %w[--version] => :version
       desc "version, --version", "Print the version"

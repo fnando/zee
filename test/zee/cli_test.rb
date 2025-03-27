@@ -16,6 +16,34 @@ class CLITest < Minitest::Test
     refute Zee::CLI.available?("missing")
   end
 
+  test "lists middleware" do
+    exit_code = nil
+    out = nil
+
+    Dir.chdir("test/fixtures/sample_app") do
+      capture { Zee::CLI.start(["middleware"]) } => {exit_code:, out:}
+    end
+
+    assert_equal 0, exit_code
+    assert_includes out, "Rack::Runtime\n"
+    refute_includes out, "_zee_session"
+  end
+
+  test "lists middleware with arguments" do
+    exit_code = nil
+    out = nil
+
+    Dir.chdir("test/fixtures/sample_app") do
+      capture do
+        Zee::CLI.start(["middleware", "--with-arguments"])
+      end => {exit_code:, out:}
+    end
+
+    assert_equal 0, exit_code
+    assert_includes out, "Rack::Runtime\n"
+    assert_includes out, "_zee_session"
+  end
+
   test "lists routes" do
     exit_code = nil
     out = nil
