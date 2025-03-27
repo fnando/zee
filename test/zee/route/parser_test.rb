@@ -17,6 +17,26 @@ class ParserTest < Minitest::Test
     assert_empty parser.segments
   end
 
+  test "parses catch-all route" do
+    parser = Zee::Route::Parser.new("/*path")
+
+    assert_match parser.matcher, "/"
+    assert_match parser.matcher, "/hello"
+    assert_match parser.matcher, "/hello/there"
+    assert_match parser.matcher, "/hello/there/stranger"
+    assert_empty parser.segments
+  end
+
+  test "parses catch-all route with segment" do
+    parser = Zee::Route::Parser.new("/posts/:id(/*path)")
+
+    assert_match parser.matcher, "/posts/1"
+    assert_match parser.matcher, "/posts/1/"
+    assert_match parser.matcher, "/posts/1/permalink"
+    assert_match parser.matcher, "/posts/1/category/permalink"
+    assert_equal :id, parser.segments[:id].name
+  end
+
   test "parses /posts route" do
     parser = Zee::Route::Parser.new("/posts")
 

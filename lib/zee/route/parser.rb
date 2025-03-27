@@ -45,10 +45,11 @@ module Zee
                        %r{^/$}
                      else
                        regex = pattern
+                               .gsub(%r{\(/\*([^)]+)\)}, "(?:/*\\1)?")
+                               .gsub(/\*[^)]+/, ".*")
                                .gsub(%r{\(/:(.*?)\)}, "(/(?<\\1>[^/]+))?")
                                .gsub(/(?::(\w+))/, "(?<\\1>[^/]+)")
                                .gsub(SLASH, "\\/")
-
                        Regexp.new("^#{regex}$")
                      end
       end
@@ -74,14 +75,14 @@ module Zee
       end
 
       def build_path(*args)
-        return "/" if components.empty?
+        return SLASH if components.empty?
         return pattern if segments.empty?
 
         params = segments.keys.zip(args).to_h
         path = []
 
         components.each do |component|
-          if component.start_with?(":")
+          if component.start_with?(COLON)
             name = component[1..-1].to_sym
             value = to_param(params[name]).to_s
 
@@ -98,7 +99,7 @@ module Zee
           end
         end
 
-        path.join("/")
+        path.join(SLASH)
       end
     end
   end

@@ -172,6 +172,10 @@ module Zee
     # @param at [String] the path to mount the Rack app.
     # @param as [String] the name of the route.
     # @param via [Array(Symbol)] the HTTP method(s) to match.
+    #
+    # @example Mouting a Rack app
+    #   mount Sidekiq::Web, at: "sidekiq"
+    #   mount Sidekiq::Web, at: "sidekiq", as: :sidekiq
     def mount(app, at:, as: nil, via: :all)
       unless app.respond_to?(:call)
         raise ArgumentError,
@@ -254,6 +258,21 @@ module Zee
 
     # Define an app route.
     #
+    # ## Catch-all routes
+    #
+    # > [!WARNING]
+    # > The catch-all placeholder must be used as the last segment of the route.
+    # > Adding to the middle won't work at all.
+    #
+    # Catch-all routes allows to match any path. This is useful when you need
+    # to handle generic/complex routes, rather than using the default parser.
+    #
+    #
+    # > [!NOTE]
+    # > When using catch-all routes, be aware that the route may prevent other
+    # > routes from being rendered, due to the precedence. A good call is to
+    # > always keep catch-all routes at the bottom of the route definition.
+    #
     # @param path [String] the path to match.
     # @param via [Array(Symbol)] the HTTP method(s) to match.
     # @param to [String, #call] the controller and action to route to,
@@ -263,6 +282,16 @@ module Zee
     # @param constraints [Hash, #match?, #call] the constraints to match.
     #                                           See {#constraints}.
     # @param defaults [Hash] the default values for the route. See {#defaults}.
+    #
+    # @example Defining routes
+    #   get "posts", to: "posts#index", as: :posts
+    #   get "posts/:id", to: "posts#show", as: :post
+    #   get "posts/:id/edit", to: "posts#edit", as: :edit_post
+    #   post "posts/:id/edit", to: "posts#update"
+    #
+    # @example Defining catch-all routes
+    #   get "*path", to: "catch_all#show"
+    #   get "posts/:id/*path", to: "catch_all#show"
     def match(path, via:, to:, as: nil, constraints: nil, defaults: nil)
       defaults = merge_hash(@defaults, defaults)
       constraints = (@constraints + [constraints]).flatten.compact

@@ -475,6 +475,19 @@ class RoutesTest < Minitest::Test
     )
   end
 
+  test "catches all" do
+    routes = Zee::Routes.new do
+      get "*path", to: "catch_all#process"
+    end
+
+    refute_nil routes.find(
+      Zee::Request.new("REQUEST_METHOD" => "GET", "PATH_INFO" => "/")
+    )
+    refute_nil routes.find(
+      Zee::Request.new("REQUEST_METHOD" => "GET", "PATH_INFO" => "/hello")
+    )
+  end
+
   test "raises when trying to mount a non-rack app" do
     error = assert_raises(ArgumentError) do
       Zee::Routes.new { mount nil, at: "/hello" }
