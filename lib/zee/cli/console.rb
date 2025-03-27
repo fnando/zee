@@ -3,6 +3,7 @@
 module Zee
   module CLI
     class Root < Command
+      map "c" => "console"
       desc "console", "Start a console (alias: c)"
       option :env,
              type: :string,

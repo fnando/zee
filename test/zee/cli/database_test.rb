@@ -25,7 +25,7 @@ class DatabaseTest < Minitest::Test
         end
       RUBY
 
-      capture { Zee::CLI.start(%w[db:migrate --verbose]) } => {exit_code:, err:}
+      capture { Zee::CLI.start(%w[db migrate --verbose]) } => {exit_code:, err:}
 
       assert_equal 1, exit_code
       assert_includes err, "ERROR: No connection string found"
@@ -55,7 +55,7 @@ class DatabaseTest < Minitest::Test
         end
       RUBY
 
-      capture { Zee::CLI.start(%w[db:migrate --verbose]) } => {out:, exit_code:}
+      capture { Zee::CLI.start(%w[db migrate --verbose]) } => {out:, exit_code:}
     end
 
     refute_equal 1, exit_code
@@ -84,8 +84,8 @@ class DatabaseTest < Minitest::Test
         end
       RUBY
 
-      capture { Zee::CLI.start(%w[db:migrate --verbose]) }
-      capture { Zee::CLI.start(%w[db:schema:dump]) } => {exit_code:}
+      capture { Zee::CLI.start(%w[db migrate --verbose]) }
+      capture { Zee::CLI.start(%w[db schema dump]) } => {exit_code:}
     end
 
     # TODO: remove this replace when support for ruby3.3 is dropped.
@@ -118,10 +118,10 @@ class DatabaseTest < Minitest::Test
         end
       RUBY
 
-      capture { Zee::CLI.start(%w[db:migrate --verbose]) }
-      capture { Zee::CLI.start(%w[db:schema:dump]) }
+      capture { Zee::CLI.start(%w[db migrate --verbose]) }
+      capture { Zee::CLI.start(%w[db schema dump]) }
       FileUtils.rm("storage/development.db")
-      capture { Zee::CLI.start(%w[db:schema:load]) } => {exit_code:}
+      capture { Zee::CLI.start(%w[db schema load]) } => {exit_code:}
     end
 
     assert_equal 0, exit_code
@@ -155,8 +155,8 @@ class DatabaseTest < Minitest::Test
         end
       RUBY
 
-      capture { Zee::CLI.start(%w[db:migrate]) }
-      capture { Zee::CLI.start(%w[db:undo]) } => {exit_code:}
+      capture { Zee::CLI.start(%w[db migrate]) }
+      capture { Zee::CLI.start(%w[db undo]) } => {exit_code:}
     end
 
     db = Sequel.connect("sqlite://tmp/storage/development.db")
@@ -187,8 +187,8 @@ class DatabaseTest < Minitest::Test
         end
       RUBY
 
-      capture { Zee::CLI.start(%w[db:migrate]) }
-      capture { Zee::CLI.start(%w[db:redo]) } => {exit_code:}
+      capture { Zee::CLI.start(%w[db migrate]) }
+      capture { Zee::CLI.start(%w[db redo]) } => {exit_code:}
     end
 
     db = Sequel.connect("sqlite://tmp/storage/development.db")
@@ -196,5 +196,15 @@ class DatabaseTest < Minitest::Test
 
     assert_equal 0, exit_code
     assert_match(/_create_users\.rb$/, migration_name)
+  end
+
+  test "fails when using wrong schema command" do
+    exit_code = nil
+    err = nil
+
+    capture { Zee::CLI.start(%w[db schema foo]) } => {exit_code:, err:}
+
+    assert_equal 1, exit_code
+    assert_includes err, 'Invalid option: "foo"'
   end
 end

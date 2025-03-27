@@ -9,4 +9,4 @@
 --verbose
 --output-dir doc
 --readme README.md
-'lib/**/*.rb' - CHANGELOG.md CODE_OF_CONDUCT.md LICENSE.md CONTRIBUTING.md
+'lib/**/*.rb' - CHANGELOG.md CODE_OF_CONDUCT.md LICENSE.md CONTRIBUTING.md PLUGINS.md

@@ -25,7 +25,6 @@ module Zee
       require_relative "console"
       require_relative "assets"
       require_relative "test" if CLI.available?("minitest")
-      include Database if CLI.available?("sequel")
       include Secrets
 
       def self.handle_no_command_error(command, *)
@@ -46,14 +45,16 @@ module Zee
         puts "zee #{VERSION}"
       end
 
+      map "g" => "generate"
       desc "generate SUBCOMMAND", "Generate new code (alias: g)"
       subcommand "generate", Generate
 
-      no_commands do
-        def db_helpers
-          @db_helpers ||= Database::Helpers.new(options:, shell:)
-        end
+      if CLI.available?("sequel")
+        desc "db SUBCOMMAND", "Database commands"
+        subcommand "db", Database
+      end
 
+      no_commands do
         # :nocov:
         def secrets_helpers
           @secrets_helpers ||= Secrets::Helpers.new(options:, shell:)

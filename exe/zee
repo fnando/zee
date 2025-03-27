@@ -3,12 +3,9 @@
 
 require_relative "../lib/zee/cli"
 
-aliases = {
-  "c" => "console",
-  "g" => "generate",
-  "db:rollback" => "db:undo"
-}
-
-ARGV[0] = aliases[ARGV[0]] if aliases[ARGV[0]]
+if ARGV[0].include?(":")
+  parts = ARGV.shift.split(":")
+  ARGV.unshift(*parts)
+end
 
 Zee::CLI.start
