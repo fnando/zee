@@ -144,7 +144,7 @@ module Zee
       #                                      template. Template files must
       #                                      follow the `name.:format.:engine`
       #                                      pattern.
-      # @return [Template, nil]
+      # @return [Template::Info, nil]
       # @raise [MissingTemplateError]
       def find_layout(name, mimes)
         mimes.each do |mime|
@@ -157,7 +157,7 @@ module Zee
               layout_path =
                 view_path.glob("layouts/#{layout}.{#{ext}}.*").first
 
-              return Template.new(path: layout_path, mime:) if layout_path
+              return Template::Info.new(path: layout_path, mime:) if layout_path
             end
           end
         end
@@ -187,7 +187,7 @@ module Zee
       #                                      pattern.
       # @param required [Boolean] When required, raises [MissingTemplateError]
       #                           if the template is not found.
-      # @return [Template, nil]
+      # @return [Template::Info, nil]
       # @raise [MissingTemplateError]
       def find_template(name, mimes, required: true)
         name_ancestry.each do |controller_name|
@@ -203,7 +203,9 @@ module Zee
                             .glob("#{name}.{#{ext}}.#{handler}")
                             .first
 
-                return Template.new(path: view_path, mime:) if view_path&.file?
+                if view_path&.file?
+                  return Template::Info.new(path: view_path, mime:)
+                end
               end
             end
           end

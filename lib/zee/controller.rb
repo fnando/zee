@@ -36,11 +36,6 @@ module Zee
     # Raised when trying to expose a public method as a helper.
     UnsafeHelperError = Class.new(StandardError)
 
-    # @api private
-    # The template object.
-    # @return [Struct]
-    Template = Struct.new(:path, :mime, keyword_init: true)
-
     class << self
       # The CSRF parameter name.
       # Defaults to `_authenticity_token`.

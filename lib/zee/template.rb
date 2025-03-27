@@ -2,6 +2,10 @@
 
 module Zee
   class Template
+    # @api private
+    # Identifies the template path+mime that's used to render partials.
+    Info = Data.define(:path, :mime)
+
     def self.cache
       @cache ||= {}
     end
