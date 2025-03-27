@@ -230,6 +230,7 @@ module Zee
     def default_middleware_stack
       MiddlewareStack.new(self).tap do |middleware|
         middleware.use Rack::Runtime
+        middleware.use Middleware::Charset
         middleware.use RequestStore::Middleware
         middleware.use Rack::ShowExceptions if env.development?
         middleware.use Middleware::Static if config.serve_static_files
