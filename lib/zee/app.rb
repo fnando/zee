@@ -303,6 +303,7 @@ module Zee
       run_init
       enable_reloading
       loader.setup
+      loader.eager_load if env.production?
     end
 
     # @api private
