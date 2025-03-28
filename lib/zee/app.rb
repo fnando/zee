@@ -156,7 +156,10 @@ module Zee
     def secrets
       @secrets ||= Secrets.new(
         keyring:,
-        secrets_file: root.join("config/secrets/#{env}.yml.enc")
+        secrets_file: ENV.fetch(
+          ZEE_SECRETS_FILE,
+          root.join("config/secrets/#{env}.yml.enc")
+        )
       )
     end
 

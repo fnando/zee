@@ -122,6 +122,9 @@ module Zee
   ZEE_SESSION_KEY = "_zee_session"
 
   # @api private
+  ZEE_SECRETS_FILE = "ZEE_SECRETS_FILE"
+
+  # @api private
   # The name of the output buffer variable used by erubi templates.
   BUFVAR = "@_output_buffer"
 
