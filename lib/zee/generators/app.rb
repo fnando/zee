@@ -243,16 +243,14 @@ module Zee
         end
 
         def database_url_for_ci
-          case options[:database]
-          when "sqlite"
-            "sqlite://storage/test.db"
-          when "postgresql"
-            "postgres://postgres:postgres@localhost:5432/test"
-          when "mysql"
-            "mysql2://mysql:mysql@127.0.0.1:3306/test?encoding=utf8mb4"
-          when "mariadb"
-            "mysql2://mariadb:mariadb@127.0.0.1:3306/test?encoding=utf8mb4"
-          end
+          enc = "encoding=utf8mb4"
+
+          {
+            "sqlite" => "sqlite://storage/test.db",
+            "postgresql" => "postgres://postgres:postgres@localhost:5432/test",
+            "mysql" => "mysql2://mysql:mysql@127.0.0.1:3306/test?#{enc}",
+            "mariadb" => "mysql2://mariadb:mariadb@127.0.0.1:3306/test?#{enc}"
+          }.fetch(options[:database])
         end
 
         def database_url(env)
