@@ -27,7 +27,7 @@ module Zee
       end
 
       def call(env)
-        instrumented = Zee.app.config.enable_instrumentation
+        instrumented = Zee.app.config.enable_instrumentation?
 
         return @app.call(env) unless instrumented
 

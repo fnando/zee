@@ -180,7 +180,7 @@ module Zee
       end
 
       return if !previously_performed && response.performed?
-      raise error unless Zee.app.config.handle_errors
+      raise error unless Zee.app.config.handle_errors?
 
       response.reset
       response.status(:internal_server_error)

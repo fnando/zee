@@ -11,7 +11,7 @@ module Sequel
     end
 
     def log_connection_yield(sql, *)
-      return super unless Zee.app.config.enable_instrumentation
+      return super unless Zee.app.config.enable_instrumentation?
 
       Zee::Instrumentation.instrument(
         :sequel,

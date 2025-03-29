@@ -236,7 +236,7 @@ module Zee
         middleware.use Middleware::Charset
         middleware.use RequestStore::Middleware
         middleware.use Rack::ShowExceptions if env.development?
-        middleware.use Middleware::Static if config.serve_static_files
+        middleware.use Middleware::Static if config.serve_static_files?
         middleware.use Middleware::RequestLogger
         middleware.use Rack::Sendfile
         middleware.use Rack::Protection if defined?(Rack::Protection)
@@ -411,7 +411,7 @@ module Zee
       Template.render(
         file,
         helpers:,
-        cache: config.enable_template_caching,
+        cache: config.enable_template_caching?,
         **options, # rubocop:disable Style/ArgumentsForwarding
         &
       )
@@ -452,7 +452,7 @@ module Zee
     # :nocov:
     # @api private
     private def enable_reloading
-      return unless config.enable_reloading
+      return unless config.enable_reloading?
 
       require "listen"
       loader.enable_reloading

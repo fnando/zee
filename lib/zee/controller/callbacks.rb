@@ -126,7 +126,7 @@ module Zee
 
       # @api private
       private def instrument_before_action(name, callback, response)
-        return unless Zee.app.config.enable_instrumentation
+        return unless Zee.app.config.enable_instrumentation?
 
         source = name
         source ||= begin
