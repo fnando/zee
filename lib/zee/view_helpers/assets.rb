@@ -3,6 +3,8 @@
 module Zee
   module ViewHelpers
     module Assets
+      using Core::Blank
+
       # @api private
       TYPE_TO_DIR_MAPPING = {
         js: "scripts",
@@ -119,8 +121,9 @@ module Zee
       def with_asset_host(path)
         asset_host = Zee.app.config.asset_host
         asset_host = asset_host.call if asset_host.respond_to?(:call)
+        has_asset_host = asset_host.present?
 
-        if always_include_host? && !asset_host && !default_url_options[:host]
+        if always_include_host? && !has_asset_host && !default_url_options[:host]
           raise ArgumentError, "Please provide the :host parameter, " \
                                "set default_url_options[:host], or define " \
                                "asset_host in the configuration."
@@ -130,7 +133,7 @@ module Zee
                  default_url_options[:protocol] ||
                  HTTPS
 
-        if asset_host
+        if has_asset_host
           uri = URI.parse(asset_host) if asset_host.match?(/^https?:/)
           uri ||= URI.parse(SLASH).tap { _1.host = asset_host }
         elsif always_include_host?

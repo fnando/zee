@@ -57,6 +57,10 @@ module Zee
 
     # @api private
     private def set_default_options
+      dev = !!app&.env&.development? # rubocop:disable Style/DoubleNegation
+      local = !!app&.env&.local? # rubocop:disable Style/DoubleNegation
+      prod = !!app&.env&.production? # rubocop:disable Style/DoubleNegation
+
       set :logger,
           Logger.new(
             ::Logger.new($stdout),
@@ -69,15 +73,31 @@ module Zee
       set :session_options, secret: SecureRandom.hex(64)
       set :json_serializer, JSON
       set :template_handlers, %w[erb]
-      set :serve_static_files, !!app&.env&.local? #  rubocop:disable Style/DoubleNegation
       set :enable_reloading, false
-      set :enable_template_caching, false
-      set :enable_instrumentation, false
-      set :handle_errors, false
+
+      set :serve_static_files,
+          env(:serve_static_files, local, type: :bool)
+
+      set :enable_template_caching,
+          env(:enable_template_caching, prod, type: :bool)
+
+      set :enable_instrumentation,
+          env(:enable_instrumentation, dev, type: :bool)
+
+      set :asset_host, env(:asset_host, "", type: :string)
+
+      set :handle_errors, env(:handle_errors, prod, type: :bool)
+
       set :filter_parameters, ParameterFilter::DEFAULT_FILTERS
-      set :asset_host, nil
       set :cache, CacheStore::Null.new(encrypt: false)
       set :inflector, Dry::Inflector.new
+    end
+
+    def env(name, default, type:)
+      env_var = [:zee, name].join(UNDERSCORE).upcase
+      return coerce(name, type, @env[env_var]) if @env.key?(env_var)
+
+      default
     end
 
     # @api private

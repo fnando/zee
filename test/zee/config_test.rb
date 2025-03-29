@@ -64,4 +64,21 @@ class ConfigTest < Minitest::Test
 
     assert_instance_of Zee::Config, config
   end
+
+  test "sets config from env" do
+    env = {
+      "ZEE_ASSET_HOST" => "HOST",
+      "ZEE_ENABLE_INSTRUMENTATION" => "1",
+      "ZEE_SERVE_STATIC_FILES" => "1",
+      "ZEE_ENABLE_TEMPLATE_CACHING" => "1",
+      "ZEE_HANDLE_ERRORS" => "1"
+    }
+    config = Zee::Config.new(env:)
+
+    assert_equal "HOST", config.asset_host
+    assert config.enable_instrumentation?
+    assert config.enable_template_caching?
+    assert config.serve_static_files?
+    assert config.handle_errors?
+  end
 end
