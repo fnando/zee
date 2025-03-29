@@ -69,7 +69,7 @@ module Zee
       set :session_options, secret: SecureRandom.hex(64)
       set :json_serializer, JSON
       set :template_handlers, %w[erb]
-      set :serve_static_files, app&.env&.local?
+      set :serve_static_files, !!app&.env&.local? #  rubocop:disable Style/DoubleNegation
       set :enable_reloading, false
       set :enable_template_caching, false
       set :enable_instrumentation, false

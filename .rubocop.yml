@@ -13,6 +13,7 @@ AllCops:
     - gemfiles/**/*
     - test/fixtures/app/**/*
     - test/fixtures/sample_app/**/*
+    - tmp/**/*
 
 Lint/EmptyClass:
   Enabled: false
