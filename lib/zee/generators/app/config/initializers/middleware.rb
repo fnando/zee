@@ -20,6 +20,14 @@ Zee.app.middleware do
   # [https://github.com/sinatra/sinatra/blob/main/rack-protection/lib/rack/protection/strict_transport.rb]
   use Rack::Protection::StrictTransport if app.env.production?
 
+  # Use common logger in production.
+  # [https://github.com/rack/rack/blob/main/lib/rack/common_logger.rb]
+  use Rack::CommonLogger if app.env.production?
+
+  # Enable compression of HTTP responses.
+  # [https://github.com/rack/rack/blob/main/lib/rack/deflater.rb]
+  use Rack::Deflater if app.env.production?
+
   # Protects against XSS attacks.
   use Zee::Middleware::ContentSecurityPolicy, {
     default_src: "'self'",
