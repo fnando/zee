@@ -21,6 +21,12 @@ module Zee
         template "Gemfile.erb", "Gemfile"
       end
 
+      def docker
+        template "Dockerfile.erb", "Dockerfile"
+        copy_file ".dockerignore"
+        copy_file "Caddyfile"
+      end
+
       def files
         copy_file ".gitignore"
         copy_file "app/helpers/app.rb"
@@ -34,6 +40,7 @@ module Zee
         copy_file "bin/scripts"
         copy_file "bin/dev"
         copy_file "bin/zee"
+        copy_file "bin/docker-entrypoint"
         copy_file "config.ru"
         copy_file "config/app.rb"
         copy_file "config/boot.rb"
@@ -131,6 +138,7 @@ module Zee
           FileUtils.chmod(0o755, "bin/scripts")
           FileUtils.chmod(0o755, "bin/dev")
           FileUtils.chmod(0o755, "bin/zee")
+          FileUtils.chmod(0o755, "bin/docker-entrypoint")
         end
       end
 
@@ -238,6 +246,11 @@ module Zee
           version.split(".").take(size).join(".")
         end
 
+        def node_version
+          version = `node --version`.strip rescue Errno::ENOENT => "22.14.0" # rubocop:disable Style/RescueModifier
+          version.delete_prefix("v")
+        end
+
         def app_name
           File.basename(destination_root).tr("-", "_").downcase
         end
@@ -264,6 +277,27 @@ module Zee
           else
             raise "Unsupported database: #{options[:database]}"
           end
+        end
+
+        def deb
+          base = "curl libjemalloc2"
+          build = "build-essential git libyaml-dev pkg-config"
+
+          {
+            "sqlite" => {base: "#{base} sqlite3", build:},
+            "postgresql" => {
+              base: "#{base} postgresql-client",
+              build: "#{build} libpq-dev"
+            },
+            "mysql" => {
+              base: "#{base} default-mysql-client",
+              build: "#{build} default-libmysqlclient-dev"
+            },
+            "mariadb" => {
+              base: "#{base} default-mysql-client",
+              build: "#{build} default-libmysqlclient-dev"
+            }
+          }.fetch(options[:database])
         end
       end
     end

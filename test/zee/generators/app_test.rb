@@ -29,6 +29,10 @@ class AppTest < Minitest::Test
     assert app.join("bin/zee").file?
     assert app.join("bin/scripts").file?
     assert app.join("bin/styles").file?
+    assert app.join("bin/docker-entrypoint").file?
+    assert app.join("Dockerfile").file?
+    assert app.join("Caddyfile").file?
+    assert app.join(".dockerignore").file?
     assert app.join("package.json").file?
     assert app.join("app/controllers/base.rb").file?
     assert app.join("app/assets/styles/app.css").file?
@@ -71,6 +75,7 @@ class AppTest < Minitest::Test
     assert app.join("bin/zee").executable?
     assert app.join("bin/scripts").executable?
     assert app.join("bin/styles").executable?
+    assert app.join("bin/docker-entrypoint").executable?
     refute app.join("config/secrets/test.key").world_readable?
     refute app.join("config/secrets/development.key").world_readable?
 

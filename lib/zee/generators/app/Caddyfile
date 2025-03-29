@@ -1,0 +1,19 @@
+{
+  admin off
+}
+
+:8080 {
+  header {
+    -Server
+  }
+
+  root * /app/public
+  file_server
+  handle_errors {
+    header {
+      -Server
+    }
+
+    reverse_proxy 127.0.0.1:3000
+  }
+}

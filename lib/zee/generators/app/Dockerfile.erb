@@ -1,0 +1,85 @@
+# syntax=docker/dockerfile:1
+# check=error=true
+
+# See https://github.com/fnando/zee/tree/main/DOCKER.md
+
+# Make sure RUBY_VERSION and NODE_VERSION must match
+# your Gemfile and package.json requirements.
+ARG RUBY_VERSION=<%= RUBY_VERSION %>
+ARG NODE_VERSION=<%= node_version %>
+ARG CADDY_VERSION=2.9.1
+FROM docker.io/library/ruby:$RUBY_VERSION-slim AS base
+
+# The app lives here
+WORKDIR /app
+
+# Install base packages
+RUN apt-get update -qq && \
+    apt-get install --no-install-recommends -y <%= deb[:base] %> && \
+    rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*
+
+# Set production environment
+ENV ZEE_ENV="production" \
+    BUNDLE_DEPLOYMENT="1" \
+    BUNDLE_PATH="/usr/local/bundle" \
+    BUNDLE_WITHOUT="development"
+
+FROM base AS build
+
+# Install packages needed to build gems
+RUN apt-get update -qq && \
+    apt-get install --no-install-recommends -y <%= deb[:build] %> && \
+    rm -rf /var/lib/apt/lists /var/cache/apt/archives
+
+# Install application gems
+COPY Gemfile Gemfile.lock .ruby-version ./
+RUN bundle install && \
+    rm -rf ~/.bundle/ "${BUNDLE_PATH}"/ruby/*/cache "${BUNDLE_PATH}"/ruby/*/bundler/gems/*/.git
+
+# Copy application code
+COPY . .
+
+# Install node
+ARG NODE_VERSION
+RUN curl -sL https://github.com/nodenv/node-build/archive/master.tar.gz | tar xz -C /tmp/ && \
+    /tmp/node-build-master/bin/node-build "${NODE_VERSION}" /usr/local/node && \
+    rm -rf /tmp/node-build-master
+
+# Precompiling assets for production
+ENV PATH="/usr/local/node/bin:${PATH}"
+RUN npm install && \
+    ./bin/zee assets && \
+    rm -rf node_modules && \
+    rm -rf /usr/local/node
+
+# Download caddy.
+ARG CADDY_VERSION
+RUN curl -sL https://github.com/caddyserver/caddy/releases/download/v${CADDY_VERSION}/caddy_${CADDY_VERSION}_linux_$(dpkg --print-architecture).deb -o caddy.deb && \
+    dpkg -i caddy.deb && \
+    rm caddy.deb
+
+# Final stage for app image
+FROM base
+
+# Copy built artifacts: gems, application
+COPY --from=build "${BUNDLE_PATH}" "${BUNDLE_PATH}"
+COPY --from=build /app /app
+COPY --from=build /usr/bin/caddy /usr/bin/caddy
+
+# Set up caddy init script.
+RUN echo '#!/usr/bin/env bash\n' \
+    'caddy run --config /app/Caddyfile > /dev/null 2>&1 &\n' \
+    'bundle exec puma -C ./config/puma.rb --bind tcp://127.0.0.1:3000' \
+    > /app/init.sh
+
+# Run and own only the runtime files as a non-root user for security
+RUN groupadd --system --gid 1000 zee && \
+    useradd zee --uid 1000 --gid 1000 --create-home --shell /bin/bash && \
+    chown -R zee:zee db log storage tmp
+USER 1000:1000
+
+# Entrypoint prepares the database.
+ENTRYPOINT ["/app/bin/docker-entrypoint"]
+
+EXPOSE 8080
+CMD ["bash", "/app/init.sh"]
