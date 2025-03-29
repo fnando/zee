@@ -40,6 +40,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "dry-inflector", "~> 1.0"
   spec.add_dependency "erubi", "~> 1.13"
   spec.add_dependency "i18n", "~> 1.14"
+  spec.add_dependency "irb"
   spec.add_dependency "json", "~> 2.10"
   spec.add_dependency "logger", "~> 1.6"
   spec.add_dependency "mail"
