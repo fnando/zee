@@ -32,7 +32,9 @@ module Zee
           end
 
           # Export styles and scripts
-          system(bin.to_s)
+          unless system(bin.to_s)
+            raise Thor::Error, set_color("ERROR: #{bin} failed to run", :red)
+          end
         end
 
         # Copy other assets

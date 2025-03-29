@@ -281,6 +281,50 @@ class CLITest < Minitest::Test
     assert_includes err, "ERROR: bin/scripts is not executable"
   end
 
+  test "fails when no bin/styles exits with non-zero status" do
+    slow_test
+    exit_code = nil
+    err = nil
+
+    FileUtils.mkdir_p("tmp/bin")
+    File.write "tmp/bin/styles", <<~BASH
+      #!/usr/bin/env bash
+      exit 1
+    BASH
+    File.chmod(0o755, "tmp/bin/styles")
+    FileUtils.touch("tmp/bin/scripts")
+    File.chmod(0o755, "tmp/bin/styles")
+
+    Dir.chdir("tmp") do
+      capture { Zee::CLI.start(["assets"]) } => {exit_code:, err:}
+    end
+
+    assert_equal 1, exit_code
+    assert_includes err, "ERROR: bin/styles failed to run"
+  end
+
+  test "fails when no bin/scripts exits with non-zero status" do
+    slow_test
+    exit_code = nil
+    err = nil
+
+    FileUtils.mkdir_p("tmp/bin")
+    File.write "tmp/bin/scripts", <<~BASH
+      #!/usr/bin/env bash
+      exit 1
+    BASH
+    File.chmod(0o755, "tmp/bin/scripts")
+    FileUtils.touch("tmp/bin/styles")
+    File.chmod(0o755, "tmp/bin/styles")
+
+    Dir.chdir("tmp") do
+      capture { Zee::CLI.start(["assets"]) } => {exit_code:, err:}
+    end
+
+    assert_equal 1, exit_code
+    assert_includes err, "ERROR: bin/scripts failed to run"
+  end
+
   test "builds assets with digest" do
     slow_test
     exit_code = nil
