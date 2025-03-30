@@ -69,6 +69,7 @@ class AppTest < Minitest::Test
     assert app.join("public/favicon.ico").file?
     assert app.join("public/icon.svg").file?
     assert app.join("public/apple-touch-icon.png").file?
+    assert app.join("public/apple-touch-icon-precomposed.png").file?
     assert app.join("test/integration/pages_test.rb").file?
     assert_equal RUBY_VERSION, app.join(".ruby-version").read.chomp
     assert app.join("bin/dev").executable?

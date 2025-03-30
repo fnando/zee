@@ -55,6 +55,7 @@ module Zee
         copy_file "package.json"
         copy_file "Procfile.dev"
         copy_file "public/apple-touch-icon.png"
+        copy_file "public/apple-touch-icon-precomposed.png"
         copy_file "public/favicon.ico"
         copy_file "public/icon.svg"
 
