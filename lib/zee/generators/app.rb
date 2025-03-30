@@ -248,7 +248,12 @@ module Zee
         end
 
         def node_version
-          version = `node --version`.strip rescue Errno::ENOENT => "22.14.0" # rubocop:disable Style/RescueModifier
+          version = begin
+            `node --version`.strip
+          rescue Errno::ENOENT
+            "22.14.0"
+          end
+
           version.delete_prefix("v")
         end
 
