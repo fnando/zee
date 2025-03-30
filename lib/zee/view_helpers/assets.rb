@@ -122,8 +122,11 @@ module Zee
         asset_host = Zee.app.config.asset_host
         asset_host = asset_host.call if asset_host.respond_to?(:call)
         has_asset_host = asset_host.present?
+        requires_host = always_include_host? &&
+                        !has_asset_host &&
+                        !default_url_options[:host]
 
-        if always_include_host? && !has_asset_host && !default_url_options[:host]
+        if requires_host
           raise ArgumentError, "Please provide the :host parameter, " \
                                "set default_url_options[:host], or define " \
                                "asset_host in the configuration."
