@@ -361,6 +361,7 @@ module Zee
           include(ViewHelpers::MetaTag)
           include(ViewHelpers::Translation)
           include(ViewHelpers::Caching)
+          include(Controller::Flash::Helpers)
           include(app.routes.helpers)
           include(*helper_modules) if helper_modules.any?
         end

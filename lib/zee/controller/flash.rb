@@ -51,13 +51,11 @@ module Zee
     # @see Controller::Redirect#redirect_to
     # @see Middleware::Flash
     module Flash
-      def self.included(target)
-        target.helper_method(:flash)
-      end
-
-      # Define the flash object.
-      private def flash
-        @flash ||= FlashHash.new(session)
+      module Helpers
+        # Define the flash object.
+        private def flash
+          @flash ||= FlashHash.new(request.env[RACK_SESSION])
+        end
       end
 
       class FlashHash

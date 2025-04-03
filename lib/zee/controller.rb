@@ -7,7 +7,7 @@ module Zee
     include Callbacks
     include AuthenticityToken
     include HelperMethods
-    include Flash
+    include Flash::Helpers
     include Translation
     include ErrorHandling
     using Zee::Core::Module
