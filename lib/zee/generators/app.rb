@@ -70,6 +70,18 @@ module Zee
         create_file "app/models/.keep"
       end
 
+      def eslint
+        add_npm_dependency eslint: "*", globals: "*", "@eslint/js" => "*"
+
+        case options[:js]
+        when "typescript"
+          add_npm_dependency "typescript-eslint" => "*"
+          copy_file "eslint.typescript.mjs", "eslint.config.mjs"
+        else
+          copy_file "eslint.javascript.mjs", "eslint.config.mjs"
+        end
+      end
+
       def js_bundler
         case options[:js_bundler]
         when "vite"

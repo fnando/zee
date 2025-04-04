@@ -34,6 +34,7 @@ class AppTest < Minitest::Test
     assert app.join("Caddyfile").file?
     assert app.join(".dockerignore").file?
     assert app.join("package.json").file?
+    assert app.join("eslint.config.mjs").file?
     assert app.join("app/controllers/base.rb").file?
     assert app.join("app/assets/styles/app.css").file?
     assert app.join("app/assets/styles/lib/reset.css").file?
@@ -153,6 +154,28 @@ class AppTest < Minitest::Test
 
     assert app.join("vite.config.js").file?
     assert_includes app.join("bin/scripts").read, "vite"
+  end
+
+  test "generates eslint config for non-typescript" do
+    app = Pathname("tmp")
+    generator = Zee::Generators::App.new
+    generator.options = {
+      skip_bundle: true,
+      skip_npm: true,
+      database: "sqlite",
+      js: "js",
+      js_bundler: "esbuild",
+      css: "tailwind",
+      test: "minitest"
+    }
+    generator.destination_root = app
+
+    Dir.chdir(app) do
+      capture { generator.invoke_all }
+    end
+
+    assert app.join("eslint.config.mjs").file?
+    refute_includes app.join("eslint.config.mjs").read, "typescript-eslint"
   end
 
   test "uses rspec as the test framework" do
