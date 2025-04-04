@@ -133,6 +133,28 @@ class AppTest < Minitest::Test
     refute_includes out, "bundle install"
   end
 
+  test "uses vite as javascript bundler" do
+    app = Pathname("tmp")
+    generator = Zee::Generators::App.new
+    generator.options = {
+      skip_bundle: true,
+      skip_npm: true,
+      database: "sqlite",
+      js: "typescript",
+      js_bundler: "vite",
+      css: "tailwind",
+      test: "rspec"
+    }
+    generator.destination_root = app
+
+    Dir.chdir(app) do
+      capture { generator.invoke_all }
+    end
+
+    assert app.join("vite.config.js").file?
+    assert_includes app.join("bin/scripts").read, "vite"
+  end
+
   test "uses rspec as the test framework" do
     app = Pathname("tmp")
     generator = Zee::Generators::App.new

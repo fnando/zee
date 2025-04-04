@@ -37,7 +37,6 @@ module Zee
         copy_file "app/assets/styles/lib/theme.css"
         copy_file "app/assets/styles/lib/flash.css"
         copy_file "bin/styles"
-        copy_file "bin/scripts"
         copy_file "bin/dev"
         copy_file "bin/zee"
         copy_file "bin/docker-entrypoint"
@@ -69,6 +68,18 @@ module Zee
         create_file "tmp/.keep"
         create_file "log/.keep"
         create_file "app/models/.keep"
+      end
+
+      def js_bundler
+        case options[:js_bundler]
+        when "vite"
+          add_npm_dependency "vite" => "*"
+          copy_file "bin/vite", "bin/scripts"
+          copy_file "vite.config.js"
+        else
+          add_npm_dependency "esbuild" => "*"
+          copy_file "bin/esbuild", "bin/scripts"
+        end
       end
 
       def sqlite

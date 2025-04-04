@@ -1,0 +1,13 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# This script is used to generate the JS for the app.
+# When deploying your app, you must call `zee assets` to generate all the
+# assets. The only requirement is that files must be exported to the
+# `public/assets` folder.
+
+# Ignore warnings from Node.js
+ENV["NODE_NO_WARNINGS"] = "1"
+
+# Export script entrypoints
+system "node_modules/.bin/vite", "build", *ARGV

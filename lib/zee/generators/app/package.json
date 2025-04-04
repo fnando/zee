@@ -1,7 +1,5 @@
 {
   "name": "app",
   "private": true,
-  "dependencies": {
-    "esbuild": "*"
-  }
+  "dependencies": {}
 }

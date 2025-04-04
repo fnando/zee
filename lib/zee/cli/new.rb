@@ -27,6 +27,11 @@ module Zee
              default: "typescript",
              enum: %w[js typescript],
              desc: "Use a JavaScript language"
+      option :js_bundler,
+             type: :string,
+             default: "esbuild",
+             enum: %w[esbuild vite],
+             desc: "Use a JavaScript bundler"
       option :test,
              type: :string,
              default: "minitest",
