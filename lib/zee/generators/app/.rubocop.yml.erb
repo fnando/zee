@@ -8,6 +8,7 @@ plugins:
   - rubocop-performance
   - rubocop-minitest
   - rubocop-sequel
+  - rubocop-capybara
 
 inherit_gem:
   standard: config/base.yml
@@ -17,9 +18,13 @@ inherit_gem:
 AllCops:
   TargetRubyVersion: <%= version(RUBY_VERSION, 2) %>
   NewCops: enable
+  SuggestExtensions: false
   Exclude:
     - vendor/**/*
     - gemfiles/**/*
 
 Minitest/MultipleAssertions:
   Enabled: false
+
+Layout/ArgumentAlignment:
+  EnforcedStyle: with_first_argument
