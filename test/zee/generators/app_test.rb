@@ -156,6 +156,33 @@ class AppTest < Minitest::Test
     assert_includes app.join("bin/scripts").read, "vite"
   end
 
+  test "generates eslint config for typescript" do
+    app = Pathname("tmp")
+    generator = Zee::Generators::App.new
+    generator.options = {
+      skip_bundle: true,
+      skip_npm: true,
+      database: "sqlite",
+      js: "typescript",
+      js_bundler: "esbuild",
+      css: "tailwind",
+      test: "minitest"
+    }
+    generator.destination_root = app
+
+    Dir.chdir(app) do
+      capture { generator.invoke_all }
+    end
+
+    pkg_json = JSON.load_file(app.join("package.json"), symbolize_names: true)
+
+    assert app.join("eslint.config.mjs").file?
+    assert_includes app.join("eslint.config.mjs").read, "typescript-eslint"
+    assert_equal \
+      "npm run tsc -- --noEmit && npm run eslint -- --max-warnings=0",
+      pkg_json.dig(:scripts, :lint)
+  end
+
   test "generates eslint config for non-typescript" do
     app = Pathname("tmp")
     generator = Zee::Generators::App.new
@@ -174,8 +201,12 @@ class AppTest < Minitest::Test
       capture { generator.invoke_all }
     end
 
+    pkg_json = JSON.load_file(app.join("package.json"), symbolize_names: true)
+
     assert app.join("eslint.config.mjs").file?
     refute_includes app.join("eslint.config.mjs").read, "typescript-eslint"
+    assert_equal "npm run eslint -- --max-warnings=0",
+                 pkg_json.dig(:scripts, :lint)
   end
 
   test "uses rspec as the test framework" do

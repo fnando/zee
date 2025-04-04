@@ -35,6 +35,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
       - name: Run npm audit
         run: npm audit
 
@@ -52,6 +56,19 @@ jobs:
 
       - name: Lint Ruby code
         run: bundle exec rubocop
+
+  lint_js:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
+      - name: Lint JavaScript code
+        run: npm run lint
 
   test:
     runs-on: ubuntu-latest

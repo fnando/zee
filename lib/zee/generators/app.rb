@@ -51,7 +51,7 @@ module Zee
         copy_file "config/locales/en/forms.yml"
         copy_file "config/locales/en/meta.yml"
         copy_file "config/routes.rb"
-        copy_file "package.json"
+        template "package.json.erb", "package.json"
         copy_file "Procfile.dev"
         copy_file "public/apple-touch-icon.png"
         copy_file "public/apple-touch-icon-precomposed.png"
@@ -327,6 +327,13 @@ module Zee
               build: "#{build} default-libmysqlclient-dev"
             }
           }.fetch(options[:database])
+        end
+
+        def js_lint_commands
+          [
+            ("npm run tsc -- --noEmit" if options[:js] == "typescript"),
+            "npm run eslint -- --max-warnings=0"
+          ].compact.join(" && ")
         end
       end
     end
