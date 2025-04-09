@@ -4,8 +4,7 @@ require "test_helper"
 
 class AttributesTest < Minitest::Test
   test "defines string attribute" do
-    model_class = Class.new do
-      include Zee::Model::Attributes
+    model_class = Class.new(Zee::Model) do
       attribute :name
     end
 
@@ -16,9 +15,19 @@ class AttributesTest < Minitest::Test
     assert_equal "Jane", model.attributes[:name]
   end
 
+  test "assigns value" do
+    model_class = Class.new(Zee::Model) do
+      attribute :name
+    end
+
+    model = model_class.new(name: "Jane")
+    model[:name] = "John"
+
+    assert_equal "John", model.name
+  end
+
   test "returns default value" do
-    model_class = Class.new do
-      include Zee::Model::Attributes
+    model_class = Class.new(Zee::Model) do
       attribute :name, default: "Stranger"
     end
 
@@ -28,8 +37,7 @@ class AttributesTest < Minitest::Test
   end
 
   test "skips coercion when assigning nil" do
-    model_class = Class.new do
-      include Zee::Model::Attributes
+    model_class = Class.new(Zee::Model) do
       attribute :name
     end
 
@@ -40,8 +48,7 @@ class AttributesTest < Minitest::Test
   end
 
   test "inherits attributes" do
-    parent_class = Class.new do
-      include Zee::Model::Attributes
+    parent_class = Class.new(Zee::Model) do
       attribute :name
       attribute :email
     end
