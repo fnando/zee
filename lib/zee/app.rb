@@ -462,8 +462,18 @@ module Zee
         %r{public/assets},
         /Gemfile\.lock$/
       )
+      ignore = Regexp.union(
+        /node_modules/,
+        /\.git/,
+        /public/,
+        /tmp/,
+        /log/,
+        /storage/,
+        /db/,
+        /bin/
+      )
 
-      listener = Listen.to(root, only:) do
+      listener = Listen.to(root, only:, ignore:) do
         @config = nil
         @routes = nil
         @secrets = nil
