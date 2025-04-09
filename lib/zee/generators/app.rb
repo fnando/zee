@@ -30,12 +30,6 @@ module Zee
       def files
         copy_file ".gitignore"
         copy_file "app/helpers/app.rb"
-        copy_file "app/assets/styles/app.css"
-        copy_file "app/assets/styles/lib/reset.css"
-        copy_file "app/assets/styles/lib/colors.css"
-        copy_file "app/assets/styles/lib/form.css"
-        copy_file "app/assets/styles/lib/theme.css"
-        copy_file "app/assets/styles/lib/flash.css"
         copy_file "bin/styles"
         copy_file "bin/dev"
         copy_file "bin/zee"
@@ -68,6 +62,12 @@ module Zee
         create_file "tmp/.keep"
         create_file "log/.keep"
         create_file "app/models/.keep"
+      end
+
+      def copy_css
+        Dir[File.join(__dir__, "app/app/assets/styles/**/*.css")].each do |path|
+          copy_file Pathname(path).relative_path_from(self.class.source_root)
+        end
       end
 
       def eslint

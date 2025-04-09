@@ -11,12 +11,3 @@ You can have multiple entrypoints by adding files to `app/styles/`.
 body {
   padding: 2rem;
 }
-
-.link {
-  color: var(--blue);
-  text-decoration: underline;
-  padding: 0;
-  cursor: pointer;
-  border: none;
-  background: none;
-}

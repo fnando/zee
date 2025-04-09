@@ -25,7 +25,7 @@
 }
 
 .flash.notice {
-  background-color: var(--green-1);
+  background-color: var(--green-10);
   color: color-mix(in srgb, var(--green) 80%, #000 20%);
 }
 
@@ -34,7 +34,7 @@
 }
 
 .flash.info {
-  background-color: var(--blue-1);
+  background-color: var(--blue-10);
   color: color-mix(in srgb, var(--blue) 80%, #000 20%);
 }
 
@@ -43,7 +43,7 @@
 }
 
 .flash.error {
-  background-color: var(--pink-1);
+  background-color: var(--pink-10);
   color: color-mix(in srgb, var(--pink) 80%, #000 20%);
 }
 
@@ -52,7 +52,7 @@
 }
 
 .flash.alert {
-  background-color: var(--orange-1);
+  background-color: var(--orange-10);
   color: color-mix(in srgb, var(--orange) 80%, #000 20%);
 }
 

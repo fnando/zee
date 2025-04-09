@@ -1,30 +1,24 @@
 :root {
-  --bgcolor: #fff;
-  --fgcolor: #222;
-  --link-fgcolor: var(--blue);
-  --input-bgcolor: inherit;
-  --input-fgcolor: inherit;
-}
-
-@media screen and (prefers-color-scheme: dark) {
-  :root {
-    --bgcolor: #282828;
-    --fgcolor: #e1e2e3;
-    --input-bgcolor: inherit;
-    --input-fgcolor: inherit;
-  }
+  --accent-color: var(--blue);
 }
 
 body {
-  background: var(--bgcolor);
-  color: var(--fgcolor);
+  background: var(--primary-bg);
+  color: var(--primary-fg);
 }
 
-input {
-  background: var(--input-bgcolor);
-  color: var(--input-fgcolor);
+input,
+textarea {
+  background: transparent;
+  color: inherit;
 }
 
-a {
-  color: var(--link-fgcolor);
+a,
+.link {
+  color: var(--accent-color);
+  text-decoration: underline;
+  padding: 0;
+  cursor: pointer;
+  border: none;
+  background: none;
 }
