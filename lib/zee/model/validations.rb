@@ -3,10 +3,16 @@
 module Zee
   class Model
     module Validations
-      include Presence
-
       def self.included(target)
         target.extend ClassMethods
+      end
+
+      def self.human_attribute(model, attribute)
+        if model.class.respond_to?(:naming)
+          model.class.naming.human_attribute_name(attribute, capitalize: false)
+        else
+          attribute.to_s.tr(UNDERSCORE, SPACE)
+        end
       end
 
       def self.error_message(scope, model, attribute, options: {})
@@ -30,6 +36,7 @@ module Zee
 
       module ClassMethods
         include Presence
+        include Confirmation
 
         def validations
           @validations ||= []
@@ -54,11 +61,13 @@ module Zee
       end
 
       def errors
-        @errors ||=
-          errors_with_details.each_with_object({}) do |(attr, errors), buffer|
+        @errors ||= begin
+          hash = Hash.new {|h, k| h[k] = [] }
+          errors_with_details.each_with_object(hash) do |(attr, errors), buffer|
             buffer[attr] ||= []
             errors.each {|error| buffer[attr] << error[:message] }
           end
+        end
       end
 
       def errors_with_details

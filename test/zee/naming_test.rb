@@ -57,6 +57,29 @@ class NamingTest < Minitest::Test
                                        prefix: "Models::Admin").underscore
   end
 
+  test "returns capitalized human attribute name" do
+    assert_equal "Full name",
+                 Zee::Naming::Name.new("Full name")
+                                  .human_attribute_name("full_name")
+  end
+
+  test "returns human attribute name" do
+    assert_equal "full name",
+                 Zee::Naming::Name
+                   .new("User")
+                   .human_attribute_name("full_name", capitalize: false)
+  end
+
+  test "returns translated human attribute name" do
+    store_translations(
+      :en,
+      {zee: {model: {attributes: {user: {full_name: "Legal name"}}}}}
+    )
+
+    assert_equal "Legal name",
+                 Zee::Naming::Name.new("User").human_attribute_name("full_name")
+  end
+
   test "extends class" do
     klass = Class.new do
       def self.name
