@@ -204,6 +204,12 @@ module Zee
         end
       end
 
+      def format_files
+        in_root do
+          run "rubocop -A", verbose: false, capture: true
+        end
+      end
+
       no_commands do
         def add_npm_dependency(**deps)
           path = File.join(destination_root, "package.json")
