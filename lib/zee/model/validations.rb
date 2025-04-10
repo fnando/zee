@@ -51,6 +51,7 @@ module Zee
         include Format
         include Inclusion
         include Exclusion
+        include Size
 
         # @return [Array<Validator>] The list of validations for the model.
         def validations
