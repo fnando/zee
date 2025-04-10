@@ -3,7 +3,7 @@
 module Zee
   class Model
     module Validations
-      module Inclusion
+      module Exclusion
         DEFAULT_MESSAGE = "is not a valid %{attribute}"
 
         using Core::Blank
@@ -13,8 +13,8 @@ module Zee
           value = model[attribute]
 
           if options[:in].respond_to?(:cover?)
-            return if options[:in].cover?(value)
-          elsif options[:in].include?(value)
+            return unless options[:in].cover?(value)
+          elsif !options[:in].include?(value)
             return
           end
 
@@ -25,7 +25,7 @@ module Zee
 
           message =
             Validations.error_message(
-              :inclusion,
+              :exclusion,
               model,
               attribute,
               options: message_options
@@ -35,7 +35,7 @@ module Zee
 
           model.errors_with_details[attribute].push(
             {
-              error: :inclusion, value:,
+              error: :exclusion, value:,
               message: format(message, message_options)
             }
           )
@@ -54,8 +54,8 @@ module Zee
         # @option options [Symbol] :allow_nil Whether to allow nil values.
         # @option options [Symbol] :allow_blank Whether to allow blank values.
         # @option options [Array] :in The list of allowed values.
-        def validates_inclusion_of(*names, **options)
-          validations << Validator.new(Inclusion, names, options)
+        def validates_exclusion_of(*names, **options)
+          validations << Validator.new(Exclusion, names, options)
         end
       end
     end
