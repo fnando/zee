@@ -83,6 +83,10 @@ module Zee
       private def coerce_to_string(value)
         value.to_s
       end
+
+      private def coerce_to_integer(value)
+        value.to_i
+      end
     end
   end
 end

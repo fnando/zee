@@ -47,6 +47,28 @@ class AttributesTest < Minitest::Test
     assert_nil model.name
   end
 
+  test "coerces value to string" do
+    model_class = Class.new(Zee::Model) do
+      attribute :name
+    end
+
+    model = model_class.new
+    model.name = :john
+
+    assert_equal "john", model.name
+  end
+
+  test "coerces value to integer" do
+    model_class = Class.new(Zee::Model) do
+      attribute :age, :integer
+    end
+
+    model = model_class.new
+    model.age = "42"
+
+    assert_equal 42, model.age
+  end
+
   test "inherits attributes" do
     parent_class = Class.new(Zee::Model) do
       attribute :name
