@@ -8,6 +8,7 @@ module Zee
 
         using Core::Blank
 
+        # @api private
         def self.validate(model, attribute, options)
           value = model[attribute]
 

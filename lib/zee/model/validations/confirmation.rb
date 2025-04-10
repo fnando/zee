@@ -6,6 +6,7 @@ module Zee
       module Confirmation
         DEFAULT_MESSAGE = "doesn't match %{attribute}"
 
+        # @api private
         def self.validate(model, attribute, options)
           confirmation_attribute = :"#{attribute}_confirmation"
           value = model[attribute]

@@ -365,6 +365,7 @@ module Zee
         store_name = build_store_name(store)
 
         test "[#{store_name}] asserts successful expiring increment" do
+          slow_test
           key = random_key
 
           assert_equal 1, store.increment(key, expires_in: 1)
@@ -398,6 +399,7 @@ module Zee
         store_name = build_store_name(store)
 
         test "[#{store_name}] asserts successful expiring decrement" do
+          slow_test
           key = random_key
 
           assert_equal(-1, store.decrement(key, expires_in: 1))

@@ -124,4 +124,9 @@ class ValidationsTest < Minitest::Test
 
     assert model.valid?
   end
+
+  test "generates human attribute name for anonymous classes" do
+    assert_equal "full name",
+                 Zee::Model::Validations.human_attribute(Class.new, :full_name)
+  end
 end

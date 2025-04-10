@@ -4,6 +4,8 @@ require "test_helper"
 
 class AppTest < Minitest::Test
   test "generates new app" do
+    slow_test
+
     app = Pathname("tmp")
     generator = Zee::Generators::App.new
     generator.options = {
@@ -91,6 +93,8 @@ class AppTest < Minitest::Test
   end
 
   test "applies template" do
+    slow_test
+
     create_file "tmp/template.rb", <<~RUBY
       File.write("root.txt", Dir.pwd)
     RUBY
@@ -115,6 +119,8 @@ class AppTest < Minitest::Test
   end
 
   test "skips bundle install" do
+    slow_test
+
     app = Pathname("tmp")
     generator = Zee::Generators::App.new
     generator.options = {
@@ -135,6 +141,8 @@ class AppTest < Minitest::Test
   end
 
   test "uses vite as javascript bundler" do
+    slow_test
+
     app = Pathname("tmp")
     generator = Zee::Generators::App.new
     generator.options = {
@@ -157,6 +165,8 @@ class AppTest < Minitest::Test
   end
 
   test "generates eslint config for typescript" do
+    slow_test
+
     app = Pathname("tmp")
     generator = Zee::Generators::App.new
     generator.options = {
@@ -184,6 +194,8 @@ class AppTest < Minitest::Test
   end
 
   test "generates eslint config for non-typescript" do
+    slow_test
+
     app = Pathname("tmp")
     generator = Zee::Generators::App.new
     generator.options = {
@@ -210,6 +222,8 @@ class AppTest < Minitest::Test
   end
 
   test "uses rspec as the test framework" do
+    slow_test
+
     app = Pathname("tmp")
     generator = Zee::Generators::App.new
     generator.options = {
@@ -232,6 +246,8 @@ class AppTest < Minitest::Test
   end
 
   test "uses sqlite" do
+    slow_test
+
     app = Pathname("tmp")
     generator = Zee::Generators::App.new
     generator.options = {
@@ -256,6 +272,8 @@ class AppTest < Minitest::Test
   end
 
   test "uses postgresql" do
+    slow_test
+
     app = Pathname("tmp")
     generator = Zee::Generators::App.new
     generator.options = {
@@ -280,6 +298,8 @@ class AppTest < Minitest::Test
   end
 
   test "uses mysql" do
+    slow_test
+
     app = Pathname("tmp")
     generator = Zee::Generators::App.new
     generator.options = {
@@ -304,6 +324,8 @@ class AppTest < Minitest::Test
   end
 
   test "uses mariadb" do
+    slow_test
+
     app = Pathname("tmp")
     generator = Zee::Generators::App.new
     generator.options = {
@@ -328,6 +350,8 @@ class AppTest < Minitest::Test
   end
 
   test "uses js" do
+    slow_test
+
     app = Pathname("tmp")
     generator = Zee::Generators::App.new
     generator.options = {
@@ -387,6 +411,8 @@ class AppTest < Minitest::Test
   end
 
   test "generates CI configuration for sqlite" do
+    slow_test
+
     app = Pathname("tmp")
     generator = Zee::Generators::App.new
     generator.destination_root = app
@@ -408,6 +434,8 @@ class AppTest < Minitest::Test
   end
 
   test "generates CI configuration for postgresql" do
+    slow_test
+
     app = Pathname("tmp")
     generator = Zee::Generators::App.new
     generator.destination_root = app
@@ -430,6 +458,8 @@ class AppTest < Minitest::Test
   end
 
   test "generates CI configuration for mysql" do
+    slow_test
+
     app = Pathname("tmp")
     generator = Zee::Generators::App.new
     generator.destination_root = app
@@ -452,6 +482,8 @@ class AppTest < Minitest::Test
   end
 
   test "generates CI configuration for mariadb" do
+    slow_test
+
     app = Pathname("tmp")
     generator = Zee::Generators::App.new
     generator.destination_root = app

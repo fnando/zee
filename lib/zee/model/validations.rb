@@ -48,6 +48,7 @@ module Zee
         include Presence
         include Confirmation
         include Acceptance
+        include Format
 
         # @return [Array<Validator>] The list of validations for the model.
         def validations

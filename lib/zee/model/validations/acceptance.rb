@@ -7,6 +7,7 @@ module Zee
         DEFAULT_MESSAGE = "must be accepted"
         DEFAULT_ACCEPT = ["1", true, "true"].freeze
 
+        # @api private
         def self.validate(model, attribute, options)
           value = model[attribute]
 
