@@ -41,18 +41,17 @@ module Zee
           return if size == options[:is]
 
           message_options = {count: options[:is]}
-          message = Validations.error_message(:wrong_size, model, attribute) ||
+          message = model.errors.error_message_for(:wrong_size, attribute) ||
                     options[:wrong_size] ||
                     options[:message] ||
                     DEFAULT_WRONG_SIZE_MESSAGE
           message = format(message, message_options)
-          model.errors_with_details[attribute].push(
-            {
-              error: :size,
-              message:,
-              size:,
-              is: options[:is]
-            }
+          model.errors.add(
+            attribute,
+            :size,
+            message:,
+            size:,
+            is: options[:is]
           )
         end
 
@@ -61,18 +60,17 @@ module Zee
           return if size >= options[:minimum]
 
           message_options = {count: options[:minimum]}
-          message = Validations.error_message(:too_short, model, attribute) ||
+          message = model.errors.error_message_for(:too_short, attribute) ||
                     options[:too_short] ||
                     options[:message] ||
                     DEFAULT_TOO_SHORT_MESSAGE
           message = format(message, message_options)
-          model.errors_with_details[attribute].push(
-            {
-              error: :size,
-              message:,
-              size:,
-              minimum: options[:minimum]
-            }
+          model.errors.add(
+            attribute,
+            :size,
+            message:,
+            size:,
+            minimum: options[:minimum]
           )
         end
 
@@ -81,18 +79,17 @@ module Zee
           return if size <= options[:maximum]
 
           message_options = {count: options[:maximum]}
-          message = Validations.error_message(:too_long, model, attribute) ||
+          message = model.errors.error_message_for(:too_long, attribute) ||
                     options[:too_long] ||
                     options[:message] ||
                     DEFAULT_TOO_LONG_MESSAGE
           message = format(message, message_options)
-          model.errors_with_details[attribute].push(
-            {
-              error: :size,
-              message:,
-              size:,
-              maximum: options[:maximum]
-            }
+          model.errors.add(
+            attribute,
+            :size,
+            message:,
+            size:,
+            maximum: options[:maximum]
           )
         end
 

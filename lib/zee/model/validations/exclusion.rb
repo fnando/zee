@@ -18,25 +18,24 @@ module Zee
           end
 
           message_options = {
-            attribute: Validations.human_attribute(model, attribute),
+            attribute: model.errors.human_attribute_name(attribute),
             value:
           }
 
           message =
-            Validations.error_message(
+            model.errors.error_message_for(
               :exclusion,
-              model,
               attribute,
               options: message_options
             ) ||
             options[:message] ||
             DEFAULT_MESSAGE
 
-          model.errors_with_details[attribute].push(
-            {
-              error: :exclusion, value:,
-              message: format(message, message_options)
-            }
+          model.errors.add(
+            attribute,
+            :exclusion,
+            value:,
+            message: format(message, message_options)
           )
         end
 

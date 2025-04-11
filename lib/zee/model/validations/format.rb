@@ -51,9 +51,8 @@ module Zee
           return if options[:with] && options[:with] === value
           return if options[:without] && !(options[:without] === value)
 
-          translated_message = Validations.error_message(
+          translated_message = model.errors.error_message_for(
             :format,
-            model,
             attribute
           )
 
@@ -61,9 +60,7 @@ module Zee
                     .compact
                     .first
 
-          model.errors_with_details[attribute].push(
-            {error: :format, message:}
-          )
+          model.errors.add(attribute, :format, message:)
         end
 
         # This method is used to validate the acceptance of attributes.

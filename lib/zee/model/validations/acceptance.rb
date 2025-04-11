@@ -16,9 +16,8 @@ module Zee
 
           return if options[:accept].include?(value)
 
-          translated_message = Validations.error_message(
+          translated_message = model.errors.error_message_for(
             :acceptance,
-            model,
             attribute
           )
 
@@ -26,9 +25,7 @@ module Zee
                     .compact
                     .first
 
-          model.errors_with_details[attribute].push(
-            {error: :acceptance, message:}
-          )
+          model.errors.add(attribute, :acceptance, message:)
         end
 
         # This method is used to validate the acceptance of attributes.

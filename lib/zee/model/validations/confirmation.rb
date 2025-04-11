@@ -15,10 +15,9 @@ module Zee
 
           return if value == confirmation_value
 
-          human_attr_name = Validations.human_attribute(model, attribute)
-          translated_message = Validations.error_message(
+          human_attr_name = model.errors.human_attribute_name(attribute)
+          translated_message = model.errors.error_message_for(
             :confirmation,
-            model,
             attribute,
             options: {attribute: human_attr_name}
           )
@@ -29,8 +28,11 @@ module Zee
             format(DEFAULT_MESSAGE, attribute: human_attr_name)
           ].compact.first
 
-          model.errors_with_details[confirmation_attribute].push(
-            {error: :confirmation, message:, attribute:}
+          model.errors.add(
+            confirmation_attribute,
+            :confirmation,
+            message:,
+            attribute:
           )
         end
 

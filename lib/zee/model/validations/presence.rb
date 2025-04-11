@@ -15,11 +15,11 @@ module Zee
 
           return unless value.blank?
 
-          message = Validations.error_message(:presence, model, attribute) ||
+          message = model.errors.error_message_for(:presence, attribute) ||
                     options[:message] ||
                     DEFAULT_MESSAGE
 
-          model.errors_with_details[attribute] << {error: :presence, message:}
+          model.errors.add(attribute, :presence, message:)
         end
 
         # This method is used to validate the presence of attributes.

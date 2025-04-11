@@ -60,12 +60,17 @@ module Zee
             next if value.send(operator, expected)
 
             message =
-              Validations.error_message(check, model, attribute) || message
+              model.errors.error_message_for(check, attribute) || message
 
             message = format(message, {value: expected})
 
-            model.errors_with_details[attribute].push(
-              {error: :numericality, value:, message:, check:, expected:}
+            model.errors.add(
+              attribute,
+              :numericality,
+              value:,
+              message:,
+              check:,
+              expected:
             )
           end
         end
@@ -76,11 +81,15 @@ module Zee
           return if value.nil? || value.is_a?(Integer)
 
           message =
-            Validations.error_message(:not_an_integer, model, attribute) ||
+            model.errors.error_message_for(:not_an_integer, attribute) ||
             DEFAULT_ONLY_INTEGER_MESSAGE
 
-          model.errors_with_details[attribute].push(
-            {error: :numericality, value:, message:, check: :integer}
+          model.errors.add(
+            attribute,
+            :numericality,
+            value:,
+            message:,
+            check: :integer
           )
         end
 
@@ -90,11 +99,15 @@ module Zee
           return if value.odd?
 
           message =
-            Validations.error_message(:odd, model, attribute) ||
+            model.errors.error_message_for(:odd, attribute) ||
             DEFAULT_ODD_MESSAGE
 
-          model.errors_with_details[attribute].push(
-            {error: :numericality, value:, message:, check: :odd}
+          model.errors.add(
+            attribute,
+            :numericality,
+            value:,
+            message:,
+            check: :odd
           )
         end
 
@@ -104,11 +117,15 @@ module Zee
           return if value.even?
 
           message =
-            Validations.error_message(:even, model, attribute) ||
+            model.errors.error_message_for(:even, attribute) ||
             DEFAULT_EVEN_MESSAGE
 
-          model.errors_with_details[attribute].push(
-            {error: :numericality, value:, message:, check: :even}
+          model.errors.add(
+            attribute,
+            :numericality,
+            value:,
+            message:,
+            check: :even
           )
         end
 
