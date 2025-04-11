@@ -4,9 +4,8 @@ module Zee
   class Model
     module Validations
       module Exclusion
+        # @api private
         DEFAULT_MESSAGE = "is not a valid %{attribute}"
-
-        using Core::Blank
 
         # @api private
         def self.validate(model, attribute, options)
@@ -51,8 +50,8 @@ module Zee
         # @option options [Symbol] :if A condition to check before validating.
         # @option options [Symbol] :unless A condition to check before
         #                                  validating.
-        # @option options [Symbol] :allow_nil Whether to allow nil values.
-        # @option options [Symbol] :allow_blank Whether to allow blank values.
+        # @option options [Boolean] :allow_nil Whether to allow nil values.
+        # @option options [Boolean] :allow_blank Whether to allow blank values.
         # @option options [Array] :in The list of allowed values.
         def validates_exclusion_of(*names, **options)
           validations << Validator.new(Exclusion, names, options)

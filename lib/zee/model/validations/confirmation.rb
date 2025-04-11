@@ -4,6 +4,7 @@ module Zee
   class Model
     module Validations
       module Confirmation
+        # @api private
         DEFAULT_MESSAGE = "doesn't match %{attribute}"
 
         # @api private
@@ -42,8 +43,8 @@ module Zee
         # @option options [Symbol] :if A condition to check before validating.
         # @option options [Symbol] :unless A condition to check before
         #                                  validating.
-        # @option options [Symbol] :allow_nil Whether to allow nil values.
-        # @option options [Symbol] :allow_blank Whether to allow blank values.
+        # @option options [Boolean] :allow_nil Whether to allow nil values.
+        # @option options [Boolean] :allow_blank Whether to allow blank values.
         def validates_confirmation_of(*names, **options)
           confirmation_attrs = names.map { :"#{_1}_confirmation" }
           attr_accessor(*confirmation_attrs)

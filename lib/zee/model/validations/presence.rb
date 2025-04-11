@@ -4,6 +4,7 @@ module Zee
   class Model
     module Validations
       module Presence
+        # @api private
         DEFAULT_MESSAGE = "can't be blank"
 
         using Core::Blank
@@ -29,8 +30,8 @@ module Zee
         # @option options [Symbol] :if A condition to check before validating.
         # @option options [Symbol] :unless A condition to check before
         #                                  validating.
-        # @option options [Symbol] :allow_nil Whether to allow nil values.
-        # @option options [Symbol] :allow_blank Whether to allow blank values.
+        # @option options [Boolean] :allow_nil Whether to allow nil values.
+        # @option options [Boolean] :allow_blank Whether to allow blank values.
         def validates_presence_of(*names, **options)
           validations << Validator.new(Presence, names, options)
         end

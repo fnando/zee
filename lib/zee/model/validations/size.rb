@@ -4,12 +4,15 @@ module Zee
   class Model
     module Validations
       module Size
+        # @api private
         DEFAULT_TOO_SHORT_MESSAGE =
           "is too short (minimum is %{count} characters)"
 
+        # @api private
         DEFAULT_TOO_LONG_MESSAGE =
           "is too long (maximum is %{count} characters)"
 
+        # @api private
         DEFAULT_WRONG_SIZE_MESSAGE =
           "is the wrong size (should be %{count} characters)"
 
@@ -101,8 +104,8 @@ module Zee
         # @option options [Symbol] :if A condition to check before validating.
         # @option options [Symbol] :unless A condition to check before
         #                                  validating.
-        # @option options [Symbol] :allow_nil Whether to allow nil values.
-        # @option options [Symbol] :allow_blank Whether to allow blank values.
+        # @option options [Boolean] :allow_nil Whether to allow nil values.
+        # @option options [Boolean] :allow_blank Whether to allow blank values.
         # @option options [Numeric] :is The exact size of the attribute.
         # @option options [Numeric] :minimum The minimum size of the attribute.
         # @option options [Numeric] :maximum The maximum size of the attribute.
