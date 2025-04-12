@@ -99,6 +99,8 @@ class CLITest < Minitest::Test
   end
 
   test "generates new app" do
+    slow_test
+
     app = Pathname("tmp/app")
 
     capture { Zee::CLI.start(["new", "tmp/app"]) } => {out:, exit_code:}

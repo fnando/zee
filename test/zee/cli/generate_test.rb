@@ -87,6 +87,8 @@ class GenerateTest < Minitest::Test
   end
 
   test "generates new mailer" do
+    slow_test
+
     app = Pathname("tmp/app")
     exit_code = nil
 
@@ -111,6 +113,8 @@ class GenerateTest < Minitest::Test
   end
 
   test "generates system test" do
+    slow_test
+
     app = Pathname("tmp/app")
     exit_code = nil
 

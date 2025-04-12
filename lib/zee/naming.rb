@@ -108,6 +108,26 @@ module Zee
           str
         end
       end
+
+      # Return the humanized form of the attribute.
+      # @param attribute [Symbol] The attribute to humanize.
+      # @param capitalize [Boolean] Whether to capitalize the attribute name.
+      # @return [String]
+      # @example
+      #   Zee::Naming.new("User").human_attribute_name(:name) # => "Name"
+      def human_attribute_name(attribute, capitalize: true)
+        scope = [
+          :zee,
+          :model,
+          :attributes,
+          underscore,
+          attribute
+        ].join(I18n.default_separator)
+
+        value = I18n.t(scope, default: attribute.to_s.tr(UNDERSCORE, SPACE))
+        value = value.capitalize if capitalize
+        value
+      end
     end
   end
 end
