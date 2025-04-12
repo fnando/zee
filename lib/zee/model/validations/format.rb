@@ -48,8 +48,8 @@ module Zee
         def self.validate(model, attribute, options)
           value = model[attribute].to_s
 
-          return if options[:with] && options[:with] === value
-          return if options[:without] && !(options[:without] === value)
+          return if options[:with] && options[:with] === value # rubocop:disable Style/CaseEquality
+          return if options[:without] && !(options[:without] === value) # rubocop:disable Style/CaseEquality
 
           translated_message = model.errors.error_message_for(
             :format,
