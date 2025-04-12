@@ -63,7 +63,7 @@ module Zee
       end
 
       # Return the humanized attribute name for the model.
-      # @param model [Model] The model to get the attribute name for.
+      #
       # @param attribute [Symbol] The attribute to get the name for.
       # @return [String] The humanized attribute name.
       def human_attribute_name(attribute)
@@ -74,9 +74,10 @@ module Zee
         end
       end
 
+      # @api private
       # Return the error message for the model.
+      #
       # @param scope [Symbol] The scope of the error message.
-      # @param model [Model] The model to get the error message for.
       # @param attribute [Symbol] The attribute to get the error message for.
       # @param options [Hash] The options for the error message.
       # @return [String] The error message.

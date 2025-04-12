@@ -3,11 +3,13 @@
 module Zee
   class Model
     module Attributes
+      # @api private
       def self.included(target)
         target.extend ClassMethods
       end
 
       module ClassMethods
+        # @api private
         def inherited(subclass)
           subclass.attributes.merge!(attributes)
           super
@@ -19,24 +21,28 @@ module Zee
         # @param default [Object] The default value of the attribute.
         #
         # @example Defining multiple attributes
-        # class User
-        #   include Zee::Model::Attributes
+        #   ```ruby
+        #   class User
+        #     include Zee::Model::Attributes
         #
-        #   attribute :name
-        #   attribute :age, :integer
-        #   attribute :status, default: "pending"
-        # end
+        #     attribute :name
+        #     attribute :age, :integer
+        #     attribute :status, default: "pending"
+        #   end
+        #   ```
         #
         # @example Using custom type
-        # class User
-        #   include Zee::Model::Attributes
+        #   ```ruby
+        #   class User
+        #     include Zee::Model::Attributes
         #
-        #   attribute :name, :uppercase, default: "UNKNOWN"
+        #     attribute :name, :uppercase, default: "UNKNOWN"
         #
-        #   private def coerce_to_uppercase(value)
-        #     value.to_s.upcase
+        #     private def coerce_to_uppercase(value)
+        #       value.to_s.upcase
+        #     end
         #   end
-        # end
+        #   ```
         def attribute(name, type = :string, default: nil)
           attributes[name] = {type:, default:}
           define_method(name) do
@@ -49,6 +55,7 @@ module Zee
           end
         end
 
+        # Hold all attributes defined in a model.
         def attributes
           @attributes ||= {}
         end
@@ -80,10 +87,12 @@ module Zee
         public_send("#{name}=", value)
       end
 
+      # @api private
       private def coerce_to_string(value)
         value.to_s
       end
 
+      # @api private
       private def coerce_to_integer(value)
         value.to_i
       end

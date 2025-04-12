@@ -41,6 +41,10 @@ module Zee
         # @option options [Boolean] :allow_blank Whether to allow blank values.
         # @option options [Array] :accept The accepted values. Defaults
         #                                 to `["1", "true", true]`.
+        #
+        # @example
+        #   validates_acceptance_of :terms_of_service
+        #   validates_acceptance_of :eula, message: "must be abided"
         def validates_acceptance_of(*names, **options)
           options = {accept: DEFAULT_ACCEPT}.merge(options)
           validations << Validator.new(Acceptance, names, options)

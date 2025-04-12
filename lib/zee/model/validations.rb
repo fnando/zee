@@ -26,6 +26,26 @@ module Zee
           subclass.validations.push(*validations)
           super
         end
+
+        # Define a custom validation method.
+        #
+        # @param validator [Symbol, #call(model)] The name of the validation
+        #                                         method.
+        # @param options [Hash] The options for the validation.
+        #
+        # @example
+        #   validate :my_custom_validation
+        #   validate MyValidator
+        #   validate {|model| model.errors.add(:attr, :invalid, "is invalid") }
+        def validate(validator = nil, **options, &block)
+          if !validator && !block
+            raise ArgumentError,
+                  "either a validator or a block must be provided"
+          end
+
+          validator = block if block
+          validations << Validator.new(validator, nil, options)
+        end
       end
 
       # Returns the errors for the model.

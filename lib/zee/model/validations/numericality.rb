@@ -149,6 +149,9 @@ module Zee
         # @option options [Numeric] :other_than The value that is not allowed.
         # @option options [Boolean] :odd Whether to allow odd values.
         # @option options [Boolean] :even Whether to allow even values.
+        #
+        # @example
+        #   validates_numericality_of :value
         def validates_numericality_of(*names, **options)
           validations << Validator.new(Numericality, names, options)
         end

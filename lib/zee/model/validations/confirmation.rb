@@ -47,6 +47,11 @@ module Zee
         #                                  validating.
         # @option options [Boolean] :allow_nil Whether to allow nil values.
         # @option options [Boolean] :allow_blank Whether to allow blank values.
+        #
+        # @example
+        #   validates_confirmation_of :user_name, :password
+        #   validates_confirmation_of :email_address,
+        #                              message: "should match confirmation"
         def validates_confirmation_of(*names, **options)
           confirmation_attrs = names.map { :"#{_1}_confirmation" }
           attr_accessor(*confirmation_attrs)

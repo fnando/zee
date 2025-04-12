@@ -52,6 +52,9 @@ module Zee
         # @option options [Boolean] :allow_nil Whether to allow nil values.
         # @option options [Boolean] :allow_blank Whether to allow blank values.
         # @option options [Array] :in The list of allowed values.
+        #
+        # @example
+        #    validates_inclusion_of :role, in: %w[admin contributor]
         def validates_inclusion_of(*names, **options)
           validations << Validator.new(Inclusion, names, options)
         end

@@ -80,6 +80,10 @@ module Zee
         #                                     lines as opposed to the beginning
         #                                     or end of the string. These
         #                                     anchors are `^` and `$`.
+        #
+        # @example
+        #   validates_format_of :username, with: /\A[a-z0-9]{3,20}\z/i
+        #   validates_format_of :email, without: /NOSPAM/
         def validates_format_of(*names, **options)
           if options[:with] && options[:without]
             raise ArgumentError, NOT_SUPPLIED_ERROR

@@ -108,6 +108,9 @@ module Zee
         # @option options [Numeric] :maximum The maximum size of the attribute.
         # @option options [Numeric] :in The range of valid sizes for the
         #                               attribute.
+        #
+        # @example
+        #   validates_size_of :first_name, maximum: 30
         def validates_size_of(*names, **options)
           validations << Validator.new(Size, names, options)
         end

@@ -52,6 +52,12 @@ module Zee
         # @option options [Boolean] :allow_nil Whether to allow nil values.
         # @option options [Boolean] :allow_blank Whether to allow blank values.
         # @option options [Array] :in The list of allowed values.
+        #
+        # @example
+        #   validates_exclusion_of :username, in: %w[admin superuser]
+        #   validates_exclusion_of :age, in: 30..60
+        #   validates_exclusion_of :format, in: %w[mov avi],
+        #                           message: "extension %{value} is not allowed"
         def validates_exclusion_of(*names, **options)
           validations << Validator.new(Exclusion, names, options)
         end

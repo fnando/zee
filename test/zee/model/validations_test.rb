@@ -124,4 +124,66 @@ class ValidationsTest < Minitest::Test
 
     assert model.valid?
   end
+
+  test "validates using method" do
+    model_class = Class.new(Zee::Model) do
+      attribute :username
+      validate :validate_username
+
+      private def validate_username
+        errors.add(:username, :invalid, message: "is not a valid username")
+      end
+    end
+
+    model = model_class.new
+
+    refute model.valid?
+    assert_includes model.errors[:username], "is not a valid username"
+  end
+
+  test "validates using object" do
+    username_validator = proc do |model|
+      model.errors.add(:username, :invalid, message: "is not a valid username")
+    end
+
+    model_class = Class.new(Zee::Model) do
+      attribute :username
+      validate(username_validator)
+    end
+
+    model = model_class.new
+
+    refute model.valid?
+    assert_includes model.errors[:username], "is not a valid username"
+  end
+
+  test "validates using block" do
+    model_class = Class.new(Zee::Model) do
+      attribute :username
+      validate do |model|
+        model.errors.add(
+          :username,
+          :invalid,
+          message: "is not a valid username"
+        )
+      end
+    end
+
+    model = model_class.new
+
+    refute model.valid?
+    assert_includes model.errors[:username], "is not a valid username"
+  end
+
+  test "fails when no validator is provided" do
+    model_class = Class.new(Zee::Model) do
+      attribute :username
+    end
+
+    error = assert_raises(ArgumentError) do
+      model_class.validate
+    end
+
+    assert_equal "either a validator or a block must be provided", error.message
+  end
 end

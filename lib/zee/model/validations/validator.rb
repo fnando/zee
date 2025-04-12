@@ -22,6 +22,10 @@ module Zee
         end
 
         def call(model)
+          return model.send(validator) if validator.is_a?(Symbol)
+          return validator.call(model) if validator.respond_to?(:call)
+          return unless attributes
+
           attributes.each do |attr|
             value = model[attr]
 

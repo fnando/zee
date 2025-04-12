@@ -32,6 +32,9 @@ module Zee
         #                                  validating.
         # @option options [Boolean] :allow_nil Whether to allow nil values.
         # @option options [Boolean] :allow_blank Whether to allow blank values.
+        #
+        # @example
+        #   validates_presence_of :email
         def validates_presence_of(*names, **options)
           validations << Validator.new(Presence, names, options)
         end
