@@ -51,7 +51,7 @@ module Zee
           return if options[:with] && options[:with] === value # rubocop:disable Style/CaseEquality
           return if options[:without] && !(options[:without] === value) # rubocop:disable Style/CaseEquality
 
-          translated_message = model.errors.error_message_for(
+          translated_message = model.errors.build_error_message(
             :format,
             attribute
           )

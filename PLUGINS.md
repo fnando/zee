@@ -42,3 +42,41 @@ module Zee
   end
 end
 ```
+
+## Model Validations
+
+To add new validations to the model, you must define a new class module that
+defines the `self.validate(model, attribute, options)` method. Then you must
+extend `Zee::Model` with this module.
+
+Let's create a validator for emails. It's a simple regex that checks if the
+email is valid.
+
+```ruby
+module Zee
+  class Model
+    module Validations
+      module Email
+        DEFAULT_MESSAGE = "is not a valid email"
+        EMAIL_RE = /\A[\w-.]+@[a-z0-9-]+(\.[a-z0-9-])+\z/i
+
+        def self.validate(model, attribute, options)
+          value = model[attribute].to_s
+
+          return if value.match?(EMAIL_RE)
+
+          message = model.errors.build_error_message(:email, attribute) ||
+                    options[:message] ||
+                    DEFAULT_MESSAGE
+
+          model.errors.add(attribute, :email, message:)
+        end
+
+        def validates_email(*names, **options)
+          validations << Validator.new(Email, names, options)
+        end
+      end
+    end
+  end
+end
+```

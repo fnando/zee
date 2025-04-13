@@ -16,7 +16,7 @@ module Zee
 
           return if options[:accept].include?(value)
 
-          translated_message = model.errors.error_message_for(
+          translated_message = model.errors.build_error_message(
             :acceptance,
             attribute
           )

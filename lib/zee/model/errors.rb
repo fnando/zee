@@ -81,7 +81,7 @@ module Zee
       # @param attribute [Symbol] The attribute to get the error message for.
       # @param options [Hash] The options for the error message.
       # @return [String] The error message.
-      def error_message_for(scope, attribute, options: {})
+      def build_error_message(scope, attribute, options: {})
         scopes = []
 
         if model.class.respond_to?(:naming)

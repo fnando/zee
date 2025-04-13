@@ -186,4 +186,39 @@ class ValidationsTest < Minitest::Test
 
     assert_equal "either a validator or a block must be provided", error.message
   end
+
+  test "uses custom validator" do
+    plugin = Module.new do
+      def self.validate(model, attribute, options)
+        default_message = "is not a valid email"
+        email_re = /\A[\w.-]+@[a-z0-9-]+(\.[a-z0-9-]+)+\z/i
+        value = model[attribute].to_s
+
+        return if value.match?(email_re)
+
+        message = model.errors.build_error_message(:email, attribute) ||
+                  options[:message] ||
+                  default_message
+
+        model.errors.add(attribute, :email, message:)
+      end
+
+      def validates_email(*names, **options)
+        validations << Zee::Model::Validations::Validator.new(
+          Zee::Model::Validations::Email, names, options
+        )
+      end
+    end
+
+    Zee::Model::Validations.const_set(:Email, plugin)
+
+    Zee::Model.extend(plugin)
+    model_class = Class.new(Zee::Model) do
+      attribute :email
+      validates_email :email
+    end
+    model = model_class.new(email: "invalid_email")
+
+    refute model.valid?
+  end
 end

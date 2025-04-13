@@ -23,7 +23,7 @@ module Zee
           }
 
           message =
-            model.errors.error_message_for(
+            model.errors.build_error_message(
               :exclusion,
               attribute,
               options: message_options
