@@ -4,6 +4,11 @@ module Zee
   class Model
     module Attributes
       # @api private
+      FALSE_VALUES =
+        [0, "0", false, "false", "FALSE", nil, "off", "OFF", "no", "NO"]
+        .freeze
+
+      # @api private
       def self.included(target)
         target.extend ClassMethods
       end
@@ -19,6 +24,13 @@ module Zee
         # @param name [Symbol] The name of the attribute.
         # @param type [Symbol] The type of the attribute. Default is :string.
         # @param default [Object] The default value of the attribute.
+        #
+        # ## Coerce To Types
+        #
+        # - `:integer` converts objects to integers using
+        #   [`Integer()`](https://ruby-doc.org/3.4.1/Kernel.html#method-i-Integer).
+        # - `:boolean` converts [0, "0", "false", "FALSE", nil] to `false`. All
+        #   other values are converted to `true`.
         #
         # @example Defining multiple attributes
         #   ```ruby
@@ -94,7 +106,12 @@ module Zee
 
       # @api private
       private def coerce_to_integer(value)
-        value.to_i
+        Integer(value)
+      end
+
+      # @api private
+      private def coerce_to_boolean(value)
+        !FALSE_VALUES.include?(value)
       end
     end
   end

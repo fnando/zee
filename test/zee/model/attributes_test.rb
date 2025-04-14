@@ -69,6 +69,28 @@ class AttributesTest < Minitest::Test
     assert_equal 42, model.age
   end
 
+  test "coerces value to boolean" do
+    model_class = Class.new(Zee::Model) do
+      attribute :value, :boolean
+    end
+
+    model = model_class.new
+
+    [0, "0", false, "false", "FALSE", nil, "off", "OFF", "no", "NO"].each do |f|
+      model.value = f
+
+      refute model.value
+    end
+
+    [
+      1, "1", true, "true", "TRUE", Object.new, "on", "ON", "yes", "YES"
+    ].each do |t|
+      model.value = t
+
+      assert model.value
+    end
+  end
+
   test "inherits attributes" do
     parent_class = Class.new(Zee::Model) do
       attribute :name
