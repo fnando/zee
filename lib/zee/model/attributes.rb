@@ -130,6 +130,22 @@ module Zee
           raise ArgumentError, "invalid date value: #{value.inspect}"
         end
       end
+
+      # @api private
+      private def coerce_to_time(value)
+        case value
+        when Time
+          value
+        when Date
+          value.to_time
+        when Integer
+          Time.at(value)
+        when String
+          Time.parse(value)
+        else
+          raise ArgumentError, "invalid time value: #{value.inspect}"
+        end
+      end
     end
   end
 end
