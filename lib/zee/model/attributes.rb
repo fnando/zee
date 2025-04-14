@@ -32,6 +32,10 @@ module Zee
         # - `:boolean` converts [0, "0", "false", "FALSE", nil] to `false`. All
         #   other values are converted to `true`.
         # - `:date` converts objects to dates using `Date.parse`.
+        # - `:float` converts objects to floats using `Float(value)`
+        # - `:decimal` converts objects to big decimal instances using
+        #   `BigDecimal(value, precision)`. The default precision is
+        #   `Float::DIG + 1`.
         #
         # @example Defining multiple attributes
         #   ```ruby
@@ -56,14 +60,14 @@ module Zee
         #     end
         #   end
         #   ```
-        def attribute(name, type = :string, default: nil)
+        def attribute(name, type = :string, default: nil, **)
           attributes[name] = {type:, default:}
           define_method(name) do
             instance_variable_get(:"@#{name}") || default
           end
 
           define_method("#{name}=") do |value|
-            value = send(:"coerce_to_#{type}", value) unless value.nil?
+            value = send(:"coerce_to_#{type}", value, **) unless value.nil?
             instance_variable_set(:"@#{name}", value)
           end
         end
@@ -144,6 +148,21 @@ module Zee
           Time.parse(value)
         else
           raise ArgumentError, "invalid time value: #{value.inspect}"
+        end
+      end
+
+      # @api private
+      def coerce_to_float(value)
+        Float(value)
+      end
+
+      # @api private
+      def coerce_to_decimal(value, precision: Float::DIG + 1)
+        case value
+        when BigDecimal
+          value
+        else
+          BigDecimal(value.to_s, precision)
         end
       end
     end

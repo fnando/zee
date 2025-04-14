@@ -158,6 +158,43 @@ class AttributesTest < Minitest::Test
     assert_equal "invalid time value: true", error.message
   end
 
+  test "coerces value to float" do
+    model_class = Class.new(Zee::Model) do
+      attribute :value, :float
+    end
+
+    model = model_class.new
+
+    {
+      "42.1" => 42.1,
+      42.1 => 42.1,
+      1 => 1.0
+    }.each do |input, expected|
+      model.value = input
+
+      assert_equal expected, model.value
+    end
+  end
+
+  test "coerces value to bigdecimal" do
+    model_class = Class.new(Zee::Model) do
+      attribute :value, :decimal
+    end
+
+    model = model_class.new
+
+    {
+      "42.1" => BigDecimal("42.1"),
+      42.1 => BigDecimal("42.1"),
+      BigDecimal(42.1, 10) => BigDecimal("42.1"), # rubocop:disable Performance/BigDecimalWithNumericArgument
+      BigDecimal(1) => BigDecimal(1)
+    }.each do |input, expected|
+      model.value = input
+
+      assert_equal expected, model.value
+    end
+  end
+
   test "inherits attributes" do
     parent_class = Class.new(Zee::Model) do
       attribute :name
