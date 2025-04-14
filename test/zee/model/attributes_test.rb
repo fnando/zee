@@ -91,6 +91,39 @@ class AttributesTest < Minitest::Test
     end
   end
 
+  test "coerces value to date" do
+    model_class = Class.new(Zee::Model) do
+      attribute :value, :date
+    end
+
+    model = model_class.new
+
+    {
+      "2023-01-24" => Date.new(2023, 1, 24),
+      Date.new(2023, 1, 24) => Date.new(2023, 1, 24),
+      Time.new(2023, 1, 24) => Date.new(2023, 1, 24),
+      1_674_529_200 => Date.new(2023, 1, 24)
+    }.each do |input, expected|
+      model.value = input
+
+      assert_equal expected, model.value
+    end
+  end
+
+  test "fails when coercing invalid type to date" do
+    model_class = Class.new(Zee::Model) do
+      attribute :value, :date
+    end
+
+    model = model_class.new
+
+    error = assert_raises(ArgumentError) do
+      model.value = true
+    end
+
+    assert_equal "invalid date value: true", error.message
+  end
+
   test "inherits attributes" do
     parent_class = Class.new(Zee::Model) do
       attribute :name

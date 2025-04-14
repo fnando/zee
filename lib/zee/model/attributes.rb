@@ -31,6 +31,7 @@ module Zee
         #   [`Integer()`](https://ruby-doc.org/3.4.1/Kernel.html#method-i-Integer).
         # - `:boolean` converts [0, "0", "false", "FALSE", nil] to `false`. All
         #   other values are converted to `true`.
+        # - `:date` converts objects to dates using `Date.parse`.
         #
         # @example Defining multiple attributes
         #   ```ruby
@@ -112,6 +113,22 @@ module Zee
       # @api private
       private def coerce_to_boolean(value)
         !FALSE_VALUES.include?(value)
+      end
+
+      # @api private
+      private def coerce_to_date(value)
+        case value
+        when Date
+          value
+        when Time
+          value.to_date
+        when Integer
+          Time.at(value).to_date
+        when String
+          Date.parse(value)
+        else
+          raise ArgumentError, "invalid date value: #{value.inspect}"
+        end
       end
     end
   end
