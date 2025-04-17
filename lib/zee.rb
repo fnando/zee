@@ -25,7 +25,9 @@ loader.inflector.inflect(
   "cli" => "CLI",
   "html" => "HTML",
   "html_helpers" => "HTMLHelpers",
-  "json_encoder" => "JSONEncoder"
+  "json_encoder" => "JSONEncoder",
+  "typescript" => "TypeScript",
+  "javascript" => "JavaScript"
 )
 loader.ignore("#{__dir__}/sequel")
 loader.setup

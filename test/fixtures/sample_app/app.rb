@@ -32,6 +32,7 @@ class SampleApp < Zee::App
       # Routes related to CSRF protection
       get "posts/new", to: "posts#new", as: :new_post
       post "posts/new", to: "posts#create"
+      get "posts/:id", to: "posts#show", as: :post
       get "categories/new", to: "categories#new", as: :new_category
       post "categories/new", to: "categories#create"
       patch "categories/new", to: "categories#create"

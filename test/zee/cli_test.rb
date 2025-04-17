@@ -71,6 +71,7 @@ class CLITest < Minitest::Test
        GET        | /feed                      |                  | feeds#show
        GET        | /posts/new                 | new_post         | posts#new
        POST       | /posts/new                 |                  | posts#create
+       GET        | /posts/:id                 | post             | posts#show
        GET        | /categories/new            | new_category     | categories#new
        POST       | /categories/new            |                  | categories#create
        PATCH      | /categories/new            |                  | categories#create
@@ -84,7 +85,7 @@ class CLITest < Minitest::Test
        GET        | /admin/posts               | admin_posts      | admin/posts#index
        ALL        | /old                       |                  | #<Zee::Redirect status=301 to="/">
        ALL        | /found                     |                  | #<Zee::Redirect status=302 to="/">
-       ALL        | /redirect-rack-app         |                  | app.rb:53
+       ALL        | /redirect-rack-app         |                  | app.rb:54
        ALL        | /proc-app                  | proc_app         | app.rb:8
        ALL        | /class-app                 | class_app        | MyRackApp
       ------------+----------------------------+------------------+----------------------------------------
@@ -96,6 +97,41 @@ class CLITest < Minitest::Test
 
     assert_equal 0, exit_code
     assert_equal expected, out
+  end
+
+  test "generates routes in javascript format" do
+    exit_code = nil
+    out = nil
+
+    Dir.chdir("test/fixtures/sample_app") do
+      capture do
+        Zee::CLI.start(["routes", "-f", "javascript"])
+      end => {exit_code:, out:}
+    end
+
+    assert_equal 0, exit_code
+    assert_includes out, "export function rootURL(args, options)"
+    assert_includes out, "export function postURL(args, options)"
+  end
+
+  test "generates routes in typescript format" do
+    exit_code = nil
+    out = nil
+
+    Dir.chdir("test/fixtures/sample_app") do
+      capture do
+        Zee::CLI.start(["routes", "-f", "typescript"])
+      end => {exit_code:, out:}
+    end
+
+    assert_equal 0, exit_code
+    assert_includes \
+      out,
+      "export function rootURL(args?: Arguments, options?: Options): string"
+    assert_includes \
+      out,
+      "export function postURL(args: { id: Argument } & Arguments, " \
+      "options?: Options): string"
   end
 
   test "generates new app" do

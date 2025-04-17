@@ -1,0 +1,54 @@
+/* eslint-disable */
+// This file has been automatically generated.
+// Don't edit it manually. Use `bin/zee routes -f javascript` instead.
+
+function buildURL(components, params, options) {
+  components =
+    components
+    .filter((component) => component !== undefined && component !== null)
+    .map((component) => encodeURIComponent(String(component)));
+
+  const onlyPath = ("onlyPath" in options) ? options.onlyPath : false;
+  const path = `/${components.join("/")}`;
+  const protocol = (options.protocol || location.protocol).replace(":", "");
+  const host = options.host || location.host;
+  const url = URL.parse(`${protocol}://${host}${path}`);
+
+  if (!url) {
+    throw "Invalid url for `${path}`";
+  }
+
+  if (options.anchor) {
+    url.hash = options.anchor;
+  }
+
+  Object.keys(params).forEach((name) => {
+    url.searchParams.set(name, String(params[name]));
+  });
+
+  return onlyPath ? url.pathname + url.search + url.hash : url.toString();
+}
+
+function validateRequired(args) {
+  Object.keys(args).forEach((key) => {
+    const value = args[key];
+
+    if (value === undefined || value === null || value === "") {
+      const type = value === "" ? "an empty string" : value;
+      throw new Error(`${key} is required, but received ${type}`);
+    }
+  });
+}
+<% @routes.each do |route| %>
+export function <%= route.method_name %>(<%= route.args %>, options) {
+  <%- if route.all_names.any? -%>
+  const {<%= route.all_names.join(", ") %>, ...params} = (args || {});
+  <%- else -%>
+  const params = args || {};
+  <%- end -%>
+  <%- if route.required_names.any? -%>
+  <%= "validateRequired({#{route.required_names.join(", ")}});" %>
+  <%- end -%>
+  return buildURL([<%= route.components.join(", ") %>], params, options || {});
+}
+<% end %>
