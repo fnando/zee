@@ -275,7 +275,7 @@ module Zee
             store.fetch_multi(key1, key2, &block)
           )
 
-          store.write(key1, "stored value")
+          assert store.write(key1, "stored value")
 
           assert_equal(
             {key1 => "stored value", key2 => "value for #{key2}"},
@@ -357,7 +357,7 @@ module Zee
 
           assert_equal 1, store.increment(key)
           assert_equal 3, store.increment(key, 2)
-          assert_equal 3, store.read(key).to_i
+          assert_equal 3, store.read(key)
         end
       end
 
@@ -424,12 +424,13 @@ module Zee
           key = random_key
 
           assert store.write(key, "value")
-          assert_equal(%["value"],
-                       store.pool.with {|r| r.get("myapp:#{key}") })
           assert store.exist?(key)
+          stored = store.fetch_multi(key) { "missing #{_1}" }
+          assert_equal({key => "value"}, stored)
           assert store.delete(key)
           refute store.exist?(key)
-          assert_equal 0, (store.pool.with {|r| r.exists("myapp:#{key}") })
+          stored = store.fetch_multi(key) { "missing #{_1}" }
+          assert_equal({key => "missing #{key}"}, stored)
         end
       end
     end

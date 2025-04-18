@@ -27,7 +27,8 @@ loader.inflector.inflect(
   "html_helpers" => "HTMLHelpers",
   "json_encoder" => "JSONEncoder",
   "typescript" => "TypeScript",
-  "javascript" => "JavaScript"
+  "javascript" => "JavaScript",
+  "sqlite3" => "SQLite3"
 )
 loader.ignore("#{__dir__}/sequel")
 loader.setup

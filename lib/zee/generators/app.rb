@@ -280,7 +280,9 @@ module Zee
           version = begin
             `node --version`.strip
           rescue Errno::ENOENT
+            # :nocov:
             "22.14.0"
+            # :nocov:
           end
 
           version.delete_prefix("v")

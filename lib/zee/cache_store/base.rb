@@ -256,6 +256,7 @@ module Zee
       # @api private
       private def load(data)
         return data unless data
+        return data unless data.is_a?(String)
 
         if encrypt?
           data = JSON.parse(data)
