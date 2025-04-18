@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+echo "= Running Minitest"
+bundle exec minitest $@
+
+echo
+echo "= Running Rubocop"
+bundle exec rubocop

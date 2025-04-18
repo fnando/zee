@@ -102,11 +102,11 @@ class AttributesTest < Minitest::Test
       "2023-01-24" => Date.new(2023, 1, 24),
       Date.new(2023, 1, 24) => Date.new(2023, 1, 24),
       Time.new(2023, 1, 24) => Date.new(2023, 1, 24),
-      1_674_529_200 => Date.new(2023, 1, 24)
-    }.each do |input, expected|
+      1_674_536_400 => Date.new(2023, 1, 24)
+    }.each_with_index do |(input, expected), index|
       model.value = input
 
-      assert_equal expected, model.value
+      assert_equal expected, model.value, "Failed at index=#{index}"
     end
   end
 
@@ -137,10 +137,10 @@ class AttributesTest < Minitest::Test
       Date.new(2023, 1, 24) => Time.new(2023, 1, 24),
       Time.new(2023, 1, 24) => Date.new(2023, 1, 24).to_time,
       1_674_529_200 => Time.at(1_674_529_200)
-    }.each do |input, expected|
+    }.each_with_index do |(input, expected), index|
       model.value = input
 
-      assert_equal expected, model.value
+      assert_equal expected, model.value, "Failed at index=#{index}"
     end
   end
 
