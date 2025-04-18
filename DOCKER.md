@@ -111,3 +111,4 @@ generated. You may want to define a volume to store your certificates. See
 [caddy]: https://caddyserver.com
 [lets-encrypt]: https://letsencrypt.org
 [caddy-storage]: https://caddyserver.com/docs/caddyfile/options#storage
+[thruster]: https://github.com/basecamp/thruster
