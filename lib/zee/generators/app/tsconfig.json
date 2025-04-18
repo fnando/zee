@@ -4,6 +4,8 @@
     "baseUrl": ".",
     "strict": true,
     "outDir": "tmp/dist",
+    "esModuleInterop": true,
+    "module": "NodeNext",
     "paths": {
       "app/*": ["src/app/*"]
     }

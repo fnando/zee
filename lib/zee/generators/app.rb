@@ -132,6 +132,8 @@ module Zee
       end
 
       def js
+        add_npm_dependency "@fnando/pulse" => "*"
+
         case options[:js]
         when "typescript"
           copy_file "app/assets/scripts/app.ts"
