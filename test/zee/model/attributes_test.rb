@@ -102,7 +102,7 @@ class AttributesTest < Minitest::Test
       "2023-01-24" => Date.new(2023, 1, 24),
       Date.new(2023, 1, 24) => Date.new(2023, 1, 24),
       Time.new(2023, 1, 24) => Date.new(2023, 1, 24),
-      1_674_536_400 => Date.new(2023, 1, 24)
+      1_674_536_400 => Time.at(1_674_536_400).to_date
     }.each_with_index do |(input, expected), index|
       model.value = input
 
