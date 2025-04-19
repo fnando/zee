@@ -122,7 +122,6 @@ module Zee
 
       # @param key [String, Symbol] The key to check to.
       # @return [Boolean] Whether the write was successful.
-      # @param [Object] _key
       def exist?(key)
         result = @db.execute(
           EXISTS_QUERY,
@@ -175,8 +174,6 @@ module Zee
       # @param amount [Integer] The amount to increment the value by.
       # @param expires_in [Integer] The number of seconds to expire the key in.
       # @return [Integer] the new value.
-      # @param [Object] _key
-      # @param [Integer] _amount
       def increment(key, amount = 1, expires_in: nil)
         expires_at = expires_in ? (Time.now.utc + expires_in).to_f : nil
 
@@ -233,7 +230,6 @@ module Zee
 
       # @param keys [Array<String, Symbol>] The keys to delete.
       # @return [Integer] The number of keys deleted.
-      # @param [Array<Object>] _keys
       def delete_multi(*keys)
         placeholders = Array.new(keys.size, "?").join(",")
         query = "delete from cache_store where key in(#{placeholders})"
