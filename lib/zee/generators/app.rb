@@ -70,16 +70,9 @@ module Zee
         end
       end
 
-      def eslint
-        add_npm_dependency eslint: "*", globals: "*", "@eslint/js" => "*"
-
-        case options[:js]
-        when "typescript"
-          add_npm_dependency "typescript-eslint" => "*"
-          copy_file "eslint.typescript.mjs", "eslint.config.mjs"
-        else
-          copy_file "eslint.javascript.mjs", "eslint.config.mjs"
-        end
+      def biome
+        copy_file "biome.json"
+        add_npm_dependency "@biomejs/biome" => "*"
       end
 
       def js_bundler
@@ -342,7 +335,7 @@ module Zee
         def js_lint_commands
           [
             ("npm run tsc -- --noEmit" if options[:js] == "typescript"),
-            "npm run eslint -- --max-warnings=0"
+            "npm run biome check"
           ].compact.join(" && ")
         end
       end
