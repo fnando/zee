@@ -77,6 +77,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "sequel"
   spec.add_development_dependency "simplecov"
   spec.add_development_dependency "simplecov-tailwindcss"
+  spec.add_development_dependency "slim"
   spec.add_development_dependency "sqlite3"
   spec.add_development_dependency "test_notifier"
   spec.add_development_dependency "warning"

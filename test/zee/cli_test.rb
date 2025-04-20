@@ -53,6 +53,7 @@ class CLITest < Minitest::Test
        Verb       | Path                       | Prefix           | To
       ------------+----------------------------+------------------+----------------------------------------
        GET        | /                          | root             | pages#home
+       GET        | /slim                      |                  | pages#slim
        GET        | /custom-layout             |                  | pages#custom_layout
        GET        | /no-layout                 |                  | pages#no_layout
        GET        | /controller-layout         |                  | things#show
@@ -85,7 +86,7 @@ class CLITest < Minitest::Test
        GET        | /admin/posts               | admin_posts      | admin/posts#index
        ALL        | /old                       |                  | #<Zee::Redirect status=301 to="/">
        ALL        | /found                     |                  | #<Zee::Redirect status=302 to="/">
-       ALL        | /redirect-rack-app         |                  | app.rb:54
+       ALL        | /redirect-rack-app         |                  | app.rb:22
        ALL        | /proc-app                  | proc_app         | app.rb:8
        ALL        | /class-app                 | class_app        | MyRackApp
       ------------+----------------------------+------------------+----------------------------------------

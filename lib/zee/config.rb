@@ -20,8 +20,6 @@ module Zee
     # - `config.default_url_options`: the default URL options.
     # - `config.session_options`: the session cookie options.
     # - `config.json_serializer`: the default JSON serializer.
-    # - `config.template_handlers`: the list of template handlers that are
-    #    enabled by {https://github.com/jeremyevans/tilt Tilt}.
     # - `config.enable_reloading`: whether to enable code reloading.
     # - `config.logger`: a {Zee::Logger} instance that outputs to `$stdout`.
     # - `config.enable_instrumentation`: whether to enable request logging with
@@ -72,7 +70,6 @@ module Zee
       set :default_url_options, {}
       set :session_options, secret: SecureRandom.hex(64)
       set :json_serializer, JSON
-      set :template_handlers, %w[erb]
       set :enable_reloading, false
 
       set :serve_static_files,

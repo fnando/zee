@@ -9,8 +9,21 @@ class SampleApp < Zee::App
       [200, {"content-type" => "text/html"}, ["hello from rack app"]]
     }
 
+    class_app = Class.new do
+      def self.name
+        "MyRackApp"
+      end
+
+      def self.call(_env)
+        [200, {"content-type" => "text/html"}, ["hello from my app"]]
+      end
+    end
+
+    redirect_app = ->(_env) { [302, {"location" => "/"}] }
+
     app.routes do
       root to: "pages#home"
+      get "slim", to: "pages#slim"
       get "custom-layout", to: "pages#custom_layout"
       get "no-layout", to: "pages#no_layout"
       get "controller-layout", to: "things#show"
@@ -51,19 +64,9 @@ class SampleApp < Zee::App
       # redirections
       redirect "old", to: "/"
       redirect "found", to: "/", status: :found
-      redirect "redirect-rack-app", to: ->(_env) { [302, {"location" => "/"}] }
+      redirect "redirect-rack-app", to: redirect_app
 
       mount proc_app, at: "proc-app", as: :proc_app
-
-      class_app = Class.new do
-        def self.name
-          "MyRackApp"
-        end
-
-        def self.call(_env)
-          [200, {"content-type" => "text/html"}, ["hello from my app"]]
-        end
-      end
       mount class_app, at: "class-app", as: :class_app
     end
 

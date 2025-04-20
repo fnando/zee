@@ -59,8 +59,6 @@ module Zee
         layout: nil,
         **options
       )
-        app = Zee.app
-
         raise DoubleRenderError if response.performed?
 
         return render_json(status, options.delete(:json)) if options.key?(:json)
@@ -76,7 +74,7 @@ module Zee
         locals = collect_locals
 
         body = instrument(:request, scope: :view, path: found_view.path) do
-          app.render_template(
+          Zee.app.render_template(
             found_view.path,
             locals:,
             request:,
@@ -88,7 +86,7 @@ module Zee
         if found_layout
           body =
             instrument(:request, scope: :layout, path: found_layout.path) do
-              app.render_template(
+              Zee.app.render_template(
                 found_layout.path,
                 locals:,
                 request:,
@@ -206,19 +204,17 @@ module Zee
         name_ancestry.each do |controller_name|
           mimes.each do |mime|
             view_paths.each do |search_path|
-              Zee.app.config.template_handlers.each do |handler|
-                ext = [mime.extension, MIME_EXTENSION_ALIAS[mime.extension]]
-                      .compact
-                      .join(COMMA)
+              ext = [mime.extension, MIME_EXTENSION_ALIAS[mime.extension]]
+                    .compact
+                    .join(COMMA)
 
-                view_path = search_path
-                            .join(controller_name)
-                            .glob("#{name}.{#{ext}}.#{handler}")
-                            .first
+              view_path = search_path
+                          .join(controller_name)
+                          .glob("#{name}.{#{ext}}.*")
+                          .first
 
-                if view_path&.file?
-                  return Template::Info.new(path: view_path, mime:)
-                end
+              if view_path&.file?
+                return Template::Info.new(path: view_path, mime:)
               end
             end
           end
@@ -254,8 +250,7 @@ module Zee
 
         # When `Accept: */*` is provided, we also need to find a template that
         # matches the extension. We're looking for files like `file.html.erb` or
-        # `file.xml.erb` (the last extension component depends on the engines
-        # that are enabled via {Zee::Config#template_handlers}).
+        # `file.xml.erb`.
         if accept_all && mimes.empty?
           view_paths.each do |view_path|
             exts = view_path.glob("#{controller_name}/#{template_name}.*.*")

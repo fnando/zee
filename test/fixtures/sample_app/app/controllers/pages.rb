@@ -5,6 +5,9 @@ module Controllers
     def home
     end
 
+    def slim
+    end
+
     def missing_template
       render :missing_template
     end

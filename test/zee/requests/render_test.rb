@@ -16,6 +16,15 @@ class RenderTest < Zee::Test::Integration
     assert_includes last_response.content_type, "text/html"
   end
 
+  test "renders slim template" do
+    get "/slim"
+
+    assert_includes last_response.body,
+                    "<h1>Hello from Slim</h1>"
+    assert last_response.ok?
+    assert_includes last_response.content_type, "text/html"
+  end
+
   test "renders namespaced routes" do
     get "/admin/posts"
 
