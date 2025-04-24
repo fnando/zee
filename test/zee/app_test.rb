@@ -140,14 +140,13 @@ class AppTest < Minitest::Test
     assert_equal Zee::Middleware::Static, stack[3]
     assert_equal Zee::Middleware::RequestLogger, stack[4]
     assert_equal Rack::Sendfile, stack[5]
-    assert_equal Rack::Protection, stack[6]
-    assert_equal Rack::Session::Cookie, stack[7]
-    assert_equal Zee::Middleware::Flash, stack[8]
-    assert_equal Rack::Head, stack[9]
-    assert_equal Rack::ConditionalGet, stack[10]
-    assert_equal Rack::ETag, stack[11]
-    assert_equal Rack::TempfileReaper, stack[12]
-    assert_equal 13, stack.size
+    assert_equal Rack::Session::Cookie, stack[6]
+    assert_equal Zee::Middleware::Flash, stack[7]
+    assert_equal Rack::Head, stack[8]
+    assert_equal Rack::ConditionalGet, stack[9]
+    assert_equal Rack::ETag, stack[10]
+    assert_equal Rack::TempfileReaper, stack[11]
+    assert_equal 12, stack.size
   end
 
   test "enables template caching" do

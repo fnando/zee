@@ -10,6 +10,11 @@ Zee.app.middleware do
   #   end
   # end
 
+  # Protect against typical web attacks.
+  # If you're using OmniAuth, you need to use `except: [:remote_token]`.
+  # [https://github.com/sinatra/sinatra]
+  use Rack::Protection
+
   # Protects against DNS rebinding and other Host header attacks.
   # [https://github.com/sinatra/sinatra/blob/main/rack-protection/lib/rack/protection/host_authorization.rb]
   use Rack::Protection::HostAuthorization,

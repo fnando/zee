@@ -231,28 +231,28 @@ module Zee
     #   (development only)
     # @return [Zee::MiddlewareStack]
     def default_middleware_stack
-      MiddlewareStack.new(self).tap do |middleware|
-        middleware.use Rack::Runtime
-        middleware.use Middleware::Charset
-        middleware.use RequestStore::Middleware
-        middleware.use Rack::ShowExceptions if env.development?
-        middleware.use Middleware::Static if config.serve_static_files?
-        middleware.use Middleware::RequestLogger
-        middleware.use Rack::Sendfile
-        middleware.use Rack::Protection if defined?(Rack::Protection)
+      @default_middleware_stack ||=
+        MiddlewareStack.new(self).tap do |middleware|
+          middleware.use Rack::Runtime
+          middleware.use Middleware::Charset
+          middleware.use RequestStore::Middleware
+          middleware.use Rack::ShowExceptions if env.development?
+          middleware.use Middleware::Static if config.serve_static_files?
+          middleware.use Middleware::RequestLogger
+          middleware.use Rack::Sendfile
 
-        if defined?(Rack::Session)
-          middleware.use Rack::Session::Cookie,
-                         default_session_options.merge(config.session_options)
+          if defined?(Rack::Session)
+            middleware.use Rack::Session::Cookie,
+                           default_session_options.merge(config.session_options)
 
-          middleware.use Middleware::Flash
+            middleware.use Middleware::Flash
+          end
+
+          middleware.use Rack::Head
+          middleware.use Rack::ConditionalGet
+          middleware.use Rack::ETag
+          middleware.use Rack::TempfileReaper
         end
-
-        middleware.use Rack::Head
-        middleware.use Rack::ConditionalGet
-        middleware.use Rack::ETag
-        middleware.use Rack::TempfileReaper
-      end
     end
 
     # Initialize the application.
