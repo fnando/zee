@@ -33,7 +33,7 @@
 
 # Ignore sqlite extensions
 /.sqlpkg/*
-!/sqlpkg/.keep
+!/.sqlpkg/.keep
 
 # Ignore other files
 .minitestfailures
