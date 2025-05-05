@@ -31,7 +31,7 @@ module Zee
     class Phlex < Command
       desc "phlex", "Generate phlex components"
       def phlex
-        # The generator must a  Thor::Group subclass.
+        # The generator must a Thor::Group subclass.
         # https://nandovieira.com/creating-generators-and-executables-with-thor
         generator = PhlexGenerator.new
         generator.destination_root = File.expand_path(path)
