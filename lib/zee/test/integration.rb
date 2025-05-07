@@ -20,8 +20,8 @@ module Zee
       include Test::Assertions::HTML
 
       setup do
-        routes.default_url_options[:host] = "localhost"
-        routes.default_url_options[:port] = nil
+        routes.default_url_options[:host] = "127.0.0.1"
+        routes.default_url_options[:port] = ENV["CAPYBARA_SERVER_PORT"]
       end
 
       setup do
