@@ -599,12 +599,13 @@ module Zee
       #     <p><%= f.submit %></p>
       #   <% end %>
       #   ```
-      def form_for(object, url:, as: :form, **, &)
+      def form_for(object, url:, as: nil, **, &)
         raise RequestNotSet, "request is not set for some reason" unless request
 
-        as = object.class.naming.singular if object.class.respond_to?(:naming)
+        as ||= object.class.naming.singular if object.class.respond_to?(:naming)
+        as ||= :form
 
-        form = FormBuilder.new(object:, context: self, object_name: as, **)
+        form = FormBuilder.new(object:, context: self, object_name: as)
         form_tag(url:, **) { instance_exec(form, &) }
       end
 
