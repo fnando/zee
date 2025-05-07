@@ -280,25 +280,11 @@ module Zee
         loader.push_dir(dir.to_s, namespace:)
       end
 
-      push_dir.call "app/actions"
-      push_dir.call "app/components"
-      push_dir.call "app/contracts"
-      push_dir.call "app/controllers"
-      push_dir.call "app/decorators"
-      push_dir.call "app/forms"
-      push_dir.call "app/helpers"
-      push_dir.call "app/jobs"
-      push_dir.call "app/mailers"
-      push_dir.call "app/models"
-      push_dir.call "app/operations"
-      push_dir.call "app/policies"
-      push_dir.call "app/presenters"
-      push_dir.call "app/queries"
-      push_dir.call "app/serializers"
-      push_dir.call "app/services"
-      push_dir.call "app/views"
-      push_dir.call "app/workers"
-      push_dir.call "app/workflows"
+      root.join("app").glob("*").each do |dir|
+        next unless dir.directory?
+
+        push_dir.call("app/#{dir.basename}")
+      end
 
       init { set_i18n_load_path }
 
