@@ -86,6 +86,8 @@ module Zee
         def setup_for_system_tests
           port = ENV.fetch("CAPYBARA_SERVER_PORT", find_available_port)
           ENV["CAPYBARA_SERVER_PORT"] = port.to_s
+          ENV["ZEE_ENV"] = "test"
+          ENV["ZEE_INTEGRATION_SERVER"] = "true"
 
           $stdout.sync = true
           $stderr.sync = true
