@@ -142,7 +142,7 @@ module Zee
                 "got #{text.inspect}"
         end
 
-        html = Nokogiri::HTML(mail.html_part.body.raw_source)
+        html = Nokogiri::HTML(mail.html_part.decoded)
         link = html.css("a[href]").find { _1.text.strip.match?(text) }
 
         unless link
