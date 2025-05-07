@@ -19,7 +19,7 @@ module Zee
         # @api private
         def self.validate(model, attribute, options)
           value = model[attribute]
-          size = value.size
+          size = value&.size || 0
 
           range = options[:in]
 
