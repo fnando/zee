@@ -12,9 +12,9 @@ module Mailers
       assert_equal "<%= method.tr("_", " ").capitalize %>", mail.subject
       assert_includes mail.from, "from@example.com"
       assert_includes mail.to, "to@example.com"
-      assert_includes mail.html_part.to_s,
+      assert_includes mail.html_part.decoded,
                       "<p>Find me at app/views/<%= basename %>/<%= method %>.html.erb</p>"
-      assert_includes mail.text_part.to_s,
+      assert_includes mail.text_part.decoded,
                       "Find me at app/views/<%= basename %>/<%= method %>.text.erb"
     end
     <%- end -%>

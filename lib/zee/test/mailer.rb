@@ -20,7 +20,7 @@ module Zee
     #       assert_mail_delivered subject: "Your login link",
     #                             from: "from@example.com",
     #                             to: "to@example.com"
-    #       assert_selector mail.html_part.to_s,
+    #       assert_selector mail.html_part.decoded,
     #                       "a[href^*='https://example.com/login/confirm']",
     #                       text: "Sign in to your account"
     #     end
