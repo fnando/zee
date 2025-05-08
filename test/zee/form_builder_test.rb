@@ -420,6 +420,21 @@ class FormBuilderTest < Zee::Test
     assert_selector html, "button[type=submit]", text: /Submit/
   end
 
+  test "renders submit button with translation" do
+    user = {}
+    store_translations :en, zee: {forms: {user: {submit: "Sign up now!"}}}
+
+    template = <<~ERB
+      <%= form_for user, url: "/users", as: :user do |f| %>
+        <%= f.submit %>
+      <% end %>
+    ERB
+
+    html = render(template, locals: {user:}, request:)
+
+    assert_selector html, "button[type=submit]", text: /Sign up now!/
+  end
+
   test "renders submit button with custom text" do
     user = {}
 

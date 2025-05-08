@@ -466,7 +466,8 @@ module Zee
     # Render a submit button field.
     # @param label [String, nil] The button label.
     # @return [SafeBuffer]
-    def submit(label = "Submit", **, &)
+    def submit(label = nil, **, &)
+      label = translation_for(:submit, default: label || "Submit")
       button_tag(label, **, type: SUBMIT, &)
     end
 
@@ -613,8 +614,8 @@ module Zee
     # @api private
     # @example
     #   translation_for(:label, :name, default: "Name")
-    private def translation_for(scope, attr, default: nil)
-      I18n.t(scope, scope: [:zee, :forms, object_name, attr], default:)
+    private def translation_for(scope, attr = nil, default: nil)
+      I18n.t(scope, scope: [:zee, :forms, object_name, attr].compact, default:)
     end
 
     # @api private
