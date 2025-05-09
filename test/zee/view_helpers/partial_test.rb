@@ -77,6 +77,62 @@ class PartialTest < Minitest::Test
     assert_selector response.body, "h1", text: /Home/
   end
 
+  test "renders partial from application" do
+    controller_class = Class.new(Zee::Controller) do
+      def self.name
+        "Controllers::Pages"
+      end
+
+      def home
+      end
+    end
+
+    create_file "tmp/app/views/pages/home.html.erb", <<~ERB
+      <%= render "header" %>
+    ERB
+
+    create_file "tmp/app/views/application/_header.html.erb", <<~ERB
+      <h1>Home</h1>
+    ERB
+
+    controller_class.new(
+      request:,
+      response:,
+      controller_name: "pages",
+      action_name: "home"
+    ).send(:call)
+
+    assert_selector response.body, "h1", text: /Home/
+  end
+
+  test "renders partial if in view path" do
+    controller_class = Class.new(Zee::Controller) do
+      def self.name
+        "Controllers::Pages"
+      end
+
+      def home
+      end
+    end
+
+    create_file "tmp/app/views/pages/home.html.erb", <<~ERB
+      <%= render "application/header" %>
+    ERB
+
+    create_file "tmp/app/views/application/_header.html.erb", <<~ERB
+      <h1>Home</h1>
+    ERB
+
+    controller_class.new(
+      request:,
+      response:,
+      controller_name: "pages",
+      action_name: "home"
+    ).send(:call)
+
+    assert_selector response.body, "h1", text: /Home/
+  end
+
   test "renders partial with object (default name)" do
     controller_class = Class.new(Zee::Controller) do
       def self.name

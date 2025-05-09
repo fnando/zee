@@ -183,7 +183,8 @@ module Zee
       # @raise [MissingTemplateError]
       # @return [Pathname]
       def find_partial(name)
-        find_template("_#{name}", [response.view.mime])
+        name = [File.dirname(name), "_#{File.basename(name)}"].join(SLASH)
+        find_template(name, [response.view.mime])
       end
 
       # @api private
@@ -201,13 +202,19 @@ module Zee
       # @return [Template::Info, nil]
       # @raise [MissingTemplateError]
       def find_template(name, mimes, required: true)
-        name_ancestry.each do |controller_name|
-          mimes.each do |mime|
-            view_paths.each do |search_path|
-              ext = [mime.extension, MIME_EXTENSION_ALIAS[mime.extension]]
-                    .compact
-                    .join(COMMA)
+        mime_exts = mimes.map do |mime|
+          [
+            mime,
+            [mime.extension, MIME_EXTENSION_ALIAS[mime.extension]]
+              .compact
+              .join(COMMA)
+          ]
+        end
 
+        # First, try to find template based on ancestry.
+        name_ancestry.each do |controller_name|
+          mime_exts.each do |(mime, ext)|
+            view_paths.each do |search_path|
               view_path = search_path
                           .join(controller_name)
                           .glob("#{name}.{#{ext}}.*")
@@ -216,6 +223,19 @@ module Zee
               if view_path&.file?
                 return Template::Info.new(path: view_path, mime:)
               end
+            end
+          end
+        end
+
+        # Then, try to lookup for view_path + name.
+        mime_exts.each do |(mime, ext)|
+          view_paths.each do |search_path|
+            view_path = search_path
+                        .glob("#{name}.{#{ext}}.*")
+                        .first
+
+            if view_path&.file?
+              return Template::Info.new(path: view_path, mime:)
             end
           end
         end
