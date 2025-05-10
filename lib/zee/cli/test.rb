@@ -13,6 +13,10 @@ module Zee
              default: false,
              aliases: "-b",
              desc: "Show full backtrace"
+      option :slow,
+             type: :boolean,
+             default: false,
+             desc: "Run slow tests"
       option :wait,
              type: :numeric,
              desc: "Set a custom wait time for the integration server to start",
@@ -59,6 +63,7 @@ module Zee
         has_system_test = files.any? { _1.include?("/system/") }
 
         args = []
+        args.push("--slow") if options[:slow]
         args.push("--name", test_name.to_s) if test_name
         args.push("--seed", options[:seed]) if options[:seed]
         args.push("--backtrace") if options[:backtrace]
