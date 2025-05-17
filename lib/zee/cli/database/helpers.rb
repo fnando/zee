@@ -63,7 +63,8 @@ module Zee
         end
 
         def env
-          options[:env]
+          env = ENV_NAMES.map { ENV[_1] }.compact.first
+          env || options[:env]
         end
 
         def compute_connection_string
