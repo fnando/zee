@@ -20,7 +20,7 @@ module Zee
                           .apply_to(Nokogiri::XML(html.to_xml))
                           .lines[2..-1]
 
-          lines ? lines.join : root.to_s.inspect
+          lines ? lines.join : html.to_s.inspect
         end
       end
     end
