@@ -78,6 +78,7 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
+    environment: test
     <%- if options[:database] == "postgresql" -%>
     services:
       postgres:
