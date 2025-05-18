@@ -217,8 +217,6 @@ module Zee
     #
     # - {https://github.com/rack/rack/blob/main/lib/rack/sendfile.rb Rack::Sendfile}
     # - {https://github.com/rack/rack/blob/main/lib/rack/runtime.rb Rack::Runtime}
-    # - {https://github.com/sinatra/sinatra/tree/main/rack-protection Rack::Protection}
-    #   (if available)
     # - {https://github.com/rack/rack-session Rack::Session::Cookie} (also see
     #   {#default_session_options})
     # - {https://github.com/rack/rack/blob/main/lib/rack/show_exceptions.rb Rack::ShowExceptions}
