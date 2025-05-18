@@ -61,6 +61,7 @@ class CLITest < Minitest::Test
        GET        | /hello                     |                  | pages#hello
        GET        | /text                      |                  | formats#text
        GET        | /html                      |                  | formats#html
+       GET        | /xml                       |                  | formats#xml
        GET        | /json                      |                  | formats#json
        GET        | /redirect                  |                  | pages#redirect
        GET        | /redirect-error            |                  | pages#redirect_error

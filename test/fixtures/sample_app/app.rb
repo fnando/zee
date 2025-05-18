@@ -31,6 +31,7 @@ class SampleApp < Zee::App
       get "hello", to: "pages#hello"
       get "text", to: "formats#text"
       get "html", to: "formats#html"
+      get "xml", to: "formats#xml"
       get "json", to: "formats#json"
       get "redirect", to: "pages#redirect"
       get "redirect-error", to: "pages#redirect_error"

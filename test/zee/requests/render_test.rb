@@ -64,6 +64,14 @@ class RenderTest < Zee::Test::Integration
     assert_includes last_response.content_type, "text/html"
   end
 
+  test "renders xml" do
+    get "/xml"
+
+    assert last_response.ok?
+    assert_includes last_response.body, "<message>Hello, World!</message>"
+    assert_includes last_response.content_type, "application/xml"
+  end
+
   test "renders text" do
     get "/text"
 

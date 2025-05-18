@@ -63,6 +63,7 @@ module Zee
 
         return render_json(status, options.delete(:json)) if options.key?(:json)
         return render_html(status, options.delete(:html)) if options.key?(:html)
+        return render_xml(status, options.delete(:xml)) if options.key?(:xml)
         return render_text(status, options.delete(:text)) if options.key?(:text)
 
         mimes = possible_mime_types(template_name)
@@ -105,6 +106,13 @@ module Zee
       private def render_html(status, text)
         response.status(status)
         response.headers[:content_type] = TEXT_HTML
+        response.body = text.to_s
+      end
+
+      # @api private
+      private def render_xml(status, text)
+        response.status(status)
+        response.headers[:content_type] = APPLICATION_XML
         response.body = text.to_s
       end
 

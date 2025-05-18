@@ -104,6 +104,9 @@ module Zee
   TEXT_HTML = "text/html"
 
   # @api private
+  APPLICATION_XML = "application/xml"
+
+  # @api private
   TEXT_PLAIN = "text/plain"
 
   # @api private
