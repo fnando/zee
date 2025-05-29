@@ -39,6 +39,7 @@ module Zee
 
         log_request_path(request, duration)
         log_status(status, headers)
+        log_content_type(headers)
         log_request(request)
         log_mail
         log_sequel
@@ -120,6 +121,12 @@ module Zee
         )
 
         log_entry(:redirected_to, headers["location"]) if headers["location"]
+      end
+
+      def log_content_type(headers)
+        return unless headers["content-type"]
+
+        log_entry(:content_type, headers["content-type"])
       end
 
       def log_sequel
