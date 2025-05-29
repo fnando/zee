@@ -230,7 +230,8 @@ module Zee
       return if text_part || html_part
 
       raise MissingTemplateError,
-            "couldn't find template for #{self.class.naming.underscore}##{name}"
+            "couldn't find template for " \
+            "#{self.class.naming.underscore}##{name} (locale=#{I18n.locale})"
     end
 
     # @api private

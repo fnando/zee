@@ -74,6 +74,7 @@ module Zee
         Capybara.reset_sessions!
         Capybara.default_host = "http://127.0.0.1:#{port}"
         Capybara.app_host = "http://127.0.0.1:#{port}"
+
         Zee.app
            .config
            .set(:session_options, domain: "localhost", secure: false)

@@ -33,6 +33,7 @@ class SampleApp < Zee::App
       get "html", to: "formats#html"
       get "xml", to: "formats#xml"
       get "json", to: "formats#json"
+      get "locale", to: "locales#show"
       get "redirect", to: "pages#redirect"
       get "redirect-error", to: "pages#redirect_error"
       get "redirect-open", to: "pages#redirect_open"

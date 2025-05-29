@@ -376,7 +376,8 @@ class MailerTest < Zee::Test::Mailer
       mailer_class.hello.deliver
     end
 
-    assert_equal "couldn't find template for messages#hello", error.message
+    assert_equal "couldn't find template for messages#hello (locale=en)",
+                 error.message
   end
 
   test "makes helpers available to mailer class" do

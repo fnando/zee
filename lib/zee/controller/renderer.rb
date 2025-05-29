@@ -225,7 +225,10 @@ module Zee
             view_paths.each do |search_path|
               view_path = search_path
                           .join(controller_name)
-                          .glob("#{name}.{#{ext}}.*")
+                          .glob([
+                            "#{name}.#{I18n.locale}.{#{ext}}.*",
+                            "#{name}.{#{ext}}.*"
+                          ])
                           .first
 
               if view_path&.file?
@@ -254,7 +257,7 @@ module Zee
 
         raise MissingTemplateError,
               "couldn't find template for #{controller_name}/#{name} " \
-              "for #{content_types.inspect}"
+              "for #{content_types.inspect} (locale=#{I18n.locale})"
       end
 
       # @api private

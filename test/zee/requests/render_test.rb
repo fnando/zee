@@ -225,4 +225,20 @@ class RenderTest < Zee::Test::Integration
     assert_equal "/", last_response.location
     assert_equal 302, last_response.status
   end
+
+  test "renders locale-specific template" do
+    get "/locale?locale=pt-BR"
+
+    assert last_response.ok?
+    assert_includes last_response.body,
+                    "Olá, mundo!"
+    assert_includes last_response.content_type, "text/html"
+
+    get "/locale?locale=en"
+
+    assert last_response.ok?
+    assert_includes last_response.body,
+                    "Hello, world!"
+    assert_includes last_response.content_type, "text/html"
+  end
 end
