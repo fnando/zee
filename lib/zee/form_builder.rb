@@ -467,7 +467,7 @@ module Zee
     # @param label [String, nil] The button label.
     # @return [SafeBuffer]
     def submit(label = nil, **, &)
-      label = translation_for(:submit, default: label || "Submit")
+      label ||= translation_for(:submit, default: "Submit")
       button_tag(label, **, type: SUBMIT, &)
     end
 
