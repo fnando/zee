@@ -79,6 +79,7 @@ module Zee
     private def session
       request.env[RACK_SESSION]
     end
+    helper_method :session
 
     # Reset the session.
     private def reset_session
