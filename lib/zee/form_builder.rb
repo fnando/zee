@@ -431,11 +431,24 @@ module Zee
     #                               either `:checkbox_group` or `:radio_group`.
     # @param type [Symbol] The field type. Must match a input type supported by
     #                      this form builder.
+    # @param input_options [Hash{Symbol => Object}] The options passed to the
+    #                                               input method. Doesn't apply
+    #                                               to groups (i.e.
+    #                                               `type: :radio_group` or
+    #                                               `type: :checkbox_group`).
+    # @param label_options [Hash{Symbol => Object}] The options passed to the
+    #                                               label method. Doesn't apply
+    #                                               to groups (i.e.
+    #                                               `type: :radio_group` or
+    #                                               `type: :checkbox_group`).
+    #
     # @return [SafeBuffer]
-    def field(attr, values = nil, type: :text)
+    def field(
+      attr, values = nil, type: :text, input_options: nil, label_options: nil
+    )
       case type
       when :select
-        label = label(attr)
+        label = label(attr, **label_options)
         input = select(attr, values)
       when :radio_group
         label = tag(:span, label_text(attr), class: :label)
@@ -444,8 +457,8 @@ module Zee
         label = tag(:span, label_text(attr), class: :label)
         input = checkbox_group(attr, values)
       else
-        label = label(attr)
-        input = build_input(type, attr)
+        label = label(attr, **label_options)
+        input = build_input(type, attr, **input_options)
       end
 
       hint = hint(attr)

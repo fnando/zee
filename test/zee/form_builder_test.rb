@@ -1075,4 +1075,28 @@ class FormBuilderTest < Zee::Test
     assert_selector html, ".field>.field-controls>input[type=text]"
     assert_selector html, ".field>.field-controls>input+.error", count: 0
   end
+
+  test "renders text field with custom label attributes" do
+    user = {}
+    template = <<~ERB
+      <%= form_for user, url: "/users", as: :user do |f| %>
+        <%= f.field :name, label_options: {data: {testid: "user_name"}} %>
+      <% end %>
+    ERB
+    html = render(template, locals: {user:}, request:)
+
+    assert_selector html, "label[data-testid='user_name']", text: /Name/
+  end
+
+  test "renders text field with custom input attributes" do
+    user = {}
+    template = <<~ERB
+      <%= form_for user, url: "/users", as: :user do |f| %>
+        <%= f.field :name, input_options: {data: {testid: "user_name"}} %>
+      <% end %>
+    ERB
+    html = render(template, locals: {user:}, request:)
+
+    assert_selector html, "input[data-testid='user_name']"
+  end
 end
