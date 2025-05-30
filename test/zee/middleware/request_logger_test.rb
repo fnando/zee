@@ -6,15 +6,17 @@ class RequestLoggerTest < Minitest::Test
   include Zee::Instrumentation
 
   let(:app) do
+    app_logger = logger
+
     Rack::Builder.app do
-      use Zee::Middleware::RequestLogger
+      use Zee::Middleware::RequestLogger, app_logger
       use RequestStore::Middleware
       run(proc { [200, {}, []] })
     end
   end
 
   setup do
-    Zee.app.config.set(:enable_instrumentation, true)
+    Zee.app.config.stubs(:enable_instrumentation?).returns(true)
   end
 
   test "logs request" do

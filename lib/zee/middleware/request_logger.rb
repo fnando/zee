@@ -18,12 +18,11 @@ module Zee
       using Zee::Core::String
       using Zee::Core::Blank
 
-      def initialize(app)
-        @app = app
-      end
+      attr_reader :logger
 
-      def logger
-        Zee.app.config.logger
+      def initialize(app, logger = Zee.app.config.logger)
+        @app = app
+        @logger = logger
       end
 
       def call(env)
@@ -132,7 +131,7 @@ module Zee
       def log_sequel
         sequel = Instrumentation.instrumentations[:sequel]
         queries = sequel.count
-        sql_time_spent = sequel.sum { _1[:duration] }
+        sql_time_spent = sequel.sum { _1[:duration].to_f }
 
         log_entry(
           :database,
