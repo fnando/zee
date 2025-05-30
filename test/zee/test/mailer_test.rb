@@ -238,6 +238,8 @@ class MailerTest < Zee::Test::Mailer
       end
     end
 
+    Zee.app.config.default_url_options.clear
+
     error = assert_raises(ArgumentError) do
       mailer_class.hello.deliver
     end

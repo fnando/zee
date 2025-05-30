@@ -47,24 +47,35 @@ end
 
 Minitest::Utils::Reporter.filters << %r{/gems/}
 
+SAMPLE_APP = SampleApp.create
+TRANSLATION_FILES = Dir[
+  "#{__dir__}/../lib/zee/translations/*.yml",
+  "#{__dir__}/../lib/sequel/**/*.yml"
+]
+
 module Minitest
   class Test
     let(:logger_io) { StringIO.new }
     let(:logger) { Zee::Logger.new(Logger.new(logger_io)) }
-
-    setup do
-      Zeitwerk::Registry.loaders[1..-1]
-                        .each { Zeitwerk::Registry.unregister_loader(_1) }
-    end
 
     setup { ENV.delete("MINITEST_TEST_COMMAND") }
     setup { ENV.delete_if { _1.start_with?("ZEE") } }
     setup { ENV["APP_ENV"] = "test" }
     setup { FileUtils.rm_rf("tmp") }
     setup { FileUtils.mkdir("tmp") }
-    setup { Zee.app = SampleApp.create }
-    setup { I18n.backend.reload! }
-    setup { I18n.available_locales = [:en] }
+
+    setup do
+      # These setup step resets the sample app to a known state for each test.
+      Zee.app = SAMPLE_APP
+      Zee.app.root = Pathname.new(__dir__).join("fixtures/sample_app")
+      Zee.app.view_paths.clear
+      Zee.app.view_paths << Zee.app.root.join("app/views")
+      I18n.available_locales = %w[en pt-BR]
+      I18n.locale = "en"
+      I18n.load_path = TRANSLATION_FILES
+      I18n.backend.reload!
+    end
+
     setup { RequestStore.store.clear }
     setup { Zee.app.config.set(:logger, logger) }
     setup { Zee.error = Zee::ErrorReporter.new }

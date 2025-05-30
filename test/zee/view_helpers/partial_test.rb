@@ -7,6 +7,8 @@ class PartialTest < Minitest::Test
 
   setup do
     Zee.app.root = Pathname("tmp")
+    Zee.app.view_paths.clear
+    Zee.app.view_paths << Zee.app.root.join("app/views")
     FileUtils.mkdir_p Zee.app.root.join("app/app/helpers")
   end
 

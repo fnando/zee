@@ -158,7 +158,8 @@ class RenderTest < Zee::Test::Integration
     get "/", {}, "HTTP_ACCEPT" => "*/*"
 
     assert last_response.ok?
-    assert_includes last_response.body, "<title>My app</title>"
+    assert_includes last_response.body,
+                    "sample_app:app/views/pages/home.html.erb"
     assert_includes last_response.content_type, "text/html"
   end
 
@@ -166,7 +167,8 @@ class RenderTest < Zee::Test::Integration
     get "/", {}, "HTTP_ACCEPT" => ""
 
     assert last_response.ok?
-    assert_includes last_response.body, "<title>My app</title>"
+    assert_includes last_response.body,
+                    "sample_app:app/views/pages/home.html.erb"
     assert_includes last_response.content_type, "text/html"
   end
 

@@ -5,7 +5,11 @@ require "test_helper"
 class TranslationTest < Minitest::Test
   include Zee::Test::Assertions::HTML
 
-  setup { Zee.app.root = Pathname("tmp") }
+  setup do
+    Zee.app = Zee::App.new
+    Zee.app.root = Pathname("tmp")
+  end
+
   let(:env) { Rack::MockRequest.env_for("/").merge(Zee::RACK_SESSION => {}) }
   let(:request) { Zee::Request.new(env) }
   let(:response) { Zee::Response.new }

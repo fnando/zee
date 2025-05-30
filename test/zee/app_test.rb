@@ -167,7 +167,7 @@ class AppTest < Minitest::Test
 
     Tilt.expects(:new).once.with(template_name, anything).returns(template)
 
-    Zee.app.config.set(:enable_template_caching, true)
+    Zee.app.config.stubs(:enable_template_caching?).returns(true)
     Zee.app.render_template(template_name, locals: {name: "John"})
     Zee.app.render_template(template_name, locals: {name: "John"})
   end
@@ -190,7 +190,7 @@ class AppTest < Minitest::Test
 
     Tilt.expects(:new).twice.with(template_name, anything).returns(template)
 
-    Zee.app.config.set(:enable_template_caching, false)
+    Zee.app.config.stubs(:enable_template_caching?).returns(false)
     Zee.app.render_template(template_name, locals: {name: "John"})
     Zee.app.render_template(template_name, locals: {name: "John"})
   end
