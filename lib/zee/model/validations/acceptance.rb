@@ -16,14 +16,11 @@ module Zee
 
           return if options[:accept].include?(value)
 
-          translated_message = model.errors.build_error_message(
+          message = model.errors.build_error_message(
             :acceptance,
-            attribute
+            attribute,
+            default: options[:message] || DEFAULT_MESSAGE
           )
-
-          message = [translated_message, options[:message], DEFAULT_MESSAGE]
-                    .compact
-                    .first
 
           model.errors.add(attribute, :acceptance, message:)
         end

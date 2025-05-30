@@ -59,8 +59,11 @@ module Zee
 
             next if value.send(operator, expected)
 
-            message =
-              model.errors.build_error_message(check, attribute) || message
+            message = model.errors.build_error_message(
+              check,
+              attribute,
+              default: message
+            )
 
             message = format(message, {value: expected})
 
@@ -80,9 +83,11 @@ module Zee
           return unless options[:only_integer]
           return if value.nil? || value.is_a?(Integer)
 
-          message =
-            model.errors.build_error_message(:not_an_integer, attribute) ||
-            DEFAULT_ONLY_INTEGER_MESSAGE
+          message = model.errors.build_error_message(
+            :not_an_integer,
+            attribute,
+            default: DEFAULT_ONLY_INTEGER_MESSAGE
+          )
 
           model.errors.add(
             attribute,
@@ -98,9 +103,11 @@ module Zee
           return unless options[:odd]
           return if value.odd?
 
-          message =
-            model.errors.build_error_message(:odd, attribute) ||
-            DEFAULT_ODD_MESSAGE
+          message = model.errors.build_error_message(
+            :odd,
+            attribute,
+            default: DEFAULT_ODD_MESSAGE
+          )
 
           model.errors.add(
             attribute,
@@ -116,9 +123,11 @@ module Zee
           return unless options[:even]
           return if value.even?
 
-          message =
-            model.errors.build_error_message(:even, attribute) ||
-            DEFAULT_EVEN_MESSAGE
+          message = model.errors.build_error_message(
+            :even,
+            attribute,
+            default: DEFAULT_EVEN_MESSAGE
+          )
 
           model.errors.add(
             attribute,

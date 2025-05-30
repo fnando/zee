@@ -29,7 +29,11 @@ module Zee
           hash = Hash.new {|h, k| h[k] = [] }
           details.each_with_object(hash) do |(attr, errors), buffer|
             buffer[attr] ||= []
-            errors.each {|error| buffer[attr] << error[:message] }
+            errors.each do |error|
+              error => {type:, **options}
+              message = build_error_message(type, attr, options:)
+              buffer[attr] << message if message
+            end
           end
         end
       end
@@ -81,7 +85,10 @@ module Zee
       # @param attribute [Symbol] The attribute to get the error message for.
       # @param options [Hash] The options for the error message.
       # @return [String] The error message.
-      def build_error_message(scope, attribute, options: {})
+      # @param [Object, nil] default
+      def build_error_message(scope, attribute, default: nil, options: {})
+        return format(options[:message], options) if options[:message]
+
         scopes = []
 
         if model.class.respond_to?(:naming)
@@ -97,7 +104,9 @@ module Zee
 
         scopes << [:zee, :model, :errors, scope].join(I18n.default_separator)
 
-        I18n.t(scopes, default: nil, **options).compact.first
+        I18n.t(scopes, default: options[:message], **options).compact.first ||
+          default ||
+          scope.to_s.tr(UNDERSCORE, SPACE)
       end
     end
   end

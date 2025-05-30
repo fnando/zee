@@ -41,10 +41,14 @@ module Zee
           return if size == options[:is]
 
           message_options = {count: options[:is]}
-          message = model.errors.build_error_message(:wrong_size, attribute) ||
-                    options[:wrong_size] ||
-                    options[:message] ||
-                    DEFAULT_WRONG_SIZE_MESSAGE
+          message = model.errors.build_error_message(
+            :wrong_size,
+            attribute,
+            default: options[:wrong_size] ||
+                      options[:message] ||
+                      DEFAULT_WRONG_SIZE_MESSAGE
+          )
+
           message = format(message, message_options)
           model.errors.add(
             attribute,
@@ -60,10 +64,14 @@ module Zee
           return if size >= options[:minimum]
 
           message_options = {count: options[:minimum]}
-          message = model.errors.build_error_message(:too_short, attribute) ||
-                    options[:too_short] ||
+          message = model.errors.build_error_message(
+            :too_short,
+            attribute,
+            default: options[:too_short] ||
                     options[:message] ||
                     DEFAULT_TOO_SHORT_MESSAGE
+          )
+
           message = format(message, message_options)
           model.errors.add(
             attribute,
@@ -79,10 +87,14 @@ module Zee
           return if size <= options[:maximum]
 
           message_options = {count: options[:maximum]}
-          message = model.errors.build_error_message(:too_long, attribute) ||
-                    options[:too_long] ||
+          message = model.errors.build_error_message(
+            :too_long,
+            attribute,
+            default: options[:too_long] ||
                     options[:message] ||
                     DEFAULT_TOO_LONG_MESSAGE
+          )
+
           message = format(message, message_options)
           model.errors.add(
             attribute,

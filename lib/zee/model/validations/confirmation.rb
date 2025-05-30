@@ -16,17 +16,12 @@ module Zee
           return if value == confirmation_value
 
           human_attr_name = model.errors.human_attribute_name(attribute)
-          translated_message = model.errors.build_error_message(
+          message = model.errors.build_error_message(
             :confirmation,
             attribute,
-            options: {attribute: human_attr_name}
+            options: {attribute: human_attr_name},
+            default: options[:message] || DEFAULT_MESSAGE
           )
-
-          message = [
-            translated_message,
-            (format(options[:message], attribute: human_attr_name) if options[:message]), # rubocop:disable Layout/LineLength
-            format(DEFAULT_MESSAGE, attribute: human_attr_name)
-          ].compact.first
 
           model.errors.add(
             confirmation_attribute,

@@ -15,9 +15,11 @@ module Zee
 
           return unless value.blank?
 
-          message = model.errors.build_error_message(:presence, attribute) ||
-                    options[:message] ||
-                    DEFAULT_MESSAGE
+          message = model.errors.build_error_message(
+            :presence,
+            attribute,
+            default: options[:message] || DEFAULT_MESSAGE
+          )
 
           model.errors.add(attribute, :presence, message:)
         end

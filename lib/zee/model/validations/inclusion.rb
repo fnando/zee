@@ -26,10 +26,9 @@ module Zee
             model.errors.build_error_message(
               :inclusion,
               attribute,
-              options: message_options
-            ) ||
-            options[:message] ||
-            DEFAULT_MESSAGE
+              options: message_options,
+              default: options[:message] || DEFAULT_MESSAGE
+            )
 
           model.errors.add(
             attribute,
