@@ -112,52 +112,52 @@ module Meta
     test "renders language tags" do
       html = Nokogiri::HTML.fragment(meta.render.to_s)
 
-      assert_selector html, "meta[name=language][content=en]"
-      assert_selector html, "meta[itemprop=language][content=en]"
+      assert_html html, "meta[name=language][content=en]"
+      assert_html html, "meta[itemprop=language][content=en]"
     end
 
     test "renders title meta tags" do
       html = Nokogiri::HTML.fragment(meta.render.to_s)
 
-      assert_selector html, "meta[name='DC.title'][content='Show Page • Dummy']"
-      assert_selector html, "meta[itemprop=name][content='Show Page • Dummy']"
+      assert_html html, "meta[name='DC.title'][content='Show Page • Dummy']"
+      assert_html html, "meta[itemprop=name][content='Show Page • Dummy']"
     end
 
     test "renders og meta tags" do
       html = Nokogiri::HTML.fragment(meta.render.to_s)
 
-      assert_selector html, %[meta[property="og:image"][content="IMAGE"]]
-      assert_selector html,
+      assert_html html, %[meta[property="og:image"][content="IMAGE"]]
+      assert_html html,
                       %[meta[property="og:image:type"][content="image/jpeg"]]
-      assert_selector html, %[meta[property="og:image:width"][content=800]]
-      assert_selector html, %[meta[property="og:image:height"][content=600]]
-      assert_selector html,
+      assert_html html, %[meta[property="og:image:width"][content=800]]
+      assert_html html, %[meta[property="og:image:height"][content=600]]
+      assert_html html,
                       %[meta[property="og:description"][content="DESCRIPTION"]]
-      assert_selector html, %[meta[property="og:title"][content="TITLE"]]
-      assert_selector html, %[meta[property="og:type"][content="article"]]
-      assert_selector html,
+      assert_html html, %[meta[property="og:title"][content="TITLE"]]
+      assert_html html, %[meta[property="og:type"][content="article"]]
+      assert_html html,
                       %[meta[property="og:article:author"][content="John Doe"]]
-      assert_selector \
+      assert_html \
         html,
         %[meta[property="og:article:section"][content="Getting Started"]]
-      assert_selector html, %[meta[property="og:url"][content="URL"]]
+      assert_html html, %[meta[property="og:url"][content="URL"]]
     end
 
     test "renders twitter meta tags" do
       html = Nokogiri::HTML.fragment(meta.render.to_s)
 
-      assert_selector html, %[meta[property="twitter:card"][content="summary"]]
-      assert_selector html, %[meta[property="twitter:site"][content="@johndoe"]]
-      assert_selector html, %[meta[property="twitter:domain"][content="DOMAIN"]]
-      assert_selector html, %[meta[property="twitter:image"][content="IMAGE"]]
-      assert_selector html,
+      assert_html html, %[meta[property="twitter:card"][content="summary"]]
+      assert_html html, %[meta[property="twitter:site"][content="@johndoe"]]
+      assert_html html, %[meta[property="twitter:domain"][content="DOMAIN"]]
+      assert_html html, %[meta[property="twitter:image"][content="IMAGE"]]
+      assert_html html,
                       %[meta[property="twitter:creator"][content="@marydoe"]]
     end
 
     test "renders meta with proc as content" do
       html = Nokogiri::HTML.fragment(meta.render.to_s)
 
-      assert_selector html, %[meta[name="some-proc"][content="proc value"]]
+      assert_html html, %[meta[name="some-proc"][content="proc value"]]
     end
 
     test "deletes tags by name" do
@@ -165,7 +165,7 @@ module Meta
 
       html = Nokogiri::HTML.fragment(meta.render.to_s)
 
-      assert_selector html, %[meta[name="description"]], count: 0
+      assert_html html, %[meta[name="description"]], count: 0
     end
 
     test "sets values" do
@@ -188,7 +188,7 @@ module Meta
 
       html = Nokogiri::HTML.fragment(meta.render.to_s)
 
-      assert_selector html, %[title], text: /Some post/
+      assert_html html, %[title], text: /Some post/
     end
   end
 end

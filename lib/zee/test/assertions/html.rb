@@ -20,7 +20,7 @@ module Zee
         #                                   match the given value.
         # @param html [String, Regexp, nil] when provided, the tag's inner html
         #                                   must match the given value.
-        def assert_selector(
+        def assert_html(
           root,
           selector,
           count: nil,

@@ -44,7 +44,7 @@ class TranslationTest < Minitest::Test
 
     call_action
 
-    assert_selector response.body, "p", text: /Hello, world!/
+    assert_html response.body, "p", text: /Hello, world!/
   end
 
   test "translates text scoped by controller and action" do
@@ -56,7 +56,7 @@ class TranslationTest < Minitest::Test
 
     call_action
 
-    assert_selector response.body, "p", text: /Hello, world!/
+    assert_html response.body, "p", text: /Hello, world!/
   end
 
   test "translates text scoped by partial name" do
@@ -72,7 +72,7 @@ class TranslationTest < Minitest::Test
 
     call_action
 
-    assert_selector response.body, "p", text: /Hello, world!/
+    assert_html response.body, "p", text: /Hello, world!/
   end
 
   test "keeps non-string translations intact" do
@@ -84,7 +84,7 @@ class TranslationTest < Minitest::Test
 
     call_action
 
-    assert_selector response.body, "p", text: /Hello, world!/
+    assert_html response.body, "p", text: /Hello, world!/
   end
 
   test "escapes text" do
@@ -96,7 +96,7 @@ class TranslationTest < Minitest::Test
 
     call_action
 
-    assert_selector response.body, "p", text: /Hello, world <3/
+    assert_html response.body, "p", text: /Hello, world <3/
   end
 
   test "recognizes html safe text (_html suffix)" do
@@ -108,7 +108,7 @@ class TranslationTest < Minitest::Test
 
     call_action
 
-    assert_selector response.body, "p", text: /Hello, world/
+    assert_html response.body, "p", text: /Hello, world/
   end
 
   test "recognizes html safe text (html key)" do
@@ -120,7 +120,7 @@ class TranslationTest < Minitest::Test
 
     call_action
 
-    assert_selector response.body, "p", text: /Hello, world/
+    assert_html response.body, "p", text: /Hello, world/
   end
 
   test "recognizes html safe text (html key with scope)" do
@@ -132,7 +132,7 @@ class TranslationTest < Minitest::Test
 
     call_action
 
-    assert_selector response.body, "p", text: /Hello, world/
+    assert_html response.body, "p", text: /Hello, world/
   end
 
   test "returns missing translations as html node" do
@@ -142,7 +142,7 @@ class TranslationTest < Minitest::Test
 
     call_action
 
-    assert_selector response.body,
+    assert_html response.body,
                     "span.missing-translation",
                     text: /Missing translation: en.hello.html/
   end
@@ -168,6 +168,6 @@ class TranslationTest < Minitest::Test
 
     call_action
 
-    assert_selector response.body, "p", text: now.strftime("%Y-%m-%d")
+    assert_html response.body, "p", text: now.strftime("%Y-%m-%d")
   end
 end

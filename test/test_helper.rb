@@ -6,6 +6,9 @@ $stdout.sync = true
 require "English"
 require "simplecov"
 require "simplecov-tailwindcss"
+require "mocha/minitest"
+require "capybara"
+require "minitest/utils/capybara/chrome_headless"
 
 SimpleCov.formatter = SimpleCov::Formatter::TailwindFormatter
 
@@ -43,6 +46,10 @@ end
 
 Dir.chdir(File.join(__dir__, "fixtures/sample_app")) do
   require_relative "fixtures/sample_app/app"
+end
+
+Dir.chdir(File.join(__dir__, "fixtures/auth")) do
+  require_relative "fixtures/auth/app"
 end
 
 Minitest::Utils::Reporter.filters << %r{/gems/}

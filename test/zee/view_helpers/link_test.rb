@@ -8,7 +8,7 @@ class HTMLTest < Minitest::Test
   test "renders link" do
     html = render(%[<%= link_to "Home", "/" %>])
 
-    assert_selector html, "a[href='/']", text: "Home"
+    assert_html html, "a[href='/']", text: "Home"
   end
 
   test "renders link using block" do
@@ -18,7 +18,7 @@ class HTMLTest < Minitest::Test
       <% end %>
     ERB
 
-    assert_selector html, "a[href='/']>span", text: "Home"
+    assert_html html, "a[href='/']>span", text: "Home"
   end
 
   test "renders link with target=_blank" do
@@ -26,7 +26,7 @@ class HTMLTest < Minitest::Test
       <%= link_to "Home", "/", blank: true %>
     ERB
 
-    assert_selector html, "a[href='/'][target=_blank]", text: "Home"
+    assert_html html, "a[href='/'][target=_blank]", text: "Home"
   end
 
   test "renders external links" do
@@ -34,7 +34,7 @@ class HTMLTest < Minitest::Test
       <%= link_to "Home", "/", external: true %>
     ERB
 
-    assert_selector html,
+    assert_html html,
                     "a[href='/'][rel='noreferrer noopener nofollow external']",
                     text: "Home"
   end
@@ -44,6 +44,6 @@ class HTMLTest < Minitest::Test
       <%= link_to "Home", "/", class: "link" %>
     ERB
 
-    assert_selector html, "a[href='/'][class='link']", text: "Home"
+    assert_html html, "a[href='/'][class='link']", text: "Home"
   end
 end

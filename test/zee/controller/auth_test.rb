@@ -3,33 +3,21 @@
 require "test_helper"
 
 class AuthenticationTest < Zee::Test::System
-  setup do
-    app_class = Class.new(Zee::App)
-    app = app_class.new
-    Zee.app = app
-
-    app.root =
-      Pathname(File.expand_path(File.join("./test/fixtures/auth")))
-
-    app.routes do
-      root to: "home#show"
-      get "login", to: "login#new", as: "login"
-      post "login", to: "login#create"
-      get "dashboard", to: "dashboard#show", as: :dashboard
-      get "metrics", to: "metrics#show", as: :metrics
-    end
-
-    app.config do
-      set :logger, logger
-      set :session_options, domain: "localhost", secure: false
-    end
-
-    app.initialize!
+  def app
+    AuthApp
   end
 
-  setup { Capybara.current_driver = :rack_test }
-  setup { Capybara.default_host = "http://localhost" }
-  setup { Capybara.app_host = "http://localhost" }
+  setup do
+    Zee.app = AuthApp
+    Zee.app.root = Pathname.pwd.join("test/fixtures/auth")
+    Zee.app.view_paths.clear
+    Zee.app.view_paths << Zee.app.root.join("app/views")
+
+    Capybara.current_driver = :rack_test
+    Capybara.default_host = "http://localhost"
+    Capybara.app_host = "http://localhost"
+  end
+
   teardown { Zee.app.loader.unregister }
 
   test "logs in a user" do

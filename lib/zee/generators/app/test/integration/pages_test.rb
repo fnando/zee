@@ -8,7 +8,7 @@ module Integration
       get "/"
 
       assert_equal 200, last_response.status
-      assert_selector last_response.body,
+      assert_html last_response.body,
                       "li:nth-child(1)",
                       text: /Zee version:/
     end

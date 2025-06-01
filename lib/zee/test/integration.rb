@@ -11,7 +11,7 @@ module Zee
     #       get "/login"
     #
     #       assert last_response.ok?
-    #       assert_selector last_response.body,
+    #       assert_html last_response.body,
     #                       "form[action='/login'][method=post]"
     #     end
     #   end

@@ -85,7 +85,7 @@ class SafeBufferTest < Minitest::Test
     ERB
     html = Zee.app.render_template("tmp/template.erb")
 
-    assert_selector html, "h1", text: /Hello <3/, html: /Hello &lt;3/
+    assert_html html, "h1", text: /Hello <3/, html: /Hello &lt;3/
   end
 
   test "works with nested buffers in erb context" do
@@ -100,7 +100,7 @@ class SafeBufferTest < Minitest::Test
     ERB
     html = Zee.app.render_template("tmp/template.erb")
 
-    assert_selector html,
+    assert_html html,
                     "div>button>span",
                     text: /Click me <3/,
                     html: /Click me &lt;3/

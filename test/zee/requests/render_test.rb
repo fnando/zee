@@ -201,7 +201,7 @@ class RenderTest < Zee::Test::Integration
     get "/"
 
     assert last_response.ok?
-    assert_selector last_response.body, "meta[charset='UTF-8']"
+    assert_html last_response.body, "meta[charset='UTF-8']"
   end
 
   test "redirects (301)" do

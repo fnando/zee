@@ -42,7 +42,7 @@ class PartialTest < Minitest::Test
       action_name: "home"
     ).send(:call)
 
-    assert_selector response.body, "h1", text: /Home/
+    assert_html response.body, "h1", text: /Home/
   end
 
   test "renders partial from parent controller" do
@@ -76,7 +76,7 @@ class PartialTest < Minitest::Test
       action_name: "home"
     ).send(:call)
 
-    assert_selector response.body, "h1", text: /Home/
+    assert_html response.body, "h1", text: /Home/
   end
 
   test "renders partial from application" do
@@ -104,7 +104,7 @@ class PartialTest < Minitest::Test
       action_name: "home"
     ).send(:call)
 
-    assert_selector response.body, "h1", text: /Home/
+    assert_html response.body, "h1", text: /Home/
   end
 
   test "renders partial if in view path" do
@@ -132,7 +132,7 @@ class PartialTest < Minitest::Test
       action_name: "home"
     ).send(:call)
 
-    assert_selector response.body, "h1", text: /Home/
+    assert_html response.body, "h1", text: /Home/
   end
 
   test "renders partial with object (default name)" do
@@ -160,7 +160,7 @@ class PartialTest < Minitest::Test
       action_name: "home"
     ).send(:call)
 
-    assert_selector response.body, "h1", text: /Home/
+    assert_html response.body, "h1", text: /Home/
   end
 
   test "renders partial with object (custom name)" do
@@ -188,7 +188,7 @@ class PartialTest < Minitest::Test
       action_name: "home"
     ).send(:call)
 
-    assert_selector response.body, "h1", text: /Home/
+    assert_html response.body, "h1", text: /Home/
   end
 
   test "renders partial with locals" do
@@ -216,7 +216,7 @@ class PartialTest < Minitest::Test
       action_name: "home"
     ).send(:call)
 
-    assert_selector response.body, "h1", text: /Home/
+    assert_html response.body, "h1", text: /Home/
   end
 
   test "renders partial with collection" do
@@ -246,9 +246,9 @@ class PartialTest < Minitest::Test
       action_name: "home"
     ).send(:call)
 
-    assert_selector response.body, "p", count: 2
-    assert_selector response.body, "p[data-index=0]", text: /Item 1/
-    assert_selector response.body, "p[data-index=1]", text: /Item 2/
+    assert_html response.body, "p", count: 2
+    assert_html response.body, "p[data-index=0]", text: /Item 1/
+    assert_html response.body, "p[data-index=1]", text: /Item 2/
   end
 
   test "renders partial with collection sets first? and last?" do
@@ -279,12 +279,12 @@ class PartialTest < Minitest::Test
       action_name: "home"
     ).send(:call)
 
-    assert_selector response.body, "p", count: 3
-    assert_selector response.body, "p.first:nth-of-type(1)", text: /Item 1/
-    assert_selector response.body,
+    assert_html response.body, "p", count: 3
+    assert_html response.body, "p.first:nth-of-type(1)", text: /Item 1/
+    assert_html response.body,
                     "p:nth-of-type(2):not([class])",
                     text: /Item 2/
-    assert_selector response.body, "p.last:nth-of-type(1)", text: /Item 3/
+    assert_html response.body, "p.last:nth-of-type(1)", text: /Item 3/
   end
 
   test "renders partial with collection using spacer" do
@@ -320,12 +320,12 @@ class PartialTest < Minitest::Test
       action_name: "home"
     ).send(:call)
 
-    assert_selector response.body, "p", count: 3
-    assert_selector response.body, "hr", count: 2
-    assert_selector response.body, "p[data-index=0]", text: /Item 1/
-    assert_selector response.body, "p[data-index=1]", text: /Item 2/
-    assert_selector response.body, "p[data-index=2]", text: /Item 3/
-    assert_selector response.body, "p+hr+p+hr+p"
+    assert_html response.body, "p", count: 3
+    assert_html response.body, "hr", count: 2
+    assert_html response.body, "p[data-index=0]", text: /Item 1/
+    assert_html response.body, "p[data-index=1]", text: /Item 2/
+    assert_html response.body, "p[data-index=2]", text: /Item 3/
+    assert_html response.body, "p+hr+p+hr+p"
 
     assert_instance_of Float, instrumentation[:request][1].delete(:duration)
     assert_equal(
@@ -374,7 +374,7 @@ class PartialTest < Minitest::Test
       action_name: "home"
     ).send(:call)
 
-    assert_selector response.body, "li", text: /No items/
+    assert_html response.body, "li", text: /No items/
 
     assert_instance_of Float, instrumentation[:request][0].delete(:duration)
     assert_equal(

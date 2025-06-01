@@ -29,11 +29,11 @@ class CachingTest < Minitest::Test
 
     html = render(template, locals: {counter:})
 
-    assert_selector html, "span", text: "1"
+    assert_html html, "span", text: "1"
 
     html = render(template, locals: {counter:})
 
-    assert_selector html, "span", text: "1"
+    assert_html html, "span", text: "1"
   end
 
   test "caches content for a second" do
@@ -50,12 +50,12 @@ class CachingTest < Minitest::Test
 
     html = render(template, locals: {counter:})
 
-    assert_selector html, "span", text: "1"
+    assert_html html, "span", text: "1"
 
     sleep 1.001
     html = render(template, locals: {counter:})
 
-    assert_selector html, "span", text: "2"
+    assert_html html, "span", text: "2"
   end
 
   test "uses cache key from provided object" do

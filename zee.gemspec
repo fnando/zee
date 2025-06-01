@@ -81,5 +81,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "sqlite3"
   spec.add_development_dependency "test_notifier"
   spec.add_development_dependency "warning"
+  spec.add_development_dependency "webdrivers"
   spec.add_development_dependency "yard"
 end
