@@ -9,8 +9,8 @@ module Integration
 
       assert_equal 200, last_response.status
       assert_html last_response.body,
-                      "li:nth-child(1)",
-                      text: /Zee version:/
+                  "li:nth-child(1)",
+                  text: /Zee version:/
     end
   end
 end

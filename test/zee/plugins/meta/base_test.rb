@@ -128,15 +128,15 @@ module Meta
 
       assert_html html, %[meta[property="og:image"][content="IMAGE"]]
       assert_html html,
-                      %[meta[property="og:image:type"][content="image/jpeg"]]
+                  %[meta[property="og:image:type"][content="image/jpeg"]]
       assert_html html, %[meta[property="og:image:width"][content=800]]
       assert_html html, %[meta[property="og:image:height"][content=600]]
       assert_html html,
-                      %[meta[property="og:description"][content="DESCRIPTION"]]
+                  %[meta[property="og:description"][content="DESCRIPTION"]]
       assert_html html, %[meta[property="og:title"][content="TITLE"]]
       assert_html html, %[meta[property="og:type"][content="article"]]
       assert_html html,
-                      %[meta[property="og:article:author"][content="John Doe"]]
+                  %[meta[property="og:article:author"][content="John Doe"]]
       assert_html \
         html,
         %[meta[property="og:article:section"][content="Getting Started"]]
@@ -151,7 +151,7 @@ module Meta
       assert_html html, %[meta[property="twitter:domain"][content="DOMAIN"]]
       assert_html html, %[meta[property="twitter:image"][content="IMAGE"]]
       assert_html html,
-                      %[meta[property="twitter:creator"][content="@marydoe"]]
+                  %[meta[property="twitter:creator"][content="@marydoe"]]
     end
 
     test "renders meta with proc as content" do

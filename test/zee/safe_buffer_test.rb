@@ -101,9 +101,9 @@ class SafeBufferTest < Minitest::Test
     html = Zee.app.render_template("tmp/template.erb")
 
     assert_html html,
-                    "div>button>span",
-                    text: /Click me <3/,
-                    html: /Click me &lt;3/
+                "div>button>span",
+                text: /Click me <3/,
+                html: /Click me &lt;3/
   end
 
   test "escapes html from strings and buffers" do

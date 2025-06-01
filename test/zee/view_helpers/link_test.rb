@@ -35,8 +35,8 @@ class HTMLTest < Minitest::Test
     ERB
 
     assert_html html,
-                    "a[href='/'][rel='noreferrer noopener nofollow external']",
-                    text: "Home"
+                "a[href='/'][rel='noreferrer noopener nofollow external']",
+                text: "Home"
   end
 
   test "renders other attributes" do

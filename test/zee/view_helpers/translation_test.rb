@@ -143,8 +143,8 @@ class TranslationTest < Minitest::Test
     call_action
 
     assert_html response.body,
-                    "span.missing-translation",
-                    text: /Missing translation: en.hello.html/
+                "span.missing-translation",
+                text: /Missing translation: en.hello.html/
   end
 
   test "raises error when raise is set" do

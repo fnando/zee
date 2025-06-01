@@ -282,8 +282,8 @@ class PartialTest < Minitest::Test
     assert_html response.body, "p", count: 3
     assert_html response.body, "p.first:nth-of-type(1)", text: /Item 1/
     assert_html response.body,
-                    "p:nth-of-type(2):not([class])",
-                    text: /Item 2/
+                "p:nth-of-type(2):not([class])",
+                text: /Item 2/
     assert_html response.body, "p.last:nth-of-type(1)", text: /Item 3/
   end
 
