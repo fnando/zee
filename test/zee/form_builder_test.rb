@@ -577,18 +577,19 @@ class FormBuilderTest < Zee::Test
 
     html = render(template, locals: {page:}, request:)
 
-    assert_selector html, "form>.field-group", count: 2
-    assert_selector html, "form>.field-group>input[checked=checked]", count: 1
+    assert_selector html, "form>label.field-group", count: 2
+    assert_selector html, "form>label.field-group>input[checked=checked]",
+                    count: 1
 
-    group = assert_selector(html, "form>.field-group:nth-of-type(1)")
+    group = assert_selector(html, "form>label.field-group:nth-of-type(1)")
     heading = assert_selector group,
                               ":root>input#page_tags_ruby[type=checkbox]+span"
-    assert_selector heading, ":root.field-group-heading>label", text: /Ruby/
+    assert_selector heading, ":root.field-group-heading>.label", text: /Ruby/
 
-    group = assert_selector(html, "form>.field-group:nth-of-type(2)")
+    group = assert_selector(html, "form>label.field-group:nth-of-type(2)")
     heading = assert_selector group,
                               ":root>input#page_tags_rust[type=checkbox]+span"
-    assert_selector heading, ":root.field-group-heading>label", text: /Rust/
+    assert_selector heading, ":root.field-group-heading>.label", text: /Rust/
   end
 
   test "renders checkbox group using i18n labels" do
@@ -617,18 +618,19 @@ class FormBuilderTest < Zee::Test
 
     html = render(template, locals: {page:}, request:)
 
-    assert_selector html, "form>.field-group", count: 2
-    assert_selector html, "form>.field-group>input[checked=checked]", count: 1
+    assert_selector html, "form>label.field-group", count: 2
+    assert_selector html, "form>label.field-group>input[checked=checked]",
+                    count: 1
 
-    group = assert_selector(html, "form>.field-group:nth-of-type(1)")
+    group = assert_selector(html, "form>label.field-group:nth-of-type(1)")
     heading = assert_selector group,
                               ":root>input#page_tags_ruby[type=checkbox]+span"
-    assert_selector heading, ":root.field-group-heading>label", text: /\.rb/
+    assert_selector heading, ":root.field-group-heading>.label", text: /\.rb/
 
-    group = assert_selector(html, "form>.field-group:nth-of-type(2)")
+    group = assert_selector(html, "form>label.field-group:nth-of-type(2)")
     heading = assert_selector group,
                               ":root>input#page_tags_rust[type=checkbox]+span"
-    assert_selector heading, ":root.field-group-heading>label", text: /\.rs/
+    assert_selector heading, ":root.field-group-heading>.label", text: /\.rs/
   end
 
   test "renders checkbox group using default labels" do
@@ -642,18 +644,19 @@ class FormBuilderTest < Zee::Test
 
     html = render(template, locals: {page:}, request:)
 
-    assert_selector html, "form>.field-group", count: 2
-    assert_selector html, "form>.field-group>input[checked=checked]", count: 1
+    assert_selector html, "form>label.field-group", count: 2
+    assert_selector html, "form>label.field-group>input[checked=checked]",
+                    count: 1
 
-    group = assert_selector(html, "form>.field-group:nth-of-type(1)")
+    group = assert_selector(html, "form>label.field-group:nth-of-type(1)")
     heading = assert_selector group,
                               ":root>input#page_tags_ruby[type=checkbox]+span"
-    assert_selector heading, ":root.field-group-heading>label", text: /Ruby/
+    assert_selector heading, ":root.field-group-heading>.label", text: /Ruby/
 
-    group = assert_selector(html, "form>.field-group:nth-of-type(2)")
+    group = assert_selector(html, "form>label.field-group:nth-of-type(2)")
     heading = assert_selector group,
                               ":root>input#page_tags_rust[type=checkbox]+span"
-    assert_selector heading, ":root.field-group-heading>label", text: /Rust/
+    assert_selector heading, ":root.field-group-heading>.label", text: /Rust/
   end
 
   test "renders select field" do
@@ -733,21 +736,22 @@ class FormBuilderTest < Zee::Test
 
     html = render(template, locals: {page:}, request:)
 
-    assert_selector html, "form>.field-group", count: 2
-    assert_selector html, "form>.field-group>input[checked=checked]", count: 1
+    assert_selector html, "form>label.field-group", count: 2
+    assert_selector html, "form>label.field-group>input[checked=checked]",
+                    count: 1
 
-    group = assert_selector(html, "form>.field-group:nth-of-type(1)")
+    group = assert_selector(html, "form>label.field-group:nth-of-type(1)")
     heading = assert_selector group,
                               ":root>input#page_tags_ruby[type=checkbox]+span"
-    assert_selector heading, ":root.field-group-heading>label", text: /Ruby/
-    assert_selector heading, ":root.field-group-heading>label~.hint",
+    assert_selector heading, ":root.field-group-heading>.label", text: /Ruby/
+    assert_selector heading, ":root.field-group-heading>.label~.hint",
                     text: /Elegant/
 
-    group = assert_selector(html, "form>.field-group:nth-of-type(2)")
+    group = assert_selector(html, "form>label.field-group:nth-of-type(2)")
     heading = assert_selector group,
                               ":root>input#page_tags_rust[type=checkbox]+span"
-    assert_selector heading, ":root.field-group-heading>label", text: /Rust/
-    assert_selector heading, ":root.field-group-heading>label~.hint",
+    assert_selector heading, ":root.field-group-heading>.label", text: /Rust/
+    assert_selector heading, ":root.field-group-heading>.label~.hint",
                     text: /systems/
   end
 
@@ -794,24 +798,24 @@ class FormBuilderTest < Zee::Test
                     text: /Define which features/
 
     group = assert_selector html,
-                            ".field>.field-controls>.field-group:nth-child(1)"
+                            ".field>.field-controls>label.field-group:nth-child(1)"
     assert_selector group, ":root>#project_features_wikis[checked=checked]"
     assert_selector group,
-                    ":root>input+.field-group-heading>label",
+                    ":root>input+.field-group-heading>.label",
                     text: "Wikis"
     assert_selector group,
-                    ":root>input+.field-group-heading>label~.hint",
+                    ":root>input+.field-group-heading>.label~.hint",
                     text: /Wikis host/
 
     group = assert_selector html,
-                            ".field>.field-controls>.field-group:nth-child(2)"
+                            ".field>.field-controls>label.field-group:nth-child(2)"
     assert_selector group,
                     ":root>#project_features_issues:not([checked=checked])"
     assert_selector group,
-                    ":root>input+.field-group-heading>label",
+                    ":root>input+.field-group-heading>.label",
                     text: "Issues"
     assert_selector group,
-                    ":root>input+.field-group-heading>label~.hint",
+                    ":root>input+.field-group-heading>.label~.hint",
                     text: /Issues integrate/
   end
 
@@ -853,34 +857,35 @@ class FormBuilderTest < Zee::Test
     html = render(template, locals: {site:}, request:)
 
     assert_selector html, "form>.field", count: 1
-    assert_selector html, "form>.field>.field-controls>.field-group", count: 3
+    assert_selector html, "form>.field>.field-controls>label.field-group",
+                    count: 3
     assert_selector html, "form>.field input[checked=checked]", count: 1
 
     group = assert_selector html,
-                            ".field>.field-controls>.field-group:nth-of-type(1)"
+                            ".field>.field-controls>label.field-group:nth-of-type(1)"
     heading = assert_selector group,
                               ":root>input#site_theme_system[type=radio]+span"
-    assert_selector heading, ":root.field-group-heading>label", text: /Sync/
-    assert_selector heading, ":root.field-group-heading>label~.hint",
+    assert_selector heading, ":root.field-group-heading>.label", text: /Sync/
+    assert_selector heading, ":root.field-group-heading>.label~.hint",
                     text: /system/
 
     group = assert_selector html,
-                            ".field>.field-controls>.field-group:nth-of-type(2)"
+                            ".field>.field-controls>label.field-group:nth-of-type(2)"
     heading = assert_selector group,
                               ":root>input#site_theme_light[checked=checked]" \
                               "[type=radio]+span"
-    assert_selector heading, ":root.field-group-heading>label",
+    assert_selector heading, ":root.field-group-heading>.label",
                     text: /Light Theme/
-    assert_selector heading, ":root.field-group-heading>label~.hint",
+    assert_selector heading, ":root.field-group-heading>.label~.hint",
                     text: /Bright/
 
     group = assert_selector html,
-                            ".field>.field-controls>.field-group:nth-of-type(3)"
+                            ".field>.field-controls>label.field-group:nth-of-type(3)"
     heading = assert_selector group,
                               ":root>input#site_theme_dark[type=radio]+span"
-    assert_selector heading, ":root.field-group-heading>label",
+    assert_selector heading, ":root.field-group-heading>.label",
                     text: /Dark Theme/
-    assert_selector heading, ":root.field-group-heading>label~.hint",
+    assert_selector heading, ":root.field-group-heading>.label~.hint",
                     text: /Sleek/
   end
 
@@ -920,31 +925,32 @@ class FormBuilderTest < Zee::Test
 
     html = render(template, locals: {site:}, request:)
 
-    assert_selector html, "form>.field-group", count: 3
-    assert_selector html, "form>.field-group>input[checked=checked]", count: 1
+    assert_selector html, "form>label.field-group", count: 3
+    assert_selector html, "form>label.field-group>input[checked=checked]",
+                    count: 1
 
-    group = assert_selector(html, "form>.field-group:nth-of-type(1)")
+    group = assert_selector(html, "form>label.field-group:nth-of-type(1)")
     heading = assert_selector group,
                               ":root>input#site_theme_system[type=radio]+span"
-    assert_selector heading, ":root.field-group-heading>label", text: /Sync/
-    assert_selector heading, ":root.field-group-heading>label~.hint",
+    assert_selector heading, ":root.field-group-heading>.label", text: /Sync/
+    assert_selector heading, ":root.field-group-heading>.label~.hint",
                     text: /system/
 
-    group = assert_selector(html, "form>.field-group:nth-of-type(2)")
+    group = assert_selector(html, "form>label.field-group:nth-of-type(2)")
     heading = assert_selector group,
                               ":root>input#site_theme_light[checked=checked]" \
                               "[type=radio]+span"
-    assert_selector heading, ":root.field-group-heading>label",
+    assert_selector heading, ":root.field-group-heading>.label",
                     text: /Light Theme/
-    assert_selector heading, ":root.field-group-heading>label~.hint",
+    assert_selector heading, ":root.field-group-heading>.label~.hint",
                     text: /Bright/
 
-    group = assert_selector(html, "form>.field-group:nth-of-type(3)")
+    group = assert_selector(html, "form>label.field-group:nth-of-type(3)")
     heading = assert_selector group,
                               ":root>input#site_theme_dark[type=radio]+span"
-    assert_selector heading, ":root.field-group-heading>label",
+    assert_selector heading, ":root.field-group-heading>.label",
                     text: /Dark Theme/
-    assert_selector heading, ":root.field-group-heading>label~.hint",
+    assert_selector heading, ":root.field-group-heading>.label~.hint",
                     text: /Sleek/
   end
 

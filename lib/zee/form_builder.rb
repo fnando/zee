@@ -411,11 +411,11 @@ module Zee
         )
         hint = tag(:br) + hint(attr, hint_text) if hint_text
 
-        buffer << content_tag(:div, class: FIELD_GROUP) do
+        buffer << content_tag(:label, class: FIELD_GROUP) do
           send(field_type, attr, value) +
             content_tag(
               :span,
-              label([attr, value], label) + hint,
+              content_tag(:span, label, class: "label") + hint,
               class: FIELD_GROUP_HEADING
             )
         end
