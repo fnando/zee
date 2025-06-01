@@ -192,6 +192,7 @@ class MailerTest < Zee::Test::Mailer
     Zee.app.config.default_url_options[:host] = "example.com"
     Zee.app.config.default_url_options[:protocol] = "https"
     Zee.app.config.default_url_options[:fragment] = "anchor"
+    Zee.app.config.default_url_options[:port] = nil
 
     root = "tmp/app/views/messages"
     FileUtils.mkdir_p(root)
