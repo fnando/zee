@@ -17,5 +17,13 @@ module Zee
   #     end
   #   end
   class Test < Minitest::Test
+    if defined?(::Capybara)
+      Capybara.default_driver = :rack_test
+      Capybara.javascript_driver = :chrome_headless
+
+      Capybara.register_driver :rack_test do
+        Capybara::RackTest::Driver.new(Zee.app)
+      end
+    end
   end
 end

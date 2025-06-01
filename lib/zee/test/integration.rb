@@ -18,9 +18,16 @@ module Zee
     class Integration < Test
       include Rack::Test::Methods
       include Test::Assertions::HTML
+      include Capybara::DSL
+      include Capybara::Minitest::Assertions
+      include CapybaraHelpers
 
       setup do
-        routes.default_url_options[:host] = "localhost"
+        Capybara.current_driver = Capybara.default_driver
+        Capybara.reset_sessions!
+        Capybara.default_host = "http://127.0.0.1"
+        Capybara.app_host = "http://127.0.0.1"
+        routes.default_url_options[:host] = "127.0.0.1"
         routes.default_url_options[:port] = ENV["CAPYBARA_SERVER_PORT"]
       end
 
@@ -32,7 +39,8 @@ module Zee
       end
 
       # @api private
-      # This is required by rack-test. The default host is `example.org`.
+      # This is required by rack-test. The default host is `example.org`, so
+      # let's replace it with the host defined in the route.
       def default_host
         routes.default_url_options[:host]
       end
