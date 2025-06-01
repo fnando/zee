@@ -138,7 +138,7 @@ module Zee
             uri = URI.parse(SLASH)
             uri.scheme = protocol.to_s if protocol
             uri.host = host if host
-            uri.port = port if port&.positive?
+            uri.port = port if port.to_i.positive?
             uri.path = path
             uri.query = query if query
             uri.fragment = anchor if anchor
