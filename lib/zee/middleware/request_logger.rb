@@ -55,8 +55,12 @@ module Zee
       end
 
       def log_entry(key, value, duration = nil)
+        key = key.to_s
+
+        return if key.empty?
+
         duration = "(#{duration.duration})" if duration
-        key = "#{key.to_s.humanize}:".colored(:cyan)
+        key = "#{key.humanize}:".colored(:cyan)
         value = relative_path(value) if value.is_a?(Pathname)
 
         logger.debug [key, value, duration].compact.join(SPACE)
