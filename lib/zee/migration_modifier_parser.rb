@@ -8,22 +8,35 @@ module Zee
 
     NULL_VALUES = [nil, "true"].freeze
 
-    FIELD_MAPPING = {
-      primary_key: ["primary_key"],
-      foreign_key: ["foreign_key"],
-      integer: ["Integer", {}],
-      string: ["String", {}],
-      text: ["String", {text: true}],
-      file: ["File", {}],
-      blob: ["File", {}],
-      bigint: ["Bignum", {}],
-      boolean: ["TrueClass", {}],
-      float: ["Float", {}],
-      date: ["Date", {}],
-      datetime: ["Time", {}],
-      numeric: ["Numeric", {}],
-      timestamps: ["Time", {}]
-    }.freeze
+    def self.field_mapping
+      @field_mapping ||= {
+        primary_key: ["primary_key"],
+        foreign_key: ["foreign_key"],
+        integer: ["Integer", {}],
+        string: ["String", {}],
+        text: ["String", {text: true}],
+        file: ["File", {}],
+        blob: ["File", {}],
+        bigint: ["Bignum", {}],
+        boolean: ["TrueClass", {}],
+        float: ["Float", {}],
+        date: ["Date", {}],
+        datetime: [time_type, {}],
+        numeric: ["Numeric", {}],
+        timestamps: [time_type, {}]
+      }
+    end
+
+    def self.time_type
+      pg? ? "timestamptz" : "Time"
+    end
+
+    def self.pg?
+      require "pg"
+      true
+    rescue LoadError
+      false
+    end
 
     # The raw modifier definition.
     # @return [String]
@@ -79,7 +92,7 @@ module Zee
 
         ["BigDecimal", {size:}]
       else
-        type = FIELD_MAPPING[type&.to_sym]
+        type = self.class.field_mapping[type&.to_sym]
         return type if type
 
         raise InvalidModifierError, "Unsupported type: #{input.inspect}; " \
