@@ -36,6 +36,11 @@ Zee.app.init do
   # @see https://github.com/fnando/zee/tree/main/lib/sequel/plugins/cache_key.rb
   Sequel::Model.plugin :cache_key
 
+  # Enable plugin that adds a `{#to_param}` method to models.
+  #
+  # @see https://github.com/fnando/zee/tree/main/lib/sequel/plugins/param.rb
+  Sequel::Model.plugin :param
+
   # Enable plugin that sets json serializer.
   #
   # @example
