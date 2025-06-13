@@ -338,7 +338,6 @@ module Zee
             ::Helpers.constants.map {|name| ::Helpers.const_get(name) }
 
           include(BaseHelper)
-          include(ViewHelpers::Partial)
           include(ViewHelpers::Assets)
           include(ViewHelpers::Form)
           include(ViewHelpers::Link)

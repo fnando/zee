@@ -9,7 +9,7 @@ class PartialTest < Minitest::Test
     Zee.app.root = Pathname("tmp")
     Zee.app.view_paths.clear
     Zee.app.view_paths << Zee.app.root.join("app/views")
-    FileUtils.mkdir_p Zee.app.root.join("app/app/helpers")
+    FileUtils.mkdir_p Zee.app.root.join("app/helpers")
   end
 
   let(:env) { Rack::MockRequest.env_for("/").merge(Zee::RACK_SESSION => {}) }
@@ -386,5 +386,75 @@ class PartialTest < Minitest::Test
         }
       }, instrumentation[:request][0].except(:time)
     )
+  end
+
+  test "renders partial within partial" do
+    controller_class = Class.new(Zee::Controller) do
+      def self.name
+        "Controllers::Pages"
+      end
+
+      def home
+      end
+    end
+
+    create_file "tmp/app/views/pages/home.html.erb", <<~ERB
+      <ul>
+        <%= render "items" %>
+      </ul>
+    ERB
+
+    create_file "tmp/app/views/pages/_items.html.erb", <<~ERB
+      <%= render "item" %>
+    ERB
+
+    create_file "tmp/app/views/pages/_item.html.erb", <<~ERB
+      <p>item rendered</p>
+    ERB
+
+    controller_class.new(
+      request:,
+      response:,
+      controller_name: "pages",
+      action_name: "home"
+    ).send(:call)
+
+    assert_html response.body, "p", text: /item rendered/
+  end
+
+  test "calls helper within partial" do
+    controller_class = Class.new(Zee::Controller) do
+      helper_method :hello_from_helper
+
+      def self.name
+        "Controllers::Pages"
+      end
+
+      def home
+      end
+
+      private def hello_from_helper(name)
+        helpers.content_tag :p, "Hello from #{name}!"
+      end
+    end
+
+    create_file "tmp/app/views/pages/home.html.erb", <<~ERB
+      <%= hello_from_helper(:view) %>
+      <%= render "item" %>
+    ERB
+
+    create_file "tmp/app/views/pages/_item.html.erb", <<~ERB
+      <%= hello_from_helper(:partial) %>
+    ERB
+
+    controller_class.new(
+      request:,
+      response:,
+      controller_name: "pages",
+      action_name: "home"
+    ).send(:call)
+
+    assert_html response.body, "p", text: /Hello from view!/
+    assert_html response.body, "p", text: /Hello from partial!/
   end
 end

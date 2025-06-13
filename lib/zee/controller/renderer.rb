@@ -72,7 +72,9 @@ module Zee
 
         response.view = found_view
         response.layout = found_layout
-        locals = collect_locals
+        locals = collect_locals.merge(:@_controller => self)
+        context = helpers.clone
+                         .extend(ViewHelpers::Partial)
 
         body = instrument(:request, scope: :view, path: found_view.path) do
           Zee.app.render_template(
@@ -80,7 +82,7 @@ module Zee
             locals:,
             request:,
             controller: self,
-            context: helpers
+            context:
           )
         end
 
@@ -92,7 +94,7 @@ module Zee
                 locals:,
                 request:,
                 controller: self,
-                context: helpers
+                context:
               ) { SafeBuffer.new(body) }
             end
         end

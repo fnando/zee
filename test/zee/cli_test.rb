@@ -58,7 +58,7 @@ class CLITest < Minitest::Test
        GET        | /no-layout                 |                  | pages#no_layout
        GET        | /controller-layout         |                  | things#show
        GET        | /missing-template          |                  | pages#missing_template
-       GET        | /hello                     |                  | pages#hello
+       GET        | /hello                     |                  | pages#hello_ivar
        GET        | /text                      |                  | formats#text
        GET        | /html                      |                  | formats#html
        GET        | /xml                       |                  | formats#xml

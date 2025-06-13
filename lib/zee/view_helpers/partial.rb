@@ -3,6 +3,8 @@
 module Zee
   module ViewHelpers
     module Partial
+      include App::BaseHelper
+
       # ## Partial lookup
       #
       # When rendering a partial, for instance, `<%= render "header" %>`, Zee
@@ -86,16 +88,24 @@ module Zee
         spacer: nil,
         blank: nil
       )
-        locals = locals.merge(as => object)
-        partial = controller.find_partial(name)
-        spacer = controller.find_partial(spacer) if spacer
-        blank = controller.find_partial(blank) if blank
-        buffer = SafeBuffer.new
         list = object.respond_to?(:each) && !object.is_a?(Hash)
         items = list ? object : [object]
         size = items.size
         iterator = Iterator.new(size)
-        context = Context.new(iterator).extend(Zee.app.helpers)
+
+        locals = locals.merge(
+          as => object,
+          :@_controller => @_controller,
+          :@_iterator => iterator
+        )
+        partial = controller.find_partial(name)
+        spacer = controller.find_partial(spacer) if spacer
+        blank = controller.find_partial(blank) if blank
+        buffer = SafeBuffer.new
+        context = controller.send(:helpers)
+                            .clone
+                            .extend(Partial)
+                            .extend(Utils)
 
         if list && blank && items.empty?
           rendered =
@@ -152,13 +162,13 @@ module Zee
         buffer
       end
 
+      def request
+        @_request
+      end
+
       # @api private
       # The context object passed to the partial.
-      class Context
-        def initialize(iterator)
-          @_iterator = iterator
-        end
-
+      module Utils
         def first?
           @_iterator.first?
         end

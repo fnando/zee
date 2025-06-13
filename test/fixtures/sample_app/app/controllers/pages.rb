@@ -12,7 +12,7 @@ module Controllers
       render :missing_template
     end
 
-    def hello
+    def hello_ivar
       @message = "Hello, World!"
     end
 

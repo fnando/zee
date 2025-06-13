@@ -164,6 +164,11 @@ module Zee
     end
 
     # @api private
+    def helpers
+      @helpers ||= Object.new.extend(Zee.app.helpers)
+    end
+
+    # @api private
     def render(name, mimes:, locals:)
       template = find_template(name, mimes, required: false)
       return unless template
@@ -177,13 +182,19 @@ module Zee
 
       use_safe_buffer = mimes.any? {|mime| mime.content_type == TEXT_HTML }
       layout = find_layout(nil, mimes)
+      context = helpers.extend(ViewHelpers::Partial)
       content = instrument(
         :mailer,
         scope: :view,
         path: template.path,
         mailer: mailer_name
       ) do
-        Zee.app.render_template(template.path, locals:, use_safe_buffer:)
+        Zee.app.render_template(
+          template.path,
+          locals:,
+          context:,
+          use_safe_buffer:
+        )
       end
 
       if layout
@@ -193,7 +204,7 @@ module Zee
           path: layout.path,
           mailer: mailer_name
         ) do
-          Zee.app.render_template(layout.path, locals:) do
+          Zee.app.render_template(layout.path, locals:, context:) do
             SafeBuffer.new(content)
           end
         end

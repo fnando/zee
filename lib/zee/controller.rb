@@ -153,9 +153,9 @@ module Zee
         file, line = ref.source_location
 
         helpers.instance_eval <<~RUBY, file, line + 1 # rubocop:disable Style/EvalWithLocation
-          def #{name}(*, **)                   # def hello(*, **)
-            controller.send(:"#{name}", *, **) #  controller.send(:hello, *, **)
-          end                                  # end
+          def #{name}(*, **)                          # def hello(*, **)
+            controller.send(:"#{name}", *, **)        #  controller.send(:hello, *, **)
+          end                                         # end
         RUBY
       end
     end

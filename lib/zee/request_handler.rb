@@ -44,6 +44,7 @@ module Zee
       )
 
       controller.extend(app.routes.helpers)
+                .extend(app.helpers)
       controller.send(:call)
 
       [response.status, response.headers.to_h, [response.body]]

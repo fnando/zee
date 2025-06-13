@@ -28,7 +28,7 @@ class SampleApp < Zee::App
       get "no-layout", to: "pages#no_layout"
       get "controller-layout", to: "things#show"
       get "missing-template", to: "pages#missing_template"
-      get "hello", to: "pages#hello"
+      get "hello", to: "pages#hello_ivar"
       get "text", to: "formats#text"
       get "html", to: "formats#html"
       get "xml", to: "formats#xml"
