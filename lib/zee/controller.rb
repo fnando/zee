@@ -75,11 +75,13 @@ module Zee
       @_params = Params.new(request.params)
     end
 
+    helper_methods :session, :params
+    private :params
+
     # The session hash.
     private def session
       request.env[RACK_SESSION]
     end
-    helper_method :session
 
     # Reset the session.
     private def reset_session
