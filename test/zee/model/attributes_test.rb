@@ -195,6 +195,28 @@ class AttributesTest < Minitest::Test
     end
   end
 
+  test "skips coercion" do
+    model_class = Class.new(Zee::Model) do
+      attribute :val1, false
+      attribute :val2, nil
+    end
+
+    model = model_class.new
+
+    {
+      "42.1" => "42.1",
+      42.1 => 42.1,
+      BigDecimal(42.1, 10) => BigDecimal("42.1"), # rubocop:disable Performance/BigDecimalWithNumericArgument
+      BigDecimal(1) => BigDecimal(1)
+    }.each do |input, expected|
+      model.val1 = input
+      model.val2 = input
+
+      assert_equal expected, model.val1
+      assert_equal expected, model.val2
+    end
+  end
+
   test "inherits attributes" do
     parent_class = Class.new(Zee::Model) do
       attribute :name

@@ -60,14 +60,26 @@ module Zee
         #     end
         #   end
         #   ```
+        #
+        # @example Bypassing coercion by passing either `false` or `null`
+        #   ```ruby
+        #   class User
+        #     include Zee::Model::Attributes
+        #
+        #     attribute :name, false
+        #   end
+        #   ```
+        #
         def attribute(name, type = :string, default: nil, **)
           attributes[name] = {type:, default:}
+
           define_method(name) do
             instance_variable_get(:"@#{name}") || default
           end
 
           define_method("#{name}=") do |value|
-            value = send(:"coerce_to_#{type}", value, **) unless value.nil?
+            must_coerce = type && !value.nil?
+            value = send(:"coerce_to_#{type}", value, **) if must_coerce
             instance_variable_set(:"@#{name}", value)
           end
         end
