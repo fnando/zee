@@ -66,6 +66,21 @@ module Zee
       #   <%= render "comment", comments, as: :comment, blank: "no_comments" %>
       #   ```
       #
+      # @example Rendering items with a wrapper
+      #   The following example will render a `table` around each `row` partial.
+      #
+      #   ```erb
+      #   <%= render "row", rows, as: :row, items: "table" %>
+      #   ```
+      #
+      #   This `_table.html.erb` partial would look with something like this:
+      #
+      #   ```erb
+      #   <table>
+      #     <%= yield %>
+      #   </table>
+      #   ```
+      #
       # @param name [String] The name of the partial to render.
       # @param object [Object] The object to render. When rendering a
       #                        collection (any object that responds to `#each`),
@@ -79,6 +94,10 @@ module Zee
       # @param blank [String, nil] A partial to render when the collection is
       #                            empty. The collection must respond to
       #                            `#empty?`.
+      # @param items [String, nil] A partial to render when the collection is
+      #                           not empty. This can be used to wrap all items.
+      #                           E.g. a table can be the `items` partial, while
+      #                           each row can be the target partial.
       # @return [SafeBuffer] The rendered template.
       def render(
         name,
@@ -86,11 +105,12 @@ module Zee
         as: :item,
         locals: {},
         spacer: nil,
-        blank: nil
+        blank: nil,
+        items: nil
       )
         list = object.respond_to?(:each) && !object.is_a?(Hash)
-        items = list ? object : [object]
-        size = items.size
+        collection = list ? object : [object]
+        size = collection.size
         iterator = Iterator.new(size)
 
         locals = locals.merge(
@@ -101,13 +121,14 @@ module Zee
         partial = controller.find_partial(name)
         spacer = controller.find_partial(spacer) if spacer
         blank = controller.find_partial(blank) if blank
+        items = controller.find_partial(items) if items
         buffer = SafeBuffer.new
         context = controller.send(:helpers)
                             .clone
                             .extend(Partial)
                             .extend(Utils)
 
-        if list && blank && items.empty?
+        if list && blank && collection.empty?
           rendered =
             Instrumentation.instrument(
               :request,
@@ -120,7 +141,7 @@ module Zee
           return SafeBuffer.new(rendered)
         end
 
-        items.each do |item|
+        collection.each do |item|
           item_locals = locals.merge(as => item)
 
           if spacer && iterator.index.positive?
@@ -157,6 +178,25 @@ module Zee
 
           buffer << SafeBuffer.new(rendered)
           iterator.iterate!
+        end
+
+        if items && size.positive?
+          Instrumentation.instrument(
+            :request,
+            scope: :partial,
+            path: items.path
+          ) do
+            rendered = Zee.app.render_template(
+              items.path,
+              locals:,
+              request:,
+              context:
+            ) do
+              buffer
+            end
+
+            buffer = SafeBuffer.new(rendered)
+          end
         end
 
         buffer

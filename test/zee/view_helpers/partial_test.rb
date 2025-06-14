@@ -388,6 +388,63 @@ class PartialTest < Minitest::Test
     )
   end
 
+  test "renders partial with collection using wrapper" do
+    controller_class = Class.new(Zee::Controller) do
+      def self.name
+        "Controllers::Pages"
+      end
+
+      def home
+      end
+    end
+
+    create_file "tmp/app/views/pages/home.html.erb", <<~ERB
+      <%= render "item", [1, 2, 3], spacer: "spacer", items: "items" %>
+    ERB
+
+    create_file "tmp/app/views/pages/_items.html.erb", <<~ERB
+      <div class="items">
+        <h1>Your items</h1>
+
+        <%= yield %>
+      </div>
+    ERB
+
+    create_file "tmp/app/views/pages/_spacer.html.erb", <<~ERB
+      <hr>
+    ERB
+
+    create_file "tmp/app/views/pages/_item.html.erb", <<~ERB
+      <div class="item">Item <%= item %></div>
+    ERB
+
+    controller_class.new(
+      request:,
+      response:,
+      controller_name: "pages",
+      action_name: "home"
+    ).send(:call)
+
+    assert_html response.body, "div.items" do |items|
+      assert_html items, ">*", count: 6
+      assert_html items, ">h1:first-child", text: "Your items"
+      assert_html items, "h1+div.item", text: "Item 1"
+      assert_html items, "h1+div.item+hr+div.item", text: "Item 2"
+      assert_html items, "h1+div.item+hr+div.item+hr+div.item", text: "Item 3"
+    end
+
+    assert_instance_of Float, instrumentation[:request][0].delete(:duration)
+    assert_equal(
+      {
+        name: :request,
+        args: {
+          scope: :partial,
+          path: Pathname("tmp/app/views/pages/_items.html.erb")
+        }
+      }, instrumentation[:request][5].except(:duration, :time)
+    )
+  end
+
   test "renders partial within partial" do
     controller_class = Class.new(Zee::Controller) do
       def self.name
