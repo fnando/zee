@@ -7,7 +7,7 @@
     "esModuleInterop": true,
     "module": "NodeNext",
     "paths": {
-      "app/*": ["src/app/*"]
+      "app/*": ["app/assets/scripts/app/*"]
     }
   },
   "exclude": ["node_modules", "tmp/dist", "**/*.test.ts"]
