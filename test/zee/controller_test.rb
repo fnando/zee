@@ -386,4 +386,22 @@ class ControllerTest < Minitest::Test
     assert_instance_of RuntimeError, h1.errors[2].error
     assert_equal "nope", h1.errors[2].error.message
   end
+
+  test "renders using specified content type" do
+    controller_class = Class.new(Zee::Controller) do
+      def show
+        render body: "<svg></svg>", content_type: "image/svg+xml"
+      end
+    end
+
+    controller_class.new(
+      request:,
+      response:,
+      controller_name: "application",
+      action_name: "show"
+    ).send(:call)
+
+    assert_equal "<svg></svg>", response.body
+    assert_equal "image/svg+xml", response.headers["content-type"]
+  end
 end

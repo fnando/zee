@@ -72,6 +72,7 @@ module Zee
       @_response = response
       @_action_name = action_name.to_s
       @_controller_name = controller_name.to_s
+      @_controller = self
       @_params = Params.new(request.params)
     end
 

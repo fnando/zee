@@ -53,6 +53,9 @@ module Zee
       #   render text: "Hello"
       #   render html: "<h1>Hello</h1>"
       #   render json: {message: "Hello"}
+      # @example Render a custom body.
+      #   render body: "Hello"
+      #   render body: "<svg></svg>", content_type: "image/svg+xml"
       def render(
         template_name = action_name,
         status: :ok,
@@ -65,6 +68,7 @@ module Zee
         return render_html(status, options.delete(:html)) if options.key?(:html)
         return render_xml(status, options.delete(:xml)) if options.key?(:xml)
         return render_text(status, options.delete(:text)) if options.key?(:text)
+        return render_body(status, options) if options.key?(:body)
 
         mimes = possible_mime_types(template_name)
         found_view = find_template(template_name, mimes)
@@ -130,6 +134,13 @@ module Zee
         response.status(status)
         response.headers[:content_type] = APPLICATION_JSON
         response.body = Zee.app.config.json_serializer.dump(data)
+      end
+
+      # @api private
+      private def render_body(status, options)
+        response.status(status)
+        response.headers[:content_type] = options[:content_type] || TEXT_PLAIN
+        response.body = options[:body].to_s
       end
 
       # @api private
