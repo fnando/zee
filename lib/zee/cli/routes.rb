@@ -10,13 +10,7 @@ module Zee
              default: "table",
              enum: %w[table typescript javascript]
       def routes
-        require "bundler/setup"
-        require "dotenv"
-        require "zee/app"
-
-        Dotenv.load(".env", ".env.development", ".env.test", ".env.production")
-        Bundler.require(:default)
-        require "./config/environment" if File.file?("./config/environment.rb")
+        load_environment
 
         case options[:format]
         when "typescript"

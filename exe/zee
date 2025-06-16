@@ -8,4 +8,7 @@ if ARGV[0]&.include?(":")
   ARGV.unshift(*parts)
 end
 
+# `run` is a reserved command in Thor, so we need to handle it specially.
+ARGV[0] = "_run" if ARGV[0] == "run"
+
 Zee::CLI.start

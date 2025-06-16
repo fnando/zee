@@ -491,4 +491,26 @@ class CLITest < Minitest::Test
     assert_equal 0, exit_code
     assert_includes out, "DOTENV_LOADED=1"
   end
+
+  test "runs ruby file" do
+    slow_test
+
+    exit_code = nil
+    out = nil
+
+    Dir.chdir("test/fixtures/sample_app") do
+      capture(shell: true) do
+        system "../../../exe/zee",
+               *%w[
+                 run
+                 lib/runners/my_runner.rb
+                 lib/runners/another_runner.rb
+               ]
+      end => {exit_code:, out:}
+    end
+
+    assert_equal 0, exit_code
+    assert_includes out, "Hello from my runner!"
+    assert_includes out, "Hello from another runner!"
+  end
 end

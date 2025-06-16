@@ -58,6 +58,30 @@ module Zee
         system(*)
       end
 
+      desc "run FILE...",
+           "Load and run a ruby file after loading the Zee environment"
+      option :env,
+             type: :string,
+             default: "development",
+             desc: "Set the environment",
+             aliases: "-e",
+             enum: %w[development test production]
+      def _run(*files)
+        dotenvs = [".env.#{options[:env]}", ".env"]
+        CLI.load_dotenv_files(*dotenvs)
+
+        files.each do |file|
+          file = File.expand_path(file)
+
+          if File.exist?(file)
+            load file
+          else
+            say_error "ERROR: File not found: #{file}"
+            exit 1
+          end
+        end
+      end
+
       map "g" => "generate"
       desc "generate SUBCOMMAND", "Generate new code (alias: g)"
       subcommand "generate", Generate
