@@ -1111,4 +1111,16 @@ class FormBuilderTest < Zee::Test
 
     assert_html html, "input[data-testid='user_name']"
   end
+
+  test "renders field with custom attributes" do
+    user = {}
+    template = <<~ERB
+      <%= form_for user, url: "/users", as: :user do |f| %>
+        <%= f.field :name, data: {testid: "name_field"} %>
+      <% end %>
+    ERB
+    html = render(template, locals: {user:}, request:)
+
+    assert_html html, "div.field[data-testid='name_field']"
+  end
 end

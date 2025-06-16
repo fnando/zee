@@ -441,10 +441,16 @@ module Zee
     #                                               to groups (i.e.
     #                                               `type: :radio_group` or
     #                                               `type: :checkbox_group`).
-    #
+    # @param options [Hash{Symbol => Object}] The HTML attributes for the field
+    #                                         wrapper.
     # @return [SafeBuffer]
     def field(
-      attr, values = nil, type: :text, input_options: nil, label_options: nil
+      attr,
+      values = nil,
+      type: :text,
+      input_options: nil,
+      label_options: nil,
+      **options
     )
       case type
       when :select
@@ -463,8 +469,9 @@ module Zee
 
       hint = hint(attr)
       error = error(attr)
+      css_class = class_names(FIELD, {invalid: error}, options[:class])
 
-      content_tag :div, class: class_names(FIELD, {invalid: error}) do
+      content_tag :div, **options, class: css_class do
         info = content_tag :div, class: FIELD_INFO do
           label + hint
         end
