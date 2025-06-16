@@ -477,4 +477,18 @@ class CLITest < Minitest::Test
     assert_equal 0, exit_code
     assert_includes out, "zee #{Zee::VERSION}"
   end
+
+  test "executes command" do
+    exit_code = nil
+    out = nil
+
+    Dir.chdir("test/fixtures/sample_app") do
+      capture do
+        Zee::CLI.start(%w[exec mycmd])
+      end => {exit_code:, out:}
+    end
+
+    assert_equal 0, exit_code
+    assert_includes out, "DOTENV_LOADED=1"
+  end
 end

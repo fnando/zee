@@ -45,6 +45,19 @@ module Zee
         puts "zee #{VERSION}"
       end
 
+      desc "exec", "Execute a command after loading the Zee environment"
+      option :env,
+             type: :string,
+             default: "development",
+             desc: "Set the environment",
+             aliases: "-e",
+             enum: %w[development test production]
+      def exec(*)
+        dotenvs = [".env.#{options[:env]}", ".env"]
+        CLI.load_dotenv_files(*dotenvs)
+        system(*)
+      end
+
       map "g" => "generate"
       desc "generate SUBCOMMAND", "Generate new code (alias: g)"
       subcommand "generate", Generate
