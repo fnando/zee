@@ -16,7 +16,7 @@ module Zee
       def read(*)
       end
 
-      def delete(_key, **)
+      def delete(_key, **) # rubocop:disable Naming/PredicateMethod
         false
       end
 
@@ -28,11 +28,11 @@ module Zee
         keys.each_with_object({}) {|key, hash| hash[key] = yield(key, self) }
       end
 
-      def write(*, **)
+      def write(*, **) # rubocop:disable Naming/PredicateMethod
         false
       end
 
-      def write_multi(*, **)
+      def write_multi(*, **) # rubocop:disable Naming/PredicateMethod
         false
       end
 
@@ -44,7 +44,7 @@ module Zee
         false
       end
 
-      def clear(**)
+      def clear(**) # rubocop:disable Naming/PredicateMethod
         false
       end
     end

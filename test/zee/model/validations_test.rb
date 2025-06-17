@@ -56,9 +56,9 @@ class ValidationsTest < Minitest::Test
       end
 
       attribute :name
-      validates_presence_of :name, if: :condition
+      validates_presence_of :name, if: :condition?
 
-      private def condition
+      private def condition?
         true
       end
     end
@@ -75,9 +75,9 @@ class ValidationsTest < Minitest::Test
       end
 
       attribute :name
-      validates_presence_of :name, if: :condition
+      validates_presence_of :name, if: :condition?
 
-      private def condition
+      private def condition?
         false
       end
     end
@@ -94,9 +94,9 @@ class ValidationsTest < Minitest::Test
       end
 
       attribute :name
-      validates_presence_of :name, unless: :condition
+      validates_presence_of :name, unless: :condition?
 
-      private def condition
+      private def condition?
         false
       end
     end
@@ -113,9 +113,9 @@ class ValidationsTest < Minitest::Test
       end
 
       attribute :name
-      validates_presence_of :name, unless: :condition
+      validates_presence_of :name, unless: :condition?
 
-      private def condition
+      private def condition?
         true
       end
     end
