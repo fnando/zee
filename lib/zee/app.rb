@@ -468,6 +468,12 @@ module Zee
         load_files force: true
         run_init
 
+        if defined?(Sequel)
+          Sequel::DATABASES.each do |db|
+            db.pool.disconnect
+          end
+        end
+
         I18n.reload!
         I18n.t("reload", default: "reload")
       end
