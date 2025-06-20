@@ -45,9 +45,10 @@ module Zee
                    .relative_path_from(Zee.app.root.join("app/views"))
                    .to_s
                    .gsub(%r{^(.*?)/_?([^.]+).*?$}, '\1/\2')
-                   .tr(SLASH, I18n.default_separator)
+                   .split(SLASH)
+                   .map {|c| c.gsub(/^_/, EMPTY_STRING) }
 
-            [base, str_key].join(I18n.default_separator)
+            [*base, str_key].join(I18n.default_separator)
           else
             key
           end
