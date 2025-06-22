@@ -127,9 +127,11 @@ module Zee
       end
 
       def log_content_type(headers)
-        return unless headers["content-type"]
+        key = headers.keys.find {|k| k.to_s.downcase == "content-type" }
 
-        log_entry(:content_type, headers["content-type"])
+        return unless key
+
+        log_entry(:content_type, headers[key])
       end
 
       def log_sequel

@@ -11,7 +11,7 @@ class RequestLoggerTest < Minitest::Test
     Rack::Builder.app do
       use Zee::Middleware::RequestLogger, app_logger
       use RequestStore::Middleware
-      run(proc { [200, {}, []] })
+      run(proc { [200, {"content-type": "text/html"}, []] })
     end
   end
 
@@ -63,6 +63,7 @@ class RequestLoggerTest < Minitest::Test
     assert_match(%r{^POST /\?email=filtered \(.*?\)$}, log)
     assert_includes log, "Handler: pages#home\n"
     assert_includes log, "Halted by: :some_before_action\n"
+    assert_includes log, "Content type: text/html\n"
     assert_match(/Params: {"email" ?=> ?"\[filtered\]"}\n/, log)
     assert_match(%r{^View: app/views/pages/home\.html\.erb \(.*?\)$}, log)
     assert_match(%r{^Partial: app/views/pages/_item\.html\.erb \(.*?\)$}, log)
