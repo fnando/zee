@@ -61,7 +61,9 @@ class CLITest < Minitest::Test
        GET        | /hello                     |                  | pages#hello_ivar
        GET        | /text                      |                  | formats#text
        GET        | /html                      |                  | formats#html
+       GET        | /to-html                   |                  | formats#html_protocol
        GET        | /xml                       |                  | formats#xml
+       GET        | /to-xml                    |                  | formats#xml_protocol
        GET        | /json                      |                  | formats#json
        GET        | /locale                    |                  | locales#show
        GET        | /redirect                  |                  | pages#redirect

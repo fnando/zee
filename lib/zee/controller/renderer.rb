@@ -21,6 +21,49 @@ module Zee
       # @api private
       APPLICATION = "application"
 
+      # @api private
+      HTML = lambda do |response:, status:, object:, **|
+        response.status(status)
+        response.headers[:content_type] = TEXT_HTML
+        response.body = response.body = if object.respond_to?(:to_html)
+                                          object.to_html
+                                        else
+                                          object.to_s
+                                        end
+      end
+
+      # @api private
+      XML = lambda do |response:, status:, object:, **|
+        response.status(status)
+        response.headers[:content_type] = APPLICATION_XML
+        response.body = if object.respond_to?(:to_xml)
+                          object.to_xml
+                        else
+                          object.to_s
+                        end
+      end
+
+      # @api private
+      JSON = lambda do |response:, status:, object:, **|
+        response.status(status)
+        response.headers[:content_type] = APPLICATION_JSON
+        response.body = Zee.app.config.json_serializer.dump(object)
+      end
+
+      # @api private
+      TEXT = lambda do |response:, status:, object:, **|
+        response.status(status)
+        response.headers[:content_type] = TEXT_PLAIN
+        response.body = object.to_s
+      end
+
+      # @api private
+      BODY = lambda do |response:, status:, object:, options:|
+        response.status(status)
+        response.headers[:content_type] = options[:content_type] || TEXT_PLAIN
+        response.body = object.to_s
+      end
+
       # Render a template. The default is to render a template with the same
       # name as the action. The template must be named
       # `:name.:content_type.:template_handler`, as in `home.html.erb`.
@@ -64,9 +107,18 @@ module Zee
       )
         raise DoubleRenderError if response.performed?
 
-        return render_json(status, options.delete(:json)) if options.key?(:json)
-        return render_html(status, options.delete(:html)) if options.key?(:html)
-        return render_xml(status, options.delete(:xml)) if options.key?(:xml)
+        options.each do |key, object|
+          next unless Zee.app.config.format_renderers[key]
+
+          Zee.app.config.format_renderers[key].call(
+            response:,
+            status:,
+            object:,
+            options: options.except(key)
+          )
+          return
+        end
+
         return render_text(status, options.delete(:text)) if options.key?(:text)
         return render_body(status, options) if options.key?(:body)
 
@@ -106,41 +158,6 @@ module Zee
         response.status(status)
         response.headers[:content_type] = found_view.mime.content_type
         response.body = body
-      end
-
-      # @api private
-      private def render_html(status, text)
-        response.status(status)
-        response.headers[:content_type] = TEXT_HTML
-        response.body = text.to_s
-      end
-
-      # @api private
-      private def render_xml(status, text)
-        response.status(status)
-        response.headers[:content_type] = APPLICATION_XML
-        response.body = text.to_s
-      end
-
-      # @api private
-      private def render_text(status, text)
-        response.status(status)
-        response.headers[:content_type] = TEXT_PLAIN
-        response.body = text.to_s
-      end
-
-      # @api private
-      private def render_json(status, data)
-        response.status(status)
-        response.headers[:content_type] = APPLICATION_JSON
-        response.body = Zee.app.config.json_serializer.dump(data)
-      end
-
-      # @api private
-      private def render_body(status, options)
-        response.status(status)
-        response.headers[:content_type] = options[:content_type] || TEXT_PLAIN
-        response.body = options[:body].to_s
       end
 
       # @api private
@@ -309,7 +326,7 @@ module Zee
           end
         end
 
-        mimes << MiniMime.lookup_by_extension(HTML) if mimes.empty?
+        mimes << MiniMime.lookup_by_extension(Zee::HTML) if mimes.empty?
 
         mimes
       end

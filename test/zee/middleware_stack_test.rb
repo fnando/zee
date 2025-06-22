@@ -11,8 +11,8 @@ class MiddlewareStackTest < Minitest::Test
     list = stack.to_a
 
     assert_equal 2, list.size
-    assert_equal [Rack::CommonLogger, [], nil], list[0]
-    assert_equal [Rack::Runtime, [], nil], list[1]
+    assert_equal [Rack::CommonLogger, [], {}, nil], list[0]
+    assert_equal [Rack::Runtime, [], {}, nil], list[1]
   end
 
   test "prepends middleware" do
@@ -23,8 +23,8 @@ class MiddlewareStackTest < Minitest::Test
     list = stack.to_a
 
     assert_equal 2, list.size
-    assert_equal [Rack::Runtime, [], nil], list[0]
-    assert_equal [Rack::CommonLogger, [], nil], list[1]
+    assert_equal [Rack::Runtime, [], {}, nil], list[0]
+    assert_equal [Rack::CommonLogger, [], {}, nil], list[1]
   end
 
   test "clears stack" do
@@ -44,6 +44,6 @@ class MiddlewareStackTest < Minitest::Test
 
     stack.delete Rack::CommonLogger
 
-    assert_equal [[Rack::Runtime, [], nil]], stack.to_a
+    assert_equal [[Rack::Runtime, [], {}, nil]], stack.to_a
   end
 end

@@ -88,6 +88,14 @@ module Zee
       set :filter_parameters, ParameterFilter::DEFAULT_FILTERS
       set :cache, CacheStore::Null.new(encrypt: false)
       set :inflector, Dry::Inflector.new
+
+      set :format_renderers, {
+        html: Controller::Renderer::HTML,
+        xml: Controller::Renderer::XML,
+        json: Controller::Renderer::JSON,
+        text: Controller::Renderer::TEXT,
+        body: Controller::Renderer::BODY
+      }
     end
 
     def env(name, default, type:)

@@ -24,6 +24,7 @@ loader.inflector.inflect(
   "aes" => "AES",
   "cli" => "CLI",
   "html" => "HTML",
+  "xml" => "XML",
   "html_helpers" => "HTMLHelpers",
   "json_encoder" => "JSONEncoder",
   "typescript" => "TypeScript",
