@@ -408,7 +408,10 @@ module Zee
         stack = middleware.to_a
 
         Rack::Builder.app do
-          stack.each {|middleware, args, block| use(middleware, *args, &block) }
+          stack.each do |middleware, args, kwargs, block|
+            use(middleware, *args, **kwargs, &block)
+          end
+
           run request_handler
         end
       end

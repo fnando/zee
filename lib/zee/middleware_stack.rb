@@ -18,17 +18,19 @@ module Zee
     # Add middleware to the end of the stack.
     # @param middleware [Class] The middleware class.
     # @param args [Array] The arguments to pass to the middleware.
+    # @param kwargs [Hash] The keyword arguments to pass to the middleware.
     # @param block [Proc] The block to pass to the middleware.
-    def use(middleware, *args, &block)
-      @store << [middleware, args, block]
+    def use(middleware, *args, **kwargs, &block)
+      @store << [middleware, args, kwargs, block]
     end
 
     # Add a middleware to the beginning of the stack.
     # @param middleware [Class] The middleware class.
     # @param args [Array] The arguments to pass to the middleware.
+    # @param kwargs [Hash] The keyword arguments to pass to the middleware.
     # @param block [Proc] The block to pass to the middleware.
-    def unshift(middleware, *args, &block)
-      @store.unshift([middleware, args, block])
+    def unshift(middleware, *args, **kwargs, &block)
+      @store.unshift([middleware, args, kwargs, block])
     end
 
     # Convert the stack to an array.
