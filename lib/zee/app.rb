@@ -460,12 +460,13 @@ module Zee
       )
 
       listener = Listen.to(root, only:, ignore:) do
-        @config = nil
-        @routes = nil
-        @secrets = nil
-        @middleware = nil
-        @to_app = nil
-        @helpers = nil
+        skip_reset = %i[@init @initialized @root @loader @env]
+
+        instance_variables.each do |var|
+          next if skip_reset.include?(var)
+
+          instance_variable_set(var, nil)
+        end
 
         loader.reload
         load_files force: true
