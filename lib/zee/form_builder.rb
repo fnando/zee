@@ -34,7 +34,7 @@ module Zee
 
     # @api private
     # The values that will be used to mark a `input[type=checkbox]` as checked.
-    TRUTHY_VALUES = %w[1 true yes TRUE YES].freeze
+    TRUTHY_VALUES = %w[1 true yes TRUE YES on].freeze
 
     # @api private
     SUBMIT = "submit"
@@ -462,6 +462,9 @@ module Zee
       when :checkbox_group
         label = tag(:span, label_text(attr), class: :label)
         input = checkbox_group(attr, values)
+      when :checkbox
+        label = label(attr, **label_options)
+        input = checkbox(attr, **input_options)
       else
         label = label(attr, **label_options)
         input = build_input(type, attr, **input_options)
@@ -471,15 +474,30 @@ module Zee
       error = error(attr)
       css_class = class_names(FIELD, {invalid: error}, options[:class])
 
-      content_tag :div, **options, class: css_class do
-        info = content_tag :div, class: FIELD_INFO do
-          label + hint
-        end
-        control = content_tag :div, class: FIELD_CONTROLS do
-          input + error
-        end
+      if type == :checkbox
+        content_tag :div, **options, class: css_class do
+          info = content_tag :div, class: FIELD_INFO do
+            label + hint + error
+          end
 
-        info + control
+          control = content_tag :div, class: FIELD_CONTROLS do
+            input
+          end
+
+          control + info
+        end
+      else
+        content_tag :div, **options, class: css_class do
+          info = content_tag :div, class: FIELD_INFO do
+            label + hint
+          end
+
+          control = content_tag :div, class: FIELD_CONTROLS do
+            input + error
+          end
+
+          info + control
+        end
       end
     end
 
@@ -608,7 +626,8 @@ module Zee
     # @return [String]
     private def name_for(attr, collection: false)
       suffix = SQUARE_BRACKETS if collection
-      "#{object_name}[#{attr}]#{suffix}"
+      name = object_name.split(SLASH).last
+      "#{name}[#{attr}]#{suffix}"
     end
 
     # @api private
@@ -635,7 +654,10 @@ module Zee
     # @example
     #   translation_for(:label, :name, default: "Name")
     private def translation_for(scope, attr = nil, default: nil)
-      I18n.t(scope, scope: [:zee, :forms, object_name, attr].compact, default:)
+      scope = [:zee, :forms, object_name.tr(SLASH, DOT), attr, scope]
+              .compact
+              .join(I18n.default_separator)
+      I18n.t(scope, default:)
     end
 
     # @api private
@@ -656,7 +678,11 @@ module Zee
       attrs[:placeholder] ||=
         translation_for(:placeholder, attr, default: false)
 
-      helper_name = :"#{type}_field_tag"
+      helper_name = if type == :checkbox
+                      :"#{type}_tag"
+                    else
+                      :"#{type}_field_tag"
+                    end
 
       send helper_name,
            name_for(attr),
