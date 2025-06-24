@@ -117,6 +117,10 @@ module Sequel
         # @param encoder [Object] the encoder to use. Must response to
         #                         `dump(data)` and `parse(string)`. Defaults
         #                         to `nil`.
+        # @param default [Object, nil] a default value to use when the encrypted
+        #                              attribute is not set. If a callable is
+        #                              given, the default value will be called
+        #                              with the model instance as an argument.
         # @see JSONEncoder
         #
         # @example Define encrypted attributes
@@ -137,11 +141,11 @@ module Sequel
         #     keyring ENV["KEYRING"], digest_salt: ENV["KEYRING_DIGEST_SALT"]
         #     encrypt :email, encoder: Zee::Encoders::JSONEncoder
         #   end
-        def encrypt(*attributes, encoder: nil)
+        def encrypt(*attributes, encoder: nil, default: nil)
           self.encrypted_attributes ||= {}
 
           attributes.each do |attribute|
-            encrypted_attributes[attribute.to_sym] = {encoder: encoder}
+            encrypted_attributes[attribute.to_sym] = {encoder:, default:}
 
             define_encrypted_attribute_writer(attribute)
             define_encrypted_attribute_reader(attribute)
@@ -212,7 +216,15 @@ module Sequel
 
           encrypted_value = public_send(:"encrypted_#{attribute}")
 
-          return unless encrypted_value
+          unless encrypted_value
+            default_value = self.class.encrypted_attributes[attribute][:default]
+
+            if default_value.respond_to?(:call)
+              default_value = default_value.call(self)
+            end
+
+            return default_value
+          end
 
           decrypted_value = self.class.keyring.decrypt(
             encrypted_value,

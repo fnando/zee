@@ -116,7 +116,7 @@ module Zee
             object:,
             options: options.except(key)
           )
-          return
+          return # rubocop:disable Lint/NonLocalExitFromIterator
         end
 
         return render_text(status, options.delete(:text)) if options.key?(:text)

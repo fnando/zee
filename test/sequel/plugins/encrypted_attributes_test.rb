@@ -517,4 +517,30 @@ class EncryptedAttributesTest < Minitest::Test
 
     assert_equal Hash(message: "hello"), user.secret
   end
+
+  test "returns default value (callable)" do
+    model = create_model do
+      keyring DEFAULT_KEYRING, digest_salt: ""
+      encrypt :secret,
+              encoder: Zee::Encoders::JSONEncoder,
+              default: ->(_) { {} }
+    end
+
+    user = model.new
+
+    assert_empty(user.secret)
+  end
+
+  test "returns default value" do
+    model = create_model do
+      keyring DEFAULT_KEYRING, digest_salt: ""
+      encrypt :secret,
+              encoder: Zee::Encoders::JSONEncoder,
+              default: "sekret"
+    end
+
+    user = model.new
+
+    assert_equal "sekret", user.secret
+  end
 end
