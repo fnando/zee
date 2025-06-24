@@ -90,11 +90,11 @@ module Zee
       set :inflector, Dry::Inflector.new
 
       set :format_renderers, {
-        html: Controller::Renderer::HTML,
-        xml: Controller::Renderer::XML,
-        json: Controller::Renderer::JSON,
-        text: Controller::Renderer::TEXT,
-        body: Controller::Renderer::BODY
+        html: Controller::Renderer::HTML_RENDERER,
+        xml: Controller::Renderer::XML_RENDERER,
+        json: Controller::Renderer::JSON_RENDERER,
+        text: Controller::Renderer::TEXT_RENDERER,
+        body: Controller::Renderer::BODY_RENDERER
       }
     end
 

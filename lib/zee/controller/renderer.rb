@@ -22,7 +22,7 @@ module Zee
       APPLICATION = "application"
 
       # @api private
-      HTML = lambda do |response:, status:, object:, **|
+      HTML_RENDERER = lambda do |response:, status:, object:, **|
         response.status(status)
         response.headers[:content_type] = TEXT_HTML
         response.body = response.body = if object.respond_to?(:to_html)
@@ -33,7 +33,7 @@ module Zee
       end
 
       # @api private
-      XML = lambda do |response:, status:, object:, **|
+      XML_RENDERER = lambda do |response:, status:, object:, **|
         response.status(status)
         response.headers[:content_type] = APPLICATION_XML
         response.body = if object.respond_to?(:to_xml)
@@ -44,21 +44,21 @@ module Zee
       end
 
       # @api private
-      JSON = lambda do |response:, status:, object:, **|
+      JSON_RENDERER = lambda do |response:, status:, object:, **|
         response.status(status)
         response.headers[:content_type] = APPLICATION_JSON
         response.body = Zee.app.config.json_serializer.dump(object)
       end
 
       # @api private
-      TEXT = lambda do |response:, status:, object:, **|
+      TEXT_RENDERER = lambda do |response:, status:, object:, **|
         response.status(status)
         response.headers[:content_type] = TEXT_PLAIN
         response.body = object.to_s
       end
 
       # @api private
-      BODY = lambda do |response:, status:, object:, options:|
+      BODY_RENDERER = lambda do |response:, status:, object:, options:|
         response.status(status)
         response.headers[:content_type] = options[:content_type] || TEXT_PLAIN
         response.body = object.to_s
@@ -240,6 +240,8 @@ module Zee
       # @return [Template::Info, nil]
       # @raise [MissingTemplateError]
       def find_template(name, mimes, required: true)
+        lookup_dirs = []
+
         mime_exts = mimes.map do |mime|
           [
             mime,
@@ -253,8 +255,9 @@ module Zee
         name_ancestry.each do |controller_name|
           mime_exts.each do |(mime, ext)|
             view_paths.each do |search_path|
-              view_path = search_path
-                          .join(controller_name)
+              dir = search_path.join(controller_name)
+              lookup_dirs << dir
+              view_path = dir
                           .glob([
                             "#{name}.#{I18n.locale}.{#{ext}}.*",
                             "#{name}.{#{ext}}.*"
@@ -271,6 +274,7 @@ module Zee
         # Then, try to lookup for view_path + name.
         mime_exts.each do |(mime, ext)|
           view_paths.each do |search_path|
+            lookup_dirs << search_path
             view_path = search_path
                         .glob("#{name}.{#{ext}}.*")
                         .first
@@ -284,10 +288,17 @@ module Zee
         return unless required
 
         content_types = mimes.map(&:content_type)
+        name = name.to_s.gsub("./", "")
+        lookup_dirs =
+          lookup_dirs
+          .map {|dir| dir.relative_path_from(Zee.app.root) }
+          .uniq
+          .join(", ")
 
         raise MissingTemplateError,
-              "couldn't find template for #{controller_name}/#{name} " \
-              "for #{content_types.inspect} (locale=#{I18n.locale})"
+              "couldn't find template #{name.inspect} " \
+              "for #{content_types.inspect} (locale=#{I18n.locale}) " \
+              "in #{lookup_dirs}"
       end
 
       # @api private
