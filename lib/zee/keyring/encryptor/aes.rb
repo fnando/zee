@@ -59,7 +59,6 @@ module Zee
             cipher = build_cipher
             cipher.decrypt
 
-            # hmac, *data = *Base64.strict_decode64(message).split
             decoded = Base64.strict_decode64(message)
             hmac, *data =
               *segment_ranges.map do |range|

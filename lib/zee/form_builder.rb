@@ -67,7 +67,7 @@ module Zee
     # @see ViewHelpers::Form#form_for
     def initialize(object:, context:, object_name:)
       @object = object
-      @object_name = object_name
+      @object_name = object_name.to_s
       @context = context
     end
 
