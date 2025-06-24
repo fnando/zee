@@ -35,5 +35,9 @@ module Controllers
     def no_layout
       render layout: false
     end
+
+    def no_content
+      render status: 204
+    end
   end
 end

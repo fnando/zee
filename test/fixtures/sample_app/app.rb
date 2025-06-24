@@ -43,8 +43,8 @@ class SampleApp < Zee::App
       get "session", to: "sessions#show"
       delete "session", to: "sessions#delete"
       get "helpers", to: "helpers#show"
-
       get "feed", to: "feeds#show"
+      get "no-content", to: "pages#no_content"
 
       # Routes related to CSRF protection
       get "posts/new", to: "posts#new", as: :new_post

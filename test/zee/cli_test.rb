@@ -74,6 +74,7 @@ class CLITest < Minitest::Test
        DELETE     | /session                   |                  | sessions#delete
        GET        | /helpers                   |                  | helpers#show
        GET        | /feed                      |                  | feeds#show
+       GET        | /no-content                |                  | pages#no_content
        GET        | /posts/new                 | new_post         | posts#new
        POST       | /posts/new                 |                  | posts#create
        GET        | /posts/:id                 | post             | posts#show

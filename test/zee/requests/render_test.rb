@@ -259,4 +259,11 @@ class RenderTest < Zee::Test::Integration
                     "Hello, world!"
     assert_includes last_response.content_type, "text/html"
   end
+
+  test "renders no content" do
+    get "/no-content"
+
+    assert last_response.no_content?
+    assert_empty last_response.body
+  end
 end

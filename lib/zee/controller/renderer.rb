@@ -119,8 +119,9 @@ module Zee
           return # rubocop:disable Lint/NonLocalExitFromIterator
         end
 
-        return render_text(status, options.delete(:text)) if options.key?(:text)
-        return render_body(status, options) if options.key?(:body)
+        if Rack::Utils.status_code(status) == 204
+          return HTML_RENDERER.call(response:, status:, object: "")
+        end
 
         mimes = possible_mime_types(template_name)
         found_view = find_template(template_name, mimes)
