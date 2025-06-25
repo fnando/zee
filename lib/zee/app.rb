@@ -477,7 +477,7 @@ module Zee
 
         if defined?(Sequel)
           Sequel::DATABASES.each do |db|
-            db.pool.disconnect
+            db.tables.each {|table| db.schema(table, reload: true) }
           end
         end
 
