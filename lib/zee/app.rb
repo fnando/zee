@@ -284,6 +284,9 @@ module Zee
         push_dir.call("app/#{dir.basename}")
       end
 
+      $LOAD_PATH << root.join("lib").to_s
+      loader.push_dir("lib") if root.join("lib").directory?
+
       init { set_i18n_load_path }
 
       load_files
