@@ -22,6 +22,24 @@ module Zee
         @details ||= Hash.new {|h, k| h[k] = [] }
       end
 
+      # Returns the full error messages for the model.
+      # @return [Array<String>] The full error messages for the model.
+      def full_messages
+        scope = %w[zee model errors full_message].join(I18n.default_separator)
+
+        messages.each_with_object([]) do |(key, errors), buffer|
+          attribute = human_attribute_name(key)
+          errors.each do |message|
+            buffer << I18n.t(
+              scope,
+              default: "#{attribute} #{message}",
+              attribute:,
+              message:
+            )
+          end
+        end
+      end
+
       # Returns the errors for the model.
       # @return [Hash{Symbol => Array<String>}] The errors for the model.
       def messages
@@ -71,11 +89,29 @@ module Zee
       # @param attribute [Symbol] The attribute to get the name for.
       # @return [String] The humanized attribute name.
       def human_attribute_name(attribute)
-        if model.class.respond_to?(:naming)
-          model.class.naming.human_attribute_name(attribute, capitalize: false)
-        else
-          attribute.to_s.tr(UNDERSCORE, SPACE)
-        end
+        possible_names = []
+
+        default_name =
+          if model.class.respond_to?(:naming)
+            scope = [
+              :zee, :model, :attributes, model.class.naming.singular, attribute
+            ].join(I18n.default_separator)
+            possible_names << I18n.t(scope, default: nil)
+            model.class.naming.human_attribute_name(
+              attribute,
+              capitalize: false
+            )
+          else
+            attribute.to_s.tr(UNDERSCORE, SPACE)
+          end
+
+        possible_names << I18n.t(
+          [:zee, :model, :attributes, attribute].join(I18n.default_separator),
+          default: nil
+        )
+        possible_names << default_name
+
+        possible_names.compact.first
       end
 
       # @api private

@@ -9,6 +9,48 @@ class ErrorsTest < Minitest::Test
                                    .human_attribute_name(:full_name)
   end
 
+  test "returns human attribute from generic translation" do
+    store_translations(
+      :en,
+      zee: {
+        model: {
+          attributes: {
+            name: "full name"
+          }
+        }
+      }
+    )
+
+    assert_equal "full name",
+                 Zee::Model::Errors.new(Class.new)
+                                   .human_attribute_name(:name)
+  end
+
+  test "returns human attribute from model attribute translation" do
+    model = Class.new do
+      def self.naming
+        @naming ||= Zee::Naming::Name.new("User")
+      end
+    end
+
+    store_translations(
+      :en,
+      zee: {
+        model: {
+          attributes: {
+            user: {
+              name: "full name"
+            }
+          }
+        }
+      }
+    )
+
+    assert_equal "full name",
+                 Zee::Model::Errors.new(model.new)
+                                   .human_attribute_name(:name)
+  end
+
   test "iterates over errors" do
     errors = Zee::Model::Errors.new(nil)
     errors.add(:name, :blank, message: "can't be blank")
@@ -97,5 +139,86 @@ class ErrorsTest < Minitest::Test
     errors = Zee::Model::Errors.new(nil)
 
     assert_empty errors
+  end
+
+  test "returns full messages" do
+    store_translations(
+      :en,
+      zee: {
+        model: {
+          errors: {
+            blank: "is required"
+          }
+        }
+      }
+    )
+
+    model = Class.new do
+      def self.naming
+        @naming ||= Zee::Naming::Name.new("User")
+      end
+    end
+
+    errors = Zee::Model::Errors.new(model.new)
+    errors.add(:name, :blank)
+    expected = ["name is required"]
+
+    assert_equal expected, errors.full_messages
+  end
+
+  test "returns full messages with custom attribute translation" do
+    store_translations(
+      :en,
+      zee: {
+        model: {
+          attributes: {
+            user: {
+              name: "full name"
+            }
+          },
+          errors: {
+            blank: "is required"
+          }
+        }
+      }
+    )
+
+    model = Class.new do
+      def self.naming
+        @naming ||= Zee::Naming::Name.new("User")
+      end
+    end
+
+    errors = Zee::Model::Errors.new(model.new)
+    errors.add(:name, :blank)
+    expected = ["full name is required"]
+
+    assert_equal expected, errors.full_messages
+  end
+
+  test "returns full messages with custom placeholder pattern" do
+    store_translations(
+      :en,
+      zee: {
+        model: {
+          errors: {
+            full_message: "%{attribute}: %{message}",
+            blank: "is required"
+          }
+        }
+      }
+    )
+
+    model = Class.new do
+      def self.naming
+        @naming ||= Zee::Naming::Name.new("User")
+      end
+    end
+
+    errors = Zee::Model::Errors.new(model.new)
+    errors.add(:name, :blank)
+    expected = ["name: is required"]
+
+    assert_equal expected, errors.full_messages
   end
 end
