@@ -14,7 +14,7 @@ class EncryptedAttributesTest < Minitest::Test
         encrypted_secret text,
         secret_digest text,
         encrypted_other_secret text
-      )
+      );
     SQL
 
     Class.new(Sequel::Model(db[:users])) do
