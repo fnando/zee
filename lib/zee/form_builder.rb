@@ -678,11 +678,7 @@ module Zee
       attrs[:placeholder] ||=
         translation_for(:placeholder, attr, default: false)
 
-      helper_name = if type == :checkbox
-                      :"#{type}_tag"
-                    else
-                      :"#{type}_field_tag"
-                    end
+      helper_name = :"#{type}_field_tag"
 
       send helper_name,
            name_for(attr),

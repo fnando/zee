@@ -516,4 +516,24 @@ class CLITest < Minitest::Test
     assert_includes out, "Hello from my runner!"
     assert_includes out, "Hello from another runner!"
   end
+
+  test "fails when running missing ruby file" do
+    slow_test
+
+    exit_code = nil
+    err = nil
+
+    Dir.chdir("test/fixtures/sample_app") do
+      capture(shell: true) do
+        system "../../../exe/zee",
+               *%w[
+                 run
+                 doesnt_exist.rb
+               ]
+      end => {exit_code:, err:}
+    end
+
+    assert_equal 1, exit_code
+    assert_includes err, "ERROR: File not found: doesnt_exist.rb"
+  end
 end

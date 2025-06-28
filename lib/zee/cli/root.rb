@@ -67,6 +67,7 @@ module Zee
              aliases: "-e",
              enum: %w[development test production]
       def _run(*files)
+        # :nocov:
         dotenvs = [".env.#{options[:env]}", ".env"]
         CLI.load_dotenv_files(*dotenvs)
 
@@ -76,10 +77,12 @@ module Zee
           if File.exist?(file)
             load file
           else
-            say_error "ERROR: File not found: #{file}"
+            relative_path = Pathname(file).relative_path_from(Pathname.pwd)
+            say_error "ERROR: File not found: #{relative_path}"
             exit 1
           end
         end
+        # :nocov:
       end
 
       map "g" => "generate"

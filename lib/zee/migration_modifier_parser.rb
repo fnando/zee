@@ -8,6 +8,10 @@ module Zee
 
     NULL_VALUES = [nil, "true"].freeze
 
+    class << self
+      attr_writer :field_mapping
+    end
+
     def self.field_mapping
       @field_mapping ||= {
         primary_key: ["primary_key"],
@@ -33,7 +37,9 @@ module Zee
 
     def self.pg?
       require "pg"
+      # :nocov:
       true
+      # :nocov:
     rescue LoadError
       false
     end

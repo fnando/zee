@@ -1123,4 +1123,28 @@ class FormBuilderTest < Zee::Test
 
     assert_html html, "div.field[data-testid='name_field']"
   end
+
+  test "renders field for checkbox" do
+    store_translations :en,
+                       zee: {
+                         forms: {
+                           user: {
+                             admin: {
+                               label: "Admin permission",
+                               hint: "User can manage things and users"
+                             }
+                           }
+                         }
+                       }
+    user = {}
+    template = <<~ERB
+      <%= form_for user, url: "/users", as: :user do |f| %>
+        <%= f.field :admin, type: :checkbox %>
+      <% end %>
+    ERB
+    html = render(template, locals: {user:}, request:)
+
+    assert_html html, "div.field>div.field-controls+div.field-info"
+    assert_html html, "div.field-info>label.label+.hint"
+  end
 end

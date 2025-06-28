@@ -3,6 +3,10 @@
 require "test_helper"
 
 class MigrationModifierParserTest < Minitest::Test
+  setup do
+    Zee::MigrationModifierParser.field_mapping = nil
+  end
+
   test "raises error for modifier without type definition" do
     error = assert_raises(Zee::MigrationModifierParser::InvalidModifierError) do
       Zee::MigrationModifierParser.call("name")
@@ -114,5 +118,19 @@ class MigrationModifierParserTest < Minitest::Test
 
     assert_equal "user_id", field.name
     assert_equal "foreign_key", field.sequel_type
+  end
+
+  test "returns time modifier for postgres" do
+    Zee::MigrationModifierParser.stubs(:pg?).returns(true)
+    field = Zee::MigrationModifierParser.call("user:datetime")
+
+    assert_equal "timestamptz", field.sequel_type
+  end
+
+  test "returns time modifier for other databases" do
+    Zee::MigrationModifierParser.stubs(:pg?).returns(false)
+    field = Zee::MigrationModifierParser.call("user:datetime")
+
+    assert_equal "Time", field.sequel_type
   end
 end
