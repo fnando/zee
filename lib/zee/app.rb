@@ -368,7 +368,7 @@ module Zee
     end
 
     def call(env)
-      if root == Dir.pwd
+      if root == Pathname.pwd
         # :nocov:
         to_app.call(env)
         # :nocov:
