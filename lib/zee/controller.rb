@@ -129,6 +129,10 @@ module Zee
       # Define helper methods.
       define_helper_methods
 
+      # Set a copy of the request parameters in the environment, because it
+      # includes route parameters.
+      request.env[ZEE_PARAMS] = params.to_h
+
       # Execute the action on the controller.
       public_send(action_name)
 

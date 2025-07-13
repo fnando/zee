@@ -51,7 +51,7 @@ module Zee
         props
       end
 
-      define_method :[] do |index|
+      define_method :[] do |index| # rubocop:disable Naming/MethodName
         key = index.instance_of?(Integer) ? keys[index] : index
 
         unless keys.include?(key)

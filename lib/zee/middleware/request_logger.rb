@@ -98,13 +98,12 @@ module Zee
           end
         end
 
-        return unless request.params.any?
+        params = request.env[ZEE_PARAMS]
+        return unless params&.any?
 
         log_entry(
           :params,
-          ParameterFilter
-            .new(Zee.app.config.filter_parameters)
-            .filter(request.params)
+          ParameterFilter.new(Zee.app.config.filter_parameters).filter(params)
         )
       end
 

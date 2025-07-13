@@ -7,7 +7,6 @@ Gem::Specification.new do |spec|
   spec.version = Zee::VERSION
   spec.authors = ["Nando Vieira"]
   spec.email   = ["me@fnando.com"]
-  spec.metadata = {"rubygems_mfa_required" => "true"}
 
   spec.summary     = "A mini web framework."
   spec.description = spec.summary
@@ -18,6 +17,7 @@ Gem::Specification.new do |spec|
   github_tree_url = "#{github_url}/tree/v#{spec.version}"
 
   spec.homepage = github_url
+  spec.metadata["rubygems_mfa_required"] = "true"
   spec.metadata["homepage_uri"] = spec.homepage
   spec.metadata["bug_tracker_uri"] = "#{github_url}/issues"
   spec.metadata["source_code_uri"] = github_tree_url

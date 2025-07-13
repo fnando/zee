@@ -51,3 +51,6 @@ Naming/MemoizedInstanceVariableName:
 
 Style/RedundantFetchBlock:
   Enabled: false
+
+Naming/PredicateMethod:
+  Enabled: false

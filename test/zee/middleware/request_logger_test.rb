@@ -51,11 +51,8 @@ class RequestLoggerTest < Minitest::Test
 
     Dir.chdir(root) do
       app.call(
-        Rack::MockRequest.env_for(
-          "/?email=me@example.com",
-          params: {email: "me@example.com"},
-          method: :post
-        )
+        Rack::MockRequest.env_for("/?email=me@example.com", method: :post)
+          .merge(Zee::ZEE_PARAMS => {"email" => "me@example.com"})
       )
     end
     log = strip_ansi_color(logger_io.tap(&:rewind).read)
