@@ -45,7 +45,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "logger", "~> 1.6"
   spec.add_dependency "mail"
   spec.add_dependency "mini_mime", "~> 1.1"
-  spec.add_dependency "public_suffix", "~> 6.0"
+  spec.add_dependency "public_suffix", ">= 6", "< 8"
   spec.add_dependency "rack", "~> 3.1"
   spec.add_dependency "rack-test"
   spec.add_dependency "rake"
